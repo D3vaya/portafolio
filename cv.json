@@ -1,0 +1,392 @@
+{
+  "basics": {
+    "name": "Juan Carlos Ayala",
+    "label": "Full Stack Developer con más de 10 años de experiencia",
+    "image": "/perfil2.jpeg",
+    "email": "j.ayala.higuera@gmail.com",
+    "phone": "+569 35222613",
+    "url": "https://www.linkedin.com/in/juan-carlos-ayala-higuera-50520a62/",
+    "summary": "+10 años de experiencia como Desarrollador Web. Actualmente me especializo como FrontEnd developr. Vivo en Santiago, Chile. He trabajado en diferentes entornos: desde desarrollos en start-ups hasta liderando equipos de empresas de alto performance.",
+    "location": {
+      "address": "Santa amalia #3544, depto 824",
+      "postalCode": "",
+      "city": "Santiago",
+      "countryCode": "ES",
+      "region": "Chile"
+    },
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "username": "Juan Carlos Ayala",
+        "url": "https://www.linkedin.com/in/juan-carlos-ayala-higuera-50520a62/"
+      },
+      {
+        "network": "X",
+        "username": "D3vAya",
+        "url": "https://twitter.com/D3vAya"
+      },
+      {
+        "network": "GitHub",
+        "username": "D3vaya",
+        "url": "https://github.com/D3vaya"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "Mercado Libre",
+      "position": "Software Engineer",
+      "url": null,
+      "startDate": "2023-09-09",
+      "endDate": null,
+      "summary": "En Mercadolibre me desempeñe como Software Engineer en un equipo backend realizando microservicios para el área de advertising, utilizando Java y springboot como principales tecnologías.",
+      "highlights": [
+        "Started the company"
+      ]
+    },
+    {
+      "name": "WOM",
+      "position": "Software Engineer",
+      "url": null,
+      "startDate": "2021-09-09",
+      "endDate": "2023-04-01",
+      "summary": "Como Software Engineer en WOM durante tres años, desempeñe un papel fundamental en el diseño, desarrollo y mantenimiento del sitio web de ventas de la empresa. Mi enfoque se ha centrado en la implementación de soluciones frontend eficientes y atractivas que han mejorado significativamente la experiencia del usuario y contribuido al crecimiento de la empresa.",
+      "highlights": [
+        "Started the company"
+      ]
+    },
+    {
+      "name": "ZentaGroup",
+      "position": "Tech Lead",
+      "url": "#",
+      "startDate": "2017-04-01",
+      "endDate": "2020-09-01",
+      "summary": "En Zenta me desempeñe inicialmente como desarrollador PHP para productos internos aproximadamente 1 año. Luego se me presento la oportunidad de liderar técnicamente equipos de desarrollo, nuevamente para productos internos de la empresa. La mayoría de estos softwares estaban construidos con marcos de desarrollo monolíticos, y el desafío contemplaba migrar todos los productos a microservicios alojados en GCP y con marcos de desarrollo javascript, Mi día a día era apoyar a los equipos técnicamente, velar por la buena calidad del código y ser el puente con el equipo de arquitectura y el equipo de desarrollo.",
+      "highlights": [
+        "Started the company"
+      ]
+    },
+    {
+      "name": "Nbit",
+      "position": "Software Developer",
+      "startDate": "2014-03-01",
+      "endDate": "2017-03-01",
+      "summary": "En mi estadía en la empresa Nbit, trabaje en innumerables proyectos en los rubros de la educación y el sector inmobiliario. En el  rubro de la educación, trabaje en prácticamente todos los software que utilizan tanto los docentes como los alumnos.  Construimos desde el software para pasar la lista en clases, hasta la plataforma con la cual crean las mallas curriculares en la institución.En el rubro inmobiliario, trabaje construyendo plataformas de corretaje para la inmobiliaria Solar & Galvez. A su vez, también me desempeñaba liderando el equipo de desarrollo con el cual prestamos servicios en dicha empresa.",
+      "highlights": [
+        "Started the company"
+      ]
+    }
+  ],
+  "volunteer": [{
+    "organization": "Organization",
+    "position": "Volunteer",
+    "url": "https://organization.com/",
+    "startDate": "2012-01-01",
+    "endDate": "2013-01-01",
+    "summary": "Description…",
+    "highlights": [
+      "Awarded 'Volunteer of the Month'"
+    ]
+  }],
+  "education": [
+    {
+      "institution": "Duoc UC",
+      "url": "https://www.duoc.cl/",
+      "area": "Diseño Gráfico",
+      "studyType": "Bachelor",
+      "startDate": "2017-03-01",
+      "endDate": "2018-11-21",
+      "score": "4.0",
+      "courses": [
+        "DB1101 - Basic SQL"
+      ]
+    },
+    {
+      "institution": "Universidad Ucinf(ahora UGM)",
+      "url": "https://www.ugm.cl/",
+      "area": "Ingeniería en Informática",
+      "studyType": "Bachelor",
+      "startDate": "2016-03-01",
+      "endDate": "2017-11-21",
+      "score": "4.0",
+      "courses": [
+        "DB1101 - Basic SQL"
+      ]
+    },
+    {
+    "institution": "Universidad Ucinf(ahora UGM)",
+    "url": "https://www.ugm.cl/",
+    "area": "Analisis de sistemas",
+    "studyType": "Bachelor",
+    "startDate": "2013-03-01",
+    "endDate": "2014-11-21",
+    "score": "4.0",
+    "courses": [
+      "DB1101 - Basic SQL"
+    ]
+  }
+  ],
+  "awards": [{
+    "title": "Award",
+    "date": "2014-11-01",
+    "awarder": "Company",
+    "summary": "There is no spoon."
+  }],
+  "certificates": [{
+    "name": "Certificate",
+    "date": "2021-11-07",
+    "issuer": "Company",
+    "url": "https://certificate.com"
+  }],
+  "publications": [{
+    "name": "Publication",
+    "publisher": "Company",
+    "releaseDate": "2014-10-01",
+    "url": "https://publication.com",
+    "summary": "Description…"
+  }],
+  "skills": [
+    {
+      "name": "HTML",
+      "level": "Master",
+      "keywords": [
+        "Desarrollo Web", "Frontend"
+      ]
+    },
+    {
+      "name": "CSS",
+      "level": "Master",
+      "keywords": [
+        "Desarrollo Web", "Frontend", "Diseño Responsive"
+      ]
+    },
+    {
+      "name": "JavaScript",
+      "level": "Master",
+      "keywords": [
+        "Desarrollo Web", "Frontend", "Backend", "Fullstack"
+      ]
+    },
+    {
+      "name": "Tailwind",
+      "level": "Avanzado",
+      "keywords": [
+        "Desarrollo Web", "Frontend", "CSS Framework", "Diseño Responsive"
+      ]
+    },
+    {
+      "name": "TypeScript",
+      "level": "Avanzado",
+      "keywords": [
+        "Desarrollo Web", "Frontend", "Backend", "JavaScript Superset"
+      ]
+    },
+    {
+      "name": "Node",
+      "level": "Avanzado",
+      "keywords": [
+        "Desarrollo Web", "Backend", "JavaScript", "Servidor"
+      ]
+    },
+    {
+      "name": "MySQL",
+      "level": "Avanzado",
+      "keywords": [
+        "Bases de Datos", "SQL", "Almacenamiento de Datos", "Backend"
+      ]
+    },
+    {
+      "name": "Git",
+      "level": "Avanzado",
+      "keywords": [
+        "Control de Versiones", "Colaboración", "Código Fuente"
+      ]
+    },
+    {
+      "name": "GitHub",
+      "level": "Avanzado",
+      "keywords": [
+        "Control de Versiones", "Colaboración", "Código Fuente", "Git"
+      ]
+    },
+    {
+      "name": "Next.js",
+      "level": "Avanzado",
+      "keywords": [
+        "Desarrollo Web", "Frontend", "React Framework", "SSR", "Static Generation"
+      ]
+    },
+    {
+      "name": "React",
+      "level": "Avanzado",
+      "keywords": [
+        "Desarrollo Web", "Frontend", "JavaScript Library", "UI"
+      ]
+    },
+    {
+      "name": "Elixir",
+      "level": "Medio",
+      "keywords": [
+        "Backend"
+      ]
+    },
+    {
+      "name": "Go",
+      "level": "Medio",
+      "keywords": [
+        "Backend"
+      ]
+    },
+    {
+      "name": "PHP",
+      "level": "Medio",
+      "keywords": [
+        "Backend"
+      ]
+    },
+    {
+      "name": "Java",
+      "level": "Medio",
+      "keywords": [
+        "Backend"
+      ]
+    },
+    {
+      "name": "Figma",
+      "level": "Avanzado",
+      "keywords": [
+        "UI"
+      ]
+    },
+    {
+      "name": "Gatsby JS",
+      "level": "Avanzado",
+      "keywords": [
+        "UI", "Frontend"
+      ]
+    },
+    {
+      "name": "Next JS",
+      "level": "Avanzado",
+      "keywords": [
+        "Backend", "Frontend"
+      ]
+    },
+    {
+      "name": "GraphQL",
+      "level": "Medio",
+      "keywords": [
+        "Frontend"
+      ]
+    },
+    {
+      "name": "Astro",
+      "level": "Medio",
+      "keywords": [
+        "Frontend"
+      ]
+    },
+    {
+      "name": "Angular",
+      "level": "Medio",
+      "keywords": [
+        "Frontend"
+      ]
+    },
+    {
+      "name": "Vue JS",
+      "level": "Medio",
+      "keywords": [
+        "Frontend"
+      ]
+    },
+    {
+      "name": "Svelte",
+      "level": "Medio",
+      "keywords": [
+        "Frontend"
+      ]
+    }
+  ],
+  "languages": [
+    {
+      "language": "Spanish",
+      "fluency": "Native speaker"
+    }
+  ],
+  "interests": [{
+    "name": "Wildlife",
+    "keywords": [
+      "Ferrets",
+      "Unicorns"
+    ]
+  }],
+  "references": [{
+    "name": "Jane Doe",
+    "reference": "Reference…"
+  }],
+  "projects": [
+    {
+      "name": "mars.codes",
+      "isActive": true,
+      "description": "Historia interactiva con retos de programación para viajar a Marte",
+      "highlights": [
+        "Elige tu propia aventura",
+        "En desarrollo"
+      ],
+      "url": "https://mars.codes"
+    },
+    {
+      "name": "AdventJS",
+      "isActive": true,
+      "description": "Retos de programación en JavaScript para cada día de diciembre hasta Navidad",
+      "highlights": [
+        "+1 millón de visitas",
+        "Multidioma",
+        "JavaScript & TypeScript"
+      ],
+      "url": "https://adventjs.dev"
+    },
+    {
+      "name": "Codember",
+      "isActive": true,
+      "description": "Juego interactivo de programación con retos y secretos",
+      "highlights": [
+        "+2000 usuarios activos",
+        "Retos para cualquier lenguaje"
+      ],
+      "url": "https://codember.dev"
+    },
+    {
+      "name": "codi.link",
+      "isActive": true,
+      "description": "Playground de código HTML, CSS y JavaScript para compartir",
+      "highlights": [
+        "100k visitas al mes",
+        "Desarrollado por la comunidad"
+      ],
+      "url": "https://codi.link",
+      "github": "https://github.com/midudev/codi.link"
+    },
+    {
+      "name": "Pruebas Técnicas",
+      "isActive": true,
+      "description": "Lista de pruebas técnicas de empresas para practicar programación",
+      "highlights": [
+        "100% gratuito",
+        "+500 soluciones de la comunidad"
+      ],
+      "url": "https://pruebastecnicas.com",
+      "github": "https://github.com/midudev/pruebas-tecnicas"
+    },
+    {
+      "name": "miduConf",
+      "description": "Conferencia de programación en streaming para la comunidad hispanohablante con charlas top",
+      "highlights": [
+        "+15k tickets repartidos",
+        "+50k espectadores en directo"
+      ],
+      "url": "https://miduconf.com"
+    }
+  ]
+}
