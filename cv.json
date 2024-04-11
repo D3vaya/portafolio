@@ -174,8 +174,18 @@
       ]
     },
     {
-      "name": "Node",
+      "name": "Node Js",
       "level": "Avanzado",
+      "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
+    },
+    {
+      "name": "Express",
+      "level": "Avanzado",
+      "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
+    },
+    {
+      "name": "Supabase",
+      "level": "Medio",
       "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
     },
     {
@@ -245,6 +255,11 @@
       "keywords": ["Backend"]
     },
     {
+      "name": "Phoenix Framework",
+      "level": "Medio",
+      "keywords": ["Backend"]
+    },
+    {
       "name": "Go",
       "level": "Medio",
       "keywords": ["Backend"]
@@ -254,6 +269,17 @@
       "level": "Medio",
       "keywords": ["Backend"]
     },
+    {
+      "name": "Cake PHP",
+      "level": "Medio",
+      "keywords": ["Backend"]
+    },
+    {
+      "name": "Laravel",
+      "level": "Medio",
+      "keywords": ["Backend"]
+    },
+
     {
       "name": "Java",
       "level": "Medio",
@@ -296,6 +322,16 @@
     },
     {
       "name": "Svelte",
+      "level": "Medio",
+      "keywords": ["Frontend"]
+    },
+    {
+      "name": "Redis",
+      "level": "Medio",
+      "keywords": ["Frontend"]
+    },
+    {
+      "name": "MongoDB",
       "level": "Medio",
       "keywords": ["Frontend"]
     }
