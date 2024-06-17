@@ -179,6 +179,11 @@
       "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
     },
     {
+      "name": "Nest Js",
+      "level": "Avanzado",
+      "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
+    },
+    {
       "name": "Express",
       "level": "Avanzado",
       "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
@@ -334,6 +339,16 @@
       "name": "MongoDB",
       "level": "Medio",
       "keywords": ["Frontend"]
+    },
+    {
+      "name": "Mongoose ORM",
+      "level": "Avanzado",
+      "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
+    },
+    {
+      "name": "Docker",
+      "level": "Avanzado",
+      "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
     }
   ],
   "languages": [
