@@ -34,6 +34,15 @@
   },
   "work": [
     {
+      "name": "ETpay",
+      "position": "Sr. Frontend Engineer",
+      "url": null,
+      "startDate": "2024-25-06",
+      "endDate": null,
+      "summary": "Actualmente me encargo del desarrollo de productos de pago eficientes y fáciles de usar en ETpay, una de las principales fintech en Chile y México. Me enfoco en mejorar la velocidad y confiabilidad de las transacciones, colaborando con equipos multifuncionales y optimizando la interfaz de usuario para grandes clientes. Contribuyo al alto índice de éxito de transacciones de ETpay en la región.",
+      "highlights": ["Started the company"]
+    },
+    {
       "name": "Mercado Libre",
       "position": "Software Engineer",
       "url": null,
