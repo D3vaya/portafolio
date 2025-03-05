@@ -1,6 +1,6 @@
 {
   "basics": {
-    "name": "Juan Carlos Ayala",
+    "name": "Juan Carlos Ayala Higuera",
     "label": "Full Stack Developer con más de 10 años de experiencia",
     "image": "/perfil2.jpeg",
     "email": "j.ayala.higuera@gmail.com",
@@ -36,6 +36,7 @@
     {
       "name": "Mercado Libre",
       "position": "Software Engineer",
+      "image": "./mercado-libre.png",
       "url": null,
       "startDate": "2023-09-09",
       "endDate": null,
@@ -45,6 +46,7 @@
     {
       "name": "WOM",
       "position": "Software Engineer",
+      "image": "./wom.png",
       "url": null,
       "startDate": "2021-09-09",
       "endDate": "2023-04-01",
@@ -54,6 +56,7 @@
     {
       "name": "ZentaGroup",
       "position": "Tech Lead",
+      "image": "./zenta.jpeg",
       "url": "#",
       "startDate": "2017-04-01",
       "endDate": "2020-09-01",
@@ -63,6 +66,7 @@
     {
       "name": "Nbit",
       "position": "Software Developer",
+      "image": "./nbit.png",
       "startDate": "2014-03-01",
       "endDate": "2017-03-01",
       "summary": "En mi estadía en la empresa Nbit, trabaje en innumerables proyectos en los rubros de la educación y el sector inmobiliario. En el  rubro de la educación, trabaje en prácticamente todos los software que utilizan tanto los docentes como los alumnos.  Construimos desde el software para pasar la lista en clases, hasta la plataforma con la cual crean las mallas curriculares en la institución.En el rubro inmobiliario, trabaje construyendo plataformas de corretaje para la inmobiliaria Solar & Galvez. A su vez, también me desempeñaba liderando el equipo de desarrollo con el cual prestamos servicios en dicha empresa.",
@@ -174,8 +178,18 @@
       ]
     },
     {
-      "name": "Node",
+      "name": "Node Js",
       "level": "Avanzado",
+      "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
+    },
+    {
+      "name": "Express",
+      "level": "Avanzado",
+      "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
+    },
+    {
+      "name": "Supabase",
+      "level": "Medio",
       "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
     },
     {
@@ -245,6 +259,11 @@
       "keywords": ["Backend"]
     },
     {
+      "name": "Phoenix Framework",
+      "level": "Medio",
+      "keywords": ["Backend"]
+    },
+    {
       "name": "Go",
       "level": "Medio",
       "keywords": ["Backend"]
@@ -254,6 +273,17 @@
       "level": "Medio",
       "keywords": ["Backend"]
     },
+    {
+      "name": "Cake PHP",
+      "level": "Medio",
+      "keywords": ["Backend"]
+    },
+    {
+      "name": "Laravel",
+      "level": "Medio",
+      "keywords": ["Backend"]
+    },
+
     {
       "name": "Java",
       "level": "Medio",
@@ -296,6 +326,16 @@
     },
     {
       "name": "Svelte",
+      "level": "Medio",
+      "keywords": ["Frontend"]
+    },
+    {
+      "name": "Redis",
+      "level": "Medio",
+      "keywords": ["Frontend"]
+    },
+    {
+      "name": "MongoDB",
       "level": "Medio",
       "keywords": ["Frontend"]
     }
