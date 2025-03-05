@@ -34,10 +34,20 @@
   },
   "work": [
     {
+      "name": "ETpay",
+      "position": "Sr. Frontend Engineer",
+      "image": "/images/etpay.png",
+      "url": "https://etpay.com",
+      "startDate": "2024-06-24",
+      "endDate": null,
+      "summary": "Actualmente me encargo del desarrollo de productos de pago eficientes y fáciles de usar en ETpay, una de las principales fintech en Chile y México. Me enfoco en mejorar la velocidad y confiabilidad de las transacciones, colaborando con equipos multifuncionales y optimizando la interfaz de usuario para grandes clientes. Contribuyo al alto índice de éxito de transacciones de ETpay en la región.",
+      "highlights": ["Started the company"]
+    },
+    {
       "name": "Mercado Libre",
       "position": "Software Engineer",
       "image": "/images/mercado-libre.png",
-      "url": null,
+      "url": "https://www.mercadolibre.cl/",
       "startDate": "2023-09-09",
       "endDate": null,
       "summary": "Durante mi tiempo en MercadoLibre como Software Engineer, tuve el privilegio de trabajar en proyectos cruciales para el ecosistema de comercio electrónico líder en América Latina. En este rol, me enfoqué en el diseño, desarrollo y mantenimiento de sistemas backend utilizando tecnologías de vanguardia. Mis responsabilidades principales incluyeron la implementación de microservicios utilizando Java y Spring Boot, lo que me permitió construir soluciones robustas y escalables. Además, trabajé con bases de datos relacionales, como MySQL, para almacenar y gestionar datos críticos de manera eficiente.",
@@ -47,7 +57,7 @@
       "name": "WOM",
       "position": "Software Engineer",
       "image": "/images/wom.png",
-      "url": null,
+      "url": "https://www.wom.cl/",
       "startDate": "2021-09-09",
       "endDate": "2023-04-01",
       "summary": "Durante mi tiempo en WOM como Software Engineer, desempeñé un papel fundamental en el mantenimiento y la mejora continua del ecommerce de la empresa. Colaboré estrechamente con un equipo multidisciplinario para garantizar un rendimiento óptimo y una experiencia de usuario excepcional en la plataforma de comercio electrónico. Mi enfoque principal fue el desarrollo de soluciones frontend utilizando tecnologías modernas como React y Gatsby.js. Estas herramientas me permitieron crear interfaces de usuario dinámicas y altamente responsivas, mejorando la navegación y la interacción del cliente en el sitio web de WOM.",
@@ -57,7 +67,7 @@
       "name": "ZentaGroup",
       "position": "Tech Lead",
       "image": "/images/zenta.jpeg",
-      "url": "#",
+      "url": "https://zentagroup.com/",
       "startDate": "2017-04-01",
       "endDate": "2020-09-01",
       "summary": "En mi rol como Tech Lead en Zenta Group, lideré de manera técnica diversos proyectos tecnológicos, coordinando equipos multidisciplinarios para alcanzar los objetivos establecidos. Mi enfoque principal fue garantizar el desarrollo y la implementación exitosa de soluciones innovadoras utilizando una amplia gama de tecnologías. Dirigí el desarrollo de aplicaciones web y móviles utilizando frameworks como React y Angular, asegurando la entrega de productos de alta calidad que cumplieran con los estándares de rendimiento y usabilidad. Además, gestioné la arquitectura y el desarrollo de sistemas backend utilizando tecnologías como PHP, Firebase, MongoDB, MySQL y PostgreSQL. Esto implicó la creación de APIs robustas y escalables, así como la integración de sistemas de bases de datos para garantizar la integridad y la disponibilidad de los datos",
@@ -66,6 +76,7 @@
     {
       "name": "Nbit",
       "position": "Software Developer",
+      "url": "https://nbit.cl/",
       "image": "/images/nbit.png",
       "startDate": "2014-03-01",
       "endDate": "2017-03-01",
