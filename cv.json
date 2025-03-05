@@ -1,12 +1,12 @@
 {
   "basics": {
     "name": "Juan Carlos Ayala Higuera",
-    "label": "Full Stack Developer con más de 11 años de experiencia",
+    "label": "Full Stack Developer con más de 10 años de experiencia",
     "image": "/perfil2.jpeg",
     "email": "j.ayala.higuera@gmail.com",
     "phone": "+569 35222613",
     "url": "https://www.linkedin.com/in/juan-carlos-ayala-higuera-50520a62/",
-    "summary": "+11 años de experiencia como Desarrollador Web. Actualmente me especializo como FrontEnd developr. Vivo en Santiago, Chile. He trabajado en diferentes entornos: desde desarrollos en start-ups hasta liderando equipos de empresas de alto performance.",
+    "summary": "+10 años de experiencia como Desarrollador Web. Actualmente me especializo como FrontEnd developr. Vivo en Santiago, Chile. He trabajado en diferentes entornos: desde desarrollos en start-ups hasta liderando equipos de empresas de alto performance.",
     "location": {
       "address": "Santa amalia #3544, depto 824",
       "postalCode": "",
@@ -34,26 +34,19 @@
   },
   "work": [
     {
-      "name": "ETpay",
-      "position": "Sr. Frontend Engineer",
-      "url": null,
-      "startDate": "2024-06-24",
-      "endDate": null,
-      "summary": "Actualmente me encargo del desarrollo de productos de pago eficientes y fáciles de usar en ETpay, una de las principales fintech en Chile y México. Me enfoco en mejorar la velocidad y confiabilidad de las transacciones, colaborando con equipos multifuncionales y optimizando la interfaz de usuario para grandes clientes. Contribuyo al alto índice de éxito de transacciones de ETpay en la región.",
-      "highlights": ["Started the company"]
-    },
-    {
       "name": "Mercado Libre",
       "position": "Software Engineer",
+      "image": "./mercado-libre.png",
       "url": null,
       "startDate": "2023-09-09",
-      "endDate": "2024-02-14",
+      "endDate": null,
       "summary": "Durante mi tiempo en MercadoLibre como Software Engineer, tuve el privilegio de trabajar en proyectos cruciales para el ecosistema de comercio electrónico líder en América Latina. En este rol, me enfoqué en el diseño, desarrollo y mantenimiento de sistemas backend utilizando tecnologías de vanguardia. Mis responsabilidades principales incluyeron la implementación de microservicios utilizando Java y Spring Boot, lo que me permitió construir soluciones robustas y escalables. Además, trabajé con bases de datos relacionales, como MySQL, para almacenar y gestionar datos críticos de manera eficiente.",
       "highlights": ["Started the company"]
     },
     {
       "name": "WOM",
       "position": "Software Engineer",
+      "image": "./wom.png",
       "url": null,
       "startDate": "2021-09-09",
       "endDate": "2023-04-01",
@@ -63,6 +56,7 @@
     {
       "name": "ZentaGroup",
       "position": "Tech Lead",
+      "image": "./zenta.jpeg",
       "url": "#",
       "startDate": "2017-04-01",
       "endDate": "2020-09-01",
@@ -72,6 +66,7 @@
     {
       "name": "Nbit",
       "position": "Software Developer",
+      "image": "./nbit.png",
       "startDate": "2014-03-01",
       "endDate": "2017-03-01",
       "summary": "En mi estadía en la empresa Nbit, trabaje en innumerables proyectos en los rubros de la educación y el sector inmobiliario. En el  rubro de la educación, trabaje en prácticamente todos los software que utilizan tanto los docentes como los alumnos.  Construimos desde el software para pasar la lista en clases, hasta la plataforma con la cual crean las mallas curriculares en la institución.En el rubro inmobiliario, trabaje construyendo plataformas de corretaje para la inmobiliaria Solar & Galvez. A su vez, también me desempeñaba liderando el equipo de desarrollo con el cual prestamos servicios en dicha empresa.",
@@ -184,11 +179,6 @@
     },
     {
       "name": "Node Js",
-      "level": "Avanzado",
-      "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
-    },
-    {
-      "name": "Nest Js",
       "level": "Avanzado",
       "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
     },
@@ -348,16 +338,6 @@
       "name": "MongoDB",
       "level": "Medio",
       "keywords": ["Frontend"]
-    },
-    {
-      "name": "Mongoose ORM",
-      "level": "Avanzado",
-      "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
-    },
-    {
-      "name": "Docker",
-      "level": "Avanzado",
-      "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
     }
   ],
   "languages": [
