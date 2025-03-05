@@ -36,7 +36,7 @@
     {
       "name": "Mercado Libre",
       "position": "Software Engineer",
-      "image": "/public/images/mercado-libre.png",
+      "image": "/images/mercado-libre.png",
       "url": null,
       "startDate": "2023-09-09",
       "endDate": null,
@@ -46,7 +46,7 @@
     {
       "name": "WOM",
       "position": "Software Engineer",
-      "image": "/public/images/wom.png",
+      "image": "/images/wom.png",
       "url": null,
       "startDate": "2021-09-09",
       "endDate": "2023-04-01",
@@ -56,7 +56,7 @@
     {
       "name": "ZentaGroup",
       "position": "Tech Lead",
-      "image": "/public/images/zenta.jpeg",
+      "image": "/images/zenta.jpeg",
       "url": "#",
       "startDate": "2017-04-01",
       "endDate": "2020-09-01",
@@ -66,7 +66,7 @@
     {
       "name": "Nbit",
       "position": "Software Developer",
-      "image": "/public/images/nbit.png",
+      "image": "/images/nbit.png",
       "startDate": "2014-03-01",
       "endDate": "2017-03-01",
       "summary": "En mi estadía en la empresa Nbit, trabaje en innumerables proyectos en los rubros de la educación y el sector inmobiliario. En el  rubro de la educación, trabaje en prácticamente todos los software que utilizan tanto los docentes como los alumnos.  Construimos desde el software para pasar la lista en clases, hasta la plataforma con la cual crean las mallas curriculares en la institución.En el rubro inmobiliario, trabaje construyendo plataformas de corretaje para la inmobiliaria Solar & Galvez. A su vez, también me desempeñaba liderando el equipo de desarrollo con el cual prestamos servicios en dicha empresa.",
