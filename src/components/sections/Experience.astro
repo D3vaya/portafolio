@@ -8,7 +8,7 @@ import { work } from "@cv"
   <ul>
     {
       work.map(
-        ({ name, startDate, endDate, position, summary, highlights, url }) => {
+        ({ name, startDate, endDate, position, summary, image, highlights, url }) => {
           const startYear = new Date(startDate).getFullYear()
           const endYear =
             endDate != null ? new Date(endDate).getFullYear() : "Actual"
@@ -18,13 +18,19 @@ import { work } from "@cv"
             <li>
               <article>
                 <header>
-                  <div>
-                    <h3>
+
+                  <div id="position">
+                    <figure>
+                      <img src={image} alt="imagen empresa" class="img-empresa">
+                    </figure>
+                    <div>
+                      <h3>
                       <a href={url} title={`Ver ${name}`} target="_blank">
                         {name}
                       </a>
                     </h3>
                     <h4>{position}</h4>
+                    </div>
                   </div>
 
                   <time>{years}</time>
@@ -80,9 +86,20 @@ import { work } from "@cv"
     min-width: 102px;
   }
 
+  img {
+    height: 50px;
+  }
+
   @media (width <= 700px) {
     time {
       text-align: right;
     }
+  }
+
+  #position {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap:5px
   }
 </style>
