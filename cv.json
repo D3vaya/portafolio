@@ -49,7 +49,7 @@
       "image": "/images/mercado-libre.png",
       "url": "https://www.mercadolibre.cl/",
       "startDate": "2023-09-09",
-      "endDate": null,
+      "endDate": "2024-12-13",
       "summary": "En Mercado Libre, el principal ecosistema de comercio electrónico en América Latina, formé parte de un equipo altamente senior encargado de desarrollar soluciones backend utilizando Java y Spring Boot. Mi enfoque principal fue la creación de microservicios robustos y escalables, trabajando con tecnologías como Redis para optimizar el rendimiento y la disponibilidad de las aplicaciones. Además, trabajé directamente con la plataforma de arquitectura interna de la compañía, conocida como Fury, que permite gestionar de manera eficiente la carga y mejorar la distribución de microservicios dentro de la infraestructura. Durante mi tiempo en el equipo, tuve la oportunidad de colaborar con profesionales de alto nivel, lo que me permitió aprender y aportar en la resolución de desafíos técnicos complejos, siempre enfocados en la escala y fiabilidad de los sistemas.",
       "highlights": ["Started the company"]
     },
