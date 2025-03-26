@@ -10,7 +10,7 @@ import WorldMap from "@/icons/WorldMap.astro"
 import type { SocialIcon } from "@/types"
 
 const { name, label, image, location, profiles, phone, email } = basics
-const { city, region } = location
+const { city, region, address } = location
 
 const SOCIAL_ICONS: SocialIcon = {
   GitHub,
@@ -29,6 +29,10 @@ const printInfo = [email, phone, linkedUrl].filter(Boolean).join(" • ")
     <div class="info">
       <h1>{name}</h1>
       <h2>{label}</h2>
+      <span>
+        <WorldMap />
+        {address}
+      </span>
       <span>
         <WorldMap />
         {city}, {region}
