@@ -34,12 +34,22 @@
   },
   "work": [
     {
+      "name": "Juegalo.com",
+      "position": "Sr. Frontend Engineer",
+      "image": "/images/juegalocom.png",
+      "url": "https://juegalo.com",
+      "startDate": "2025-04-07",
+      "endDate": null,
+      "summary": "Actualmente me desempeño como Senior Frontend Engineer en Juegalo.com, una plataforma de casino online enfocada en el mercado de gambling. Mi rol principal consiste en el desarrollo de nuevas funcionalidades críticas para el producto, asegurando una experiencia fluida, rápida y confiable para los usuarios. Trabajo con un stack moderno basado en Next.js y desplegado sobre Google Cloud Platform (GCP), integrando soluciones escalables y eficientes que cumplen con los estándares del sector. Además, colaboro estrechamente con equipos de producto y backend para garantizar una arquitectura robusta y mantenible, velando por la estabilidad general de la plataforma y su continua evolución técnica.",
+      "highlights": ["Started the company"]
+    },
+    {
       "name": "ETpay",
       "position": "Sr. Frontend Engineer",
       "image": "/images/etpay2.svg",
       "url": "https://etpay.com",
       "startDate": "2024-06-24",
-      "endDate": null,
+      "endDate": "2025-04-07",
       "summary": "En ETpay, una de las principales fintechs de Chile y México, me encargo del desarrollo de productos de pago eficientes y fáciles de usar. Mi enfoque está en optimizar la velocidad y confiabilidad de las transacciones, siempre trabajando en estrecha colaboración con equipos multifuncionales. Gracias a este trabajo, he contribuido al alto índice de éxito en las transacciones de ETpay en la región.",
       "highlights": ["Started the company"]
     },
