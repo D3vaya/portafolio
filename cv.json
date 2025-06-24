@@ -6,7 +6,7 @@
     "email": "j.ayala.higuera@gmail.com",
     "phone": "+569 35222613",
     "url": "https://www.linkedin.com/in/juan-carlos-ayala-higuera-50520a62/",
-    "summary": "¡Hola! Soy Juan Carlos Ayala Higuera, un Full Stack Developer con más de 11 años de experiencia en el desarrollo de soluciones web. Actualmente, me especializo como Sr. Frontend Developer, pero he trabajado a lo largo de mi carrera en diversas tecnologías y roles que me han permitido tener un enfoque integral del ciclo de vida del desarrollo de software. Mi experiencia me ha llevado a trabajar en entornos dinámicos y desafiantes, desde startups hasta empresas de alto rendimiento, lo que me ha permitido liderar equipos y colaborar con profesionales multifuncionales para crear productos innovadores, escalables y eficientes.",
+    "summary": "Soy Senior Frontend Engineer con más de 11 años de experiencia desarrollando soluciones web escalables, enfocadas en rendimiento y experiencia de usuario. Aunque tengo formación Full Stack, mi especialidad actual es el desarrollo frontend con React, Next.js y TypeScript, junto a arquitecturas modernas basadas en GCP y patrones serverless. He liderado equipos y participado en proyectos de alto tráfico en industrias como fintech y gambling, siempre con una mirada integral del ciclo de desarrollo, desde la idea hasta la producció",
     "location": {
       "address": "Santa amalia #3544, depto 824.",
       "postalCode": "",
@@ -40,7 +40,7 @@
       "url": "https://juegalo.com",
       "startDate": "2025-04-07",
       "endDate": null,
-      "summary": "Actualmente me desempeño como Senior Frontend Engineer en Juegalo.com, una plataforma de casino online enfocada en el mercado de gambling. Mi rol principal consiste en el desarrollo de nuevas funcionalidades críticas para el producto, asegurando una experiencia fluida, rápida y confiable para los usuarios. Trabajo con un stack moderno basado en Next.js y desplegado sobre Google Cloud Platform (GCP), integrando soluciones escalables y eficientes que cumplen con los estándares del sector. Además, colaboro estrechamente con equipos de producto y backend para garantizar una arquitectura robusta y mantenible, velando por la estabilidad general de la plataforma y su continua evolución técnica.",
+      "summary": "En Juegalo.com, plataforma de casino online operando en mercados altamente regulados, lidero el desarrollo frontend de nuevas funcionalidades de juego y flujos críticos para el negocio. Utilizo Next.js y Google Cloud Platform (GCP) para construir experiencias rápidas, seguras y confiables. Mi rol implica trabajar codo a codo con diseño, producto y backend, asegurando calidad técnica, performance y disponibilidad continua en una plataforma que atiende miles de sesiones simultáneas.",
       "highlights": ["Started the company"]
     },
     {
@@ -50,7 +50,7 @@
       "url": "https://etpay.com",
       "startDate": "2024-06-24",
       "endDate": "2025-04-07",
-      "summary": "En ETpay, una de las principales fintechs de Chile y México, me encargo del desarrollo de productos de pago eficientes y fáciles de usar. Mi enfoque está en optimizar la velocidad y confiabilidad de las transacciones, siempre trabajando en estrecha colaboración con equipos multifuncionales. Gracias a este trabajo, he contribuido al alto índice de éxito en las transacciones de ETpay en la región.",
+      "summary": "En ETpay, una fintech con operaciones en Chile y México, me encargué del desarrollo de interfaces orientadas a pagos e integraciones bancarias. Mi foco fue optimizar la velocidad y tasa de éxito de las transacciones, trabajando con micro-frontends y una arquitectura modular. Participé activamente en decisiones de arquitectura, CI/CD y mejoras UX basadas en datos. El stack incluía React, Next.js, GCP y herramientas de trazabilidad para monitoreo en producción.",
       "highlights": ["Started the company"]
     },
     {
@@ -60,7 +60,7 @@
       "url": "https://www.mercadolibre.cl/",
       "startDate": "2023-09-09",
       "endDate": "2024-12-13",
-      "summary": "En Mercado Libre, el principal ecosistema de comercio electrónico en América Latina, formé parte de un equipo altamente senior encargado de desarrollar soluciones backend utilizando Java y Spring Boot. Mi enfoque principal fue la creación de microservicios robustos y escalables, trabajando con tecnologías como Redis para optimizar el rendimiento y la disponibilidad de las aplicaciones. Además, trabajé directamente con la plataforma de arquitectura interna de la compañía, conocida como Fury, que permite gestionar de manera eficiente la carga y mejorar la distribución de microservicios dentro de la infraestructura. Durante mi tiempo en el equipo, tuve la oportunidad de colaborar con profesionales de alto nivel, lo que me permitió aprender y aportar en la resolución de desafíos técnicos complejos, siempre enfocados en la escala y fiabilidad de los sistemas.",
+      "summary": "Formé parte de un equipo senior encargado de construir y mantener microservicios de alto rendimiento usando Java, Spring Boot, Redis y la infraestructura interna Fury. Mi foco fue backend, orientado a disponibilidad, performance y escalabilidad de servicios críticos. Participé en la evolución de sistemas distribuidos en un entorno con altos volúmenes de tráfico y estándares de clase mundial.",
       "highlights": ["Started the company"]
     },
     {
@@ -70,7 +70,7 @@
       "url": "https://www.wom.cl/",
       "startDate": "2021-09-09",
       "endDate": "2023-04-01",
-      "summary": "En WOM, desempeñé un rol clave como Líder Frontend dentro del equipo encargado del desarrollo y optimización del ecommerce de ventas de la compañía. En este contexto, mi responsabilidad principal fue liderar el desarrollo de soluciones frontend utilizando tecnologías como React y Gatsby.js, enfocándome en ofrecer una experiencia de usuario fluida y dinámica, optimizando la navegación y el rendimiento del sitio. Trabajé con un equipo mixto de desarrolladores senior y junior, y juntos logramos llevar a cabo con éxito todos los proyectos que se nos asignaron. Mi enfoque como líder fue no solo garantizar la calidad del código, sino también fomentar la colaboración y el aprendizaje constante dentro del equipo, lo que permitió alcanzar los objetivos de manera eficiente y efectiva. La innovación continua y la agilidad fueron pilares clave en nuestro trabajo, y logramos implementar mejoras sustanciales en la plataforma de ecommerce de WOM, asegurando una experiencia de compra excepcional para los usuarios y un alto rendimiento en las transacciones.",
+      "summary": "Lideré el equipo frontend encargado del ecommerce de WOM, desarrollando con React y Gatsby.js. Mi responsabilidad incluyó liderazgo técnico, mentoring de developers junior, y coordinación con diseño y QA para asegurar entregas iterativas de alta calidad. Enfocado en performance y conversión, implementamos mejoras que redujeron el LCP y aumentaron la tasa de éxito de compra.",
       "highlights": ["Started the company"]
     },
     {
@@ -80,7 +80,7 @@
       "url": "https://zentagroup.com/",
       "startDate": "2017-04-01",
       "endDate": "2020-09-01",
-      "summary": "En ZentaGroup, tuve la oportunidad de asumir el rol de Líder Técnico en diversos proyectos para startups, lo que me permitió coordinar equipos multidisciplinarios y guiar el desarrollo de soluciones tecnológicas en una amplia variedad de stacks tecnológicos. Mi enfoque principal fue garantizar que cada proyecto se entregara a tiempo, con alta calidad y cumpliendo con los estándares técnicos, sin importar las tecnologías involucradas.Lideré el desarrollo de aplicaciones web y móviles utilizando React y Angular, y gestioné la arquitectura y el backend con tecnologías como PHP, Firebase, MongoDB y PostgreSQL. Mi responsabilidad también incluyó la implementación de APIs robustas y escalables, garantizando que las soluciones fueran capaces de adaptarse al crecimiento y la evolución de las startups para las que trabajábamos.Mi rol fue clave para integrar equipos de desarrollo de diferentes niveles de experiencia, colaborando estrechamente con senior developers y junior developers, lo que me permitió fomentar un entorno de aprendizaje constante y asegurar el éxito en cada uno de los proyectos.",
+      "summary": "Como Tech Lead en ZentaGroup, coordiné equipos multidisciplinarios para construir productos desde cero para startups. Definí arquitecturas full stack usando React, Angular, Firebase, MongoDB, PostgreSQL, PHP, y gestioné entregas técnicas con foco en calidad, escalabilidad y time-to-market. Fomenté un entorno de aprendizaje, capacitando a perfiles junior e integrando buenas prácticas desde el inicio.",
       "highlights": ["Started the company"]
     },
     {
@@ -90,7 +90,7 @@
       "image": "/images/nbit.png",
       "startDate": "2014-03-01",
       "endDate": "2017-03-01",
-      "summary": "En Nbit, trabajé en una variedad de proyectos dentro de los sectores de educación e inmobiliaria, donde fui responsable de desarrollar soluciones a medida para cada industria. En el sector educativo, participé en la creación de plataformas utilizadas tanto por docentes como por estudiantes, contribuyendo al diseño y desarrollo de herramientas desde sistemas para gestión de asistencia hasta plataformas para la creación de mallas curriculares.En el ámbito inmobiliario, trabajé en la construcción de plataformas de corretaje para Solar & Gálvez, ayudando a digitalizar y optimizar los procesos de gestión inmobiliaria. Durante mi tiempo en Nbit, también tuve la oportunidad de liderar el equipo de desarrollo, gestionando la creación de soluciones innovadoras que satisfacían las necesidades específicas de cada cliente. Mi experiencia en Nbit me permitió fortalecer mis habilidades en desarrollo full-stack y aprender a adaptarme a diferentes requerimientos tecnológicos, siempre enfocado en ofrecer soluciones eficientes y escalables.",
+      "summary": "Desarrollé soluciones para los sectores educativo e inmobiliario, implementando plataformas de gestión académica y de corretaje. Lideré proyectos end-to-end, desde el diseño hasta el despliegue, usando un stack variado (PHP, MySQL, JS, Firebase). También gestioné equipos técnicos y colaboré en la mejora continua de productos digitales según requerimientos de clientes.",
       "highlights": ["Started the company"]
     }
   ],
