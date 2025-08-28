@@ -8,34 +8,87 @@ import Hero from "@/components/sections/Hero.astro"
 import Projects from "@/components/sections/Projects.astro"
 import Skills from "@/components/sections/Skills.astro"
 import KeyboardManager from "@/components/KeyboardManager.astro"
+import MatrixRain from "@/components/MatrixRain.astro"
+import FloatingParticles from "@/components/FloatingParticles.astro"
+import Navigation from "@/components/Navigation.astro"
 import Analytics from '@vercel/analytics/astro'
 import { basics } from "@cv"
 const { name, label } = basics
 ---
 
 <Layout title={`Portafolio de ${name} - ${label}`}>
+  <MatrixRain />
+  <FloatingParticles />
+  <Navigation />
   <main>
-    <Hero />
-    <About />
-    <Experience />
-    <Education />
+    <section id="hero"><Hero /></section>
+    <section id="about"><About /></section>
+    <section id="experience"><Experience /></section>
+    <section id="education"><Education /></section>
     <!-- <Projects /> -->
-    <Skills />
+    <section id="skills"><Skills /></section>
   </main>
   <Analytics />
   <KeyboardManager />
 </Layout>
 
 <style>
+  html {
+    scroll-behavior: smooth;
+  }
+
   main {
     padding: 4rem;
     margin: auto;
     width: 100%;
+    position: relative;
+    z-index: 1;
+    background: rgba(10, 10, 10, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    border: 1px solid rgba(0, 255, 159, 0.2);
+    box-shadow: 
+      0 0 30px rgba(0, 255, 159, 0.1),
+      inset 0 0 30px rgba(0, 255, 159, 0.05);
+    animation: hologramFlicker 4s ease-in-out infinite alternate;
+  }
+
+  main > section {
+    margin-bottom: 4rem;
+    opacity: 0;
+    transform: translateY(50px);
+    animation: fadeInUp 1s ease-out forwards;
+  }
+
+  main > section:nth-child(1) { animation-delay: 0.2s; }
+  main > section:nth-child(2) { animation-delay: 0.4s; }
+  main > section:nth-child(3) { animation-delay: 0.6s; }
+  main > section:nth-child(4) { animation-delay: 0.8s; }
+  main > section:nth-child(5) { animation-delay: 1.0s; }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes hologramFlicker {
+    0%, 100% { 
+      opacity: 1;
+      transform: translateY(0px);
+    }
+    50% { 
+      opacity: 0.95;
+      transform: translateY(-2px);
+    }
   }
 
   @media (width <= 700px) {
     main {
       padding: 2rem;
+      margin: 1rem;
+      width: calc(100% - 2rem);
     }
   }
 </style>

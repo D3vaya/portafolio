@@ -19,6 +19,8 @@ const { image, summary, url } = basics
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preload" as="image" href={image} />
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap"></noscript>
 
     <meta property="og:url" content={url} />
     <meta property="og:type" content="website" />
@@ -41,24 +43,35 @@ const { image, summary, url } = basics
 <style is:global>
   html {
     font-family:
+      "JetBrains Mono",
       Menlo,
       Monaco,
       Lucida Console,
       "Courier New",
       Courier,
       monospace;
-    background: #fff;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
     letter-spacing: -0.025rem;
+    min-height: 100vh;
+    color: #00ff9f;
   }
 
   body,
   figure {
     margin: 0;
     padding: 0;
+    background: transparent;
   }
 
   a {
     text-decoration: none;
+    color: #00ff9f;
+    transition: all 0.3s ease;
+  }
+
+  a:hover {
+    color: #ff006f;
+    text-shadow: 0 0 10px #ff006f;
   }
 
   ul {
@@ -79,6 +92,7 @@ const { image, summary, url } = basics
   h4 {
     margin: 0;
     font-family:
+      "JetBrains Mono",
       system-ui,
       -apple-system,
       BlinkMacSystemFont,
@@ -90,14 +104,36 @@ const { image, summary, url } = basics
       "Open Sans",
       "Helvetica Neue",
       sans-serif;
+    color: #ffffff;
+    text-shadow: 0 0 20px #00ff9f;
   }
 
   p {
-    color: #666;
+    color: #b3b3b3 !important;
     font-size: 0.9rem;
     line-height: 1.5;
     margin: 0;
     text-wrap: pretty;
+    text-shadow: 0 0 5px rgba(179, 179, 179, 0.3);
+  }
+
+  /* Ensure all text elements are visible */
+  article, section, div {
+    color: #b3b3b3;
+  }
+
+  /* Override any dark text colors */
+  * {
+    color: inherit;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #ffffff !important;
+  }
+
+  /* Specific overrides for dark text */
+  .dark-text-fix {
+    color: #ffffff !important;
   }
 
   .print {
@@ -120,5 +156,79 @@ const { image, summary, url } = basics
     article {
       break-inside: avoid;
     }
+  }
+
+  /* Cyberpunk Animations and Effects */
+  @keyframes neonGlow {
+    0%, 100% { text-shadow: 0 0 5px #00ff9f, 0 0 10px #00ff9f, 0 0 15px #00ff9f; }
+    50% { text-shadow: 0 0 10px #00ff9f, 0 0 20px #00ff9f, 0 0 30px #00ff9f, 0 0 40px #ff006f; }
+  }
+
+  @keyframes glitch {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-2px); }
+    40% { transform: translateX(2px); }
+    60% { transform: translateX(-1px); }
+    80% { transform: translateX(1px); }
+    100% { transform: translateX(0); }
+  }
+
+  @keyframes scanline {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100vw); }
+  }
+
+  .neon-text {
+    animation: neonGlow 2s ease-in-out infinite alternate;
+  }
+
+  .glitch-effect {
+    animation: glitch 0.3s linear infinite;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(26, 26, 46, 0.3);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #00ff9f, #ff006f);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #ff006f, #00ff9f);
+  }
+
+  /* Selection styling */
+  ::selection {
+    background: rgba(0, 255, 159, 0.3);
+    color: #ffffff;
+  }
+
+  ::-moz-selection {
+    background: rgba(0, 255, 159, 0.3);
+    color: #ffffff;
+  }
+
+  /* Holographic border effect */
+  .holo-border {
+    position: relative;
+    border: 2px solid transparent;
+    background: linear-gradient(135deg, rgba(0, 255, 159, 0.1), rgba(255, 0, 111, 0.1));
+  }
+
+  .holo-border::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(45deg, #00ff9f, #ff006f, #00ff9f);
+    border-radius: inherit;
+    z-index: -1;
+    animation: neonGlow 3s linear infinite;
   }
 </style>

@@ -1,0 +1,73 @@
+---
+---
+
+<canvas id="matrix-rain"></canvas>
+
+<script>
+  class MatrixRain {
+    private canvas: HTMLCanvasElement;
+    private ctx: CanvasRenderingContext2D;
+    private drops: number[] = [];
+    private chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:',.<>?/~`".split("");
+
+    constructor() {
+      this.canvas = document.getElementById('matrix-rain') as HTMLCanvasElement;
+      this.ctx = this.canvas.getContext('2d')!;
+      this.init();
+      this.animate();
+    }
+
+    init() {
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
+      
+      const columns = Math.floor(this.canvas.width / 20);
+      for (let i = 0; i < columns; i++) {
+        this.drops[i] = Math.random() * this.canvas.height / 20;
+      }
+
+      window.addEventListener('resize', () => {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        this.drops.length = Math.floor(this.canvas.width / 20);
+      });
+    }
+
+    animate = () => {
+      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      
+      this.ctx.fillStyle = '#00ff9f';
+      this.ctx.font = '15px monospace';
+      
+      for (let i = 0; i < this.drops.length; i++) {
+        const text = this.chars[Math.floor(Math.random() * this.chars.length)];
+        this.ctx.fillText(text, i * 20, this.drops[i] * 20);
+        
+        if (this.drops[i] * 20 > this.canvas.height && Math.random() > 0.975) {
+          this.drops[i] = 0;
+        }
+        this.drops[i]++;
+      }
+      
+      requestAnimationFrame(this.animate);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    new MatrixRain();
+  });
+</script>
+
+<style>
+  #matrix-rain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -10;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+</style>

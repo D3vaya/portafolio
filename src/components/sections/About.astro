@@ -5,8 +5,196 @@ import { basics } from "@cv"
 const { summary } = basics
 ---
 
-<Section title="Sobre mí">
-  <p>
-    {summary}
-  </p>
+<Section title="/* About Me */">
+  <div class="code-editor">
+    <div class="editor-header">
+      <div class="editor-tabs">
+        <div class="tab active">about.js</div>
+        <div class="tab">skills.json</div>
+        <div class="tab">experience.md</div>
+      </div>
+    </div>
+    <div class="editor-content">
+      <div class="line-numbers">
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+        <span>5</span>
+        <span>6</span>
+        <span>7</span>
+        <span>8</span>
+        <span>9</span>
+        <span>10</span>
+        <span>11</span>
+        <span>12</span>
+        <span>13</span>
+        <span>14</span>
+        <span>15</span>
+      </div>
+      <div class="code-content">
+        <div class="code-line"><span class="comment">// Developer Profile</span></div>
+        <div class="code-line"><span class="keyword">const</span> <span class="variable">developer</span> = {</div>
+        <div class="code-line">  <span class="property">description</span>: <span class="string">"{summary}"</span>,</div>
+        <div class="code-line">  <span class="property">passion</span>: <span class="string">"Building amazing experiences"</span>,</div>
+        <div class="code-line">  <span class="property">status</span>: <span class="string">"Always learning"</span></div>
+        <div class="code-line">{"}"}</div>
+        <div class="code-line"></div>
+        <div class="code-line"><span class="comment">// Ready to code awesome projects!</span></div>
+      </div>
+    </div>
+  </div>
 </Section>
+
+<style>
+  .code-editor {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+    box-shadow: 0 10px 30px rgba(0, 255, 159, 0.1);
+  }
+
+  .editor-header {
+    background: #2d2d30;
+    border-bottom: 1px solid #333;
+    padding: 0;
+  }
+
+  .editor-tabs {
+    display: flex;
+    gap: 0;
+  }
+
+  .tab {
+    padding: 10px 15px;
+    color: #aaa;
+    background: #2d2d30;
+    border-right: 1px solid #333;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .tab.active {
+    background: #1e1e1e;
+    color: #00ff9f;
+  }
+
+  .tab:hover:not(.active) {
+    background: #3e3e42;
+    color: #fff;
+  }
+
+  .editor-content {
+    display: flex;
+    min-height: 150px;
+  }
+
+  .line-numbers {
+    background: #252526;
+    padding: 15px 10px;
+    border-right: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.8rem;
+    color: #858585;
+    user-select: none;
+    min-width: 40px;
+    text-align: right;
+  }
+
+  .code-content {
+    padding: 15px 20px;
+    flex: 1;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  .code-line {
+    margin-bottom: 2px;
+  }
+
+  .keyword {
+    color: #569cd6;
+    font-weight: 500;
+  }
+
+  .variable {
+    color: #9cdcfe;
+  }
+
+  .property {
+    color: #d19a66;
+  }
+
+  .string {
+    color: #ce9178;
+  }
+
+  .comment {
+    color: #6a9955;
+    font-style: italic;
+  }
+
+  .code-line:hover {
+    background: rgba(0, 255, 159, 0.05);
+    padding-left: 5px;
+    margin-left: -5px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+  }
+
+  @media (width <= 768px) {
+    .editor-content {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .line-numbers {
+      flex-direction: column;
+      border-right: 1px solid #333;
+      border-bottom: none;
+      min-width: 35px;
+      text-align: right;
+      padding: 10px 8px;
+      font-size: 0.7rem;
+    }
+    .line-numbers span {
+      margin-bottom: 4px;
+    }
+
+    .code-content {
+      padding: 10px 12px;
+      font-size: 0.75rem;
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .tab {
+      padding: 8px 10px;
+      font-size: 0.7rem;
+    }
+
+    .code-line {
+      margin-bottom: 1px;
+      min-height: 1.4em;
+    }
+
+    /* Reduce spacing for mobile */
+    .code-editor {
+      margin: 0 -5px;
+      border-radius: 5px;
+    }
+
+    .editor-header {
+      padding: 8px 12px;
+    }
+
+    .terminal-title {
+      font-size: 0.7rem;
+    }
+  }
+</style>

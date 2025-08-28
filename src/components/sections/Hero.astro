@@ -25,159 +25,427 @@ const printInfo = [email, phone, linkedUrl].filter(Boolean).join(" • ")
 ---
 
 <Section>
-  <div class="container">
-    <div class="info">
-      <h1>{name}</h1>
-      <h2>{label}</h2>
-      <span>
-        <WorldMap />
-        {city}, {region}
-      </span>
-      <footer class="print">
-        {printInfo}
-      </footer>
-      <footer class="no-print">
-        {
-          email && (
-            <a
-              href={`mailto:${email}`}
-              title={`Enviar un correo electrónico a ${name} al correo ${email}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Mail />
-            </a>
-          )
-        }
-        {
-          phone && (
-            <a
-              href={`tel:${phone}`}
-              title={`Llamar por teléfono a ${name} al número ${phone}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Phone />
-            </a>
-          )
-        }
-        {
-          profiles.map(({ network, url, username }) => {
-            const Icon = SOCIAL_ICONS[network]
-
-            return (
+  <div class="terminal-window">
+    <div class="terminal-header">
+      <div class="terminal-buttons">
+        <span class="terminal-button red"></span>
+        <span class="terminal-button yellow"></span>
+        <span class="terminal-button green"></span>
+      </div>
+      <div class="terminal-title">d3vaya@cyberpunk:~$</div>
+    </div>
+    <div class="terminal-body">
+      <div class="terminal-line">
+        <span class="prompt">$ whoami</span>
+        <h1 class="typewriter neon-text">{name}</h1>
+      </div>
+      <div class="terminal-line">
+        <span class="prompt">$ cat role.txt</span>
+        <h2 class="typewriter delay-1">{label}</h2>
+      </div>
+      <div class="terminal-line">
+        <span class="prompt">$ pwd</span>
+        <span class="typewriter delay-2">
+          <WorldMap />
+          {city}, {region}
+        </span>
+      </div>
+      <div class="terminal-line">
+        <span class="prompt">$ ls -la contacts/</span>
+        <footer class="print typewriter delay-3">
+          {printInfo}
+        </footer>
+        <footer class="no-print typewriter delay-3">
+          {
+            email && (
               <a
-                href={url}
-                title={`Visitar el perfil de ${name} en ${network}`}
+                href={`mailto:${email}`}
+                title={`Enviar un correo electrónico a ${name} al correo ${email}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                class="terminal-link"
               >
-                <Icon />
+                <Mail /> {email}
               </a>
             )
-          })
-        }
-      </footer>
+          }
+          {
+            phone && (
+              <a
+                href={`tel:${phone}`}
+                title={`Llamar por teléfono a ${name} al número ${phone}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="terminal-link"
+              >
+                <Phone /> {phone}
+              </a>
+            )
+          }
+          {
+            profiles.map(({ network, url, username }) => {
+              const Icon = SOCIAL_ICONS[network]
+
+              return (
+                <a
+                  href={url}
+                  title={`Visitar el perfil de ${name} en ${network}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="terminal-link"
+                >
+                  <Icon /> {network}
+                </a>
+              )
+            })
+          }
+        </footer>
+      </div>
     </div>
-    <figure>
-      <img src={image} alt={name} />
-    </figure>
   </div>
+
+  <!-- Floating Avatar outside terminal -->
+  <figure class="floating-avatar">
+    <div class="hologram-effect">
+      <img src={image} alt={name} class="hologram-image" />
+      <div class="scan-lines"></div>
+    </div>
+  </figure>
 </Section>
 
 <style>
-  .container {
+  .terminal-window {
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #00ff9f;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow:
+      0 0 20px rgba(0, 255, 159, 0.3),
+      inset 0 0 20px rgba(0, 255, 159, 0.1);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .terminal-header {
+    background: linear-gradient(90deg, #1a1a2e, #16213e);
+    padding: 10px 15px;
     display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    gap: 10px;
+    border-bottom: 1px solid #00ff9f;
+  }
+
+  .terminal-buttons {
+    display: flex;
+    gap: 5px;
+  }
+
+  .terminal-button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    opacity: 0.8;
+  }
+
+  .terminal-button.red { background: #ff5f56; }
+  .terminal-button.yellow { background: #ffbd2e; }
+  .terminal-button.green { background: #27ca3f; }
+
+  .terminal-title {
+    color: #00ff9f;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .terminal-body {
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
   }
 
-  .info {
+  .terminal-line {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    padding-right: 32px;
+    margin-bottom: 1rem;
+  }
+
+  .prompt {
+    color: #ff006f;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .typewriter {
+    overflow: hidden;
+    border-right: 2px solid #00ff9f;
+    white-space: nowrap;
+    animation: typing 3s steps(30, end), blink-caret 0.75s step-end infinite;
+  }
+
+  .typewriter.delay-1 {
+    animation-delay: 1s;
+    animation: typing 2s steps(20, end) 1s both, blink-caret 0.75s step-end infinite 1s;
+  }
+
+  .typewriter.delay-2 {
+    animation-delay: 2s;
+    animation: typing 1.5s steps(15, end) 2s both, blink-caret 0.75s step-end infinite 2s;
+  }
+
+  .typewriter.delay-3 {
+    animation-delay: 3s;
+    animation: typing 2s steps(25, end) 3s both, blink-caret 0.75s step-end infinite 3s;
+  }
+
+  @keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+
+  @keyframes blink-caret {
+    from, to { border-color: transparent; }
+    50% { border-color: #00ff9f; }
   }
 
   h1 {
-    font-size: 2rem;
+    font-size: 2.5rem;
+    color: #ffffff;
+    text-shadow: 0 0 10px #00ff9f;
+    margin: 0;
+    font-weight: 700;
   }
 
   h2 {
-    color: #444;
+    color: #b3b3b3;
     font-weight: 500;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    margin: 0;
     text-wrap: balance;
   }
 
-  img {
-    aspect-ratio: 1 / 1;
+  .floating-avatar {
+    position: absolute;
+    top: 20px;
+    right: -130px;
+    z-index: 10;
+    margin: 0;
+    animation: floatUpDown 4s ease-in-out infinite;
+  }
+
+  .hologram-effect {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hologram-image {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    width: 128px;
-    border-radius: 16px;
+    border-radius: 50%;
+    border: 4px solid #00ff9f;
+    box-shadow:
+      0 0 30px rgba(0, 255, 159, 0.6),
+      inset 0 0 30px rgba(0, 255, 159, 0.3),
+      0 0 50px rgba(0, 255, 159, 0.2);
+    animation: hologramPulse 3s ease-in-out infinite;
+    object-position: center center;
+  }
+
+  @keyframes floatUpDown {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    25% {
+      transform: translateY(-10px) rotate(1deg);
+    }
+    50% {
+      transform: translateY(-5px) rotate(0deg);
+    }
+    75% {
+      transform: translateY(-15px) rotate(-1deg);
+    }
+  }
+
+  .scan-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 159, 0.1) 2px,
+      rgba(0, 255, 159, 0.1) 4px
+    );
+    border-radius: 50%;
+    pointer-events: none;
+    animation: scanLineMove 2s linear infinite;
+  }
+
+  @keyframes hologramPulse {
+    0%, 100% {
+      transform: scale(1);
+      filter: hue-rotate(0deg);
+    }
+    50% {
+      transform: scale(1.05);
+      filter: hue-rotate(90deg);
+    }
+  }
+
+  @keyframes scanLineMove {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
   }
 
   span {
-    color: #666;
+    color: #b3b3b3;
     display: flex;
     align-items: center;
-    gap: 0.25rem;
-    font-size: 0.85rem;
-    letter-spacing: -0.05rem;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    letter-spacing: -0.02rem;
   }
 
   footer {
-    color: #555;
-    font-size: 0.65rem;
     display: flex;
-    gap: 4px;
-    margin-top: 8px;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
   }
 
-  footer a {
-    color: #777;
+  .terminal-link {
+    color: #00ff9f !important;
+    text-decoration: none;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    border: 1px solid #eee;
-    padding: 4px;
-    height: 32px;
-    width: 32px;
-    border-radius: 6px;
+    gap: 5px;
+    padding: 5px 10px;
+    border: 1px solid #00ff9f;
+    border-radius: 5px;
+    font-size: 0.8rem;
     transition: all 0.3s ease;
+    background: rgba(0, 255, 159, 0.1);
   }
 
-  footer a:hover {
-    background: #eee;
-    border: 1px solid #ddd;
+  .terminal-link:hover {
+    background: rgba(0, 255, 159, 0.2);
+    box-shadow: 0 0 10px rgba(0, 255, 159, 0.5);
+    transform: translateY(-2px);
   }
 
+  /* Tablet adjustments */
+  @media (width <= 1024px) and (width > 700px) {
+    .floating-avatar {
+      right: -40px;
+      top: 40px;
+    }
+
+    .hologram-effect {
+      width: 160px;
+      height: 160px;
+    }
+  }
+
+  /* Mobile adjustments */
   @media (width <= 700px) {
-    .container {
-      flex-direction: column-reverse;
+    .floating-avatar {
+      position: static;
+      margin: 0 auto 2rem auto;
+      animation: hologramPulse 3s ease-in-out infinite;
     }
 
-    .info {
-      justify-content: center;
-      align-items: center;
-      padding-right: 0;
-      text-align: center;
+    .hologram-effect {
+      width: 150px;
+      height: 150px;
     }
 
-    figure {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    .terminal-line {
+      align-items: start;
+      width: 100%;
+    }
+
+    .terminal-body {
+      padding: 15px;
+    }
+
+    /* Disable typewriter animation on mobile to prevent overflow */
+    .typewriter {
+      white-space: normal;
+      overflow: visible;
+      border-right: none;
+      animation: none;
+      width: 100% !important;
+      word-wrap: break-word;
+      text-align: start;
+    }
+
+    /* Add a simple fade-in animation instead */
+    .typewriter {
+      animation: fadeInMobile 2s ease-in-out;
+    }
+
+    .typewriter.delay-1 {
+      animation: fadeInMobile 2s ease-in-out 0.5s both;
+    }
+
+    .typewriter.delay-2 {
+      animation: fadeInMobile 2s ease-in-out 1s both;
+    }
+
+    .typewriter.delay-3 {
+      animation: fadeInMobile 2s ease-in-out 1.5s both;
+    }
+
+    @keyframes fadeInMobile {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      line-height: 1.2;
+      word-break: break-word;
     }
 
     h2 {
+      font-size: 1rem;
+      line-height: 1.3;
       text-wrap: balance;
+      max-width: 100%;
     }
 
-    figure {
-      margin: 0 auto;
+    .hologram-effect {
+      width: 120px;
+      height: 120px;
+    }
+
+    .terminal-title {
+      font-size: 0.8rem;
+    }
+
+    .prompt {
+      font-size: 0.8rem;
+    }
+
+    /* Make terminal links stack better on mobile */
+    footer {
+      flex-direction: column;
+      gap: 8px;
+      align-items: start;
     }
   }
 </style>

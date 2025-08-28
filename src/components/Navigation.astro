@@ -1,0 +1,280 @@
+---
+---
+
+<nav class="cyber-nav">
+  <div class="nav-brand">
+    <span class="brand-text">&lt;Developer/&gt;</span>
+  </div>
+  <div class="nav-links">
+    <a href="#hero" class="nav-link" data-section="hero">
+      <span class="link-icon">01</span>
+      <span class="link-text">Home</span>
+    </a>
+    <a href="#about" class="nav-link" data-section="about">
+      <span class="link-icon">02</span>
+      <span class="link-text">About</span>
+    </a>
+    <a href="#experience" class="nav-link" data-section="experience">
+      <span class="link-icon">03</span>
+      <span class="link-text">Experience</span>
+    </a>
+    <a href="#skills" class="nav-link" data-section="skills">
+      <span class="link-icon">04</span>
+      <span class="link-text">Skills</span>
+    </a>
+  </div>
+  <div class="nav-indicator">
+    <div class="indicator-line"></div>
+  </div>
+</nav>
+
+<script>
+  class CyberNavigation {
+    private nav: HTMLElement;
+    private links: NodeListOf<HTMLElement>;
+    private indicator: HTMLElement;
+    private sections: HTMLElement[] = [];
+
+    constructor() {
+      this.nav = document.querySelector('.cyber-nav')!;
+      this.links = document.querySelectorAll('.nav-link');
+      this.indicator = document.querySelector('.indicator-line')!;
+      this.init();
+    }
+
+    init() {
+      this.setupSections();
+      this.setupScrolling();
+      this.setupIntersectionObserver();
+      this.addHoverEffects();
+    }
+
+    setupSections() {
+      this.links.forEach(link => {
+        const sectionId = link.getAttribute('href')?.slice(1);
+        if (sectionId === 'hero') {
+          // Hero is the first section in main
+          const heroSection = document.querySelector('main > section:first-child') as HTMLElement;
+          if (heroSection) {
+            heroSection.id = 'hero';
+            this.sections.push(heroSection);
+          }
+        } else {
+          const section = document.getElementById(sectionId!) as HTMLElement;
+          if (section) this.sections.push(section);
+        }
+      });
+    }
+
+    setupScrolling() {
+      this.links.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href')?.slice(1);
+          const target = document.getElementById(targetId!);
+          
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+    }
+
+    setupIntersectionObserver() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const activeLink = document.querySelector(`[href="#${entry.target.id}"]`);
+            this.updateActiveLink(activeLink as HTMLElement);
+          }
+        });
+      }, { threshold: 0.3, rootMargin: '-100px 0px -100px 0px' });
+
+      this.sections.forEach(section => {
+        observer.observe(section);
+      });
+    }
+
+    updateActiveLink(activeLink: HTMLElement) {
+      this.links.forEach(link => link.classList.remove('active'));
+      if (activeLink) {
+        activeLink.classList.add('active');
+        this.moveIndicator(activeLink);
+      }
+    }
+
+    moveIndicator(activeLink: HTMLElement) {
+      const linkRect = activeLink.getBoundingClientRect();
+      const navRect = this.nav.getBoundingClientRect();
+      const position = linkRect.top - navRect.top + linkRect.height / 2;
+      
+      this.indicator.style.transform = `translateY(${position}px)`;
+      this.indicator.style.opacity = '1';
+    }
+
+    addHoverEffects() {
+      this.links.forEach(link => {
+        link.addEventListener('mouseenter', () => {
+          link.classList.add('hover-effect');
+        });
+        
+        link.addEventListener('mouseleave', () => {
+          link.classList.remove('hover-effect');
+        });
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    new CyberNavigation();
+  });
+</script>
+
+<style>
+  .cyber-nav {
+    position: fixed;
+    top: 50%;
+    right: 30px;
+    transform: translateY(-50%);
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(0, 255, 159, 0.3);
+    border-radius: 10px;
+    padding: 20px 10px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 255, 159, 0.2);
+  }
+
+  .nav-brand {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .brand-text {
+    color: #00ff9f;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(0, 255, 159, 0.5);
+  }
+
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    position: relative;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    color: #888;
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 159, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .nav-link:hover::before,
+  .nav-link.hover-effect::before {
+    left: 100%;
+  }
+
+  .link-icon {
+    color: #ff006f;
+    font-weight: 600;
+    font-size: 0.7rem;
+    opacity: 0.8;
+  }
+
+  .link-text {
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: #00ff9f;
+    background: rgba(0, 255, 159, 0.1);
+    border-left: 3px solid #00ff9f;
+    transform: translateX(-3px);
+    box-shadow: 0 0 15px rgba(0, 255, 159, 0.3);
+  }
+
+  .nav-link.active .link-icon {
+    color: #00ff9f;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .nav-indicator {
+    position: absolute;
+    left: -5px;
+    top: 0;
+    width: 3px;
+    height: 30px;
+    pointer-events: none;
+  }
+
+  .indicator-line {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #00ff9f, #ff006f);
+    border-radius: 2px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 255, 159, 0.5);
+  }
+
+  /* Hide navigation on mobile */
+  @media (width <= 768px) {
+    .cyber-nav {
+      display: none;
+    }
+  }
+
+  /* Show minimal version on tablet */
+  @media (width <= 1024px) and (width > 768px) {
+    .cyber-nav {
+      right: 15px;
+      padding: 15px 8px;
+    }
+    
+    .link-text {
+      display: none;
+    }
+    
+    .nav-link {
+      padding: 8px 10px;
+      justify-content: center;
+    }
+    
+    .brand-text {
+      font-size: 0.8rem;
+    }
+  }
+</style>
