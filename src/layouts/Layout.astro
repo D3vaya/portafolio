@@ -230,4 +230,17 @@ const { image, summary, url } = basics
     z-index: -1;
     animation: neonGlow 3s linear infinite;
   }
+
+  /* Global cyberpunk modal styles */
+  .hotkeypad,
+  [data-hotkeypad] {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.98), rgba(26, 26, 46, 0.98)) !important;
+    border: 2px solid #00ff9f !important;
+    border-radius: 15px !important;
+    backdrop-filter: blur(20px) !important;
+    box-shadow: 
+      0 0 40px rgba(0, 255, 159, 0.4),
+      inset 0 0 40px rgba(0, 255, 159, 0.1) !important;
+    z-index: 100000 !important;
+  }
 </style>
