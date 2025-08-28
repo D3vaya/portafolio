@@ -109,12 +109,31 @@ const { image, summary, url } = basics
   }
 
   p {
-    color: #b3b3b3;
+    color: #b3b3b3 !important;
     font-size: 0.9rem;
     line-height: 1.5;
     margin: 0;
     text-wrap: pretty;
-    text-shadow: 0 0 5px rgba(179, 179, 179, 0.5);
+    text-shadow: 0 0 5px rgba(179, 179, 179, 0.3);
+  }
+
+  /* Ensure all text elements are visible */
+  article, section, div {
+    color: #b3b3b3;
+  }
+
+  /* Override any dark text colors */
+  * {
+    color: inherit;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #ffffff !important;
+  }
+
+  /* Specific overrides for dark text */
+  .dark-text-fix {
+    color: #ffffff !important;
   }
 
   .print {

@@ -57,20 +57,26 @@ import { work } from "@cv"
 
   article h3 {
     font-weight: 500;
-    color: #111;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(0, 255, 159, 0.3);
   }
 
   article a {
-    color: #111;
+    color: #00ff9f;
+    text-decoration: none;
+    transition: all 0.3s ease;
   }
 
   article a:hover {
-    text-decoration: underline;
+    color: #ff006f;
+    text-shadow: 0 0 10px #ff006f;
+    text-decoration: none;
   }
 
   article h4 {
-    color: #222;
+    color: #b3b3b3;
     font-weight: 400;
+    text-shadow: 0 0 5px rgba(179, 179, 179, 0.3);
   }
 
   header {
@@ -81,13 +87,25 @@ import { work } from "@cv"
   }
 
   time {
-    color: #555;
+    color: #00ff9f;
     font-size: 0.85rem;
     min-width: 102px;
+    font-weight: 600;
+    text-shadow: 0 0 5px rgba(0, 255, 159, 0.5);
   }
 
   img {
     height: 50px;
+    border-radius: 8px;
+    border: 2px solid rgba(0, 255, 159, 0.3);
+    box-shadow: 0 0 10px rgba(0, 255, 159, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  img:hover {
+    border-color: #00ff9f;
+    box-shadow: 0 0 20px rgba(0, 255, 159, 0.5);
+    transform: scale(1.05);
   }
 
   @media (width <= 700px) {
