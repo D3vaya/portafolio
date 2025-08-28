@@ -1,375 +1,353 @@
 ---
 import Section from "../Section.astro"
-import HTML from "@/icons/html.astro"
-import CSS from "@/icons/css.astro"
-import JavaScript from "@/icons/javascript.astro"
-import TypeScript from "@/icons/type.astro"
-import React from "@/icons/react.astro"
-import Node from "@/icons/node.astro"
-import MySQL from "@/icons/sql.astro"
-import Git from "@/icons/git.astro"
-import GitHub from "@/icons/GitHub.astro"
-import Tailwind from "@/icons/tailwind.astro"
-import Next from "@/icons/next.astro"
 import { skills } from "@cv"
 
-const SKILLS_ICONS: Record<string, any> = {
-  HTML,
-  CSS,
-  JavaScript,
-  TypeScript,
-  React,
-  Node,
-  MySQL,
-  Git,
-  GitHub,
-  Next,
-  Tailwind,
+// Agrupar skills por categorías para mejor organización
+const skillCategories = {
+  "Frontend": ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Next.js", "Tailwind"],
+  "Backend": ["Node", "MySQL"], 
+  "Tools": ["Git", "GitHub"]
 }
 
-const getProficiencyLevel = (level: string) => {
-  const levels: Record<string, number> = {
-    'Beginner': 25,
-    'Intermediate': 50,
-    'Advanced': 75,
-    'Expert': 90,
-    'Master': 95
+const getProficiencyColor = (level: string) => {
+  const colors: Record<string, string> = {
+    'Beginner': '#ff006f',
+    'Intermediate': '#ff6b35', 
+    'Advanced': '#ffd700',
+    'Expert': '#00ff9f',
+    'Master': '#00d4ff'
   };
-  return levels[level] || 85;
+  return colors[level] || '#00ff9f';
 }
 ---
 
-<Section title="> system/skills --interactive">
-  <div class="skills-matrix">
-    {
-      skills.map(({ name, level, keywords }, index) => {
-        const iconName = name === "Next.js" ? "Next" : name
-        const Icon = SKILLS_ICONS[iconName]
-        const proficiency = getProficiencyLevel(level || "Expert")
-
-        return (
-          <div class="skill-node" data-index={index}>
-            <div class="skill-header">
-              <div class="skill-icon-container">
-                {Icon && <Icon />}
-              </div>
-              <div class="skill-info">
-                <h3 class="skill-name glitch-text">{name}</h3>
-                <div class="skill-level">{level || "Expert"}</div>
-              </div>
-            </div>
-            <div class="skill-bar-container">
-              <div class="skill-bar">
-                <div 
-                  class="skill-progress" 
-                  data-progress={proficiency}
-                  style={`--progress: ${proficiency}%`}
-                ></div>
-                <div class="skill-sparks"></div>
-              </div>
-              <div class="skill-percentage">{proficiency}%</div>
-            </div>
-            {keywords && keywords.length > 0 && (
-              <div class="skill-tags">
-                {keywords.slice(0, 3).map((keyword) => (
-                  <span class="skill-tag">{keyword}</span>
-                ))}
-              </div>
-            )}
+<Section title="> system/skills --compact">
+  <div class="skills-terminal">
+    <div class="terminal-output">
+      {Object.entries(skillCategories).map(([category, categorySkills]) => (
+        <div class="skill-category">
+          <div class="category-header">
+            <span class="prompt">$ ls {category.toLowerCase()}/</span>
+            <div class="category-badge">{categorySkills.length} items</div>
           </div>
-        )
-      })
-    }
+          <div class="skills-grid">
+            {skills
+              .filter(skill => categorySkills.includes(skill.name))
+              .map((skill) => {
+                const color = getProficiencyColor(skill.level || "Expert")
+                return (
+                  <div 
+                    class="skill-chip" 
+                    style={`--skill-color: ${color}`}
+                    data-level={skill.level || "Expert"}
+                  >
+                    <span class="skill-name">{skill.name}</span>
+                    <div class="skill-indicator"></div>
+                  </div>
+                )
+              })}
+          </div>
+        </div>
+      ))}
+      
+      <!-- Skills adicionales que no están categorizados -->
+      {skills.filter(skill => 
+        !Object.values(skillCategories).flat().includes(skill.name)
+      ).length > 0 && (
+        <div class="skill-category">
+          <div class="category-header">
+            <span class="prompt">$ ls others/</span>
+            <div class="category-badge">
+              {skills.filter(skill => 
+                !Object.values(skillCategories).flat().includes(skill.name)
+              ).length} items
+            </div>
+          </div>
+          <div class="skills-grid">
+            {skills
+              .filter(skill => !Object.values(skillCategories).flat().includes(skill.name))
+              .map((skill) => {
+                const color = getProficiencyColor(skill.level || "Expert")
+                return (
+                  <div 
+                    class="skill-chip" 
+                    style={`--skill-color: ${color}`}
+                    data-level={skill.level || "Expert"}
+                  >
+                    <span class="skill-name">{skill.name}</span>
+                    <div class="skill-indicator"></div>
+                  </div>
+                )
+              })}
+          </div>
+        </div>
+      )}
+    </div>
   </div>
 </Section>
 
 <script>
-  const skillNodes = document.querySelectorAll('.skill-node');
+  const skillChips = document.querySelectorAll('.skill-chip');
   
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        const progressBar = entry.target.querySelector('.skill-progress');
-        const sparks = entry.target.querySelector('.skill-sparks');
-        const progress = progressBar?.getAttribute('data-progress');
-        
-        if (progressBar && progress) {
+        const chips = entry.target.querySelectorAll('.skill-chip');
+        chips.forEach((chip, index) => {
           setTimeout(() => {
-            (progressBar as HTMLElement).style.setProperty('--animate-progress', `${progress}%`);
-            progressBar.classList.add('animate');
-            sparks?.classList.add('active');
-          }, parseInt(entry.target.getAttribute('data-index') || '0') * 200);
-        }
+            chip.classList.add('animate');
+          }, index * 100);
+        });
       }
     });
-  }, { threshold: 0.3 });
+  }, { threshold: 0.2 });
   
-  skillNodes.forEach((node) => observer.observe(node));
+  document.querySelectorAll('.skill-category').forEach((category) => {
+    observer.observe(category);
+  });
+
+  // Tooltip interactivo para mostrar el nivel de skill
+  skillChips.forEach((chip) => {
+    chip.addEventListener('mouseenter', (e) => {
+      const target = e.target as HTMLElement;
+      if (!target) return;
+      
+      const level = target.getAttribute('data-level');
+      const tooltip = document.createElement('div');
+      tooltip.className = 'skill-tooltip';
+      tooltip.textContent = level || 'Expert';
+      document.body.appendChild(tooltip);
+      
+      const rect = target.getBoundingClientRect();
+      tooltip.style.left = rect.left + rect.width / 2 + 'px';
+      tooltip.style.top = rect.top - 40 + 'px';
+      
+      setTimeout(() => tooltip.classList.add('visible'), 10);
+    });
+    
+    chip.addEventListener('mouseleave', () => {
+      document.querySelectorAll('.skill-tooltip').forEach(tooltip => {
+        tooltip.classList.remove('visible');
+        setTimeout(() => tooltip.remove(), 200);
+      });
+    });
+  });
 </script>
 
 <style>
-  .skills-matrix {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+  .skills-terminal {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid #00ff9f;
+    border-radius: 10px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 20px rgba(0, 255, 159, 0.2);
     margin-top: 20px;
   }
 
-  .skill-node {
-    background: linear-gradient(135deg, rgba(0, 255, 159, 0.1), rgba(255, 0, 111, 0.1));
-    border: 1px solid rgba(0, 255, 159, 0.3);
-    border-radius: 10px;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
+  .terminal-output {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
   }
 
-  .skill-node::before {
+  .skill-category {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .skill-category:nth-child(1) { animation-delay: 0.1s; }
+  .skill-category:nth-child(2) { animation-delay: 0.2s; }
+  .skill-category:nth-child(3) { animation-delay: 0.3s; }
+
+  .category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 255, 159, 0.3);
+  }
+
+  .prompt {
+    color: #ff006f;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .category-badge {
+    background: rgba(0, 255, 159, 0.2);
+    color: #00ff9f;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    border: 1px solid rgba(0, 255, 159, 0.4);
+  }
+
+  .skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .skill-chip {
+    position: relative;
+    background: rgba(26, 26, 46, 0.8);
+    border: 1px solid var(--skill-color, #00ff9f);
+    border-radius: 20px;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: scale(0.8);
+    backdrop-filter: blur(5px);
+    overflow: hidden;
+  }
+
+  .skill-chip.animate {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .skill-chip::before {
     content: '';
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0, 255, 159, 0.2), transparent);
+    background: linear-gradient(90deg, transparent, var(--skill-color, #00ff9f), transparent);
+    opacity: 0.3;
     transition: left 0.5s ease;
   }
 
-  .skill-node:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 255, 159, 0.3);
-    border-color: #00ff9f;
+  .skill-chip:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 
+      0 4px 15px rgba(0, 255, 159, 0.4),
+      0 0 20px var(--skill-color, #00ff9f);
+    border-color: var(--skill-color, #00ff9f);
   }
 
-  .skill-node:hover::before {
+  .skill-chip:hover::before {
     left: 100%;
   }
 
-  .skill-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 15px;
-  }
-
-  .skill-icon-container {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 255, 159, 0.2);
-    border-radius: 8px;
-    border: 1px solid #00ff9f;
-  }
-
-  .skill-info {
-    flex: 1;
-  }
-
   .skill-name {
-    color: #ffffff;
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin: 0;
-    text-shadow: 0 0 10px rgba(0, 255, 159, 0.5);
-  }
-
-  .glitch-text {
-    position: relative;
-  }
-
-  .glitch-text::after {
-    content: attr(data-text);
-    position: absolute;
-    left: 2px;
-    text-shadow: -2px 0 #ff006f;
-    top: 0;
-    color: #ff006f;
-    background: transparent;
-    overflow: hidden;
-    animation: noise-anim-2 15s infinite linear alternate-reverse;
-  }
-
-  .glitch-text::before {
-    content: attr(data-text);
-    position: absolute;
-    left: -2px;
-    text-shadow: 2px 0 #00ff9f;
-    top: 0;
-    color: #00ff9f;
-    background: transparent;
-    overflow: hidden;
-    animation: noise-anim 2s infinite linear alternate-reverse;
-  }
-
-  @keyframes noise-anim {
-    0% { clip-path: inset(29% 0 71% 0); }
-    5% { clip-path: inset(41% 0 59% 0); }
-    10% { clip-path: inset(25% 0 75% 0); }
-    15% { clip-path: inset(54% 0 46% 0); }
-    20% { clip-path: inset(76% 0 24% 0); }
-    25% { clip-path: inset(30% 0 70% 0); }
-    30% { clip-path: inset(67% 0 33% 0); }
-    35% { clip-path: inset(15% 0 85% 0); }
-    40% { clip-path: inset(82% 0 18% 0); }
-    45% { clip-path: inset(38% 0 62% 0); }
-    50% { clip-path: inset(71% 0 29% 0); }
-    55% { clip-path: inset(22% 0 78% 0); }
-    60% { clip-path: inset(93% 0 7% 0); }
-    65% { clip-path: inset(14% 0 86% 0); }
-    70% { clip-path: inset(58% 0 42% 0); }
-    75% { clip-path: inset(87% 0 13% 0); }
-    80% { clip-path: inset(33% 0 67% 0); }
-    85% { clip-path: inset(49% 0 51% 0); }
-    90% { clip-path: inset(65% 0 35% 0); }
-    95% { clip-path: inset(17% 0 83% 0); }
-    100% { clip-path: inset(78% 0 22% 0); }
-  }
-
-  @keyframes noise-anim-2 {
-    0% { clip-path: inset(76% 0 24% 0); }
-    10% { clip-path: inset(54% 0 46% 0); }
-    20% { clip-path: inset(22% 0 78% 0); }
-    30% { clip-path: inset(89% 0 11% 0); }
-    40% { clip-path: inset(33% 0 67% 0); }
-    50% { clip-path: inset(67% 0 33% 0); }
-    60% { clip-path: inset(11% 0 89% 0); }
-    70% { clip-path: inset(44% 0 56% 0); }
-    80% { clip-path: inset(78% 0 22% 0); }
-    90% { clip-path: inset(19% 0 81% 0); }
-    100% { clip-path: inset(56% 0 44% 0); }
-  }
-
-  .skill-level {
-    color: #00ff9f;
+    color: var(--skill-color, #00ff9f);
     font-size: 0.8rem;
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .skill-bar-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-  }
-
-  .skill-bar {
-    flex: 1;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    overflow: hidden;
+    font-weight: 500;
+    text-shadow: 0 0 5px var(--skill-color, #00ff9f);
     position: relative;
+    z-index: 1;
   }
 
-  .skill-progress {
-    height: 100%;
-    background: linear-gradient(90deg, #00ff9f, #ff006f);
-    border-radius: 10px;
-    width: 0;
-    position: relative;
-    transition: width 2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .skill-progress.animate {
-    width: var(--animate-progress, 0%);
-  }
-
-  .skill-progress::after {
-    content: '';
+  .skill-indicator {
     position: absolute;
-    top: 0;
-    right: 0;
-    width: 4px;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    top: 2px;
+    right: 2px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--skill-color, #00ff9f);
+    box-shadow: 0 0 8px var(--skill-color, #00ff9f);
+    animation: pulse 2s infinite;
   }
 
-  .skill-sparks {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    pointer-events: none;
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  .skill-sparks.active::after {
-    content: '⚡';
-    position: absolute;
-    color: #fff;
-    font-size: 12px;
-    animation: sparkle 1s ease-out;
-  }
-
-  @keyframes sparkle {
-    0% {
-      opacity: 0;
-      transform: scale(0.5) rotate(0deg);
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
     }
     50% {
-      opacity: 1;
-      transform: scale(1.2) rotate(180deg);
-    }
-    100% {
-      opacity: 0;
-      transform: scale(0.5) rotate(360deg);
+      opacity: 0.7;
+      transform: scale(1.2);
     }
   }
 
-  .skill-percentage {
+  /* Tooltip global */
+  .skill-tooltip {
+    position: fixed;
+    background: rgba(0, 0, 0, 0.9);
     color: #00ff9f;
-    font-weight: 600;
-    font-size: 0.9rem;
-    min-width: 35px;
-    text-align: right;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid #00ff9f;
+    box-shadow: 0 0 10px rgba(0, 255, 159, 0.5);
+    z-index: 1000;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    backdrop-filter: blur(10px);
   }
 
-  .skill-tags {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+  .skill-tooltip.visible {
+    opacity: 1;
   }
 
-  .skill-tag {
-    background: rgba(255, 0, 111, 0.2);
-    color: #ff006f;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 0.7rem;
-    border: 1px solid rgba(255, 0, 111, 0.4);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  .skill-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #00ff9f;
   }
 
+  /* Responsive */
   @media (width <= 768px) {
-    .skills-matrix {
-      grid-template-columns: 1fr;
-      gap: 15px;
-    }
-
-    .skill-node {
+    .skills-terminal {
       padding: 15px;
     }
 
-    .skill-header {
-      gap: 10px;
+    .terminal-output {
+      gap: 20px;
     }
 
-    .skill-icon-container {
-      width: 32px;
-      height: 32px;
+    .category-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .skills-grid {
+      gap: 6px;
+    }
+
+    .skill-chip {
+      padding: 6px 12px;
+      font-size: 0.75rem;
+    }
+
+    .prompt {
+      font-size: 0.8rem;
+    }
+  }
+
+  @media (width <= 480px) {
+    .skill-chip {
+      padding: 5px 10px;
     }
 
     .skill-name {
-      font-size: 1rem;
+      font-size: 0.7rem;
+    }
+
+    .skills-grid {
+      gap: 4px;
     }
   }
 </style>
