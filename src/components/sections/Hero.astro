@@ -35,84 +35,82 @@ const printInfo = [email, phone, linkedUrl].filter(Boolean).join(" • ")
       <div class="terminal-title">d3vaya@cyberpunk:~$</div>
     </div>
     <div class="terminal-body">
-      <div class="container">
-        <div class="info">
-          <div class="terminal-line">
-            <span class="prompt">$ whoami</span>
-            <h1 class="typewriter neon-text">{name}</h1>
-          </div>
-          <div class="terminal-line">
-            <span class="prompt">$ cat role.txt</span>
-            <h2 class="typewriter delay-1">{label}</h2>
-          </div>
-          <div class="terminal-line">
-            <span class="prompt">$ pwd</span>
-            <span class="typewriter delay-2">
-              <WorldMap />
-              {city}, {region}
-            </span>
-          </div>
-          <div class="terminal-line">
-            <span class="prompt">$ ls -la contacts/</span>
-            <footer class="print typewriter delay-3">
-              {printInfo}
-            </footer>
-            <footer class="no-print typewriter delay-3">
-              {
-                email && (
-                  <a
-                    href={`mailto:${email}`}
-                    title={`Enviar un correo electrónico a ${name} al correo ${email}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="terminal-link"
-                  >
-                    <Mail /> {email}
-                  </a>
-                )
-              }
-              {
-                phone && (
-                  <a
-                    href={`tel:${phone}`}
-                    title={`Llamar por teléfono a ${name} al número ${phone}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="terminal-link"
-                  >
-                    <Phone /> {phone}
-                  </a>
-                )
-              }
-              {
-                profiles.map(({ network, url, username }) => {
-                  const Icon = SOCIAL_ICONS[network]
+      <div class="terminal-line">
+        <span class="prompt">$ whoami</span>
+        <h1 class="typewriter neon-text">{name}</h1>
+      </div>
+      <div class="terminal-line">
+        <span class="prompt">$ cat role.txt</span>
+        <h2 class="typewriter delay-1">{label}</h2>
+      </div>
+      <div class="terminal-line">
+        <span class="prompt">$ pwd</span>
+        <span class="typewriter delay-2">
+          <WorldMap />
+          {city}, {region}
+        </span>
+      </div>
+      <div class="terminal-line">
+        <span class="prompt">$ ls -la contacts/</span>
+        <footer class="print typewriter delay-3">
+          {printInfo}
+        </footer>
+        <footer class="no-print typewriter delay-3">
+          {
+            email && (
+              <a
+                href={`mailto:${email}`}
+                title={`Enviar un correo electrónico a ${name} al correo ${email}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="terminal-link"
+              >
+                <Mail /> {email}
+              </a>
+            )
+          }
+          {
+            phone && (
+              <a
+                href={`tel:${phone}`}
+                title={`Llamar por teléfono a ${name} al número ${phone}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="terminal-link"
+              >
+                <Phone /> {phone}
+              </a>
+            )
+          }
+          {
+            profiles.map(({ network, url, username }) => {
+              const Icon = SOCIAL_ICONS[network]
 
-                  return (
-                    <a
-                      href={url}
-                      title={`Visitar el perfil de ${name} en ${network}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="terminal-link"
-                    >
-                      <Icon /> {network}
-                    </a>
-                  )
-                })
-              }
-            </footer>
-          </div>
-        </div>
-        <figure class="hologram-container">
-          <div class="hologram-effect">
-            <img src={image} alt={name} class="hologram-image" />
-            <div class="scan-lines"></div>
-          </div>
-        </figure>
+              return (
+                <a
+                  href={url}
+                  title={`Visitar el perfil de ${name} en ${network}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="terminal-link"
+                >
+                  <Icon /> {network}
+                </a>
+              )
+            })
+          }
+        </footer>
       </div>
     </div>
   </div>
+
+  <!-- Floating Avatar outside terminal -->
+  <figure class="floating-avatar">
+    <div class="hologram-effect">
+      <img src={image} alt={name} class="hologram-image" />
+      <div class="scan-lines"></div>
+    </div>
+  </figure>
 </Section>
 
 <style>
@@ -159,19 +157,7 @@ const printInfo = [email, phone, linkedUrl].filter(Boolean).join(" • ")
   }
 
   .terminal-body {
-    padding: 20px;
-  }
-
-  .container {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 2rem;
-  }
-
-  .info {
-    flex: 1;
+    padding: 25px;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -238,15 +224,22 @@ const printInfo = [email, phone, linkedUrl].filter(Boolean).join(" • ")
     text-wrap: balance;
   }
 
-  .hologram-container {
-    position: relative;
-    flex-shrink: 0;
+  .floating-avatar {
+    position: absolute;
+    top: 20px;
+    right: -130px;
+    z-index: 10;
+    margin: 0;
+    animation: floatUpDown 4s ease-in-out infinite;
   }
 
   .hologram-effect {
     position: relative;
-    width: 150px;
-    height: 150px;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .hologram-image {
@@ -254,11 +247,28 @@ const printInfo = [email, phone, linkedUrl].filter(Boolean).join(" • ")
     height: 100%;
     object-fit: cover;
     border-radius: 50%;
-    border: 3px solid #00ff9f;
+    border: 4px solid #00ff9f;
     box-shadow:
-      0 0 20px rgba(0, 255, 159, 0.5),
-      inset 0 0 20px rgba(0, 255, 159, 0.2);
+      0 0 30px rgba(0, 255, 159, 0.6),
+      inset 0 0 30px rgba(0, 255, 159, 0.3),
+      0 0 50px rgba(0, 255, 159, 0.2);
     animation: hologramPulse 3s ease-in-out infinite;
+    object-position: center center;
+  }
+
+  @keyframes floatUpDown {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    25% {
+      transform: translateY(-10px) rotate(1deg);
+    }
+    50% {
+      transform: translateY(-5px) rotate(0deg);
+    }
+    75% {
+      transform: translateY(-15px) rotate(-1deg);
+    }
   }
 
   .scan-lines {
@@ -331,25 +341,34 @@ const printInfo = [email, phone, linkedUrl].filter(Boolean).join(" • ")
     transform: translateY(-2px);
   }
 
+  /* Tablet adjustments */
+  @media (width <= 1024px) and (width > 700px) {
+    .floating-avatar {
+      right: -40px;
+      top: 40px;
+    }
+
+    .hologram-effect {
+      width: 160px;
+      height: 160px;
+    }
+  }
+
+  /* Mobile adjustments */
   @media (width <= 700px) {
-    .container {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
+    .floating-avatar {
+      position: static;
+      margin: 0 auto 2rem auto;
+      animation: hologramPulse 3s ease-in-out infinite;
     }
 
-    .info {
-      order: 2;
-      width: 100%;
-    }
-
-    .hologram-container {
-      order: 1;
-      margin-bottom: 2rem;
+    .hologram-effect {
+      width: 150px;
+      height: 150px;
     }
 
     .terminal-line {
-      align-items: center;
+      align-items: start;
       width: 100%;
     }
 
@@ -365,7 +384,7 @@ const printInfo = [email, phone, linkedUrl].filter(Boolean).join(" • ")
       animation: none;
       width: 100% !important;
       word-wrap: break-word;
-      text-align: center;
+      text-align: start;
     }
 
     /* Add a simple fade-in animation instead */
@@ -426,7 +445,7 @@ const printInfo = [email, phone, linkedUrl].filter(Boolean).join(" • ")
     footer {
       flex-direction: column;
       gap: 8px;
-      align-items: center;
+      align-items: start;
     }
   }
 </style>
