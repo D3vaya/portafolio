@@ -149,24 +149,51 @@ const { summary } = basics
 
   @media (width <= 768px) {
     .editor-content {
-      flex-direction: column;
+      display: flex;
+      flex-direction: row;
     }
 
     .line-numbers {
-      flex-direction: row;
-      justify-content: space-around;
-      border-right: none;
-      border-bottom: 1px solid #333;
-      min-width: auto;
-      text-align: center;
+      flex-direction: column;
+      border-right: 1px solid #333;
+      border-bottom: none;
+      min-width: 35px;
+      text-align: right;
+      padding: 10px 8px;
+      font-size: 0.7rem;
+    }
+    .line-numbers span {
+      margin-bottom: 4px;
     }
 
     .code-content {
-      padding: 10px 15px;
+      padding: 10px 12px;
+      font-size: 0.75rem;
+      line-height: 1.4;
+      flex: 1;
     }
 
     .tab {
       padding: 8px 10px;
+      font-size: 0.7rem;
+    }
+
+    .code-line {
+      margin-bottom: 1px;
+      min-height: 1.4em;
+    }
+
+    /* Reduce spacing for mobile */
+    .code-editor {
+      margin: 0 -5px;
+      border-radius: 5px;
+    }
+
+    .editor-header {
+      padding: 8px 12px;
+    }
+
+    .terminal-title {
       font-size: 0.7rem;
     }
   }
