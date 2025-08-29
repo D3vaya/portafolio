@@ -132,7 +132,7 @@ const profilesInfo = profiles.map(({ network, url }) => {
       hotkey: "ctrl+P",
       section: "Acciones",
       handler: () => {
-        window.print()
+        // window.print()
       }
     },
     ...data
@@ -168,11 +168,11 @@ const profilesInfo = profiles.map(({ network, url }) => {
   }
 
   @keyframes neonPulse {
-    0%, 100% { 
-      box-shadow: 0 0 10px #00ff9f, 0 0 20px #00ff9f, 0 0 30px #00ff9f; 
+    0%, 100% {
+      box-shadow: 0 0 10px #00ff9f, 0 0 20px #00ff9f, 0 0 30px #00ff9f;
     }
-    50% { 
-      box-shadow: 0 0 20px #00ff9f, 0 0 30px #00ff9f, 0 0 40px #00ff9f, 0 0 50px #ff006f; 
+    50% {
+      box-shadow: 0 0 20px #00ff9f, 0 0 30px #00ff9f, 0 0 40px #00ff9f, 0 0 50px #ff006f;
     }
   }
 
@@ -221,7 +221,7 @@ const profilesInfo = profiles.map(({ network, url }) => {
     font-size: 0.9rem;
     backdrop-filter: blur(10px);
     z-index: 1000;
-    
+
     animation: cyberFadeIn 0.5s ease-out;
     box-shadow: 0 -5px 20px rgba(0, 255, 159, 0.2);
   }
@@ -312,7 +312,7 @@ const profilesInfo = profiles.map(({ network, url }) => {
     border: 2px solid #00ff9f !important;
     border-radius: 15px !important;
     backdrop-filter: blur(20px) !important;
-    box-shadow: 
+    box-shadow:
       0 0 40px rgba(0, 255, 159, 0.4),
       inset 0 0 40px rgba(0, 255, 159, 0.1) !important;
     z-index: 100000 !important;
