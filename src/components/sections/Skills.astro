@@ -36,45 +36,178 @@ const getProficiencyColor = (level: string): string => {
   }
   return colors[level] || '#00ff9f'
 }
+
+const getLevelStars = (level: string): number => {
+  const stars: Record<string, number> = {
+    'Beginner': 2,
+    'Medio': 3,
+    'Intermediate': 3,
+    'Avanzado': 4,
+    'Advanced': 4,
+    'Expert': 4,
+    'Master': 5,
+  }
+  return stars[level] || 3
+}
+
+// Devicon class mapping for each skill
+const getIconClass = (name: string): string | null => {
+  const icons: Record<string, string> = {
+    'HTML': 'devicon-html5-plain colored',
+    'CSS': 'devicon-css3-plain colored',
+    'JavaScript': 'devicon-javascript-plain colored',
+    'TypeScript': 'devicon-typescript-plain colored',
+    'React': 'devicon-react-original colored',
+    'Next.js': 'devicon-nextjs-plain',
+    'Next JS': 'devicon-nextjs-plain',
+    'Tailwind': 'devicon-tailwindcss-original colored',
+    'Gatsby JS': 'devicon-gatsby-plain colored',
+    'Angular': 'devicon-angularjs-plain colored',
+    'Vue JS': 'devicon-vuejs-plain colored',
+    'Svelte': 'devicon-svelte-plain colored',
+    'Astro': 'devicon-astro-plain',
+    'GraphQL': 'devicon-graphql-plain colored',
+    'Node Js': 'devicon-nodejs-plain colored',
+    'Express': 'devicon-express-original',
+    'MySQL': 'devicon-mysql-plain colored',
+    'PostgreSQL': 'devicon-postgresql-plain colored',
+    'Firebase': 'devicon-firebase-plain colored',
+    'Supabase': 'devicon-supabase-plain colored',
+    'PHP': 'devicon-php-plain colored',
+    'Cake PHP': 'devicon-cakephp-plain colored',
+    'Laravel': 'devicon-laravel-original colored',
+    'Java': 'devicon-java-plain colored',
+    'Elixir': 'devicon-elixir-plain colored',
+    'Phoenix Framework': 'devicon-phoenix-plain colored',
+    'Go': 'devicon-go-plain colored',
+    'MongoDB': 'devicon-mongodb-plain colored',
+    'Redis': 'devicon-redis-plain colored',
+    'Git': 'devicon-git-plain colored',
+    'GitHub': 'devicon-github-original',
+    'Figma': 'devicon-figma-plain colored',
+    'AWS Lambda': 'devicon-amazonwebservices-plain-wordmark colored',
+    'AWS EC2': 'devicon-amazonwebservices-plain-wordmark colored',
+    'AWS S3': 'devicon-amazonwebservices-plain-wordmark colored',
+    'AWS ELB / ASG': 'devicon-amazonwebservices-plain-wordmark colored',
+  }
+  return icons[name] || null
+}
+
+// Build category data with hero skills sorted first
+const categoryData = Object.entries(skillCategories).map(([category, categorySkills]) => {
+  const matched = skills.filter(s => categorySkills.includes(s.name))
+  // Sort: hero skills first, then alphabetically
+  matched.sort((a, b) => {
+    const aHero = heroSkills.includes(a.name) ? 0 : 1
+    const bHero = heroSkills.includes(b.name) ? 0 : 1
+    if (aHero !== bHero) return aHero - bHero
+    return a.name.localeCompare(b.name)
+  })
+  return { category, skills: matched }
+}).filter(c => c.skills.length > 0)
+
+const totalSkills = categoryData.reduce((sum, c) => sum + c.skills.length, 0)
 ---
 
 <Section title="> skills --list">
-  <div class="skills-power-grid" id="skills-grid">
-    {Object.entries(skillCategories).map(([category, categorySkills]) => {
-      const matchedSkills = skills.filter(s => categorySkills.includes(s.name))
-      if (matchedSkills.length === 0) return null
+  <div class="vscode-window" id="skills-extensions" data-vscode-window>
+    <!-- Title bar -->
+    <div class="vscode-titlebar" data-titlebar>
+      <div class="titlebar-dots">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+      </div>
+      <span class="titlebar-text">EXTENSIONS: INSTALLED</span>
+      <span class="titlebar-icon">&#x27F3;</span>
+    </div>
 
-      return (
-        <div class="skill-category" data-skill-cat>
-          <div class="category-header" data-skill-header>
-            <span class="prompt">$ ls {category.toLowerCase()}/</span>
-            <div class="category-badge">{matchedSkills.length} modules</div>
-          </div>
-          <div class="skills-grid">
-            {matchedSkills.map((skill) => {
-              const color = getProficiencyColor(skill.level || "Expert")
-              const percent = getLevelPercent(skill.level || "Expert")
-              const isHero = heroSkills.includes(skill.name)
+    <!-- Search bar -->
+    <div class="vscode-search" data-search-bar>
+      <span class="search-icon">&#x1F50D;</span>
+      <span class="search-placeholder">Search installed skills...</span>
+    </div>
 
-              return (
-                <div
-                  class={`skill-chip ${isHero ? "hero-skill" : ""}`}
-                  style={`--skill-color: ${color}; --skill-pct: ${percent}%`}
-                  data-level={skill.level || "Expert"}
-                  data-skill-chip
-                >
-                  <span class="skill-name">{skill.name}</span>
-                  <div class="skill-level-bar">
-                    <div class="skill-level-fill" data-skill-bar></div>
+    <!-- Tab bar -->
+    <div class="vscode-tabs" data-tab-bar>
+      {categoryData.map((cat, i) => (
+        <button
+          class={`vscode-tab ${i === 0 ? "active" : ""}`}
+          data-tab={cat.category}
+        >
+          <span class="tab-indicator"></span>
+          <span class="tab-label">{cat.category}</span>
+          <span class="tab-count">{cat.skills.length}</span>
+        </button>
+      ))}
+    </div>
+
+    <!-- Extension panels -->
+    <div class="vscode-panels">
+      {categoryData.map((cat, i) => (
+        <div
+          class={`ext-panel ${i === 0 ? "active" : ""}`}
+          data-panel={cat.category}
+        >
+          {cat.skills.map((skill) => {
+            const color = getProficiencyColor(skill.level || "Expert")
+            const percent = getLevelPercent(skill.level || "Expert")
+            const stars = getLevelStars(skill.level || "Expert")
+            const isHero = heroSkills.includes(skill.name)
+            const keyword = skill.keywords?.[0] || cat.category
+            const iconClass = getIconClass(skill.name)
+
+            return (
+              <div
+                class={`ext-card ${isHero ? "ext-hero" : ""}`}
+                style={`--skill-color: ${color}; --skill-pct: ${percent}%`}
+                data-ext-card
+              >
+                <div class="ext-card-top">
+                  <div class="ext-icon-wrap">
+                    {iconClass ? (
+                      <i class={`ext-devicon ${iconClass}`}></i>
+                    ) : (
+                      <div class="ext-icon-fallback" style={`background: ${color}`}>
+                        {skill.name.charAt(0)}
+                      </div>
+                    )}
                   </div>
-                  <span class="skill-level-label">{skill.level}</span>
+                  <div class="ext-info">
+                    <div class="ext-name-row">
+                      <span class="ext-name">{skill.name}</span>
+                      <span class="ext-stars" data-stars>
+                        {Array.from({ length: 5 }).map((_, si) => (
+                          <span class={`star ${si < stars ? "filled" : ""}`}>&#9733;</span>
+                        ))}
+                      </span>
+                      <span class="ext-level-badge">{skill.level}</span>
+                    </div>
+                    <div class="ext-meta-row">
+                      <span class="ext-category-tag">{cat.category} &middot; {keyword}</span>
+                      {isHero ? (
+                        <span class="ext-status ext-status-active">&#9889; Active</span>
+                      ) : (
+                        <span class="ext-status ext-status-installed">Installed</span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              )
-            })}
-          </div>
+                <div class="ext-bar-track">
+                  <div class="ext-bar-fill" data-ext-bar style={`--skill-pct: ${percent}%`}></div>
+                </div>
+                <span class="ext-bar-label">{percent}%</span>
+              </div>
+            )
+          })}
         </div>
-      )
-    })}
+      ))}
+    </div>
+
+    <!-- Footer -->
+    <div class="vscode-footer" data-footer>
+      Showing <span class="footer-count" data-footer-count>{categoryData[0]?.skills.length || 0}</span> of {totalSkills} extensions
+    </div>
   </div>
 </Section>
 
@@ -82,84 +215,202 @@ const getProficiencyColor = (level: string): string => {
   import { gsap, prefersReducedMotion } from "@/scripts/gsap-init";
 
   document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("skills-extensions");
+    if (!container) return;
+
+    // Tab switching
+    const tabs = container.querySelectorAll<HTMLButtonElement>("[data-tab]");
+    const panels = container.querySelectorAll<HTMLElement>("[data-panel]");
+    const footerCount = container.querySelector<HTMLElement>("[data-footer-count]");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const target = tab.dataset.tab;
+        if (!target) return;
+
+        // Update tabs
+        tabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+
+        // Switch panels
+        const activePanel = container.querySelector<HTMLElement>(".ext-panel.active");
+        const nextPanel = container.querySelector<HTMLElement>(`[data-panel="${target}"]`);
+        if (!nextPanel || activePanel === nextPanel) return;
+
+        // Update footer count
+        const cardCount = nextPanel.querySelectorAll("[data-ext-card]").length;
+        if (footerCount) footerCount.textContent = String(cardCount);
+
+        if (prefersReducedMotion()) {
+          activePanel?.classList.remove("active");
+          nextPanel.classList.add("active");
+          return;
+        }
+
+        // GSAP transition
+        gsap.to(activePanel, {
+          autoAlpha: 0,
+          y: -10,
+          duration: 0.25,
+          ease: "power2.in",
+          onComplete: () => {
+            activePanel?.classList.remove("active");
+            nextPanel.classList.add("active");
+            gsap.set(nextPanel, { autoAlpha: 0, y: 10 });
+            gsap.to(nextPanel, {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.3,
+              ease: "power2.out",
+            });
+
+            // Stagger cards in new panel
+            const cards = nextPanel.querySelectorAll("[data-ext-card]");
+            gsap.fromTo(cards,
+              { autoAlpha: 0, y: 15 },
+              {
+                autoAlpha: 1,
+                y: 0,
+                stagger: 0.06,
+                duration: 0.4,
+                ease: "power2.out",
+                delay: 0.1,
+              }
+            );
+
+            // Animate bars
+            const bars = nextPanel.querySelectorAll("[data-ext-bar]");
+            gsap.fromTo(bars,
+              { scaleX: 0 },
+              {
+                scaleX: 1,
+                stagger: 0.06,
+                duration: 0.6,
+                ease: "power2.out",
+                delay: 0.2,
+              }
+            );
+          },
+        });
+      });
+    });
+
+    // Reduced motion: show everything, skip all animations
     if (prefersReducedMotion()) {
-      document.querySelectorAll("[data-skill-chip]").forEach(el => {
+      container.querySelectorAll("[data-ext-card]").forEach(el => {
         const htmlEl = el as HTMLElement;
         htmlEl.style.opacity = "1";
         htmlEl.style.visibility = "visible";
         htmlEl.style.transform = "none";
       });
-      document.querySelectorAll("[data-skill-bar]").forEach(el => {
+      container.querySelectorAll("[data-ext-bar]").forEach(el => {
         (el as HTMLElement).style.transform = "scaleX(1)";
       });
       return;
     }
 
-    // Category headers clip-path reveal
-    document.querySelectorAll("[data-skill-header]").forEach((header) => {
-      gsap.fromTo(header,
-        { clipPath: "inset(0 100% 0 0)" },
-        {
-          clipPath: "inset(0 0% 0 0)",
-          duration: 0.6,
-          ease: "power3.inOut",
-          scrollTrigger: {
-            trigger: header,
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    });
-
-    // Skill chips stagger from random positions
-    document.querySelectorAll("[data-skill-cat]").forEach((cat) => {
-      const chips = cat.querySelectorAll("[data-skill-chip]");
-      // Set initial state explicitly
-      gsap.set(chips, { scale: 0, autoAlpha: 0 });
-      gsap.to(chips, {
+    // Window frame entrance
+    gsap.fromTo(container,
+      { scale: 0.95, autoAlpha: 0 },
+      {
         scale: 1,
         autoAlpha: 1,
-        stagger: {
-          each: 0.08,
-          from: "random",
-        },
-        duration: 0.4,
-        ease: "back.out(1.7)",
+        duration: 0.7,
+        ease: "power3.out",
         scrollTrigger: {
-          trigger: cat,
+          trigger: container,
           start: "top 85%",
           toggleActions: "play none none none",
         },
-      });
-    });
+      }
+    );
 
-    // Level bars fill with ScrollTrigger
-    document.querySelectorAll("[data-skill-bar]").forEach((bar) => {
-      gsap.fromTo(bar,
+    // Search bar clip-path reveal
+    const searchBar = container.querySelector("[data-search-bar]");
+    if (searchBar) {
+      gsap.fromTo(searchBar,
+        { clipPath: "inset(0 100% 0 0)" },
+        {
+          clipPath: "inset(0 0% 0 0)",
+          duration: 0.5,
+          ease: "power3.inOut",
+          scrollTrigger: {
+            trigger: container,
+            start: "top 80%",
+            toggleActions: "play none none none",
+          },
+          delay: 0.3,
+        }
+      );
+    }
+
+    // Tab bar stagger
+    gsap.fromTo(tabs,
+      { autoAlpha: 0, x: -20 },
+      {
+        autoAlpha: 1,
+        x: 0,
+        stagger: 0.1,
+        duration: 0.4,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: container,
+          start: "top 80%",
+          toggleActions: "play none none none",
+        },
+        delay: 0.4,
+      }
+    );
+
+    // Initial panel cards stagger
+    const firstPanel = container.querySelector<HTMLElement>(".ext-panel.active");
+    if (firstPanel) {
+      const cards = firstPanel.querySelectorAll("[data-ext-card]");
+      gsap.fromTo(cards,
+        { autoAlpha: 0, y: 15 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          stagger: 0.07,
+          duration: 0.45,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: container,
+            start: "top 75%",
+            toggleActions: "play none none none",
+          },
+          delay: 0.6,
+        }
+      );
+
+      // Proficiency bars
+      const bars = firstPanel.querySelectorAll("[data-ext-bar]");
+      gsap.fromTo(bars,
         { scaleX: 0 },
         {
           scaleX: 1,
-          duration: 0.8,
+          stagger: 0.07,
+          duration: 0.7,
           ease: "power2.out",
           scrollTrigger: {
-            trigger: bar,
-            start: "top 85%",
+            trigger: container,
+            start: "top 75%",
             toggleActions: "play none none none",
           },
+          delay: 0.8,
         }
       );
-    });
+    }
 
-    // Hero skills pulse glow
-    gsap.to(".hero-skill", {
-      boxShadow: "0 0 25px rgba(0, 255, 159, 0.4), 0 0 50px rgba(0, 255, 159, 0.2)",
+    // Hero skill pulse glow
+    gsap.to(".ext-hero", {
+      boxShadow: "0 0 20px rgba(0, 212, 255, 0.3), 0 0 40px rgba(0, 212, 255, 0.15)",
       repeat: -1,
       yoyo: true,
       duration: 2,
       ease: "sine.inOut",
       scrollTrigger: {
-        trigger: "#skills-grid",
+        trigger: container,
         start: "top 60%",
         toggleActions: "play pause resume pause",
       },
@@ -168,107 +419,315 @@ const getProficiencyColor = (level: string): string => {
 </script>
 
 <style>
-  .skills-power-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+  /* VS Code Window Frame */
+  .vscode-window {
+    background: rgba(30, 30, 30, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.05) inset;
   }
 
-  .skill-category {
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(0, 255, 159, 0.15);
-    border-radius: 12px;
-    padding: 20px;
-    backdrop-filter: blur(10px);
-  }
-
-  .category-header {
+  /* Title Bar */
+  .vscode-titlebar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(0, 255, 159, 0.2);
+    gap: 12px;
+    padding: 10px 16px;
+    background: rgba(37, 37, 38, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   }
 
-  .prompt {
-    color: #ff006e;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
-    font-weight: 600;
-  }
-
-  .category-badge {
-    background: rgba(0, 255, 159, 0.1);
-    color: #00ff9f;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.7rem;
-    font-family: 'JetBrains Mono', monospace;
-    border: 1px solid rgba(0, 255, 159, 0.3);
-  }
-
-  .skills-grid {
+  .titlebar-dots {
     display: flex;
-    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .dot-red { background: #ff5f57; }
+  .dot-yellow { background: #febc2e; }
+  .dot-green { background: #28c840; }
+
+  .titlebar-text {
+    flex: 1;
+    color: #999;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .titlebar-icon {
+    color: #666;
+    font-size: 1rem;
+  }
+
+  /* Search Bar */
+  .vscode-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 12px 16px;
+    padding: 8px 12px;
+    background: rgba(60, 60, 60, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+  }
+
+  .search-icon {
+    font-size: 0.8rem;
+    opacity: 0.5;
+  }
+
+  .search-placeholder {
+    color: #666;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+  }
+
+  /* Tab Bar */
+  .vscode-tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 0 12px;
+    gap: 0;
+  }
+
+  .vscode-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    color: #888;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    transition: color 0.2s;
+    border-bottom: 2px solid transparent;
+  }
+
+  .vscode-tab:hover {
+    color: #ccc;
+  }
+
+  .vscode-tab.active {
+    color: #e0e0e0;
+    border-bottom-color: #00d4ff;
+  }
+
+  .tab-indicator {
+    display: none;
+  }
+
+  .vscode-tab.active .tab-indicator {
+    display: block;
+    width: 3px;
+    height: 16px;
+    background: #00d4ff;
+    border-radius: 2px;
+    position: absolute;
+    left: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .tab-count {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-size: 0.65rem;
+    color: #888;
+  }
+
+  .vscode-tab.active .tab-count {
+    background: rgba(0, 212, 255, 0.15);
+    color: #00d4ff;
+  }
+
+  /* Panels */
+  .vscode-panels {
+    padding: 16px;
+    min-height: 200px;
+  }
+
+  .ext-panel {
+    display: none;
+    flex-direction: column;
     gap: 10px;
   }
 
-  .skill-chip {
-    position: relative;
-    background: rgba(26, 26, 46, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-    padding: 10px 16px;
-    cursor: default;
-    transition: all 0.3s ease;
-    min-width: 100px;
-    backdrop-filter: blur(5px);
+  .ext-panel.active {
+    display: flex;
+  }
+
+  /* Extension Card */
+  .ext-card {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    /* Visible by default - GSAP will handle hide/reveal */
-    visibility: visible;
+    gap: 8px;
+    padding: 14px 16px;
+    background: rgba(37, 37, 38, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    cursor: default;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
   }
 
-  .skill-chip.hero-skill {
-    border-color: rgba(0, 255, 159, 0.4);
-    background: rgba(0, 255, 159, 0.08);
-    min-width: 140px;
-    padding: 14px 20px;
-  }
-
-  .skill-chip:hover {
-    transform: translateY(-3px);
+  .ext-card:hover {
+    transform: translateY(-2px);
     border-color: var(--skill-color, #00ff9f);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 15px color-mix(in srgb, var(--skill-color, #00ff9f) 20%, transparent);
   }
 
-  .skill-chip:hover .skill-level-label {
-    opacity: 1;
+  .ext-card.ext-hero {
+    border-color: rgba(0, 212, 255, 0.25);
+    background: rgba(0, 212, 255, 0.04);
   }
 
-  .skill-name {
-    color: var(--skill-color, #00ff9f);
+  .ext-card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  /* Extension icon */
+  .ext-icon-wrap {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .ext-devicon {
+    font-size: 26px;
+    line-height: 1;
+  }
+
+  /* Fallback for icons not in devicon */
+  .ext-icon-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    border-radius: 6px;
+    opacity: 0.85;
   }
 
-  .hero-skill .skill-name {
-    font-size: 0.95rem;
-    text-shadow: 0 0 8px var(--skill-color, #00ff9f);
+  .ext-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 
-  .skill-level-bar {
+  .ext-name-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .ext-name {
+    color: #e0e0e0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+
+  .ext-hero .ext-name {
+    color: #fff;
+    text-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+  }
+
+  .ext-stars {
+    display: flex;
+    gap: 1px;
+  }
+
+  .star {
+    font-size: 0.7rem;
+    color: #444;
+  }
+
+  .star.filled {
+    color: #ffd700;
+  }
+
+  .ext-level-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: #999;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: auto;
+  }
+
+  .ext-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .ext-category-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: #666;
+  }
+
+  .ext-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .ext-status-active {
+    color: #00ff9f;
+    background: rgba(0, 255, 159, 0.1);
+    border: 1px solid rgba(0, 255, 159, 0.2);
+  }
+
+  .ext-status-installed {
+    color: #666;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  /* Proficiency bar */
+  .ext-bar-track {
     width: 100%;
     height: 3px;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.06);
     border-radius: 2px;
     overflow: hidden;
   }
 
-  .skill-level-fill {
+  .ext-bar-fill {
     width: var(--skill-pct, 60%);
     height: 100%;
     background: var(--skill-color, #00ff9f);
@@ -277,48 +736,120 @@ const getProficiencyColor = (level: string): string => {
     box-shadow: 0 0 6px var(--skill-color, #00ff9f);
   }
 
-  .skill-level-label {
-    font-size: 0.65rem;
-    color: #666;
+  .ext-bar-label {
     font-family: 'JetBrains Mono', monospace;
-    opacity: 0;
-    transition: opacity 0.2s ease;
+    font-size: 0.6rem;
+    color: #555;
+    text-align: right;
+    display: block;
+  }
+
+  /* Footer */
+  .vscode-footer {
+    padding: 10px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(37, 37, 38, 0.6);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: #666;
+    text-align: center;
+  }
+
+  .footer-count {
+    color: #00d4ff;
   }
 
   /* Responsive */
   @media (max-width: 768px) {
-    .skill-category {
-      padding: 15px;
-    }
-
-    .skills-grid {
-      gap: 8px;
-    }
-
-    .skill-chip {
-      min-width: 80px;
+    .vscode-titlebar {
       padding: 8px 12px;
     }
 
-    .skill-chip.hero-skill {
-      min-width: 110px;
-      padding: 10px 14px;
+    .titlebar-text {
+      font-size: 0.65rem;
+      letter-spacing: 1px;
     }
 
-    .skill-name {
-      font-size: 0.72rem;
+    .dot {
+      width: 10px;
+      height: 10px;
     }
 
-    .hero-skill .skill-name {
-      font-size: 0.8rem;
+    .vscode-search {
+      margin: 8px 12px;
+      padding: 6px 10px;
     }
 
-    .prompt {
-      font-size: 0.75rem;
+    .search-placeholder {
+      font-size: 0.7rem;
     }
 
-    .skill-level-label {
-      opacity: 1;
+    .vscode-tabs {
+      padding: 0 6px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .vscode-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .vscode-tab {
+      padding: 8px 12px;
+      font-size: 0.7rem;
+      white-space: nowrap;
+    }
+
+    .vscode-panels {
+      padding: 12px;
+    }
+
+    .ext-card {
+      padding: 10px 12px;
+    }
+
+    .ext-name {
+      font-size: 0.78rem;
+    }
+
+    .ext-name-row {
+      gap: 6px;
+    }
+
+    .ext-level-badge {
+      font-size: 0.6rem;
+      padding: 1px 6px;
+    }
+
+    .ext-meta-row {
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .ext-icon-wrap {
+      width: 34px;
+      height: 34px;
+    }
+
+    .ext-devicon {
+      font-size: 22px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .ext-level-badge {
+      margin-left: 0;
+    }
+
+    .ext-name-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .ext-stars {
+      order: -1;
     }
   }
 </style>
