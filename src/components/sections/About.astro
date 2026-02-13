@@ -1,41 +1,224 @@
 ---
 import Section from "../Section.astro"
-import { basics } from "@cv"
-const { summary } = basics
+import { basics, skills, work, education, projects, interests, languages } from "@cv"
+
+const { summary, location } = basics
+
+// Compute dynamic stats from cv.json
+const currentYear = new Date().getFullYear()
+const earliestYear = work.reduce((min: number, job: any) => {
+  const y = new Date(job.startDate).getFullYear()
+  return y < min ? y : min
+}, currentYear)
+const yearsExperience = currentYear - earliestYear
+const totalSkills = skills.length
+const totalPositions = work.length
+const totalEducation = education.length
+const totalProjects = projects.length
+
+const frontendCount = skills.filter((s: any) =>
+  s.keywords.some((k: string) => k.toLowerCase().includes('frontend'))
+).length
+const backendCount = skills.filter((s: any) =>
+  s.keywords.some((k: string) => k.toLowerCase().includes('backend'))
+).length
+
+// Neofetch system info lines
+const neofetchLines = [
+  { label: "OS", value: `Developer v${yearsExperience}.0` },
+  { label: "Host", value: `${location.city}, ${location.region}` },
+  { label: "Kernel", value: "Tech Lead Frontend" },
+  { label: "Uptime", value: `${yearsExperience} years` },
+  { label: "Packages", value: `${totalSkills} (skills)` },
+  { label: "Shell", value: "React / Next.js / TypeScript" },
+  { label: "Terminal", value: "VS Code + JetBrains Mono" },
+  { label: "CPU", value: "Problem Solving @ 100%" },
+  { label: "GPU", value: "Pixel Perfect Rendering" },
+  { label: "Memory", value: `${totalPositions} positions / ${totalEducation} degrees` },
+  { label: "Disk", value: `${totalProjects} projects deployed` },
+  { label: "Lang", value: languages.length > 0 ? `${languages[0].language} (${languages[0].fluency})` : "Spanish (Native)" },
+]
+
+// ASCII art for neofetch (D3V in block letters)
+const asciiArt = [
+  "  ██████╗ ██████╗ ██╗   ██╗",
+  "  ██╔══██╗╚════██╗██║   ██║",
+  "  ██║  ██║ █████╔╝██║   ██║",
+  "  ██║  ██║ ╚═══██╗╚██╗ ██╔╝",
+  "  ██████╔╝██████╔╝ ╚████╔╝ ",
+  "  ╚═════╝ ╚═════╝   ╚═══╝  ",
+  "       < D3v />             ",
+].join("\n")
+
+// Badge pills for README
+const badges = ["Team Leader", "Fintech", "Gambling", "Scalable Architecture", "GCP", "Serverless", "Micro-frontends", "CI/CD"]
+
+// Fun facts derived from cv.json
+const interestKeywords = interests.flatMap((i: any) => i.keywords).join(" & ")
+const funFacts = [
+  interests.length > 0 ? `${interests[0].name} enthusiast — loves ${interestKeywords}` : null,
+  `Based in ${location.city}, ${location.region}`,
+  languages.length > 0 ? `${languages[0].language} (${languages[0].fluency})` : null,
+  `${yearsExperience}+ years building for the web`,
+].filter(Boolean)
+
+// Activity Monitor stats
+const monitorStats = [
+  { label: "Experience", value: `${yearsExperience} yrs`, percent: Math.min(Math.round((yearsExperience / 15) * 100), 100), color: "#00ff9f" },
+  { label: "Skills Loaded", value: `${totalSkills} pkg`, percent: Math.min(Math.round((totalSkills / 50) * 100), 100), color: "#00d4ff" },
+  { label: "Frontend", value: `${frontendCount} mod`, percent: Math.min(Math.round((frontendCount / 25) * 100), 100), color: "#c678dd" },
+  { label: "Backend", value: `${backendCount} mod`, percent: Math.min(Math.round((backendCount / 25) * 100), 100), color: "#e5c07b" },
+]
+
+// Process table
+const processes = [
+  { pid: "1024", name: "react.runtime", cpu: "95.2", status: "running" },
+  { pid: "1025", name: "nextjs.server", cpu: "88.7", status: "running" },
+  { pid: "1026", name: "typescript.compiler", cpu: "72.4", status: "running" },
+  { pid: "1027", name: "gsap.animations", cpu: "45.1", status: "running" },
+  { pid: "1028", name: "node.backend", cpu: "38.9", status: "idle" },
+]
 ---
 
 <Section title="About">
-  <div class="code-editor" id="about-editor">
-    <div class="editor-header">
-      <div class="editor-tabs">
-        <div class="tab active" data-tab>about.ts</div>
-        <div class="tab" data-tab>skills.json</div>
-        <div class="tab" data-tab>experience.md</div>
+  <div class="desktop" id="about-desktop">
+    <!-- Window 1: Neofetch Terminal (full width, top) -->
+    <div class="window window-neofetch" data-window>
+      <div class="window-titlebar">
+        <div class="window-dots">
+          <span class="dot dot-close"></span>
+          <span class="dot dot-minimize"></span>
+          <span class="dot dot-maximize"></span>
+        </div>
+        <span class="window-title">d3vaya@portfolio: ~</span>
+      </div>
+      <div class="window-content neofetch-content">
+        <div class="neofetch-ascii">
+          <pre class="ascii-art">{asciiArt}</pre>
+        </div>
+        <div class="neofetch-info">
+          <div class="neofetch-header" data-neo-line>
+            <span class="neo-user">d3vaya</span><span class="neo-at">@</span><span class="neo-host">portfolio</span>
+          </div>
+          <div class="neofetch-separator" data-neo-line>─────────────────────</div>
+          {neofetchLines.map(line => (
+            <div class="neofetch-line" data-neo-line>
+              <span class="neo-label">{line.label}:</span>
+              <span class="neo-value">{line.value}</span>
+            </div>
+          ))}
+          <div class="neofetch-colors" data-neo-line>
+            <span class="color-block" style="background:#ff5f57"></span>
+            <span class="color-block" style="background:#febc2e"></span>
+            <span class="color-block" style="background:#28c840"></span>
+            <span class="color-block" style="background:#00d4ff"></span>
+            <span class="color-block" style="background:#c678dd"></span>
+            <span class="color-block" style="background:#e5c07b"></span>
+            <span class="color-block" style="background:#00ff9f"></span>
+            <span class="color-block" style="background:#ff006f"></span>
+          </div>
+          <div class="neofetch-cursor" data-neo-line>
+            <span class="neo-prompt">$</span> <span class="cursor-blink">_</span>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="editor-content">
-      <div class="line-numbers">
-        {Array.from({ length: 14 }, (_, i) => (
-          <span data-ln>{i + 1}</span>
-        ))}
+
+    <!-- Window 2: README.md Viewer (left, bottom row) -->
+    <div class="window window-readme" data-window>
+      <div class="window-titlebar">
+        <div class="window-dots">
+          <span class="dot dot-close"></span>
+          <span class="dot dot-minimize"></span>
+          <span class="dot dot-maximize"></span>
+        </div>
+        <span class="window-title">README.md</span>
       </div>
-      <div class="code-content">
-        <div class="code-line" data-code-line><span class="comment">// Developer Profile</span></div>
-        <div class="code-line" data-code-line><span class="keyword">interface</span> <span class="variable">Developer</span> {"{"}</div>
-        <div class="code-line" data-code-line>  <span class="property">role</span>: <span class="type">string</span>;</div>
-        <div class="code-line" data-code-line>  <span class="property">experience</span>: <span class="type">number</span>;</div>
-        <div class="code-line" data-code-line>  <span class="property">summary</span>: <span class="type">string</span>;</div>
-        <div class="code-line" data-code-line>{"}"}</div>
-        <div class="code-line" data-code-line>&nbsp;</div>
-        <div class="code-line" data-code-line><span class="keyword">const</span> <span class="variable">me</span>: <span class="type">Developer</span> = {"{"}</div>
-        <div class="code-line" data-code-line>  <span class="property">role</span>: <span class="string">"Tech Lead Frontend"</span>,</div>
-        <div class="code-line" data-code-line>  <span class="property">experience</span>: <span class="number">12</span>,</div>
-        <div class="code-line summary-line" data-code-line>  <span class="property">summary</span>: <span class="string">"{summary}"</span>,</div>
-        <div class="code-line" data-code-line>{"}"};</div>
-        <div class="code-line" data-code-line>&nbsp;</div>
-        <div class="code-line" data-code-line><span class="comment">// Ready to build something amazing</span></div>
+      <div class="window-content readme-content">
+        <h3 class="readme-heading" data-readme-el>## About Me</h3>
+        <p class="readme-text" data-readme-el>{summary}</p>
+        <div class="readme-badges" data-readme-el>
+          {badges.map(badge => (
+            <span class="badge">{badge}</span>
+          ))}
+        </div>
+        <h3 class="readme-heading readme-heading-fun" data-readme-el>## Fun Facts</h3>
+        <ul class="readme-list" data-readme-el>
+          {funFacts.map(fact => (
+            <li class="readme-fact">- {fact}</li>
+          ))}
+        </ul>
       </div>
-      <div class="glow-line" id="glow-line"></div>
+    </div>
+
+    <!-- Window 3: Activity Monitor (right, bottom row) -->
+    <div class="window window-monitor" data-window>
+      <div class="window-titlebar">
+        <div class="window-dots">
+          <span class="dot dot-close"></span>
+          <span class="dot dot-minimize"></span>
+          <span class="dot dot-maximize"></span>
+        </div>
+        <span class="window-title">Activity Monitor</span>
+      </div>
+      <div class="window-content monitor-content">
+        <div class="monitor-stats">
+          {monitorStats.map(stat => (
+            <div class="stat-row" data-stat-row>
+              <div class="stat-header">
+                <span class="stat-label">{stat.label}</span>
+                <span class="stat-value">{stat.value}</span>
+              </div>
+              <div class="stat-bar-track">
+                <div
+                  class="stat-bar-fill"
+                  data-stat-bar
+                  style={`--bar-width: ${stat.percent}%; --bar-color: ${stat.color}`}
+                ></div>
+              </div>
+              <span class="stat-percent">{stat.percent}%</span>
+            </div>
+          ))}
+        </div>
+        <div class="process-table">
+          <div class="process-header">
+            <span>PID</span>
+            <span>PROCESS</span>
+            <span>CPU%</span>
+            <span>STATUS</span>
+          </div>
+          {processes.map(proc => (
+            <div class="process-row" data-process-row>
+              <span class="process-pid">{proc.pid}</span>
+              <span class="process-name">{proc.name}</span>
+              <span class="process-cpu">{proc.cpu}%</span>
+              <span class={`process-status status-${proc.status}`}>{proc.status}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Taskbar (bottom) -->
+    <div class="taskbar" data-taskbar>
+      <div class="taskbar-apps">
+        <button class="taskbar-app active" data-taskbar-btn>
+          <span class="taskbar-icon">&gt;_</span>
+          <span class="taskbar-label">Terminal</span>
+        </button>
+        <button class="taskbar-app" data-taskbar-btn>
+          <span class="taskbar-icon">M↓</span>
+          <span class="taskbar-label">README</span>
+        </button>
+        <button class="taskbar-app" data-taskbar-btn>
+          <span class="taskbar-icon">%</span>
+          <span class="taskbar-label">Monitor</span>
+        </button>
+      </div>
+      <div class="taskbar-tray">
+        <span class="tray-lang">ES</span>
+        <span class="tray-clock" id="about-clock">--:--</span>
+      </div>
     </div>
   </div>
 </Section>
@@ -44,202 +227,526 @@ const { summary } = basics
   import { gsap, prefersReducedMotion } from "@/scripts/gsap-init";
 
   document.addEventListener("DOMContentLoaded", () => {
+    // Live clock — runs regardless of motion preference
+    function updateClock() {
+      const clock = document.getElementById("about-clock");
+      if (!clock) return;
+      const now = new Date();
+      clock.textContent = now.toLocaleTimeString("es-CL", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+    updateClock();
+    setInterval(updateClock, 60000);
+
     if (prefersReducedMotion()) return;
 
-    const editor = document.getElementById("about-editor");
-    if (!editor) return;
+    const desktop = document.getElementById("about-desktop");
+    if (!desktop) return;
 
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: editor,
+        trigger: desktop,
         start: "top 80%",
         toggleActions: "play none none none",
       },
     });
 
-    // Editor container scales in
-    tl.from(editor, {
-      scale: 0.95,
+    // 1. Desktop grid fades in
+    tl.from(desktop, {
       opacity: 0,
-      y: 50,
-      duration: 0.6,
-      ease: "power3.out",
+      duration: 0.4,
+      ease: "power2.out",
     });
 
-    // Tabs stagger
-    tl.from("[data-tab]", {
-      y: -20,
+    // 2. Windows stagger from different directions
+    tl.from(".window-neofetch", {
+      y: -60,
       opacity: 0,
-      stagger: 0.1,
-      duration: 0.3,
+      duration: 0.6,
+      ease: "back.out(1.2)",
+    }, "-=0.1");
+
+    tl.from(".window-readme", {
+      x: -60,
+      opacity: 0,
+      duration: 0.6,
+      ease: "back.out(1.2)",
     }, "-=0.3");
 
-    // Line numbers stagger
-    tl.from("[data-ln]", {
+    tl.from(".window-monitor", {
+      x: 60,
+      opacity: 0,
+      duration: 0.6,
+      ease: "back.out(1.2)",
+    }, "-=0.5");
+
+    // 3. ASCII art fades in
+    tl.from(".neofetch-ascii", {
+      opacity: 0,
+      scale: 0.8,
+      duration: 0.5,
+      ease: "power2.out",
+    }, "-=0.2");
+
+    // 4. Neofetch lines type in with stagger
+    tl.from("[data-neo-line]", {
       x: -20,
       opacity: 0,
-      stagger: 0.03,
-      duration: 0.2,
+      stagger: 0.06,
+      duration: 0.3,
+      ease: "power2.out",
+    }, "-=0.3");
+
+    // 5. README elements reveal with stagger
+    tl.from("[data-readme-el]", {
+      y: 20,
+      opacity: 0,
+      stagger: 0.08,
+      duration: 0.4,
+      ease: "power2.out",
+    }, "-=0.4");
+
+    // 6. Monitor stats stagger + bars fill scaleX(0) → 1
+    tl.from("[data-stat-row]", {
+      x: 30,
+      opacity: 0,
+      stagger: 0.08,
+      duration: 0.3,
+      ease: "power2.out",
+    }, "-=0.3");
+
+    tl.from("[data-stat-bar]", {
+      scaleX: 0,
+      transformOrigin: "left center",
+      stagger: 0.1,
+      duration: 0.6,
+      ease: "power3.out",
     }, "-=0.2");
 
-    // Code lines stagger
-    tl.from("[data-code-line]", {
-      x: -30,
+    tl.from("[data-process-row]", {
+      y: 10,
       opacity: 0,
       stagger: 0.05,
-      duration: 0.3,
+      duration: 0.2,
+      ease: "power2.out",
+    }, "-=0.3");
+
+    // 7. Taskbar slides up from bottom
+    tl.from("[data-taskbar]", {
+      y: 30,
+      opacity: 0,
+      duration: 0.4,
+      ease: "back.out(1.2)",
     }, "-=0.2");
 
-    // Glow line sweep animation
-    const glowLine = document.getElementById("glow-line");
-    if (glowLine) {
-      const codeLines = editor.querySelectorAll("[data-code-line]");
-      const lineHeight = 28;
-      gsap.to(glowLine, {
-        y: (codeLines.length - 1) * lineHeight,
-        duration: 4,
-        repeat: -1,
-        ease: `steps(${codeLines.length})`,
-        scrollTrigger: {
-          trigger: editor,
-          start: "top 60%",
-          toggleActions: "play pause resume pause",
-        },
-      });
-    }
+    // 8. Cursor blinks infinitely
+    gsap.to(".cursor-blink", {
+      opacity: 0,
+      repeat: -1,
+      yoyo: true,
+      duration: 0.5,
+      ease: "steps(1)",
+    });
   });
 </script>
 
 <style>
-  .code-editor {
-    background: #1a1a2e;
-    border: 1px solid rgba(0, 255, 159, 0.3);
-    border-radius: 10px;
-    overflow: hidden;
+  /* ── Desktop Grid Layout ────────────────────────── */
+  .desktop {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
     font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── Window Chrome ──────────────────────────────── */
+  .window {
+    background: rgba(15, 15, 30, 0.95);
+    border: 1px solid rgba(0, 255, 159, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
     box-shadow:
-      0 10px 40px rgba(0, 0, 0, 0.5),
-      0 0 20px rgba(0, 255, 159, 0.1);
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      0 0 15px rgba(0, 255, 159, 0.05);
   }
 
-  .editor-header {
-    background: rgba(0, 0, 0, 0.5);
-    border-bottom: 1px solid rgba(0, 255, 159, 0.2);
+  .window-neofetch {
+    grid-column: 1 / -1;
   }
 
-  .editor-tabs {
+  .window-titlebar {
     display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 14px;
+    background: rgba(0, 0, 0, 0.5);
+    border-bottom: 1px solid rgba(0, 255, 159, 0.15);
   }
 
-  .tab {
-    padding: 10px 18px;
-    color: #666;
-    background: transparent;
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
+  .window-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot-close { background: #ff5f57; }
+  .dot-minimize { background: #febc2e; }
+  .dot-maximize { background: #28c840; }
+
+  .window-title {
+    font-size: 0.72rem;
+    color: #888;
+  }
+
+  .window-content {
+    padding: 16px;
+  }
+
+  /* ── Window 1: Neofetch Terminal ────────────────── */
+  .neofetch-content {
+    display: flex;
+    gap: 24px;
+    padding: 20px;
+  }
+
+  .ascii-art {
+    color: #00ff9f;
+    font-size: 0.5rem;
+    line-height: 1.15;
+    margin: 0;
+    white-space: pre;
+    text-shadow: 0 0 10px rgba(0, 255, 159, 0.3);
+    flex-shrink: 0;
+  }
+
+  .neofetch-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.78rem;
+    min-width: 0;
+  }
+
+  .neofetch-header {
+    margin-bottom: 2px;
+  }
+
+  .neo-user { color: #00ff9f; font-weight: 700; }
+  .neo-at { color: #888; }
+  .neo-host { color: #00d4ff; font-weight: 700; }
+
+  .neofetch-separator {
+    color: #00ff9f;
+    margin-bottom: 4px;
+    opacity: 0.5;
+  }
+
+  .neofetch-line {
+    display: flex;
+    gap: 8px;
+  }
+
+  .neo-label {
+    color: #00d4ff;
+    font-weight: 500;
+    min-width: 90px;
+    flex-shrink: 0;
+  }
+
+  .neo-value {
+    color: #b3b3b3;
+  }
+
+  .neofetch-colors {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+  }
+
+  .color-block {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+  }
+
+  .neofetch-cursor {
+    margin-top: 8px;
+  }
+
+  .neo-prompt {
+    color: #00ff9f;
+  }
+
+  .cursor-blink {
+    color: #00ff9f;
+    font-weight: 700;
+  }
+
+  /* ── Window 2: README.md Viewer ─────────────────── */
+  .readme-content {
+    padding: 20px;
+  }
+
+  .readme-heading {
+    color: #00ff9f !important;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    text-shadow: none !important;
+  }
+
+  .readme-heading-fun {
+    margin-top: 16px;
+  }
+
+  .readme-text {
     font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    line-height: 1.6;
+    margin-bottom: 12px;
   }
 
-  .tab.active {
-    background: #1a1a2e;
+  .readme-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .badge {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.65rem;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    color: #00d4ff;
+  }
+
+  .readme-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .readme-fact {
+    font-size: 0.78rem;
+    color: #b3b3b3;
+  }
+
+  /* ── Window 3: Activity Monitor ─────────────────── */
+  .monitor-content {
+    padding: 16px;
+  }
+
+  .monitor-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: 120px 1fr 42px;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .stat-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    color: #ccc;
+  }
+
+  .stat-value {
+    font-size: 0.62rem;
+    color: #888;
+  }
+
+  .stat-bar-track {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .stat-bar-fill {
+    height: 100%;
+    width: var(--bar-width);
+    background: var(--bar-color);
+    border-radius: 4px;
+    box-shadow: 0 0 8px var(--bar-color);
+  }
+
+  .stat-percent {
+    font-size: 0.68rem;
+    color: #888;
+    text-align: right;
+  }
+
+  /* Process Table */
+  .process-table {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 10px;
+  }
+
+  .process-header,
+  .process-row {
+    display: grid;
+    grid-template-columns: 38px 1fr 48px 58px;
+    gap: 8px;
+    font-size: 0.65rem;
+    padding: 3px 0;
+  }
+
+  .process-header {
+    color: #666;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 5px;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    font-size: 0.58rem;
+  }
+
+  .process-pid { color: #666; }
+  .process-name { color: #b3b3b3; }
+  .process-cpu { color: #e5c07b; text-align: right; }
+  .status-running { color: #00ff9f; }
+  .status-idle { color: #666; }
+
+  /* ── Taskbar ────────────────────────────────────── */
+  .taskbar {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 14px;
+    background: rgba(10, 10, 20, 0.95);
+    border: 1px solid rgba(0, 255, 159, 0.15);
+    border-radius: 8px;
+  }
+
+  .taskbar-apps {
+    display: flex;
+    gap: 4px;
+  }
+
+  .taskbar-app {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: #888;
+    transition: all 0.2s ease;
+  }
+
+  .taskbar-app:hover {
+    background: rgba(0, 255, 159, 0.05);
+    border-color: rgba(0, 255, 159, 0.2);
+    color: #ccc;
+  }
+
+  .taskbar-app.active {
+    background: rgba(0, 255, 159, 0.08);
+    border-color: rgba(0, 255, 159, 0.3);
     color: #00ff9f;
     border-bottom: 2px solid #00ff9f;
   }
 
-  .tab:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.05);
-    color: #aaa;
+  .taskbar-icon {
+    font-weight: 700;
+    font-size: 0.72rem;
   }
 
-  .editor-content {
+  .taskbar-tray {
     display: flex;
-    min-height: 150px;
-    position: relative;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.7rem;
   }
 
-  .line-numbers {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 15px 12px;
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
-    display: flex;
-    flex-direction: column;
-    font-size: 0.8rem;
-    color: #555;
-    user-select: none;
-    min-width: 45px;
-    text-align: right;
-    line-height: 1.75;
+  .tray-lang {
+    color: #888;
+    padding: 2px 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
   }
 
-  .code-content {
-    padding: 15px 20px;
-    flex: 1;
-    font-size: 0.85rem;
-    line-height: 1.75;
-    overflow-x: auto;
+  .tray-clock {
+    color: #b3b3b3;
+    font-variant-numeric: tabular-nums;
   }
 
-  .code-line {
-    white-space: nowrap;
-    position: relative;
-  }
-
-  .glow-line {
-    position: absolute;
-    left: 45px;
-    top: 15px;
-    right: 0;
-    height: 28px;
-    background: rgba(0, 255, 159, 0.04);
-    border-left: 2px solid rgba(0, 255, 159, 0.3);
-    pointer-events: none;
-  }
-
-  .keyword { color: #c678dd; font-weight: 500; }
-  .variable { color: #61afef; }
-  .property { color: #e5c07b; }
-  .string { color: #98c379; }
-  .comment { color: #5c6370; font-style: italic; }
-  .type { color: #e06c75; }
-  .number { color: #d19a66; }
-
-  .code-line:hover {
-    background: rgba(0, 255, 159, 0.05);
-  }
-
-  .summary-line .string {
-    white-space: normal;
-    display: inline;
-    word-break: break-word;
-  }
-
+  /* ── Responsive: Mobile ≤768px ──────────────────── */
   @media (max-width: 768px) {
-    .code-content {
-      padding: 10px 12px;
-      font-size: 0.72rem;
-      line-height: 1.6;
+    .desktop {
+      grid-template-columns: 1fr;
     }
 
-    .line-numbers {
-      min-width: 35px;
-      padding: 10px 8px;
-      font-size: 0.7rem;
-      line-height: 1.6;
-    }
-
-    .tab {
-      padding: 8px 12px;
-      font-size: 0.7rem;
-    }
-
-    .glow-line {
+    .neofetch-ascii {
       display: none;
     }
 
-    .code-editor {
-      margin: 0 -5px;
-      border-radius: 8px;
+    .neofetch-content {
+      padding: 14px;
+    }
+
+    .neo-label {
+      min-width: 72px;
+    }
+
+    .neofetch-info {
+      font-size: 0.7rem;
+    }
+
+    .stat-row {
+      grid-template-columns: 95px 1fr 38px;
+    }
+
+    .stat-label {
+      font-size: 0.66rem;
+    }
+
+    .stat-value {
+      font-size: 0.58rem;
+    }
+
+    .process-header,
+    .process-row {
+      grid-template-columns: 32px 1fr 42px 50px;
+      font-size: 0.6rem;
+    }
+
+    .taskbar-label {
+      display: none;
+    }
+
+    .taskbar-app {
+      padding: 5px 8px;
+    }
+
+    .taskbar-tray {
+      gap: 8px;
+      font-size: 0.65rem;
     }
   }
 </style>
