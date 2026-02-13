@@ -1,0 +1,461 @@
+---
+import Section from "../Section.astro"
+import { education } from "@cv"
+
+const sorted = [...education].sort(
+  (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+)
+
+const getPackageName = (area: string) =>
+  area.toLowerCase().replace(/[\s]+/g, "-").replace(/[^a-z0-9-]/g, "")
+
+const getVersion = (startDate: string) => {
+  const d = new Date(startDate)
+  return `${d.getFullYear()}.${d.getMonth() + 1}.0`
+}
+---
+
+<Section title="> education --package">
+  <div class="pkg-window" id="edu-package">
+    <!-- Title bar -->
+    <div class="pkg-titlebar">
+      <div class="pkg-dots">
+        <span class="pdot pdot-r"></span>
+        <span class="pdot pdot-y"></span>
+        <span class="pdot pdot-g"></span>
+      </div>
+      <span class="pkg-filename">package.json — education</span>
+    </div>
+
+    <!-- Line numbers + code -->
+    <div class="pkg-editor">
+      <div class="pkg-code" id="pkg-code">
+        {/* Opening brace */}
+        <div class="pkg-line" data-pkg-line>
+          <span class="pkg-ln" data-ln>1</span>
+          <span class="pkg-bracket">{'{'}</span>
+        </div>
+
+        {/* Name */}
+        <div class="pkg-line" data-pkg-line>
+          <span class="pkg-ln" data-ln>2</span>
+          <span class="pkg-indent"></span>
+          <span class="pkg-key">"name"</span>
+          <span class="pkg-colon">:</span>
+          <span class="pkg-string">"@d3vaya/education"</span>
+          <span class="pkg-comma">,</span>
+        </div>
+
+        {/* Version */}
+        <div class="pkg-line" data-pkg-line>
+          <span class="pkg-ln" data-ln>3</span>
+          <span class="pkg-indent"></span>
+          <span class="pkg-key">"version"</span>
+          <span class="pkg-colon">:</span>
+          <span class="pkg-string">"1.0.0"</span>
+          <span class="pkg-comma">,</span>
+        </div>
+
+        {/* Description */}
+        <div class="pkg-line" data-pkg-line>
+          <span class="pkg-ln" data-ln>4</span>
+          <span class="pkg-indent"></span>
+          <span class="pkg-key">"description"</span>
+          <span class="pkg-colon">:</span>
+          <span class="pkg-string">"Academic background & professional education"</span>
+          <span class="pkg-comma">,</span>
+        </div>
+
+        {/* Empty line */}
+        <div class="pkg-line" data-pkg-line>
+          <span class="pkg-ln" data-ln>5</span>
+        </div>
+
+        {/* Dependencies header */}
+        <div class="pkg-line" data-pkg-line>
+          <span class="pkg-ln" data-ln>6</span>
+          <span class="pkg-indent"></span>
+          <span class="pkg-key">"dependencies"</span>
+          <span class="pkg-colon">:</span>
+          <span class="pkg-bracket">{'{'}</span>
+        </div>
+
+        {/* Education entries as dependencies */}
+        {sorted.map((edu, i) => {
+          const pkg = getPackageName(edu.area)
+          const version = getVersion(edu.startDate)
+          const lineNum = 7 + i
+          const isLast = i === sorted.length - 1
+          const startYear = new Date(edu.startDate).getFullYear()
+          const endYear = edu.endDate ? new Date(edu.endDate).getFullYear() : "Present"
+
+          return (
+            <div class="pkg-line pkg-dep-line" data-pkg-line data-pkg-dep>
+              <span class="pkg-ln" data-ln>{lineNum}</span>
+              <span class="pkg-indent"></span>
+              <span class="pkg-indent"></span>
+              <span class="pkg-dep-key">"{pkg}"</span>
+              <span class="pkg-colon">:</span>
+              <span class="pkg-dep-version">"^{version}"</span>
+              {!isLast && <span class="pkg-comma">,</span>}
+              <span class="pkg-comment">// {edu.institution} ({startYear}–{endYear})</span>
+            </div>
+          )
+        })}
+
+        {/* Close dependencies */}
+        <div class="pkg-line" data-pkg-line>
+          <span class="pkg-ln" data-ln>{7 + sorted.length}</span>
+          <span class="pkg-indent"></span>
+          <span class="pkg-bracket">{'}'}</span>
+          <span class="pkg-comma">,</span>
+        </div>
+
+        {/* Empty line */}
+        <div class="pkg-line" data-pkg-line>
+          <span class="pkg-ln" data-ln>{8 + sorted.length}</span>
+        </div>
+
+        {/* Metadata / scripts */}
+        <div class="pkg-line" data-pkg-line>
+          <span class="pkg-ln" data-ln>{9 + sorted.length}</span>
+          <span class="pkg-indent"></span>
+          <span class="pkg-key">"scripts"</span>
+          <span class="pkg-colon">:</span>
+          <span class="pkg-bracket">{'{'}</span>
+        </div>
+
+        <div class="pkg-line" data-pkg-line>
+          <span class="pkg-ln" data-ln>{10 + sorted.length}</span>
+          <span class="pkg-indent"></span>
+          <span class="pkg-indent"></span>
+          <span class="pkg-key">"learn"</span>
+          <span class="pkg-colon">:</span>
+          <span class="pkg-string">"never-stop"</span>
+          <span class="pkg-comma">,</span>
+        </div>
+
+        <div class="pkg-line" data-pkg-line>
+          <span class="pkg-ln" data-ln>{11 + sorted.length}</span>
+          <span class="pkg-indent"></span>
+          <span class="pkg-indent"></span>
+          <span class="pkg-key">"grow"</span>
+          <span class="pkg-colon">:</span>
+          <span class="pkg-string">"continuously"</span>
+        </div>
+
+        <div class="pkg-line" data-pkg-line>
+          <span class="pkg-ln" data-ln>{12 + sorted.length}</span>
+          <span class="pkg-indent"></span>
+          <span class="pkg-bracket">{'}'}</span>
+        </div>
+
+        {/* Closing brace */}
+        <div class="pkg-line" data-pkg-line>
+          <span class="pkg-ln" data-ln>{13 + sorted.length}</span>
+          <span class="pkg-bracket">{'}'}</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Mini-map decoration */}
+    <div class="pkg-minimap"></div>
+  </div>
+</Section>
+
+<script>
+  import { gsap, prefersReducedMotion } from "@/scripts/gsap-init";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("edu-package");
+    if (!container) return;
+
+    const lines = container.querySelectorAll("[data-pkg-line]");
+    const deps = container.querySelectorAll("[data-pkg-dep]");
+
+    if (prefersReducedMotion()) {
+      lines.forEach(el => {
+        (el as HTMLElement).style.opacity = "1";
+        (el as HTMLElement).style.visibility = "visible";
+      });
+      return;
+    }
+
+    // Window entrance
+    gsap.fromTo(container,
+      { scale: 0.96, autoAlpha: 0 },
+      {
+        scale: 1,
+        autoAlpha: 1,
+        duration: 0.6,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: container,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    // Lines type-in stagger (code appearing line by line)
+    gsap.set(lines, { autoAlpha: 0, x: -10 });
+
+    gsap.to(lines, {
+      autoAlpha: 1,
+      x: 0,
+      stagger: 0.06,
+      duration: 0.25,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: container,
+        start: "top 75%",
+        toggleActions: "play none none none",
+      },
+      delay: 0.3,
+    });
+
+    // Dependency lines get a highlight flash
+    deps.forEach((dep, i) => {
+      gsap.fromTo(dep,
+        { backgroundColor: "rgba(0, 212, 255, 0.15)" },
+        {
+          backgroundColor: "rgba(0, 212, 255, 0)",
+          duration: 1.2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: dep,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+          delay: 0.5 + i * 0.15,
+        }
+      );
+    });
+  });
+</script>
+
+<style>
+  /* Package.json Window */
+  .pkg-window {
+    background: rgba(30, 30, 30, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.6),
+      0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+    position: relative;
+  }
+
+  /* Title bar */
+  .pkg-titlebar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: rgba(37, 37, 38, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .pkg-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .pdot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .pdot-r { background: #ff5f57; }
+  .pdot-y { background: #febc2e; }
+  .pdot-g { background: #28c840; }
+
+  .pkg-filename {
+    flex: 1;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: #888;
+  }
+
+  /* Editor area */
+  .pkg-editor {
+    padding: 16px 0;
+    overflow-x: auto;
+  }
+
+  .pkg-code {
+    padding: 0 16px;
+  }
+
+  .pkg-line {
+    display: flex;
+    align-items: baseline;
+    gap: 0;
+    min-height: 24px;
+    line-height: 24px;
+    padding: 0 8px;
+    border-radius: 2px;
+    transition: background 0.2s ease;
+  }
+
+  .pkg-line:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  /* Line numbers */
+  .pkg-ln {
+    width: 32px;
+    min-width: 32px;
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: #444;
+    user-select: none;
+    margin-right: 16px;
+    flex-shrink: 0;
+  }
+
+  /* Indent */
+  .pkg-indent {
+    display: inline-block;
+    width: 20px;
+    flex-shrink: 0;
+  }
+
+  /* Syntax colors */
+  .pkg-bracket {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: #ffd700;
+  }
+
+  .pkg-key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: #9cdcfe;
+  }
+
+  .pkg-colon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: #d4d4d4;
+    margin: 0 6px;
+  }
+
+  .pkg-string {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: #ce9178;
+  }
+
+  .pkg-comma {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: #d4d4d4;
+  }
+
+  .pkg-comment {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: #6a9955;
+    margin-left: 12px;
+    white-space: nowrap;
+  }
+
+  /* Dependency lines */
+  .pkg-dep-key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: #4ec9b0;
+    font-weight: 600;
+  }
+
+  .pkg-dep-version {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: #b5cea8;
+  }
+
+  .pkg-dep-line {
+    border-left: 2px solid transparent;
+  }
+
+  .pkg-dep-line:hover {
+    border-left-color: #00d4ff;
+    background: rgba(0, 212, 255, 0.05);
+  }
+
+  /* Minimap decoration */
+  .pkg-minimap {
+    position: absolute;
+    top: 44px;
+    right: 8px;
+    width: 40px;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(156, 220, 254, 0.06) 0px,
+      rgba(156, 220, 254, 0.06) 2px,
+      transparent 2px,
+      transparent 4px
+    );
+    border-left: 1px solid rgba(255, 255, 255, 0.03);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .pkg-titlebar {
+      padding: 8px 12px;
+    }
+
+    .pdot {
+      width: 10px;
+      height: 10px;
+    }
+
+    .pkg-code {
+      padding: 0 8px;
+    }
+
+    .pkg-line {
+      min-height: 22px;
+      line-height: 22px;
+      padding: 0 4px;
+    }
+
+    .pkg-ln {
+      width: 24px;
+      min-width: 24px;
+      font-size: 0.6rem;
+      margin-right: 10px;
+    }
+
+    .pkg-indent {
+      width: 14px;
+    }
+
+    .pkg-bracket,
+    .pkg-key,
+    .pkg-colon,
+    .pkg-string,
+    .pkg-comma,
+    .pkg-dep-key,
+    .pkg-dep-version {
+      font-size: 0.7rem;
+    }
+
+    .pkg-comment {
+      display: none;
+    }
+
+    .pkg-minimap {
+      display: none;
+    }
+  }
+</style>

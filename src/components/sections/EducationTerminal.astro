@@ -1,0 +1,424 @@
+---
+import Section from "../Section.astro"
+import { education } from "@cv"
+
+// Reverse so oldest installs first (chronological)
+const sorted = [...education].sort(
+  (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+)
+
+const getPackageName = (area: string) =>
+  area.toLowerCase().replace(/[\s]+/g, "-").replace(/[^a-z0-9-]/g, "")
+
+const getDuration = (start: string, end: string | undefined) => {
+  const s = new Date(start)
+  const e = end ? new Date(end) : new Date()
+  const months = (e.getFullYear() - s.getFullYear()) * 12 + (e.getMonth() - s.getMonth())
+  const years = Math.floor(months / 12)
+  const rem = months % 12
+  if (years > 0 && rem > 0) return `${years}y ${rem}m`
+  if (years > 0) return `${years}y`
+  return `${rem}m`
+}
+
+const totalSize = sorted.length
+---
+
+<Section title="> education --install">
+  <div class="term-window" id="edu-terminal">
+    <!-- Title bar -->
+    <div class="term-titlebar">
+      <div class="term-dots">
+        <span class="tdot tdot-r"></span>
+        <span class="tdot tdot-y"></span>
+        <span class="tdot tdot-g"></span>
+      </div>
+      <span class="term-title">zsh — npm install</span>
+    </div>
+
+    <!-- Terminal body -->
+    <div class="term-body">
+      <!-- Initial command -->
+      <div class="term-line term-cmd-line" data-term-line>
+        <span class="term-prompt">$</span>
+        <span class="term-cmd">npm install --save education-stack</span>
+      </div>
+
+      <div class="term-line term-info" data-term-line>
+        <span class="term-dim">resolving dependencies...</span>
+      </div>
+
+      {sorted.map((edu, i) => {
+        const pkg = getPackageName(edu.area)
+        const version = new Date(edu.startDate).getFullYear()
+        const endYear = edu.endDate ? new Date(edu.endDate).getFullYear() : "present"
+        const duration = getDuration(edu.startDate, edu.endDate)
+        const isLast = i === sorted.length - 1
+
+        return (
+          <div class="term-package" data-term-pkg>
+            {/* Package header */}
+            <div class="term-line" data-term-line>
+              <span class="term-dim">added</span>
+              <span class="term-pkg-name">{pkg}</span>
+              <span class="term-at">@</span>
+              <span class="term-version">{version}</span>
+            </div>
+
+            {/* Progress bar */}
+            <div class="term-line term-progress-line" data-term-line>
+              <div class="term-progress-track">
+                <div class="term-progress-fill" data-term-bar></div>
+              </div>
+              <span class="term-progress-pct" data-term-pct>100%</span>
+            </div>
+
+            {/* Details */}
+            <div class="term-line term-detail" data-term-line>
+              <span class="term-check">&#10003;</span>
+              <span class="term-detail-label">institution:</span>
+              <span class="term-detail-value">{edu.institution}</span>
+            </div>
+            <div class="term-line term-detail" data-term-line>
+              <span class="term-check">&#10003;</span>
+              <span class="term-detail-label">area:</span>
+              <span class="term-detail-value">{edu.area}</span>
+            </div>
+            <div class="term-line term-detail" data-term-line>
+              <span class="term-check">&#10003;</span>
+              <span class="term-detail-label">period:</span>
+              <span class="term-detail-value">{version} — {endYear}</span>
+              <span class="term-duration">({duration})</span>
+            </div>
+
+            {/* Installed confirmation */}
+            <div class="term-line term-success" data-term-line>
+              <span class="term-ok">&#x2714;</span>
+              <span>{pkg}@{version} installed successfully</span>
+            </div>
+
+            {!isLast && <div class="term-separator"></div>}
+          </div>
+        )
+      })}
+
+      {/* Summary */}
+      <div class="term-separator"></div>
+      <div class="term-line term-summary" data-term-line>
+        <span class="term-ok">&#x2714;</span>
+        <span>added {totalSize} packages in education-stack</span>
+      </div>
+      <div class="term-line term-audit" data-term-line>
+        <span class="term-dim">found</span>
+        <span class="term-highlight">0</span>
+        <span class="term-dim">vulnerabilities</span>
+      </div>
+
+      {/* Blinking cursor */}
+      <div class="term-line term-cmd-line">
+        <span class="term-prompt">$</span>
+        <span class="term-cursor"></span>
+      </div>
+    </div>
+  </div>
+</Section>
+
+<script>
+  import { gsap, prefersReducedMotion } from "@/scripts/gsap-init";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("edu-terminal");
+    if (!container) return;
+
+    const lines = container.querySelectorAll("[data-term-line]");
+    const bars = container.querySelectorAll("[data-term-bar]");
+    const pkgs = container.querySelectorAll("[data-term-pkg]");
+
+    if (prefersReducedMotion()) {
+      lines.forEach(el => {
+        (el as HTMLElement).style.opacity = "1";
+        (el as HTMLElement).style.visibility = "visible";
+      });
+      bars.forEach(el => {
+        (el as HTMLElement).style.transform = "scaleX(1)";
+      });
+      return;
+    }
+
+    // Window entrance
+    gsap.fromTo(container,
+      { scale: 0.96, autoAlpha: 0 },
+      {
+        scale: 1,
+        autoAlpha: 1,
+        duration: 0.6,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: container,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    // Lines type-in stagger
+    gsap.set(lines, { autoAlpha: 0, x: -8 });
+
+    gsap.to(lines, {
+      autoAlpha: 1,
+      x: 0,
+      stagger: 0.09,
+      duration: 0.3,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: container,
+        start: "top 75%",
+        toggleActions: "play none none none",
+      },
+      delay: 0.3,
+    });
+
+    // Progress bars fill
+    bars.forEach((bar) => {
+      gsap.fromTo(bar,
+        { scaleX: 0 },
+        {
+          scaleX: 1,
+          duration: 1.2,
+          ease: "power1.inOut",
+          scrollTrigger: {
+            trigger: bar,
+            start: "top 90%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    });
+  });
+</script>
+
+<style>
+  /* Terminal Window */
+  .term-window {
+    background: rgba(22, 22, 22, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.6),
+      0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  }
+
+  /* Title bar */
+  .term-titlebar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: rgba(37, 37, 38, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .term-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .tdot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .tdot-r { background: #ff5f57; }
+  .tdot-y { background: #febc2e; }
+  .tdot-g { background: #28c840; }
+
+  .term-title {
+    flex: 1;
+    text-align: center;
+    color: #888;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+  }
+
+  /* Terminal body */
+  .term-body {
+    padding: 18px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.7;
+  }
+
+  .term-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .term-prompt {
+    color: #00ff9f;
+    font-weight: 700;
+  }
+
+  .term-cmd {
+    color: #e0e0e0;
+  }
+
+  .term-dim {
+    color: #555;
+  }
+
+  .term-pkg-name {
+    color: #00d4ff;
+    font-weight: 700;
+  }
+
+  .term-at {
+    color: #666;
+  }
+
+  .term-version {
+    color: #ffd700;
+    font-weight: 600;
+  }
+
+  /* Progress bar */
+  .term-progress-line {
+    gap: 10px;
+    margin: 4px 0;
+  }
+
+  .term-progress-track {
+    flex: 1;
+    max-width: 280px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .term-progress-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #00ff9f, #00d4ff);
+    border-radius: 3px;
+    transform-origin: left;
+    box-shadow: 0 0 8px rgba(0, 255, 159, 0.4);
+  }
+
+  .term-progress-pct {
+    color: #00ff9f;
+    font-size: 0.7rem;
+    min-width: 35px;
+  }
+
+  /* Detail lines */
+  .term-detail {
+    padding-left: 6px;
+  }
+
+  .term-check {
+    color: #00ff9f;
+    font-size: 0.7rem;
+  }
+
+  .term-detail-label {
+    color: #c678dd;
+    font-size: 0.75rem;
+  }
+
+  .term-detail-value {
+    color: #ccc;
+    font-size: 0.75rem;
+  }
+
+  .term-duration {
+    color: #666;
+    font-size: 0.7rem;
+  }
+
+  /* Success line */
+  .term-success {
+    margin-top: 2px;
+  }
+
+  .term-ok {
+    color: #28c840;
+    font-weight: 700;
+  }
+
+  .term-success span {
+    color: #00ff9f;
+    font-size: 0.75rem;
+  }
+
+  /* Summary */
+  .term-summary span {
+    color: #00ff9f;
+    font-size: 0.78rem;
+  }
+
+  .term-audit {
+    margin-bottom: 8px;
+  }
+
+  .term-highlight {
+    color: #28c840;
+    font-weight: 700;
+  }
+
+  .term-separator {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.04);
+    margin: 12px 0;
+  }
+
+  /* Blinking cursor */
+  .term-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background: #00ff9f;
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .term-package {
+    margin-bottom: 4px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .term-body {
+      padding: 14px 12px;
+      font-size: 0.72rem;
+    }
+
+    .term-progress-track {
+      max-width: 160px;
+    }
+
+    .term-titlebar {
+      padding: 8px 12px;
+    }
+
+    .tdot {
+      width: 10px;
+      height: 10px;
+    }
+
+    .term-detail-label,
+    .term-detail-value,
+    .term-success span,
+    .term-duration {
+      font-size: 0.68rem;
+    }
+  }
+</style>

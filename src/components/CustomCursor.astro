@@ -1,0 +1,132 @@
+---
+---
+
+<div id="custom-cursor" class="custom-cursor">
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+</div>
+
+<script>
+  import { gsap, prefersReducedMotion } from "@/scripts/gsap-init";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const cursor = document.getElementById("custom-cursor");
+    if (!cursor) return;
+
+    // Hide on touch devices
+    const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    if (isTouch || prefersReducedMotion()) {
+      cursor.style.display = "none";
+      return;
+    }
+
+    const dot = cursor.querySelector(".cursor-dot") as HTMLElement;
+    const ring = cursor.querySelector(".cursor-ring") as HTMLElement;
+
+    // quickTo for smooth following
+    const dotX = gsap.quickTo(dot, "x", { duration: 0.15, ease: "power3" });
+    const dotY = gsap.quickTo(dot, "y", { duration: 0.15, ease: "power3" });
+    const ringX = gsap.quickTo(ring, "x", { duration: 0.35, ease: "power3" });
+    const ringY = gsap.quickTo(ring, "y", { duration: 0.35, ease: "power3" });
+
+    document.addEventListener("mousemove", (e) => {
+      dotX(e.clientX);
+      dotY(e.clientY);
+      ringX(e.clientX);
+      ringY(e.clientY);
+    });
+
+    // Hover effects for links and buttons
+    const interactives = document.querySelectorAll("a, button, [role='button'], .terminal-link, .skill-chip, .nav-link");
+
+    interactives.forEach((el) => {
+      el.addEventListener("mouseenter", () => {
+        const isButton = el.tagName === "BUTTON" || el.classList.contains("skill-chip");
+        gsap.to(ring, {
+          scale: 1.8,
+          borderColor: isButton ? "#ff006e" : "#00ff9f",
+          duration: 0.3,
+        });
+        gsap.to(dot, {
+          scale: 0.5,
+          backgroundColor: isButton ? "#ff006e" : "#00ff9f",
+          duration: 0.3,
+        });
+      });
+
+      el.addEventListener("mouseleave", () => {
+        gsap.to(ring, {
+          scale: 1,
+          borderColor: "#00ff9f",
+          duration: 0.3,
+        });
+        gsap.to(dot, {
+          scale: 1,
+          backgroundColor: "#00ff9f",
+          duration: 0.3,
+        });
+      });
+    });
+
+    // Hide cursor when leaving window
+    document.addEventListener("mouseleave", () => {
+      gsap.to(cursor, { opacity: 0, duration: 0.2 });
+    });
+
+    document.addEventListener("mouseenter", () => {
+      gsap.to(cursor, { opacity: 1, duration: 0.2 });
+    });
+
+    // Hide default cursor
+    document.documentElement.style.cursor = "none";
+    document.querySelectorAll("a, button, [role='button']").forEach((el) => {
+      (el as HTMLElement).style.cursor = "none";
+    });
+  });
+</script>
+
+<style>
+  .custom-cursor {
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999999;
+    mix-blend-mode: difference;
+  }
+
+  .cursor-dot {
+    position: fixed;
+    top: -4px;
+    left: -4px;
+    width: 8px;
+    height: 8px;
+    background: #00ff9f;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .cursor-ring {
+    position: fixed;
+    top: -20px;
+    left: -20px;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #00ff9f;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 768px) {
+    .custom-cursor {
+      display: none;
+    }
+  }
+
+  @media (pointer: coarse) {
+    .custom-cursor {
+      display: none;
+    }
+  }
+</style>

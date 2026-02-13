@@ -8,53 +8,108 @@
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
     private drops: number[] = [];
-    private chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:',.<>?/~`".split("");
+    private chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()+-=[]|;:<>?/~".split("");
+    private speed = 1;
+    private lastScrollY = 0;
+    private scrollVelocity = 0;
+    private rafId = 0;
+    private decayTimer = 0;
+    private lastFrameTime = 0;
+    private readonly FRAME_INTERVAL = 50; // ~20fps — plenty for a background rain effect
+    private readonly COLUMN_WIDTH = 25;   // wider spacing = fewer columns = less work
 
     constructor() {
       this.canvas = document.getElementById('matrix-rain') as HTMLCanvasElement;
-      this.ctx = this.canvas.getContext('2d')!;
+      this.ctx = this.canvas.getContext('2d', { willReadFrequently: false })!;
       this.init();
-      this.animate();
+      this.animate(0);
     }
 
     init() {
-      this.canvas.width = window.innerWidth;
-      this.canvas.height = window.innerHeight;
-      
-      const columns = Math.floor(this.canvas.width / 20);
-      for (let i = 0; i < columns; i++) {
-        this.drops[i] = Math.random() * this.canvas.height / 20;
-      }
+      this.resize();
 
-      window.addEventListener('resize', () => {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-        this.drops.length = Math.floor(this.canvas.width / 20);
+      window.addEventListener('resize', () => this.resize(), { passive: true });
+
+      window.addEventListener('scroll', () => {
+        const currentY = window.scrollY;
+        this.scrollVelocity = Math.abs(currentY - this.lastScrollY);
+        this.lastScrollY = currentY;
+        this.speed = 1 + Math.min(this.scrollVelocity / 15, 4);
+      }, { passive: true });
+
+      // Decay scroll velocity
+      this.decayTimer = window.setInterval(() => {
+        this.scrollVelocity *= 0.85;
+        this.speed = 1 + Math.min(this.scrollVelocity / 15, 4);
+      }, 100);
+
+      // Pause when tab hidden — saves CPU/GPU entirely
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          cancelAnimationFrame(this.rafId);
+        } else {
+          this.lastFrameTime = 0;
+          this.rafId = requestAnimationFrame((t) => this.animate(t));
+        }
       });
     }
 
-    animate = () => {
-      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-      
-      this.ctx.fillStyle = '#00ff9f';
-      this.ctx.font = '15px monospace';
-      
-      for (let i = 0; i < this.drops.length; i++) {
-        const text = this.chars[Math.floor(Math.random() * this.chars.length)];
-        this.ctx.fillText(text, i * 20, this.drops[i] * 20);
-        
-        if (this.drops[i] * 20 > this.canvas.height && Math.random() > 0.975) {
-          this.drops[i] = 0;
+    private resize() {
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
+      const columns = Math.floor(this.canvas.width / this.COLUMN_WIDTH);
+      this.drops.length = columns;
+      for (let i = 0; i < columns; i++) {
+        if (this.drops[i] === undefined) {
+          this.drops[i] = Math.random() * this.canvas.height / this.COLUMN_WIDTH;
         }
-        this.drops[i]++;
       }
-      
-      requestAnimationFrame(this.animate);
+    }
+
+    private animate = (timestamp: number) => {
+      this.rafId = requestAnimationFrame((t) => this.animate(t));
+
+      // Throttle to ~20fps
+      if (timestamp - this.lastFrameTime < this.FRAME_INTERVAL) return;
+      this.lastFrameTime = timestamp;
+
+      // Cache property access for hot loop (js-cache-property-access)
+      const ctx = this.ctx;
+      const w = this.canvas.width;
+      const h = this.canvas.height;
+      const chars = this.chars;
+      const charLen = chars.length;
+      const drops = this.drops;
+      const len = drops.length;
+      const colW = this.COLUMN_WIDTH;
+      const spd = this.speed;
+
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.fillStyle = '#00ff9f';
+      ctx.font = '15px monospace';
+
+      for (let i = 0; i < len; i++) {
+        const y = drops[i] * colW;
+        const text = chars[(Math.random() * charLen) | 0];
+        ctx.fillText(text, i * colW, y);
+
+        if (y > h && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i] += spd;
+      }
+    }
+
+    destroy() {
+      cancelAnimationFrame(this.rafId);
+      clearInterval(this.decayTimer);
     }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     new MatrixRain();
   });
 </script>
@@ -67,7 +122,8 @@
     width: 100vw;
     height: 100vh;
     z-index: -10;
-    opacity: 0.3;
+    opacity: 0.2;
     pointer-events: none;
+    contain: strict;
   }
 </style>

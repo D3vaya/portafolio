@@ -1,10 +1,16 @@
 ---
 ---
 
-<nav class="cyber-nav">
+<nav class="cyber-nav" id="cyber-nav">
   <div class="nav-brand">
-    <span class="brand-text">&lt;Developer/&gt;</span>
+    <span class="brand-text">&lt;D3v/&gt;</span>
   </div>
+
+  <!-- Scroll progress -->
+  <div class="scroll-progress">
+    <div class="scroll-progress-fill" id="scroll-progress-fill"></div>
+  </div>
+
   <div class="nav-links">
     <a href="#hero" class="nav-link" data-section="hero">
       <span class="link-icon">01</span>
@@ -18,118 +24,108 @@
       <span class="link-icon">03</span>
       <span class="link-text">Experience</span>
     </a>
-    <a href="#skills" class="nav-link" data-section="skills">
+    <a href="#education" class="nav-link" data-section="education">
       <span class="link-icon">04</span>
+      <span class="link-text">Education</span>
+    </a>
+    <a href="#skills" class="nav-link" data-section="skills">
+      <span class="link-icon">05</span>
       <span class="link-text">Skills</span>
     </a>
-  </div>
-  <div class="nav-indicator">
-    <div class="indicator-line"></div>
   </div>
 </nav>
 
 <script>
-  class CyberNavigation {
-    private nav: HTMLElement;
-    private links: NodeListOf<HTMLElement>;
-    private indicator: HTMLElement;
-    private sections: HTMLElement[] = [];
+  import { gsap, prefersReducedMotion } from "@/scripts/gsap-init";
 
-    constructor() {
-      this.nav = document.querySelector('.cyber-nav')!;
-      this.links = document.querySelectorAll('.nav-link');
-      this.indicator = document.querySelector('.indicator-line')!;
-      this.init();
-    }
+  document.addEventListener("DOMContentLoaded", () => {
+    const nav = document.getElementById("cyber-nav");
+    const links = document.querySelectorAll<HTMLElement>(".nav-link");
+    const progressFill = document.getElementById("scroll-progress-fill");
+    const sections: HTMLElement[] = [];
 
-    init() {
-      this.setupSections();
-      this.setupScrolling();
-      this.setupIntersectionObserver();
-      this.addHoverEffects();
-    }
+    if (!nav) return;
 
-    setupSections() {
-      this.links.forEach(link => {
-        const sectionId = link.getAttribute('href')?.slice(1);
-        if (sectionId === 'hero') {
-          // Hero is the first section in main
-          const heroSection = document.querySelector('main > section:first-child') as HTMLElement;
-          if (heroSection) {
-            heroSection.id = 'hero';
-            this.sections.push(heroSection);
-          }
-        } else {
-          const section = document.getElementById(sectionId!) as HTMLElement;
-          if (section) this.sections.push(section);
+    // Collect sections
+    links.forEach((link) => {
+      const id = link.getAttribute("href")?.slice(1);
+      if (id) {
+        const section = document.getElementById(id);
+        if (section) sections.push(section);
+      }
+    });
+
+    // Smooth scroll on click
+    links.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const id = link.getAttribute("href")?.slice(1);
+        const target = document.getElementById(id!);
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       });
-    }
+    });
 
-    setupScrolling() {
-      this.links.forEach(link => {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          const targetId = link.getAttribute('href')?.slice(1);
-          const target = document.getElementById(targetId!);
-          
-          if (target) {
-            target.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start'
-            });
-          }
-        });
-      });
-    }
-
-    setupIntersectionObserver() {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+    // Active section tracking
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            const activeLink = document.querySelector(`[href="#${entry.target.id}"]`);
-            this.updateActiveLink(activeLink as HTMLElement);
+            links.forEach((l) => l.classList.remove("active"));
+            const activeLink = document.querySelector<HTMLElement>(
+              `[href="#${entry.target.id}"]`
+            );
+            if (activeLink) {
+              activeLink.classList.add("active");
+            }
           }
         });
-      }, { threshold: 0.3, rootMargin: '-100px 0px -100px 0px' });
+      },
+      { threshold: 0.3, rootMargin: "-100px 0px -100px 0px" }
+    );
 
-      this.sections.forEach(section => {
-        observer.observe(section);
+    sections.forEach((s) => observer.observe(s));
+
+    if (prefersReducedMotion()) return;
+
+    // Scroll progress indicator
+    if (progressFill) {
+      gsap.to(progressFill, {
+        scaleY: 1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: document.body,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.3,
+        },
       });
     }
 
-    updateActiveLink(activeLink: HTMLElement) {
-      this.links.forEach(link => link.classList.remove('active'));
-      if (activeLink) {
-        activeLink.classList.add('active');
-        this.moveIndicator(activeLink);
-      }
-    }
-
-    moveIndicator(activeLink: HTMLElement) {
-      const linkRect = activeLink.getBoundingClientRect();
-      const navRect = this.nav.getBoundingClientRect();
-      const position = linkRect.top - navRect.top + linkRect.height / 2;
-      
-      this.indicator.style.transform = `translateY(${position}px)`;
-      this.indicator.style.opacity = '1';
-    }
-
-    addHoverEffects() {
-      this.links.forEach(link => {
-        link.addEventListener('mouseenter', () => {
-          link.classList.add('hover-effect');
-        });
-        
-        link.addEventListener('mouseleave', () => {
-          link.classList.remove('hover-effect');
+    // Magnetic hover effect on links
+    links.forEach((link) => {
+      link.addEventListener("mousemove", (e) => {
+        const rect = link.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        gsap.to(link, {
+          x: x * 0.2,
+          y: y * 0.2,
+          duration: 0.3,
+          ease: "power2.out",
         });
       });
-    }
-  }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    new CyberNavigation();
+      link.addEventListener("mouseleave", () => {
+        gsap.to(link, {
+          x: 0,
+          y: 0,
+          duration: 0.5,
+          ease: "elastic.out(1, 0.3)",
+        });
+      });
+    });
   });
 </script>
 
@@ -137,73 +133,74 @@
   .cyber-nav {
     position: fixed;
     top: 50%;
-    right: 30px;
+    right: 25px;
     transform: translateY(-50%);
     z-index: 1000;
-    background: rgba(0, 0, 0, 0.9);
-    border: 1px solid rgba(0, 255, 159, 0.3);
-    border-radius: 10px;
-    padding: 20px 10px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 10px 30px rgba(0, 255, 159, 0.2);
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid rgba(0, 255, 159, 0.2);
+    border-radius: 12px;
+    padding: 18px 10px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
   }
 
   .nav-brand {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     text-align: center;
   }
 
   .brand-text {
     color: #00ff9f;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.9rem;
-    font-weight: 600;
-    text-shadow: 0 0 10px rgba(0, 255, 159, 0.5);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(0, 255, 159, 0.4);
+  }
+
+  /* Scroll progress */
+  .scroll-progress {
+    width: 2px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    margin: 0 auto 15px;
+    overflow: hidden;
+  }
+
+  .scroll-progress-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #00ff9f, #00d4ff);
+    transform: scaleY(0);
+    transform-origin: top;
+    border-radius: 2px;
   }
 
   .nav-links {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    position: relative;
+    gap: 8px;
   }
 
   .nav-link {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 15px;
-    color: #888;
+    gap: 8px;
+    padding: 8px 14px;
+    color: #666;
     text-decoration: none;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .nav-link::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0, 255, 159, 0.2), transparent);
-    transition: left 0.5s ease;
-  }
-
-  .nav-link:hover::before,
-  .nav-link.hover-effect::before {
-    left: 100%;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    transition: color 0.3s ease, background 0.3s ease;
+    will-change: transform;
   }
 
   .link-icon {
-    color: #ff006f;
-    font-weight: 600;
-    font-size: 0.7rem;
-    opacity: 0.8;
+    color: #444;
+    font-weight: 700;
+    font-size: 0.65rem;
+    transition: color 0.3s ease;
   }
 
   .link-text {
@@ -215,66 +212,44 @@
   .nav-link:hover,
   .nav-link.active {
     color: #00ff9f;
-    background: rgba(0, 255, 159, 0.1);
-    border-left: 3px solid #00ff9f;
-    transform: translateX(-3px);
-    box-shadow: 0 0 15px rgba(0, 255, 159, 0.3);
+    background: rgba(0, 255, 159, 0.08);
   }
 
+  .nav-link:hover .link-icon,
   .nav-link.active .link-icon {
     color: #00ff9f;
-    animation: pulse 2s infinite;
   }
 
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+  .nav-link.active {
+    border-left: 2px solid #00ff9f;
+    box-shadow: 0 0 10px rgba(0, 255, 159, 0.15);
   }
 
-  .nav-indicator {
-    position: absolute;
-    left: -5px;
-    top: 0;
-    width: 3px;
-    height: 30px;
-    pointer-events: none;
-  }
-
-  .indicator-line {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(180deg, #00ff9f, #ff006f);
-    border-radius: 2px;
-    opacity: 0;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 10px rgba(0, 255, 159, 0.5);
-  }
-
-  /* Hide navigation on mobile */
-  @media (width <= 768px) {
+  /* Hide on mobile */
+  @media (max-width: 768px) {
     .cyber-nav {
       display: none;
     }
   }
 
-  /* Show minimal version on tablet */
-  @media (width <= 1024px) and (width > 768px) {
+  /* Tablet - minimal */
+  @media (max-width: 1024px) and (min-width: 769px) {
     .cyber-nav {
-      right: 15px;
-      padding: 15px 8px;
+      right: 12px;
+      padding: 14px 8px;
     }
-    
+
     .link-text {
       display: none;
     }
-    
+
     .nav-link {
-      padding: 8px 10px;
+      padding: 8px;
       justify-content: center;
     }
-    
+
     .brand-text {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
     }
   }
 </style>

@@ -1,12 +1,12 @@
 {
   "basics": {
     "name": "Juan Carlos Ayala Higuera",
-    "label": "Full Stack Developer con más de 11 años de experiencia",
+    "label": "Tech Lead Frontend con más de 12 años de experiencia",
     "image": "/perfil2.jpeg",
     "email": "j.ayala.higuera@gmail.com",
     "phone": "+569 35222613",
-    "url": "https://www.linkedin.com/in/d3vaya/",
-    "summary": "Soy Senior Frontend Engineer con más de 11 años de experiencia desarrollando soluciones web escalables, enfocadas en rendimiento y experiencia de usuario. Aunque tengo formación Full Stack, mi especialidad actual es el desarrollo frontend con React, Next.js y TypeScript, junto a arquitecturas modernas basadas en GCP y patrones serverless. He liderado equipos y participado en proyectos de alto tráfico en industrias como fintech y gambling, siempre con una mirada integral del ciclo de desarrollo, desde la idea hasta la producció",
+    "url": "https://www.linkedin.com/in/juan-carlos-ayala-higuera-50520a62/",
+    "summary": "Soy Tech Lead Frontend con más de 12 años de experiencia liderando equipos y desarrollando soluciones web escalables, enfocadas en rendimiento y experiencia de usuario. Mi especialidad es el desarrollo frontend con React, Next.js y TypeScript, junto a arquitecturas modernas basadas en GCP y patrones serverless. He liderado equipos técnicos y participado en proyectos de alto tráfico en industrias como fintech y gambling, siempre con una mirada integral del ciclo de desarrollo, desde la idea hasta la producción.",
     "location": {
       "address": "Santa amalia #3544, depto 824.",
       "postalCode": "",
@@ -18,7 +18,7 @@
       {
         "network": "LinkedIn",
         "username": "Juan Carlos Ayala",
-        "url": "https://www.linkedin.com/in/d3vaya/"
+        "url": "https://www.linkedin.com/in/juan-carlos-ayala-higuera-50520a62/"
       },
       {
         "network": "X",
@@ -210,7 +210,7 @@
     },
     {
       "name": "Supabase",
-      "level": "Medio",
+      "level": "Avanzado",
       "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
     },
     {
@@ -259,17 +259,6 @@
       ]
     },
     {
-      "name": "Next.js",
-      "level": "Avanzado",
-      "keywords": [
-        "Desarrollo Web",
-        "Frontend",
-        "React Framework",
-        "SSR",
-        "Static Generation"
-      ]
-    },
-    {
       "name": "React",
       "level": "Avanzado",
       "keywords": ["Desarrollo Web", "Frontend", "JavaScript Library", "UI"]
@@ -296,7 +285,7 @@
     },
     {
       "name": "Cake PHP",
-      "level": "Medio",
+      "level": "Avanzado",
       "keywords": ["Backend"]
     },
     {
@@ -327,7 +316,7 @@
     },
     {
       "name": "GraphQL",
-      "level": "Medio",
+      "level": "Avanzado",
       "keywords": ["Frontend"]
     },
     {
@@ -337,7 +326,7 @@
     },
     {
       "name": "Angular",
-      "level": "Medio",
+      "level": "Avanzado",
       "keywords": ["Frontend"]
     },
     {
