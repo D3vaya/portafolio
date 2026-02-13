@@ -1,71 +1,213 @@
 ---
 import Section from "../Section.astro"
-
 import { education } from "@cv"
 ---
 
-<Section title="Educación">
-  <ul>
+<Section title="Education">
+  <div class="education-container" id="edu-container">
+    <!-- SVG connector line -->
+    <svg class="edu-line-svg" id="edu-line-svg" preserveAspectRatio="none">
+      <line id="edu-line" x1="20" y1="0" x2="20" y2="100%"
+        stroke="rgba(0, 212, 255, 0.3)" stroke-width="2" stroke-dasharray="6,4" />
+    </svg>
+
     {
       education.map(({ institution, startDate, endDate, area }) => {
         const startYear = new Date(startDate).getFullYear()
         const endYear =
-          endDate != null ? new Date(endDate).getFullYear() : "Actual"
+          endDate != null ? new Date(endDate).getFullYear() : "Present"
         const years = `${startYear} - ${endYear}`
 
         return (
-          <li>
+          <div class="edu-card" data-edu-card>
+            <div class="edu-node" data-edu-node>
+              <div class="edu-dot"></div>
+            </div>
             <article>
               <header>
                 <div>
                   <h3>{institution}</h3>
+                  <p class="edu-area">{area}</p>
                 </div>
-
-                <time>{years}</time>
+                <time data-edu-year data-year-start={startYear} data-year-end={typeof endYear === 'number' ? endYear : ''}>{years}</time>
               </header>
-
-              <footer>
-                <p>{area}</p>
-              </footer>
             </article>
-          </li>
+          </div>
         )
       })
     }
-  </ul>
+  </div>
 </Section>
 
+<script>
+  import { gsap, prefersReducedMotion } from "@/scripts/gsap-init";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    if (prefersReducedMotion()) return;
+
+    // Cards slide-in from left
+    document.querySelectorAll("[data-edu-card]").forEach((card, i) => {
+      gsap.from(card, {
+        x: -80,
+        opacity: 0,
+        duration: 0.6,
+        delay: i * 0.15,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: card,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      });
+    });
+
+    // Node dots pop in
+    document.querySelectorAll("[data-edu-node]").forEach((node) => {
+      gsap.from(node, {
+        scale: 0,
+        duration: 0.4,
+        ease: "back.out(2)",
+        scrollTrigger: {
+          trigger: node,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      });
+    });
+
+    // Line draw
+    const line = document.getElementById("edu-line");
+    if (line) {
+      const length = 500;
+      gsap.set(line, { strokeDasharray: length, strokeDashoffset: length });
+      gsap.to(line, {
+        strokeDashoffset: 0,
+        scrollTrigger: {
+          trigger: "#edu-container",
+          start: "top 70%",
+          end: "bottom 50%",
+          scrub: 1,
+        },
+      });
+    }
+  });
+</script>
+
 <style>
-  ul {
+  .education-container {
+    position: relative;
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 24px;
+    padding-left: 50px;
   }
 
-  article h3 {
-    font-weight: 500;
-    color: #ffffff;
-    text-shadow: 0 0 10px rgba(0, 255, 159, 0.3);
+  .edu-line-svg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 40px;
+    height: 100%;
+    z-index: 0;
+  }
+
+  .edu-card {
+    position: relative;
+    z-index: 1;
+  }
+
+  .edu-node {
+    position: absolute;
+    left: -42px;
+    top: 12px;
+  }
+
+  .edu-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #0a0a0a;
+    border: 2px solid #00d4ff;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .edu-card:hover .edu-dot {
+    background: #00d4ff;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.7);
+  }
+
+  article {
+    background: rgba(26, 26, 46, 0.5);
+    border: 1px solid rgba(0, 212, 255, 0.15);
+    border-radius: 10px;
+    padding: 18px 20px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+  }
+
+  article:hover {
+    border-color: rgba(0, 212, 255, 0.35);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   }
 
   header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    gap: 12px;
+  }
+
+  article h3 {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #ffffff;
     margin-bottom: 4px;
   }
 
-  time {
-    color: #00ff9f;
+  .edu-area {
     font-size: 0.85rem;
-    min-width: 102px;
-    font-weight: 600;
-    text-shadow: 0 0 5px rgba(0, 255, 159, 0.5);
+    color: #aaa !important;
+    font-family: "JetBrains Mono", monospace;
   }
 
-  @media (width <= 700px) {
-    time {
-      text-align: right;
+  time {
+    color: #00d4ff;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    padding: 4px 10px;
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 20px;
+    background: rgba(0, 212, 255, 0.08);
+  }
+
+  @media (max-width: 768px) {
+    .education-container {
+      padding-left: 35px;
+    }
+
+    .edu-node {
+      left: -30px;
+    }
+
+    .edu-dot {
+      width: 10px;
+      height: 10px;
+    }
+
+    article {
+      padding: 14px 16px;
+    }
+
+    header {
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    article h3 {
+      font-size: 0.9rem;
     }
   }
 </style>

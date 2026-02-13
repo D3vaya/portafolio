@@ -19,7 +19,9 @@ const { image, summary, url } = basics
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preload" as="image" href={image} />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
 
     <meta property="og:url" content={url} />
     <meta property="og:type" content="website" />
@@ -91,17 +93,12 @@ const { image, summary, url } = basics
   h4 {
     margin: 0;
     font-family:
-      "JetBrains Mono",
+      "Space Grotesk",
       system-ui,
       -apple-system,
       BlinkMacSystemFont,
       "Segoe UI",
       Roboto,
-      Oxygen,
-      Ubuntu,
-      Cantarell,
-      "Open Sans",
-      "Helvetica Neue",
       sans-serif;
     color: #ffffff;
     text-shadow: 0 0 20px #00ff9f;
@@ -238,9 +235,48 @@ const { image, summary, url } = basics
     border: 2px solid #00ff9f !important;
     border-radius: 15px !important;
     backdrop-filter: blur(20px) !important;
-    box-shadow: 
+    box-shadow:
       0 0 40px rgba(0, 255, 159, 0.4),
       inset 0 0 40px rgba(0, 255, 159, 0.1) !important;
     z-index: 100000 !important;
+  }
+
+  /* Accessibility: prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    .neon-text,
+    .glitch-effect {
+      animation: none !important;
+    }
+
+    #matrix-rain,
+    #particles-container {
+      display: none !important;
+    }
+
+    .custom-cursor {
+      display: none !important;
+    }
+
+    /* Ensure all content is visible */
+    main > section,
+    [data-exp-card],
+    [data-exp-node],
+    [data-skill-chip],
+    [data-edu-card],
+    [data-code-line],
+    [data-tab],
+    [data-ln] {
+      opacity: 1 !important;
+      transform: none !important;
+    }
   }
 </style>

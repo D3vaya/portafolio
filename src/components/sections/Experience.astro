@@ -1,64 +1,285 @@
 ---
 import Section from "../Section.astro"
-
 import { work } from "@cv"
 ---
 
-<Section title="Experiencia laboral">
-  <ul>
+<Section title="Work Experience">
+  <div class="timeline-container" id="exp-timeline">
+    <!-- SVG Timeline Line -->
+    <svg class="timeline-svg" id="timeline-svg" preserveAspectRatio="none">
+      <line class="timeline-line" id="timeline-line" x1="50%" y1="0" x2="50%" y2="100%"
+        stroke="url(#lineGradient)" stroke-width="2" />
+      <defs>
+        <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#00ff9f" />
+          <stop offset="50%" stop-color="#00d4ff" />
+          <stop offset="100%" stop-color="#ff006e" />
+        </linearGradient>
+      </defs>
+    </svg>
+
     {
       work.map(
-        ({ name, startDate, endDate, position, summary, image, url }) => {
+        ({ name, startDate, endDate, position, summary, image, url }, index) => {
           const startYear = new Date(startDate).getFullYear()
           const endYear =
-            endDate != null ? new Date(endDate).getFullYear() : "Actual"
+            endDate != null ? new Date(endDate).getFullYear() : "Present"
           const years = `${startYear} - ${endYear}`
+          const isLeft = index % 2 === 0
 
           return (
-            <li>
-              <article>
-                <header>
+            <div class={`timeline-item ${isLeft ? "left" : "right"}`} data-exp-item>
+              <!-- Node on timeline -->
+              <div class="timeline-node" data-exp-node>
+                <div class="node-dot"></div>
+              </div>
 
-                  <div id="position">
-                    <figure>
-                      <img src={image} alt="imagen empresa" class="img-empresa">
+              <!-- Card -->
+              <article class="timeline-card" data-exp-card>
+                <header>
+                  <div class="card-top">
+                    <figure class="company-logo">
+                      <img src={image} alt={name} />
                     </figure>
-                    <div>
+                    <div class="card-info">
                       <h3>
-                      <a href={url} title={`Ver ${name}`} target="_blank">
-                        {name}
-                      </a>
-                    </h3>
-                    <h4>{position}</h4>
+                        <a href={url} title={`View ${name}`} target="_blank" rel="noopener noreferrer">
+                          {name}
+                        </a>
+                      </h3>
+                      <h4>{position}</h4>
                     </div>
                   </div>
-
-                  <time>{years}</time>
+                  <time data-exp-year>{years}</time>
                 </header>
-
                 <footer>
                   <p>{summary}</p>
                 </footer>
               </article>
-            </li>
+            </div>
           )
         }
       )
     }
-  </ul>
+  </div>
 </Section>
 
+<script>
+  import { gsap, prefersReducedMotion } from "@/scripts/gsap-init";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    if (prefersReducedMotion()) {
+      // Make everything visible
+      document.querySelectorAll("[data-exp-card], [data-exp-node]").forEach(el => {
+        (el as HTMLElement).style.opacity = "1";
+      });
+      return;
+    }
+
+    const mm = gsap.matchMedia();
+
+    mm.add("(min-width: 769px)", () => {
+      // Timeline line draw effect
+      const line = document.getElementById("timeline-line") as unknown as SVGLineElement | null;
+      if (line) {
+        const length = 1000;
+        gsap.set(line, { strokeDasharray: length, strokeDashoffset: length });
+        gsap.to(line, {
+          strokeDashoffset: 0,
+          scrollTrigger: {
+            trigger: "#exp-timeline",
+            start: "top 70%",
+            end: "bottom 30%",
+            scrub: 1,
+          },
+        });
+      }
+
+      // Nodes and cards
+      document.querySelectorAll("[data-exp-item]").forEach((item) => {
+        const card = item.querySelector("[data-exp-card]");
+        const node = item.querySelector("[data-exp-node]");
+        const isLeft = item.classList.contains("left");
+
+        // Node pop in
+        if (node) {
+          gsap.from(node, {
+            scale: 0,
+            opacity: 0,
+            duration: 0.4,
+            ease: "back.out(2)",
+            scrollTrigger: {
+              trigger: item,
+              start: "top 75%",
+              toggleActions: "play none none none",
+            },
+          });
+        }
+
+        // Card slide in
+        if (card) {
+          gsap.from(card, {
+            x: isLeft ? -100 : 100,
+            opacity: 0,
+            rotation: isLeft ? -3 : 3,
+            duration: 0.7,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: item,
+              start: "top 75%",
+              toggleActions: "play none none none",
+            },
+          });
+        }
+      });
+    });
+
+    mm.add("(max-width: 768px)", () => {
+      // Mobile: simple fade-in stagger, no alternating
+      document.querySelectorAll("[data-exp-card]").forEach((card) => {
+        gsap.from(card, {
+          y: 40,
+          opacity: 0,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: card,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        });
+      });
+    });
+  });
+</script>
+
 <style>
-  ul {
+  .timeline-container {
+    position: relative;
+    padding: 20px 0;
+  }
+
+  /* SVG Timeline */
+  .timeline-svg {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    height: 100%;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+
+  .timeline-line {
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* Timeline items */
+  .timeline-item {
+    position: relative;
     display: flex;
-    flex-direction: column;
-    gap: 32px;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    width: 100%;
+  }
+
+  .timeline-item.left {
+    justify-content: flex-start;
+    padding-right: calc(50% + 30px);
+  }
+
+  .timeline-item.right {
+    justify-content: flex-end;
+    padding-left: calc(50% + 30px);
+  }
+
+  /* Node */
+  .timeline-node {
+    position: absolute;
+    left: 50%;
+    top: 20px;
+    transform: translateX(-50%);
+    z-index: 3;
+  }
+
+  .node-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #0a0a0a;
+    border: 3px solid #00ff9f;
+    box-shadow:
+      0 0 15px rgba(0, 255, 159, 0.5),
+      0 0 30px rgba(0, 255, 159, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .timeline-item:hover .node-dot {
+    background: #00ff9f;
+    box-shadow:
+      0 0 20px rgba(0, 255, 159, 0.8),
+      0 0 40px rgba(0, 255, 159, 0.4);
+  }
+
+  /* Card */
+  .timeline-card {
+    background: rgba(26, 26, 46, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 255, 159, 0.15);
+    border-radius: 12px;
+    padding: 20px;
+    width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .timeline-card:hover {
+    border-color: rgba(0, 255, 159, 0.4);
+    box-shadow:
+      0 8px 30px rgba(0, 0, 0, 0.4),
+      0 0 20px rgba(0, 255, 159, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .card-info {
+    flex: 1;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    gap: 10px;
+  }
+
+  .company-logo {
+    margin: 0;
+  }
+
+  .company-logo img {
+    height: 45px;
+    border-radius: 8px;
+    border: 2px solid rgba(0, 255, 159, 0.2);
+    box-shadow: 0 0 10px rgba(0, 255, 159, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .timeline-card:hover .company-logo img {
+    box-shadow: 0 0 15px rgba(0, 255, 159, 0.4);
+    border-color: rgba(0, 255, 159, 0.5);
   }
 
   article h3 {
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 1rem;
     color: #ffffff;
-    text-shadow: 0 0 10px rgba(0, 255, 159, 0.3);
   }
 
   article a {
@@ -68,56 +289,82 @@ import { work } from "@cv"
   }
 
   article a:hover {
-    color: #ff006f;
-    text-shadow: 0 0 10px #ff006f;
-    text-decoration: none;
+    color: #00d4ff;
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
   }
 
   article h4 {
-    color: #b3b3b3;
+    color: #888;
     font-weight: 400;
-    text-shadow: 0 0 5px rgba(179, 179, 179, 0.3);
-  }
-
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 4px;
+    font-size: 0.85rem;
+    margin-top: 2px;
+    font-family: "JetBrains Mono", monospace;
   }
 
   time {
-    color: #00ff9f;
-    font-size: 0.85rem;
-    min-width: 102px;
+    color: #00d4ff;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.8rem;
     font-weight: 600;
-    text-shadow: 0 0 5px rgba(0, 255, 159, 0.5);
+    white-space: nowrap;
+    padding: 4px 10px;
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 20px;
+    background: rgba(0, 212, 255, 0.08);
   }
 
-  img {
-    height: 50px;
-    border-radius: 8px;
-    border: 2px solid rgba(0, 255, 159, 0.3);
-    box-shadow: 0 0 10px rgba(0, 255, 159, 0.2);
-    transition: all 0.3s ease;
+  footer p {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #aaa !important;
   }
 
-  img:hover {
-    border-color: #00ff9f;
-    box-shadow: 0 0 20px rgba(0, 255, 159, 0.5);
-    transform: scale(1.05);
-  }
-
-  @media (width <= 700px) {
-    time {
-      text-align: right;
+  /* Mobile - stacked layout */
+  @media (max-width: 768px) {
+    .timeline-svg {
+      left: 15px;
     }
-  }
 
-  #position {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap:5px
+    .timeline-item.left,
+    .timeline-item.right {
+      padding-left: 45px;
+      padding-right: 0;
+      justify-content: flex-start;
+    }
+
+    .timeline-node {
+      left: 15px;
+      top: 15px;
+    }
+
+    .node-dot {
+      width: 12px;
+      height: 12px;
+    }
+
+    .timeline-card {
+      padding: 15px;
+    }
+
+    header {
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .company-logo img {
+      height: 35px;
+    }
+
+    article h3 {
+      font-size: 0.9rem;
+    }
+
+    article h4 {
+      font-size: 0.8rem;
+    }
+
+    footer p {
+      font-size: 0.8rem;
+    }
   }
 </style>

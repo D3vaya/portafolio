@@ -9,6 +9,9 @@
     private ctx: CanvasRenderingContext2D;
     private drops: number[] = [];
     private chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:',.<>?/~`".split("");
+    private speed = 1;
+    private lastScrollY = 0;
+    private scrollVelocity = 0;
 
     constructor() {
       this.canvas = document.getElementById('matrix-rain') as HTMLCanvasElement;
@@ -20,7 +23,7 @@
     init() {
       this.canvas.width = window.innerWidth;
       this.canvas.height = window.innerHeight;
-      
+
       const columns = Math.floor(this.canvas.width / 20);
       for (let i = 0; i < columns; i++) {
         this.drops[i] = Math.random() * this.canvas.height / 20;
@@ -31,30 +34,47 @@
         this.canvas.height = window.innerHeight;
         this.drops.length = Math.floor(this.canvas.width / 20);
       });
+
+      // Track scroll velocity for speed sync
+      window.addEventListener('scroll', () => {
+        const currentY = window.scrollY;
+        this.scrollVelocity = Math.abs(currentY - this.lastScrollY);
+        this.lastScrollY = currentY;
+        // Boost speed while scrolling, faster scroll = faster rain
+        this.speed = 1 + Math.min(this.scrollVelocity / 15, 4);
+      }, { passive: true });
+
+      // Decay scroll velocity
+      setInterval(() => {
+        this.scrollVelocity *= 0.85;
+        this.speed = 1 + Math.min(this.scrollVelocity / 15, 4);
+      }, 100);
     }
 
     animate = () => {
       this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-      
+
       this.ctx.fillStyle = '#00ff9f';
       this.ctx.font = '15px monospace';
-      
+
       for (let i = 0; i < this.drops.length; i++) {
         const text = this.chars[Math.floor(Math.random() * this.chars.length)];
         this.ctx.fillText(text, i * 20, this.drops[i] * 20);
-        
+
         if (this.drops[i] * 20 > this.canvas.height && Math.random() > 0.975) {
           this.drops[i] = 0;
         }
-        this.drops[i]++;
+        this.drops[i] += this.speed;
       }
-      
+
       requestAnimationFrame(this.animate);
     }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    // Respect reduced motion
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     new MatrixRain();
   });
 </script>
@@ -67,7 +87,7 @@
     width: 100vw;
     height: 100vh;
     z-index: -10;
-    opacity: 0.3;
+    opacity: 0.2;
     pointer-events: none;
   }
 </style>

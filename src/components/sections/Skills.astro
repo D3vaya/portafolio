@@ -2,353 +2,323 @@
 import Section from "../Section.astro"
 import { skills } from "@cv"
 
-// Agrupar skills por categorías para mejor organización
-const skillCategories = {
-  "Frontend": ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Next.js", "Tailwind"],
-  "Backend": ["Node", "MySQL"], 
-  "Tools": ["Git", "GitHub"]
+const skillCategories: Record<string, string[]> = {
+  "Frontend": ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Next.js", "Next JS", "Tailwind", "Gatsby JS", "Angular", "Vue JS", "Svelte", "Astro", "GraphQL"],
+  "Backend": ["Node Js", "Express", "MySQL", "PostgreSQL", "Firebase", "Supabase", "PHP", "Cake PHP", "Laravel", "Java", "Elixir", "Phoenix Framework", "Go", "MongoDB", "Redis"],
+  "Tools": ["Git", "GitHub", "Figma", "AWS Lambda", "AWS EC2", "AWS S3", "AWS ELB / ASG"]
 }
 
-const getProficiencyColor = (level: string) => {
+// Hero skills - prominent
+const heroSkills = ["React", "Next.js", "Next JS", "TypeScript"]
+
+const getLevelPercent = (level: string): number => {
+  const percents: Record<string, number> = {
+    'Beginner': 25,
+    'Medio': 50,
+    'Intermediate': 50,
+    'Avanzado': 75,
+    'Advanced': 75,
+    'Expert': 90,
+    'Master': 100,
+  }
+  return percents[level] || 60
+}
+
+const getProficiencyColor = (level: string): string => {
   const colors: Record<string, string> = {
-    'Beginner': '#ff006f',
-    'Intermediate': '#ff6b35', 
+    'Beginner': '#ff006e',
+    'Medio': '#ff6b35',
+    'Intermediate': '#ff6b35',
+    'Avanzado': '#ffd700',
     'Advanced': '#ffd700',
     'Expert': '#00ff9f',
-    'Master': '#00d4ff'
-  };
-  return colors[level] || '#00ff9f';
+    'Master': '#00d4ff',
+  }
+  return colors[level] || '#00ff9f'
 }
 ---
 
-<Section title="> system/skills --compact">
-  <div class="skills-terminal">
-    <div class="terminal-output">
-      {Object.entries(skillCategories).map(([category, categorySkills]) => (
-        <div class="skill-category">
-          <div class="category-header">
+<Section title="> skills --list">
+  <div class="skills-power-grid" id="skills-grid">
+    {Object.entries(skillCategories).map(([category, categorySkills]) => {
+      const matchedSkills = skills.filter(s => categorySkills.includes(s.name))
+      if (matchedSkills.length === 0) return null
+
+      return (
+        <div class="skill-category" data-skill-cat>
+          <div class="category-header" data-skill-header>
             <span class="prompt">$ ls {category.toLowerCase()}/</span>
-            <div class="category-badge">{categorySkills.length} items</div>
+            <div class="category-badge">{matchedSkills.length} modules</div>
           </div>
           <div class="skills-grid">
-            {skills
-              .filter(skill => categorySkills.includes(skill.name))
-              .map((skill) => {
-                const color = getProficiencyColor(skill.level || "Expert")
-                return (
-                  <div 
-                    class="skill-chip" 
-                    style={`--skill-color: ${color}`}
-                    data-level={skill.level || "Expert"}
-                  >
-                    <span class="skill-name">{skill.name}</span>
-                    <div class="skill-indicator"></div>
+            {matchedSkills.map((skill) => {
+              const color = getProficiencyColor(skill.level || "Expert")
+              const percent = getLevelPercent(skill.level || "Expert")
+              const isHero = heroSkills.includes(skill.name)
+
+              return (
+                <div
+                  class={`skill-chip ${isHero ? "hero-skill" : ""}`}
+                  style={`--skill-color: ${color}; --skill-pct: ${percent}%`}
+                  data-level={skill.level || "Expert"}
+                  data-skill-chip
+                >
+                  <span class="skill-name">{skill.name}</span>
+                  <div class="skill-level-bar">
+                    <div class="skill-level-fill" data-skill-bar></div>
                   </div>
-                )
-              })}
+                  <span class="skill-level-label">{skill.level}</span>
+                </div>
+              )
+            })}
           </div>
         </div>
-      ))}
-      
-      <!-- Skills adicionales que no están categorizados -->
-      {skills.filter(skill => 
-        !Object.values(skillCategories).flat().includes(skill.name)
-      ).length > 0 && (
-        <div class="skill-category">
-          <div class="category-header">
-            <span class="prompt">$ ls others/</span>
-            <div class="category-badge">
-              {skills.filter(skill => 
-                !Object.values(skillCategories).flat().includes(skill.name)
-              ).length} items
-            </div>
-          </div>
-          <div class="skills-grid">
-            {skills
-              .filter(skill => !Object.values(skillCategories).flat().includes(skill.name))
-              .map((skill) => {
-                const color = getProficiencyColor(skill.level || "Expert")
-                return (
-                  <div 
-                    class="skill-chip" 
-                    style={`--skill-color: ${color}`}
-                    data-level={skill.level || "Expert"}
-                  >
-                    <span class="skill-name">{skill.name}</span>
-                    <div class="skill-indicator"></div>
-                  </div>
-                )
-              })}
-          </div>
-        </div>
-      )}
-    </div>
+      )
+    })}
   </div>
 </Section>
 
 <script>
-  const skillChips = document.querySelectorAll('.skill-chip');
-  
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        const chips = entry.target.querySelectorAll('.skill-chip');
-        chips.forEach((chip, index) => {
-          setTimeout(() => {
-            chip.classList.add('animate');
-          }, index * 100);
-        });
-      }
-    });
-  }, { threshold: 0.2 });
-  
-  document.querySelectorAll('.skill-category').forEach((category) => {
-    observer.observe(category);
-  });
+  import { gsap, prefersReducedMotion } from "@/scripts/gsap-init";
 
-  // Tooltip interactivo para mostrar el nivel de skill
-  skillChips.forEach((chip) => {
-    chip.addEventListener('mouseenter', (e) => {
-      const target = e.target as HTMLElement;
-      if (!target) return;
-      
-      const level = target.getAttribute('data-level');
-      const tooltip = document.createElement('div');
-      tooltip.className = 'skill-tooltip';
-      tooltip.textContent = level || 'Expert';
-      document.body.appendChild(tooltip);
-      
-      const rect = target.getBoundingClientRect();
-      tooltip.style.left = rect.left + rect.width / 2 + 'px';
-      tooltip.style.top = rect.top - 40 + 'px';
-      
-      setTimeout(() => tooltip.classList.add('visible'), 10);
-    });
-    
-    chip.addEventListener('mouseleave', () => {
-      document.querySelectorAll('.skill-tooltip').forEach(tooltip => {
-        tooltip.classList.remove('visible');
-        setTimeout(() => tooltip.remove(), 200);
+  document.addEventListener("DOMContentLoaded", () => {
+    if (prefersReducedMotion()) {
+      document.querySelectorAll("[data-skill-chip]").forEach(el => {
+        const htmlEl = el as HTMLElement;
+        htmlEl.style.opacity = "1";
+        htmlEl.style.visibility = "visible";
+        htmlEl.style.transform = "none";
       });
+      document.querySelectorAll("[data-skill-bar]").forEach(el => {
+        (el as HTMLElement).style.transform = "scaleX(1)";
+      });
+      return;
+    }
+
+    // Category headers clip-path reveal
+    document.querySelectorAll("[data-skill-header]").forEach((header) => {
+      gsap.fromTo(header,
+        { clipPath: "inset(0 100% 0 0)" },
+        {
+          clipPath: "inset(0 0% 0 0)",
+          duration: 0.6,
+          ease: "power3.inOut",
+          scrollTrigger: {
+            trigger: header,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    });
+
+    // Skill chips stagger from random positions
+    document.querySelectorAll("[data-skill-cat]").forEach((cat) => {
+      const chips = cat.querySelectorAll("[data-skill-chip]");
+      // Set initial state explicitly
+      gsap.set(chips, { scale: 0, autoAlpha: 0 });
+      gsap.to(chips, {
+        scale: 1,
+        autoAlpha: 1,
+        stagger: {
+          each: 0.08,
+          from: "random",
+        },
+        duration: 0.4,
+        ease: "back.out(1.7)",
+        scrollTrigger: {
+          trigger: cat,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      });
+    });
+
+    // Level bars fill with ScrollTrigger
+    document.querySelectorAll("[data-skill-bar]").forEach((bar) => {
+      gsap.fromTo(bar,
+        { scaleX: 0 },
+        {
+          scaleX: 1,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: bar,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    });
+
+    // Hero skills pulse glow
+    gsap.to(".hero-skill", {
+      boxShadow: "0 0 25px rgba(0, 255, 159, 0.4), 0 0 50px rgba(0, 255, 159, 0.2)",
+      repeat: -1,
+      yoyo: true,
+      duration: 2,
+      ease: "sine.inOut",
+      scrollTrigger: {
+        trigger: "#skills-grid",
+        start: "top 60%",
+        toggleActions: "play pause resume pause",
+      },
     });
   });
 </script>
 
 <style>
-  .skills-terminal {
-    background: rgba(0, 0, 0, 0.8);
-    border: 1px solid #00ff9f;
-    border-radius: 10px;
-    padding: 20px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 0 20px rgba(0, 255, 159, 0.2);
-    margin-top: 20px;
-  }
-
-  .terminal-output {
+  .skills-power-grid {
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 30px;
   }
 
   .skill-category {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.6s ease-out forwards;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 255, 159, 0.15);
+    border-radius: 12px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
   }
-
-  .skill-category:nth-child(1) { animation-delay: 0.1s; }
-  .skill-category:nth-child(2) { animation-delay: 0.2s; }
-  .skill-category:nth-child(3) { animation-delay: 0.3s; }
 
   .category-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(0, 255, 159, 0.3);
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 255, 159, 0.2);
   }
 
   .prompt {
-    color: #ff006f;
+    color: #ff006e;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
   }
 
   .category-badge {
-    background: rgba(0, 255, 159, 0.2);
+    background: rgba(0, 255, 159, 0.1);
     color: #00ff9f;
-    padding: 4px 8px;
+    padding: 4px 10px;
     border-radius: 12px;
     font-size: 0.7rem;
-    border: 1px solid rgba(0, 255, 159, 0.4);
+    font-family: 'JetBrains Mono', monospace;
+    border: 1px solid rgba(0, 255, 159, 0.3);
   }
 
   .skills-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px;
   }
 
   .skill-chip {
     position: relative;
     background: rgba(26, 26, 46, 0.8);
-    border: 1px solid var(--skill-color, #00ff9f);
-    border-radius: 20px;
-    padding: 8px 14px;
-    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 10px 16px;
+    cursor: default;
     transition: all 0.3s ease;
-    opacity: 0;
-    transform: scale(0.8);
+    min-width: 100px;
     backdrop-filter: blur(5px);
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    /* Visible by default - GSAP will handle hide/reveal */
+    visibility: visible;
   }
 
-  .skill-chip.animate {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  .skill-chip::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, var(--skill-color, #00ff9f), transparent);
-    opacity: 0.3;
-    transition: left 0.5s ease;
+  .skill-chip.hero-skill {
+    border-color: rgba(0, 255, 159, 0.4);
+    background: rgba(0, 255, 159, 0.08);
+    min-width: 140px;
+    padding: 14px 20px;
   }
 
   .skill-chip:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 
-      0 4px 15px rgba(0, 255, 159, 0.4),
-      0 0 20px var(--skill-color, #00ff9f);
+    transform: translateY(-3px);
     border-color: var(--skill-color, #00ff9f);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   }
 
-  .skill-chip:hover::before {
-    left: 100%;
+  .skill-chip:hover .skill-level-label {
+    opacity: 1;
   }
 
   .skill-name {
     color: var(--skill-color, #00ff9f);
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.8rem;
-    font-weight: 500;
-    text-shadow: 0 0 5px var(--skill-color, #00ff9f);
-    position: relative;
-    z-index: 1;
+    font-weight: 600;
   }
 
-  .skill-indicator {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
+  .hero-skill .skill-name {
+    font-size: 0.95rem;
+    text-shadow: 0 0 8px var(--skill-color, #00ff9f);
+  }
+
+  .skill-level-bar {
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .skill-level-fill {
+    width: var(--skill-pct, 60%);
+    height: 100%;
     background: var(--skill-color, #00ff9f);
-    box-shadow: 0 0 8px var(--skill-color, #00ff9f);
-    animation: pulse 2s infinite;
+    border-radius: 2px;
+    transform-origin: left;
+    box-shadow: 0 0 6px var(--skill-color, #00ff9f);
   }
 
-  @keyframes fadeInUp {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes pulse {
-    0%, 100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 0.7;
-      transform: scale(1.2);
-    }
-  }
-
-  /* Tooltip global */
-  .skill-tooltip {
-    position: fixed;
-    background: rgba(0, 0, 0, 0.9);
-    color: #00ff9f;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    border: 1px solid #00ff9f;
-    box-shadow: 0 0 10px rgba(0, 255, 159, 0.5);
-    z-index: 1000;
-    transform: translateX(-50%);
+  .skill-level-label {
+    font-size: 0.65rem;
+    color: #666;
+    font-family: 'JetBrains Mono', monospace;
     opacity: 0;
     transition: opacity 0.2s ease;
-    pointer-events: none;
-    backdrop-filter: blur(10px);
-  }
-
-  .skill-tooltip.visible {
-    opacity: 1;
-  }
-
-  .skill-tooltip::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border: 5px solid transparent;
-    border-top-color: #00ff9f;
   }
 
   /* Responsive */
-  @media (width <= 768px) {
-    .skills-terminal {
+  @media (max-width: 768px) {
+    .skill-category {
       padding: 15px;
     }
 
-    .terminal-output {
-      gap: 20px;
-    }
-
-    .category-header {
-      flex-direction: column;
-      align-items: flex-start;
+    .skills-grid {
       gap: 8px;
     }
 
-    .skills-grid {
-      gap: 6px;
-    }
-
     .skill-chip {
-      padding: 6px 12px;
-      font-size: 0.75rem;
+      min-width: 80px;
+      padding: 8px 12px;
     }
 
-    .prompt {
-      font-size: 0.8rem;
-    }
-  }
-
-  @media (width <= 480px) {
-    .skill-chip {
-      padding: 5px 10px;
+    .skill-chip.hero-skill {
+      min-width: 110px;
+      padding: 10px 14px;
     }
 
     .skill-name {
-      font-size: 0.7rem;
+      font-size: 0.72rem;
     }
 
-    .skills-grid {
-      gap: 4px;
+    .hero-skill .skill-name {
+      font-size: 0.8rem;
+    }
+
+    .prompt {
+      font-size: 0.75rem;
+    }
+
+    .skill-level-label {
+      opacity: 1;
     }
   }
 </style>
-

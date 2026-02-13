@@ -1,200 +1,245 @@
 ---
 import Section from "../Section.astro"
-
 import { basics } from "@cv"
 const { summary } = basics
 ---
 
-<Section title="/* About Me */">
-  <div class="code-editor">
+<Section title="About">
+  <div class="code-editor" id="about-editor">
     <div class="editor-header">
       <div class="editor-tabs">
-        <div class="tab active">about.js</div>
-        <div class="tab">skills.json</div>
-        <div class="tab">experience.md</div>
+        <div class="tab active" data-tab>about.ts</div>
+        <div class="tab" data-tab>skills.json</div>
+        <div class="tab" data-tab>experience.md</div>
       </div>
     </div>
     <div class="editor-content">
       <div class="line-numbers">
-        <span>1</span>
-        <span>2</span>
-        <span>3</span>
-        <span>4</span>
-        <span>5</span>
-        <span>6</span>
-        <span>7</span>
-        <span>8</span>
-        <span>9</span>
-        <span>10</span>
-        <span>11</span>
-        <span>12</span>
-        <span>13</span>
-        <span>14</span>
-        <span>15</span>
+        {Array.from({ length: 14 }, (_, i) => (
+          <span data-ln>{i + 1}</span>
+        ))}
       </div>
       <div class="code-content">
-        <div class="code-line"><span class="comment">// Developer Profile</span></div>
-        <div class="code-line"><span class="keyword">const</span> <span class="variable">developer</span> = {</div>
-        <div class="code-line">  <span class="property">description</span>: <span class="string">"{summary}"</span>,</div>
-        <div class="code-line">  <span class="property">passion</span>: <span class="string">"Building amazing experiences"</span>,</div>
-        <div class="code-line">  <span class="property">status</span>: <span class="string">"Always learning"</span></div>
-        <div class="code-line">{"}"}</div>
-        <div class="code-line"></div>
-        <div class="code-line"><span class="comment">// Ready to code awesome projects!</span></div>
+        <div class="code-line" data-code-line><span class="comment">// Developer Profile</span></div>
+        <div class="code-line" data-code-line><span class="keyword">interface</span> <span class="variable">Developer</span> {"{"}</div>
+        <div class="code-line" data-code-line>  <span class="property">role</span>: <span class="type">string</span>;</div>
+        <div class="code-line" data-code-line>  <span class="property">experience</span>: <span class="type">number</span>;</div>
+        <div class="code-line" data-code-line>  <span class="property">summary</span>: <span class="type">string</span>;</div>
+        <div class="code-line" data-code-line>{"}"}</div>
+        <div class="code-line" data-code-line>&nbsp;</div>
+        <div class="code-line" data-code-line><span class="keyword">const</span> <span class="variable">me</span>: <span class="type">Developer</span> = {"{"}</div>
+        <div class="code-line" data-code-line>  <span class="property">role</span>: <span class="string">"Tech Lead Frontend"</span>,</div>
+        <div class="code-line" data-code-line>  <span class="property">experience</span>: <span class="number">12</span>,</div>
+        <div class="code-line summary-line" data-code-line>  <span class="property">summary</span>: <span class="string">"{summary}"</span>,</div>
+        <div class="code-line" data-code-line>{"}"};</div>
+        <div class="code-line" data-code-line>&nbsp;</div>
+        <div class="code-line" data-code-line><span class="comment">// Ready to build something amazing</span></div>
       </div>
+      <div class="glow-line" id="glow-line"></div>
     </div>
   </div>
 </Section>
 
+<script>
+  import { gsap, prefersReducedMotion } from "@/scripts/gsap-init";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    if (prefersReducedMotion()) return;
+
+    const editor = document.getElementById("about-editor");
+    if (!editor) return;
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: editor,
+        start: "top 80%",
+        toggleActions: "play none none none",
+      },
+    });
+
+    // Editor container scales in
+    tl.from(editor, {
+      scale: 0.95,
+      opacity: 0,
+      y: 50,
+      duration: 0.6,
+      ease: "power3.out",
+    });
+
+    // Tabs stagger
+    tl.from("[data-tab]", {
+      y: -20,
+      opacity: 0,
+      stagger: 0.1,
+      duration: 0.3,
+    }, "-=0.3");
+
+    // Line numbers stagger
+    tl.from("[data-ln]", {
+      x: -20,
+      opacity: 0,
+      stagger: 0.03,
+      duration: 0.2,
+    }, "-=0.2");
+
+    // Code lines stagger
+    tl.from("[data-code-line]", {
+      x: -30,
+      opacity: 0,
+      stagger: 0.05,
+      duration: 0.3,
+    }, "-=0.2");
+
+    // Glow line sweep animation
+    const glowLine = document.getElementById("glow-line");
+    if (glowLine) {
+      const codeLines = editor.querySelectorAll("[data-code-line]");
+      const lineHeight = 28;
+      gsap.to(glowLine, {
+        y: (codeLines.length - 1) * lineHeight,
+        duration: 4,
+        repeat: -1,
+        ease: `steps(${codeLines.length})`,
+        scrollTrigger: {
+          trigger: editor,
+          start: "top 60%",
+          toggleActions: "play pause resume pause",
+        },
+      });
+    }
+  });
+</script>
+
 <style>
   .code-editor {
-    background: #1e1e1e;
-    border: 1px solid #333;
-    border-radius: 8px;
+    background: #1a1a2e;
+    border: 1px solid rgba(0, 255, 159, 0.3);
+    border-radius: 10px;
     overflow: hidden;
     font-family: 'JetBrains Mono', monospace;
-    box-shadow: 0 10px 30px rgba(0, 255, 159, 0.1);
+    box-shadow:
+      0 10px 40px rgba(0, 0, 0, 0.5),
+      0 0 20px rgba(0, 255, 159, 0.1);
   }
 
   .editor-header {
-    background: #2d2d30;
-    border-bottom: 1px solid #333;
-    padding: 0;
+    background: rgba(0, 0, 0, 0.5);
+    border-bottom: 1px solid rgba(0, 255, 159, 0.2);
   }
 
   .editor-tabs {
     display: flex;
-    gap: 0;
   }
 
   .tab {
-    padding: 10px 15px;
-    color: #aaa;
-    background: #2d2d30;
-    border-right: 1px solid #333;
+    padding: 10px 18px;
+    color: #666;
+    background: transparent;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
     font-size: 0.8rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    position: relative;
   }
 
   .tab.active {
-    background: #1e1e1e;
+    background: #1a1a2e;
     color: #00ff9f;
+    border-bottom: 2px solid #00ff9f;
   }
 
   .tab:hover:not(.active) {
-    background: #3e3e42;
-    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+    color: #aaa;
   }
 
   .editor-content {
     display: flex;
     min-height: 150px;
+    position: relative;
   }
 
   .line-numbers {
-    background: #252526;
-    padding: 15px 10px;
-    border-right: 1px solid #333;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px 12px;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     flex-direction: column;
     font-size: 0.8rem;
-    color: #858585;
+    color: #555;
     user-select: none;
-    min-width: 40px;
+    min-width: 45px;
     text-align: right;
+    line-height: 1.75;
   }
 
   .code-content {
     padding: 15px 20px;
     flex: 1;
     font-size: 0.85rem;
-    line-height: 1.6;
+    line-height: 1.75;
+    overflow-x: auto;
   }
 
   .code-line {
-    margin-bottom: 2px;
+    white-space: nowrap;
+    position: relative;
   }
 
-  .keyword {
-    color: #569cd6;
-    font-weight: 500;
+  .glow-line {
+    position: absolute;
+    left: 45px;
+    top: 15px;
+    right: 0;
+    height: 28px;
+    background: rgba(0, 255, 159, 0.04);
+    border-left: 2px solid rgba(0, 255, 159, 0.3);
+    pointer-events: none;
   }
 
-  .variable {
-    color: #9cdcfe;
-  }
-
-  .property {
-    color: #d19a66;
-  }
-
-  .string {
-    color: #ce9178;
-  }
-
-  .comment {
-    color: #6a9955;
-    font-style: italic;
-  }
+  .keyword { color: #c678dd; font-weight: 500; }
+  .variable { color: #61afef; }
+  .property { color: #e5c07b; }
+  .string { color: #98c379; }
+  .comment { color: #5c6370; font-style: italic; }
+  .type { color: #e06c75; }
+  .number { color: #d19a66; }
 
   .code-line:hover {
     background: rgba(0, 255, 159, 0.05);
-    padding-left: 5px;
-    margin-left: -5px;
-    border-radius: 3px;
-    transition: all 0.2s ease;
   }
 
-  @media (width <= 768px) {
-    .editor-content {
-      display: flex;
-      flex-direction: row;
+  .summary-line .string {
+    white-space: normal;
+    display: inline;
+    word-break: break-word;
+  }
+
+  @media (max-width: 768px) {
+    .code-content {
+      padding: 10px 12px;
+      font-size: 0.72rem;
+      line-height: 1.6;
     }
 
     .line-numbers {
-      flex-direction: column;
-      border-right: 1px solid #333;
-      border-bottom: none;
       min-width: 35px;
-      text-align: right;
       padding: 10px 8px;
       font-size: 0.7rem;
-    }
-    .line-numbers span {
-      margin-bottom: 4px;
-    }
-
-    .code-content {
-      padding: 10px 12px;
-      font-size: 0.75rem;
-      line-height: 1.4;
-      flex: 1;
+      line-height: 1.6;
     }
 
     .tab {
-      padding: 8px 10px;
+      padding: 8px 12px;
       font-size: 0.7rem;
     }
 
-    .code-line {
-      margin-bottom: 1px;
-      min-height: 1.4em;
+    .glow-line {
+      display: none;
     }
 
-    /* Reduce spacing for mobile */
     .code-editor {
       margin: 0 -5px;
-      border-radius: 5px;
-    }
-
-    .editor-header {
-      padding: 8px 12px;
-    }
-
-    .terminal-title {
-      font-size: 0.7rem;
+      border-radius: 8px;
     }
   }
 </style>

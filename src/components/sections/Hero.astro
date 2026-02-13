@@ -1,6 +1,5 @@
 ---
 import { basics } from "@cv"
-import Section from "@/components/Section.astro"
 import Mail from "@/icons/Mail.astro"
 import Phone from "@/icons/Phone.astro"
 import X from "@/icons/X.astro"
@@ -9,7 +8,7 @@ import GitHub from "@/icons/GitHub.astro"
 import WorldMap from "@/icons/WorldMap.astro"
 import type { SocialIcon } from "@/types"
 
-const { name, label, image, location, profiles, phone, email } = basics
+const { name, image, location, profiles, phone, email } = basics
 const { city, region } = location
 
 const SOCIAL_ICONS: SocialIcon = {
@@ -20,52 +19,73 @@ const SOCIAL_ICONS: SocialIcon = {
 
 const linkedInfo = profiles.find(({ network }) => network === "LinkedIn")
 const linkedUrl = linkedInfo?.url
-
 const printInfo = [email, phone, linkedUrl].filter(Boolean).join(" • ")
+
+// Split name: "Juan Carlos" on top, "Ayala Higuera" below
+const nameParts = name.split(" ")
+const firstName = nameParts.slice(0, 2).join(" ")
+const lastName = nameParts.slice(2).join(" ")
+
+const codeDecorations = [
+  "<Component />",
+  "{useState}",
+  "export default",
+  "npm run dev",
+  "async/await",
+  "() => {}",
+]
 ---
 
-<Section>
-  <div class="terminal-window">
-    <div class="terminal-header">
-      <div class="terminal-buttons">
-        <span class="terminal-button red"></span>
-        <span class="terminal-button yellow"></span>
-        <span class="terminal-button green"></span>
-      </div>
-      <div class="terminal-title">d3vaya@cyberpunk:~$</div>
+<section class="hero-section" id="hero-inner">
+  <div class="hero-content">
+    <!-- Name - split into two lines -->
+    <h1 class="hero-name" id="hero-name" aria-label={name}>
+      <span class="name-line">
+        {firstName.split("").map((char, i) => (
+          <span class="char" style={`--char-index: ${i}`}>{char}</span>
+        ))}
+      </span>
+      <span class="name-line name-last">
+        {lastName.split("").map((char, i) => (
+          <span class="char" style={`--char-index: ${firstName.length + 1 + i}`}>{char === " " ? "\u00A0" : char}</span>
+        ))}
+      </span>
+    </h1>
+
+    <!-- Role badge -->
+    <div class="hero-badge" id="hero-badge">
+      <span class="badge-text">Tech Lead Frontend | 12+ years building the web</span>
     </div>
-    <div class="terminal-body">
-      <div class="terminal-line">
-        <span class="prompt">$ whoami</span>
-        <h1 class="typewriter neon-text">{name}</h1>
+
+    <!-- Location -->
+    <div class="hero-location" id="hero-location">
+      <WorldMap />
+      <span>{city}, {region}</span>
+    </div>
+
+    <!-- Compact terminal with contacts -->
+    <div class="hero-terminal" id="hero-terminal">
+      <div class="terminal-bar">
+        <span class="terminal-dot red"></span>
+        <span class="terminal-dot yellow"></span>
+        <span class="terminal-dot green"></span>
+        <span class="terminal-title">contacts.sh</span>
       </div>
-      <div class="terminal-line">
-        <span class="prompt">$ cat role.txt</span>
-        <h2 class="typewriter delay-1">{label}</h2>
-      </div>
-      <div class="terminal-line">
-        <span class="prompt">$ pwd</span>
-        <span class="typewriter delay-2">
-          <WorldMap />
-          {city}, {region}
-        </span>
-      </div>
-      <div class="terminal-line">
-        <span class="prompt">$ ls -la contacts/</span>
-        <footer class="print typewriter delay-3">
+      <div class="terminal-content">
+        <footer class="print">
           {printInfo}
         </footer>
-        <footer class="no-print typewriter delay-3">
+        <footer class="no-print contact-links" id="hero-links">
           {
             email && (
               <a
                 href={`mailto:${email}`}
-                title={`Enviar un correo electrónico a ${name} al correo ${email}`}
+                title={`Send email to ${name}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="terminal-link"
+                class="contact-link"
               >
-                <Mail /> {email}
+                <Mail /> <span>{email}</span>
               </a>
             )
           }
@@ -73,28 +93,27 @@ const printInfo = [email, phone, linkedUrl].filter(Boolean).join(" • ")
             phone && (
               <a
                 href={`tel:${phone}`}
-                title={`Llamar por teléfono a ${name} al número ${phone}`}
+                title={`Call ${name}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="terminal-link"
+                class="contact-link"
               >
-                <Phone /> {phone}
+                <Phone /> <span>{phone}</span>
               </a>
             )
           }
           {
             profiles.map(({ network, url }) => {
               const Icon = SOCIAL_ICONS[network]
-
               return (
                 <a
                   href={url}
-                  title={`Visitar el perfil de ${name} en ${network}`}
+                  title={`Visit ${name}'s ${network} profile`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="terminal-link"
+                  class="contact-link"
                 >
-                  <Icon /> {network}
+                  <Icon /> <span>{network}</span>
                 </a>
               )
             })
@@ -104,348 +123,524 @@ const printInfo = [email, phone, linkedUrl].filter(Boolean).join(" • ")
     </div>
   </div>
 
-  <!-- Floating Avatar outside terminal -->
-  <figure class="floating-avatar">
-    <div class="hologram-effect">
-      <img src={image} alt={name} class="hologram-image" />
-      <div class="scan-lines"></div>
+  <!-- Avatar with parallax -->
+  <figure class="hero-avatar" id="hero-avatar">
+    <div class="avatar-frame">
+      <img src={image} alt={name} />
+      <div class="avatar-glow"></div>
     </div>
   </figure>
-</Section>
+
+  <!-- Code decorations -->
+  <div class="code-decorations no-print" id="code-decorations" aria-hidden="true">
+    {codeDecorations.map((code, i) => (
+      <span class="code-float" data-speed={0.5 + (i * 0.15)} style={`--float-index: ${i}`}>
+        {code}
+      </span>
+    ))}
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="scroll-indicator no-print" id="scroll-indicator">
+    <span>scroll to explore</span>
+    <div class="scroll-arrow">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M10 4v12M4 12l6 6 6-6" stroke="#00ff9f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap, prefersReducedMotion } from "@/scripts/gsap-init";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    if (prefersReducedMotion()) return;
+
+    const mm = gsap.matchMedia();
+
+    mm.add("(min-width: 769px)", () => {
+      // Desktop: set initial hidden states
+      gsap.set(".hero-name .char", { y: 100, autoAlpha: 0, rotationX: -80 });
+      gsap.set("#hero-badge", { clipPath: "inset(0 100% 0 0)" });
+      gsap.set("#hero-location", { y: 30, autoAlpha: 0 });
+      gsap.set("#hero-terminal", { y: 20, autoAlpha: 0 });
+      gsap.set("#hero-links .contact-link", { y: 15, autoAlpha: 0 });
+      gsap.set(".code-float", { autoAlpha: 0 });
+      gsap.set("#hero-avatar", { scale: 0.8, autoAlpha: 0 });
+      gsap.set("#scroll-indicator", { autoAlpha: 0, y: 20 });
+
+      const tl = gsap.timeline({ delay: 2.8 }); // after page loader
+
+      // 1. Name - split characters
+      tl.to(".hero-name .char", {
+        y: 0,
+        autoAlpha: 1,
+        rotationX: 0,
+        stagger: 0.03,
+        duration: 0.8,
+        ease: "back.out(1.5)",
+      });
+
+      // 2. Badge - clip-path reveal
+      tl.to("#hero-badge", {
+        clipPath: "inset(0 0% 0 0)",
+        duration: 0.6,
+        ease: "power3.inOut",
+      }, "-=0.2");
+
+      // 3. Location
+      tl.to("#hero-location", {
+        y: 0,
+        autoAlpha: 1,
+        duration: 0.5,
+      }, "-=0.3");
+
+      // 4. Terminal container first
+      tl.to("#hero-terminal", {
+        y: 0,
+        autoAlpha: 1,
+        duration: 0.4,
+      }, "-=0.2");
+
+      // 5. Contact links - stagger (after terminal is visible)
+      tl.to("#hero-links .contact-link", {
+        y: 0,
+        autoAlpha: 1,
+        stagger: 0.08,
+        duration: 0.35,
+        ease: "power2.out",
+      }, "-=0.1");
+
+      // 6. Code decorations
+      tl.to(".code-float", {
+        autoAlpha: 1,
+        stagger: 0.05,
+        duration: 0.6,
+      }, "-=0.3");
+
+      // 7. Avatar
+      tl.to("#hero-avatar", {
+        scale: 1,
+        autoAlpha: 1,
+        duration: 0.6,
+        ease: "back.out(1.5)",
+      }, "-=0.6");
+
+      // 8. Scroll indicator
+      tl.to("#scroll-indicator", {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.5,
+      });
+
+      // Scroll indicator bounce
+      gsap.to(".scroll-arrow", {
+        y: 8,
+        repeat: -1,
+        yoyo: true,
+        duration: 0.8,
+        ease: "power1.inOut",
+      });
+
+      // Avatar parallax on mouse move
+      const avatar = document.getElementById("hero-avatar");
+      if (avatar) {
+        const moveX = gsap.quickTo(avatar, "x", { duration: 0.5, ease: "power3" });
+        const moveY = gsap.quickTo(avatar, "y", { duration: 0.5, ease: "power3" });
+
+        document.querySelector(".hero-section")?.addEventListener("mousemove", (e) => {
+          const event = e as MouseEvent;
+          const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+          const x = (event.clientX - rect.left - rect.width / 2) / rect.width;
+          const y = (event.clientY - rect.top - rect.height / 2) / rect.height;
+          moveX(x * 20);
+          moveY(y * 15);
+        });
+      }
+
+      // Code decorations parallax with scroll
+      gsap.utils.toArray<HTMLElement>(".code-float").forEach((el) => {
+        const speed = parseFloat(el.dataset.speed || "1");
+        gsap.to(el, {
+          y: () => -100 * speed,
+          scrollTrigger: {
+            trigger: ".hero-section",
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+      });
+
+      // Hero parallax on scroll
+      gsap.to(".hero-content", {
+        y: -80,
+        opacity: 0.3,
+        scrollTrigger: {
+          trigger: ".hero-section",
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+    });
+
+    mm.add("(max-width: 768px)", () => {
+      // Mobile: set initial hidden states
+      gsap.set(".hero-name .char", { y: 40, autoAlpha: 0 });
+      gsap.set("#hero-badge", { autoAlpha: 0, y: 20 });
+      gsap.set("#hero-location", { autoAlpha: 0, y: 15 });
+      gsap.set("#hero-terminal", { autoAlpha: 0, y: 20 });
+      gsap.set("#hero-avatar", { scale: 0.9, autoAlpha: 0 });
+
+      const tl = gsap.timeline({ delay: 1.8 });
+
+      tl.to(".hero-name .char", {
+        y: 0,
+        autoAlpha: 1,
+        stagger: 0.02,
+        duration: 0.5,
+      });
+
+      tl.to("#hero-badge", {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.4,
+      }, "-=0.2");
+
+      tl.to("#hero-location", {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.3,
+      }, "-=0.2");
+
+      tl.to("#hero-terminal", {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.4,
+      }, "-=0.2");
+
+      tl.to("#hero-avatar", {
+        scale: 1,
+        autoAlpha: 1,
+        duration: 0.4,
+      }, "-=0.3");
+    });
+  });
+</script>
 
 <style>
-  .terminal-window {
-    background: rgba(0, 0, 0, 0.9);
-    border: 2px solid #00ff9f;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow:
-      0 0 20px rgba(0, 255, 159, 0.3),
-      inset 0 0 20px rgba(0, 255, 159, 0.1);
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .terminal-header {
-    background: linear-gradient(90deg, #1a1a2e, #16213e);
-    padding: 10px 15px;
+  .hero-section {
+    min-height: 100vh;
     display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    gap: 10px;
-    border-bottom: 1px solid #00ff9f;
+    position: relative;
+    padding: 2rem;
+    overflow: hidden;
   }
 
-  .terminal-buttons {
-    display: flex;
-    gap: 5px;
+  .hero-content {
+    text-align: center;
+    max-width: 900px;
+    z-index: 2;
   }
 
-  .terminal-button {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    opacity: 0.8;
+  /* Name */
+  .hero-name {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: clamp(2.2rem, 5.5vw, 5rem);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+    perspective: 600px;
+    color: #ffffff !important;
+    text-shadow:
+      0 0 20px rgba(0, 255, 159, 0.4),
+      0 0 40px rgba(0, 255, 159, 0.2);
   }
 
-  .terminal-button.red { background: #ff5f56; }
-  .terminal-button.yellow { background: #ffbd2e; }
-  .terminal-button.green { background: #27ca3f; }
-
-  .terminal-title {
-    color: #00ff9f;
-    font-size: 0.9rem;
-    font-weight: 500;
+  .name-line {
+    display: block;
   }
 
-  .terminal-body {
-    padding: 25px;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  .name-last {
+    font-size: 0.85em;
+    opacity: 0.9;
   }
 
-  .terminal-line {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+  .hero-name .char {
+    display: inline-block;
+    will-change: transform, opacity;
+  }
+
+  /* Badge */
+  #hero-badge {
     margin-bottom: 1rem;
   }
 
-  .prompt {
-    color: #ff006f;
-    font-weight: 600;
-    font-size: 0.9rem;
+  .badge-text {
+    display: inline-block;
+    font-family: "JetBrains Mono", monospace;
+    font-size: clamp(0.75rem, 1.5vw, 1rem);
+    color: #00d4ff;
+    padding: 8px 20px;
+    border: 1px solid rgba(0, 212, 255, 0.4);
+    border-radius: 30px;
+    background: rgba(0, 212, 255, 0.08);
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+    letter-spacing: 0.5px;
   }
 
-  .typewriter {
-    overflow: hidden;
-    border-right: 2px solid #00ff9f;
-    white-space: nowrap;
-    animation: typing 3s steps(30, end), blink-caret 0.75s step-end infinite;
-  }
-
-  .typewriter.delay-1 {
-    animation-delay: 1s;
-    animation: typing 2s steps(20, end) 1s both, blink-caret 0.75s step-end infinite 1s;
-  }
-
-  .typewriter.delay-2 {
-    animation-delay: 2s;
-    animation: typing 1.5s steps(15, end) 2s both, blink-caret 0.75s step-end infinite 2s;
-  }
-
-  .typewriter.delay-3 {
-    animation-delay: 3s;
-    animation: typing 2s steps(25, end) 3s both, blink-caret 0.75s step-end infinite 3s;
-  }
-
-  @keyframes typing {
-    from { width: 0; }
-    to { width: 100%; }
-  }
-
-  @keyframes blink-caret {
-    from, to { border-color: transparent; }
-    50% { border-color: #00ff9f; }
-  }
-
-  h1 {
-    font-size: 2.5rem;
-    color: #ffffff;
-    text-shadow: 0 0 10px #00ff9f;
-    margin: 0;
-    font-weight: 700;
-  }
-
-  h2 {
-    color: #b3b3b3;
-    font-weight: 500;
-    font-size: 1.2rem;
-    margin: 0;
-    text-wrap: balance;
-  }
-
-  .floating-avatar {
-    position: absolute;
-    top: 20px;
-    right: -130px;
-    z-index: 10;
-    margin: 0;
-    animation: floatUpDown 4s ease-in-out infinite;
-  }
-
-  .hologram-effect {
-    position: relative;
-    width: 200px;
-    height: 200px;
+  /* Location */
+  .hero-location {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #b3b3b3;
+    margin-bottom: 2rem;
   }
 
-  .hologram-image {
+  .hero-location span {
+    color: #b3b3b3;
+  }
+
+  /* Terminal */
+  .hero-terminal {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 255, 159, 0.3);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+  }
+
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(26, 26, 46, 0.8);
+    border-bottom: 1px solid rgba(0, 255, 159, 0.2);
+  }
+
+  .terminal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .terminal-dot.red { background: #ff5f56; }
+  .terminal-dot.yellow { background: #ffbd2e; }
+  .terminal-dot.green { background: #27ca3f; }
+
+  .terminal-title {
+    color: #888;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    margin-left: 8px;
+  }
+
+  .terminal-content {
+    padding: 15px 20px;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 1px solid rgba(0, 255, 159, 0.3);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-family: "JetBrains Mono", monospace;
+    color: #00ff9f !important;
+    background: rgba(0, 255, 159, 0.05);
+    transition: all 0.3s ease;
+  }
+
+  .contact-link span {
+    color: #00ff9f;
+    font-size: 0.8rem;
+  }
+
+  .contact-link:hover {
+    background: rgba(0, 255, 159, 0.15);
+    border-color: #00ff9f;
+    box-shadow: 0 0 15px rgba(0, 255, 159, 0.3);
+    transform: translateY(-2px);
+    color: #00ff9f !important;
+    text-shadow: 0 0 10px rgba(0, 255, 159, 0.5);
+  }
+
+  /* Avatar */
+  .hero-avatar {
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    margin: 0;
+    z-index: 1;
+  }
+
+  .avatar-frame {
+    position: relative;
+    width: 140px;
+    height: 140px;
+  }
+
+  .avatar-frame img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 50%;
-    border: 4px solid #00ff9f;
+    border: 3px solid rgba(0, 255, 159, 0.5);
     box-shadow:
-      0 0 30px rgba(0, 255, 159, 0.6),
-      inset 0 0 30px rgba(0, 255, 159, 0.3),
-      0 0 50px rgba(0, 255, 159, 0.2);
-    animation: hologramPulse 3s ease-in-out infinite;
-    object-position: center center;
+      0 0 25px rgba(0, 255, 159, 0.3),
+      0 0 50px rgba(0, 255, 159, 0.1);
   }
 
-  @keyframes floatUpDown {
-    0%, 100% {
-      transform: translateY(0px) rotate(0deg);
-    }
-    25% {
-      transform: translateY(-10px) rotate(1deg);
-    }
-    50% {
-      transform: translateY(-5px) rotate(0deg);
-    }
-    75% {
-      transform: translateY(-15px) rotate(-1deg);
-    }
-  }
-
-  .scan-lines {
+  .avatar-glow {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0, 255, 159, 0.1) 2px,
-      rgba(0, 255, 159, 0.1) 4px
-    );
+    inset: -8px;
     border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 255, 159, 0.15) 0%, transparent 70%);
+    animation: glowPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+  }
+
+  /* Code decorations */
+  .code-decorations {
+    position: absolute;
+    inset: 0;
     pointer-events: none;
-    animation: scanLineMove 2s linear infinite;
+    z-index: 0;
   }
 
-  @keyframes hologramPulse {
-    0%, 100% {
-      transform: scale(1);
-      filter: hue-rotate(0deg);
-    }
-    50% {
-      transform: scale(1.05);
-      filter: hue-rotate(90deg);
-    }
+  .code-float {
+    position: absolute;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    color: rgba(0, 255, 159, 0.2);
+    white-space: nowrap;
+    will-change: transform;
   }
 
-  @keyframes scanLineMove {
-    0% { transform: translateY(-100%); }
-    100% { transform: translateY(100%); }
-  }
+  .code-float:nth-child(1) { top: 15%; left: 5%; }
+  .code-float:nth-child(2) { top: 25%; right: 8%; }
+  .code-float:nth-child(3) { bottom: 30%; left: 3%; }
+  .code-float:nth-child(4) { bottom: 20%; right: 5%; }
+  .code-float:nth-child(5) { top: 60%; left: 8%; }
+  .code-float:nth-child(6) { top: 45%; right: 3%; }
 
-  span {
-    color: #b3b3b3;
+  /* Scroll indicator */
+  .scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-    letter-spacing: -0.02rem;
+    gap: 8px;
+    z-index: 2;
   }
 
-  footer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
+  .scroll-indicator span {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.7rem;
+    color: rgba(0, 255, 159, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 2px;
   }
 
-  .terminal-link {
-    color: #00ff9f !important;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 5px 10px;
-    border: 1px solid #00ff9f;
-    border-radius: 5px;
-    font-size: 0.8rem;
-    transition: all 0.3s ease;
-    background: rgba(0, 255, 159, 0.1);
+  .scroll-arrow {
+    opacity: 0.6;
   }
 
-  .terminal-link:hover {
-    background: rgba(0, 255, 159, 0.2);
-    box-shadow: 0 0 10px rgba(0, 255, 159, 0.5);
-    transform: translateY(-2px);
+  /* Print */
+  footer.print {
+    display: none;
+    color: #333;
+    font-size: 0.85rem;
   }
 
-  /* Tablet adjustments */
-  @media (width <= 1024px) and (width > 700px) {
-    .floating-avatar {
-      right: -40px;
-      top: 40px;
+  @media print {
+    footer.print { display: block; }
+    .no-print { display: none !important; }
+  }
+
+  /* Tablet */
+  @media (max-width: 1024px) and (min-width: 769px) {
+    .hero-avatar {
+      top: 3%;
+      right: 3%;
     }
 
-    .hologram-effect {
-      width: 160px;
-      height: 160px;
+    .avatar-frame {
+      width: 110px;
+      height: 110px;
+    }
+
+    .code-decorations {
+      display: none;
     }
   }
 
-  /* Mobile adjustments */
-  @media (width <= 700px) {
-    .floating-avatar {
-      position: static;
-      margin: 0 auto 2rem auto;
-      animation: hologramPulse 3s ease-in-out infinite;
+  /* Mobile */
+  @media (max-width: 768px) {
+    .hero-section {
+      min-height: auto;
+      padding: 6rem 1.5rem 3rem;
     }
 
-    .hologram-effect {
-      width: 150px;
-      height: 150px;
+    .hero-avatar {
+      position: relative;
+      top: auto;
+      right: auto;
+      margin: 0 auto 1.5rem;
     }
 
-    .terminal-line {
-      align-items: start;
-      width: 100%;
+    .avatar-frame {
+      width: 100px;
+      height: 100px;
     }
 
-    .terminal-body {
-      padding: 15px;
+    .hero-name {
+      font-size: clamp(1.8rem, 8vw, 2.8rem);
+      margin-bottom: 1rem;
     }
 
-    /* Disable typewriter animation on mobile to prevent overflow */
-    .typewriter {
-      white-space: normal;
-      overflow: visible;
-      border-right: none;
-      animation: none;
-      width: 100% !important;
-      word-wrap: break-word;
-      text-align: start;
+    .code-decorations {
+      display: none;
     }
 
-    /* Add a simple fade-in animation instead */
-    .typewriter {
-      animation: fadeInMobile 2s ease-in-out;
+    .scroll-indicator {
+      display: none;
     }
 
-    .typewriter.delay-1 {
-      animation: fadeInMobile 2s ease-in-out 0.5s both;
-    }
-
-    .typewriter.delay-2 {
-      animation: fadeInMobile 2s ease-in-out 1s both;
-    }
-
-    .typewriter.delay-3 {
-      animation: fadeInMobile 2s ease-in-out 1.5s both;
-    }
-
-    @keyframes fadeInMobile {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    h1 {
-      font-size: 1.8rem;
-      line-height: 1.2;
-      word-break: break-word;
-    }
-
-    h2 {
-      font-size: 1rem;
-      line-height: 1.3;
-      text-wrap: balance;
-      max-width: 100%;
-    }
-
-    .hologram-effect {
-      width: 120px;
-      height: 120px;
-    }
-
-    .terminal-title {
-      font-size: 0.8rem;
-    }
-
-    .prompt {
-      font-size: 0.8rem;
-    }
-
-    /* Make terminal links stack better on mobile */
-    footer {
+    .contact-links {
       flex-direction: column;
-      gap: 8px;
-      align-items: start;
+      align-items: center;
+    }
+
+    .hero-terminal {
+      margin-bottom: 1rem;
     }
   }
 </style>
