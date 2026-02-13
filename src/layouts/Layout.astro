@@ -8,6 +8,11 @@ interface Props {
 const { title } = Astro.props
 
 const { image, summary, url } = basics
+
+// Truncate description for meta tags (max 155 chars)
+const metaDescription = summary.length > 155 ? summary.slice(0, 152) + '...' : summary
+const siteUrl = 'https://www.jcayala.dev'
+const ogImage = `${siteUrl}${image}`
 ---
 
 <!doctype html>
@@ -15,27 +20,40 @@ const { image, summary, url } = basics
   <head>
     <meta charset="UTF-8" />
     <title>{title}</title>
-    <meta name="description" content={summary} />
+    <meta name="description" content={metaDescription} />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preload" as="image" href={image} />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+    <link rel="canonical" href={siteUrl} />
 
-    <meta property="og:url" content={url} />
+    {/* Preconnect to all external origins */}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+
+    {/* Preload hero avatar (LCP candidate) */}
+    <link rel="preload" as="image" href={image} />
+
+    {/* Non-render-blocking font loading */}
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" /></noscript>
+
+    {/* Devicon — load async (not critical for initial paint) */}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" /></noscript>
+
+    <meta property="og:url" content={siteUrl} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={summary} />
-    <meta property="og:image" content="" />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:image" content={ogImage} />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta property="twitter:domain" content={url.split("//")[1] ?? ''} />
-    <meta property="twitter:url" content={url} />
+    <meta property="twitter:domain" content="www.jcayala.dev" />
+    <meta property="twitter:url" content={siteUrl} />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={summary} />
-    <meta name="twitter:image" content="" />
+    <meta name="twitter:description" content={metaDescription} />
+    <meta name="twitter:image" content={ogImage} />
   </head>
   <body>
     <slot />
