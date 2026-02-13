@@ -1,41 +1,87 @@
 ---
 import Section from "../Section.astro"
 import { education } from "@cv"
+
+const branchColors = ["#00d4ff", "#c678dd", "#ff006e", "#ffd700", "#61afef", "#00ff9f"]
 ---
 
 <Section title="Education">
-  <div class="education-container" id="edu-container">
-    <!-- SVG connector line -->
-    <svg class="edu-line-svg" id="edu-line-svg" preserveAspectRatio="none">
-      <line id="edu-line" x1="20" y1="0" x2="20" y2="100%"
-        stroke="rgba(0, 212, 255, 0.3)" stroke-width="2" stroke-dasharray="6,4" />
-    </svg>
+  <div class="edu-graph" id="edu-timeline">
+    <div class="edu-git-header">
+      <span class="edu-git-cmd">$ git log --graph --oneline education/</span>
+    </div>
 
-    {
-      education.map(({ institution, startDate, endDate, area }) => {
-        const startYear = new Date(startDate).getFullYear()
-        const endYear =
-          endDate != null ? new Date(endDate).getFullYear() : "Present"
-        const years = `${startYear} - ${endYear}`
+    <div class="edu-graph-body">
+      <div class="edu-graph-entries">
+        {
+          education.map(({ institution, startDate, endDate, area, url }, index) => {
+            const startYear = new Date(startDate).getFullYear()
+            const endYear = endDate != null ? new Date(endDate).getFullYear() : "Present"
+            const years = `${startYear} - ${endYear}`
+            const color = branchColors[index % branchColors.length]
+            const branchName = institution.toLowerCase().replace(/[\s().]+/g, "-").replace(/-+/g, "-").replace(/-$/, "")
 
-        return (
-          <div class="edu-card" data-edu-card>
-            <div class="edu-node" data-edu-node>
-              <div class="edu-dot"></div>
-            </div>
-            <article>
-              <header>
-                <div>
-                  <h3>{institution}</h3>
-                  <p class="edu-area">{area}</p>
+            return (
+              <div class="edu-entry" data-edu-entry style={`--ebc: ${color}`}>
+                {/* === ROW 1: Fork point on main === */}
+                <div class="edu-commit-row edu-fork-row" data-edu-row="fork">
+                  <div class="edu-gcol">
+                    <span class="edu-dot edu-main-dot" data-edu-commit></span>
+                  </div>
+                  <div class="edu-row-label">
+                    <span class="edu-hash">{(0xE0F0A0 + index * 0x111111).toString(16).slice(0, 7)}</span>
+                    <span class="edu-branch-badge" style={`color: ${color}; border-color: ${color}`}>
+                      study/{branchName}
+                    </span>
+                  </div>
                 </div>
-                <time data-edu-year data-year-start={startYear} data-year-end={typeof endYear === 'number' ? endYear : ''}>{years}</time>
-              </header>
-            </article>
-          </div>
-        )
-      })
-    }
+
+                {/* === ROW 2: Institution commit (on branch) === */}
+                <div class="edu-commit-row edu-branch-row" data-edu-row="institution">
+                  <div class="edu-gcol">
+                    <span class="edu-dot edu-branch-dot" data-edu-commit style={`border-color: ${color}`}>
+                      <span class="edu-dot-inner" style={`background: ${color}`}></span>
+                    </span>
+                  </div>
+                  <div class="edu-row-content edu-institution-card">
+                    <div>
+                      <h3>
+                        <a href={url} title={`View ${institution}`} target="_blank" rel="noopener noreferrer">{institution}</a>
+                      </h3>
+                      <time>{years}</time>
+                    </div>
+                  </div>
+                </div>
+
+                {/* === ROW 3: Area/degree commit (on branch, last before merge) === */}
+                <div class="edu-commit-row edu-branch-row edu-last-branch" data-edu-row="area">
+                  <div class="edu-gcol">
+                    <span class="edu-dot edu-branch-dot" data-edu-commit style={`border-color: ${color}`}>
+                      <span class="edu-dot-inner" style={`background: ${color}`}></span>
+                    </span>
+                  </div>
+                  <div class="edu-row-content">
+                    <span class="edu-commit-msg"><span class="edu-cm-key">area:</span> {area}</span>
+                  </div>
+                </div>
+
+                {/* === ROW 4: Merge back to main === */}
+                <div class="edu-commit-row edu-merge-row" data-edu-row="merge">
+                  <div class="edu-gcol">
+                    <span class="edu-dot edu-main-dot edu-merge-dot" data-edu-commit></span>
+                  </div>
+                  <div class="edu-row-label">
+                    <span class="edu-merge-tag" style={`color: ${color}`}>&#x2714; merge study/{branchName} &rarr; main</span>
+                  </div>
+                </div>
+              </div>
+            )
+          })
+        }
+
+        <div class="edu-trunk-line" id="edu-trunk-line"></div>
+      </div>
+    </div>
   </div>
 </Section>
 
@@ -43,171 +89,408 @@ import { education } from "@cv"
   import { gsap, prefersReducedMotion } from "@/scripts/gsap-init";
 
   document.addEventListener("DOMContentLoaded", () => {
-    if (prefersReducedMotion()) return;
-
-    // Cards slide-in from left
-    document.querySelectorAll("[data-edu-card]").forEach((card, i) => {
-      gsap.from(card, {
-        x: -80,
-        opacity: 0,
-        duration: 0.6,
-        delay: i * 0.15,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: card,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
+    if (prefersReducedMotion()) {
+      document.querySelectorAll("[data-edu-commit], [data-edu-row]").forEach(el => {
+        (el as HTMLElement).style.opacity = "1";
+        (el as HTMLElement).style.visibility = "visible";
       });
-    });
-
-    // Node dots pop in
-    document.querySelectorAll("[data-edu-node]").forEach((node) => {
-      gsap.from(node, {
-        scale: 0,
-        duration: 0.4,
-        ease: "back.out(2)",
-        scrollTrigger: {
-          trigger: node,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-      });
-    });
-
-    // Line draw
-    const line = document.getElementById("edu-line");
-    if (line) {
-      const length = 500;
-      gsap.set(line, { strokeDasharray: length, strokeDashoffset: length });
-      gsap.to(line, {
-        strokeDashoffset: 0,
-        scrollTrigger: {
-          trigger: "#edu-container",
-          start: "top 70%",
-          end: "bottom 50%",
-          scrub: 1,
-        },
-      });
+      const trunk = document.getElementById("edu-trunk-line");
+      if (trunk) trunk.style.transform = "scaleY(1)";
+      return;
     }
+
+    // Trunk line grows with scroll
+    const trunk = document.getElementById("edu-trunk-line");
+    if (trunk) {
+      gsap.fromTo(trunk,
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: "#edu-timeline",
+            start: "top 70%",
+            end: "bottom 40%",
+            scrub: 1,
+          },
+        }
+      );
+    }
+
+    // Animate each entry
+    document.querySelectorAll("[data-edu-entry]").forEach((entry) => {
+      const rows = entry.querySelectorAll("[data-edu-row]");
+      const commits = entry.querySelectorAll("[data-edu-commit]");
+
+      rows.forEach(r => gsap.set(r, { autoAlpha: 0, x: 10 }));
+      commits.forEach(c => gsap.set(c, { scale: 0 }));
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: entry,
+          start: "top 80%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      rows.forEach((row, i) => {
+        const commit = row.querySelector("[data-edu-commit]");
+        const offset = i === 0 ? 0 : "-=0.15";
+
+        tl.to(row, {
+          autoAlpha: 1,
+          x: 0,
+          duration: 0.35,
+          ease: "power2.out",
+        }, offset);
+
+        if (commit) {
+          tl.to(commit, {
+            scale: 1,
+            duration: 0.25,
+            ease: "back.out(3)",
+          }, "<");
+        }
+      });
+    });
   });
 </script>
 
 <style>
-  .education-container {
+  .edu-graph {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    padding-left: 50px;
   }
 
-  .edu-line-svg {
+  .edu-git-header {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 8px 8px 0 0;
+    padding: 10px 16px;
+    border-bottom: none;
+  }
+
+  .edu-git-cmd {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.8rem;
+    color: #00d4ff;
+  }
+
+  .edu-graph-body {
+    position: relative;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 25px 15px 20px;
+  }
+
+  .edu-trunk-line {
     position: absolute;
-    left: 0;
+    left: 28px;
     top: 0;
-    width: 40px;
-    height: 100%;
+    bottom: 0;
+    width: 2px;
+    background: #00d4ff;
+    transform-origin: top;
     z-index: 0;
+    opacity: 0.4;
   }
 
-  .edu-card {
+  .edu-graph-entries {
     position: relative;
     z-index: 1;
   }
 
-  .edu-node {
-    position: absolute;
-    left: -42px;
-    top: 12px;
+  /* ── Entry wrapper ── */
+  .edu-entry {
+    position: relative;
+    margin-bottom: 8px;
   }
 
-  .edu-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #0a0a0a;
-    border: 2px solid #00d4ff;
-    box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
-    transition: all 0.3s ease;
-  }
-
-  .edu-card:hover .edu-dot {
-    background: #00d4ff;
-    box-shadow: 0 0 15px rgba(0, 212, 255, 0.7);
-  }
-
-  article {
-    background: rgba(26, 26, 46, 0.5);
-    border: 1px solid rgba(0, 212, 255, 0.15);
-    border-radius: 10px;
-    padding: 18px 20px;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-  }
-
-  article:hover {
-    border-color: rgba(0, 212, 255, 0.35);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  }
-
-  header {
+  /* ── Each row ── */
+  .edu-commit-row {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 12px;
+    align-items: center;
+    gap: 14px;
+    min-height: 32px;
+    position: relative;
   }
 
-  article h3 {
-    font-weight: 600;
-    font-size: 1rem;
-    color: #ffffff;
-    margin-bottom: 4px;
+  /* ── Graph column ── */
+  .edu-gcol {
+    width: 55px;
+    min-width: 55px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    align-self: stretch;
+    flex-shrink: 0;
   }
 
-  .edu-area {
-    font-size: 0.85rem;
-    color: #aaa !important;
+  /* ─────────────────────────────────────
+     CONNECTOR SYSTEM — pseudo-elements
+     ───────────────────────────────────── */
+
+  /* Horizontal fork connector: main → branch */
+  .edu-fork-row .edu-gcol::after {
+    content: '';
+    position: absolute;
+    left: 29px;
+    top: 50%;
+    width: 20px;
+    height: 2px;
+    transform: translateY(-50%);
+    background: var(--ebc);
+    opacity: 0.6;
+    z-index: 1;
+  }
+
+  /* Vertical branch line on every branch row */
+  .edu-branch-row .edu-gcol::before {
+    content: '';
+    position: absolute;
+    left: 48px;
+    top: -20px;
+    bottom: -20px;
+    width: 2px;
+    background: var(--ebc);
+    opacity: 0.4;
+    z-index: 1;
+  }
+
+  /* First branch row: extend upward to reach fork */
+  .edu-fork-row + .edu-branch-row .edu-gcol::before {
+    top: -40px;
+  }
+
+  /* Last branch row: extend downward to reach merge */
+  .edu-last-branch .edu-gcol::before {
+    bottom: -40px;
+  }
+
+  /* Horizontal merge-in connector */
+  .edu-last-branch .edu-gcol::after {
+    content: '';
+    position: absolute;
+    left: 29px;
+    bottom: -20px;
+    width: 20px;
+    height: 2px;
+    background: var(--ebc);
+    opacity: 0.6;
+    z-index: 1;
+  }
+
+  /* ── Dots ── */
+  .edu-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .edu-main-dot {
+    border: 2.5px solid #00d4ff;
+    background: #0a0a0a;
+    margin-left: 22px;
+  }
+
+  .edu-main-dot::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #00d4ff;
+  }
+
+  .edu-branch-dot {
+    border: 2px solid;
+    background: #0a0a0a;
+    margin-left: 42px;
+  }
+
+  .edu-dot-inner {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+  }
+
+  .edu-merge-dot {
+    border-style: double;
+    border-width: 3px;
+  }
+
+  /* ── Row content ── */
+  .edu-row-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
     font-family: "JetBrains Mono", monospace;
+    padding: 6px 0;
+    min-height: 28px;
   }
 
-  time {
+  .edu-hash {
+    font-size: 0.7rem;
+    color: #ffd700;
+    opacity: 0.7;
+  }
+
+  .edu-branch-badge {
+    font-size: 0.68rem;
+    padding: 2px 8px;
+    border: 1px solid;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  .edu-merge-tag {
+    font-size: 0.7rem;
+    font-family: "JetBrains Mono", monospace;
+    opacity: 0.7;
+  }
+
+  .edu-row-content {
+    flex: 1;
+    padding: 6px 0;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+  }
+
+  .edu-institution-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(26, 26, 46, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 10px 14px;
+    flex: 1;
+    transition: all 0.3s ease;
+  }
+
+  .edu-institution-card:hover {
+    border-color: rgba(0, 212, 255, 0.2);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .edu-institution-card h3 {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #ffffff;
+    margin: 0;
+  }
+
+  .edu-institution-card a {
+    color: #00d4ff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .edu-institution-card a:hover {
+    color: #00ff9f;
+    text-shadow: 0 0 8px rgba(0, 255, 159, 0.4);
+  }
+
+  .edu-institution-card time {
     color: #00d4ff;
     font-family: "JetBrains Mono", monospace;
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     font-weight: 600;
-    white-space: nowrap;
-    padding: 4px 10px;
-    border: 1px solid rgba(0, 212, 255, 0.3);
-    border-radius: 20px;
-    background: rgba(0, 212, 255, 0.08);
   }
 
+  .edu-commit-msg {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.8rem;
+    color: #ccc;
+  }
+
+  .edu-cm-key {
+    color: #c678dd;
+  }
+
+  /* ── Mobile ── */
   @media (max-width: 768px) {
-    .education-container {
-      padding-left: 35px;
+    .edu-graph-body {
+      padding: 20px 10px 15px;
     }
 
-    .edu-node {
-      left: -30px;
+    .edu-trunk-line {
+      left: 18px;
+    }
+
+    .edu-gcol {
+      width: 40px;
+      min-width: 40px;
+    }
+
+    .edu-main-dot {
+      margin-left: 12px;
+    }
+
+    .edu-branch-dot {
+      margin-left: 28px;
+    }
+
+    .edu-fork-row .edu-gcol::after {
+      left: 19px;
+      width: 15px;
+    }
+
+    .edu-branch-row .edu-gcol::before {
+      left: 34px;
+    }
+
+    .edu-last-branch .edu-gcol::after {
+      left: 19px;
+      width: 15px;
     }
 
     .edu-dot {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
     }
 
-    article {
-      padding: 14px 16px;
+    .edu-main-dot::after {
+      width: 4px;
+      height: 4px;
     }
 
-    header {
-      flex-direction: column;
-      gap: 6px;
+    .edu-dot-inner {
+      width: 4px;
+      height: 4px;
     }
 
-    article h3 {
-      font-size: 0.9rem;
+    .edu-commit-row {
+      gap: 10px;
+      min-height: 26px;
+    }
+
+    .edu-hash { font-size: 0.6rem; }
+    .edu-branch-badge { font-size: 0.58rem; padding: 1px 6px; }
+    .edu-merge-tag { font-size: 0.6rem; }
+    .edu-commit-msg { font-size: 0.7rem; }
+
+    .edu-institution-card {
+      padding: 8px 10px;
+      gap: 8px;
+    }
+
+    .edu-institution-card h3 {
+      font-size: 0.85rem;
+    }
+
+    .edu-institution-card time {
+      font-size: 0.65rem;
     }
   }
 </style>

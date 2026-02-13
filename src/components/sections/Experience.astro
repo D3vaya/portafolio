@@ -13,6 +13,18 @@ const branchColors = ["#00ff9f", "#00d4ff", "#ff006e", "#ffd700", "#c678dd", "#6
 
     <div class="graph-body">
       <div class="graph-entries">
+        {/* HEAD — current state */}
+        <div class="commit-row head-row">
+          <div class="graph-col">
+            <span class="dot main-dot head-dot" data-commit></span>
+          </div>
+          <div class="row-label">
+            <span class="head-tag">HEAD</span>
+            <span class="head-branch">main</span>
+            <span class="head-msg">current</span>
+          </div>
+        </div>
+
         {
           work.map(
             ({ name, startDate, endDate, position, summary, image, url }, index) => {
@@ -97,17 +109,6 @@ const branchColors = ["#00ff9f", "#00d4ff", "#ff006e", "#ffd700", "#c678dd", "#6
           )
         }
 
-        {/* HEAD */}
-        <div class="commit-row head-row">
-          <div class="graph-col">
-            <span class="dot main-dot head-dot" data-commit></span>
-          </div>
-          <div class="row-label">
-            <span class="head-tag">HEAD</span>
-            <span class="head-branch">main</span>
-            <span class="head-msg">Open to new branches</span>
-          </div>
-        </div>
         <div class="trunk-line" id="trunk-line"></div>
       </div>
     </div>

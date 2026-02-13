@@ -1,69 +1,52 @@
 ---
 ---
 
-<div id="particles-container"></div>
+<div id="particles-container" aria-hidden="true"></div>
 
 <script>
-  class FloatingParticles {
-    private container: HTMLElement;
-    private particles: Array<HTMLElement> = [];
-    private particleCount = 50;
-
-    constructor() {
-      this.container = document.getElementById('particles-container')!;
-      if (this.container) {
-        this.init();
-      }
-    }
-
-    init() {
-      for (let i = 0; i < this.particleCount; i++) {
-        this.createParticle();
-      }
-    }
-
-    createParticle() {
-      const particle = document.createElement('div');
-      particle.className = 'floating-particle';
-      
-      // Random position
-      particle.style.left = Math.random() * 100 + '%';
-      particle.style.top = Math.random() * 100 + '%';
-      
-      // Random size
-      const size = Math.random() * 4 + 1;
-      particle.style.width = size + 'px';
-      particle.style.height = size + 'px';
-      
-      // Random animation duration and delay
-      const duration = Math.random() * 20 + 10;
-      const delay = Math.random() * 5;
-      
-      particle.style.animationDuration = duration + 's';
-      particle.style.animationDelay = delay + 's';
-      
-      // Random color from our cyberpunk palette
-      const colors = ['#00ff9f', '#ff006f', '#ffffff', '#00d4ff'];
-      particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-      
-      this.container.appendChild(particle);
-      this.particles.push(particle);
-      
-      // Add mouse interaction
-      particle.addEventListener('mouseenter', () => {
-        particle.style.transform = 'scale(3)';
-        particle.style.boxShadow = `0 0 20px ${particle.style.backgroundColor}`;
-      });
-      
-      particle.addEventListener('mouseleave', () => {
-        particle.style.transform = 'scale(1)';
-        particle.style.boxShadow = 'none';
-      });
-    }
-  }
-
   document.addEventListener('DOMContentLoaded', () => {
-    new FloatingParticles();
+    // Skip entirely on reduced motion
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const container = document.getElementById('particles-container');
+    if (!container) return;
+
+    // Fewer particles = less compositor work. 15 is plenty for ambiance.
+    const PARTICLE_COUNT = 15;
+    const colors = ['#00ff9f', '#ff006f', '#ffffff', '#00d4ff'];
+
+    // Batch DOM writes with DocumentFragment (js-batch-dom-css)
+    const fragment = document.createDocumentFragment();
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      const p = document.createElement('div');
+      p.className = 'floating-particle';
+
+      const size = Math.random() * 3 + 1;
+      const duration = Math.random() * 25 + 15;
+      const delay = Math.random() * 10;
+
+      // Single cssText write instead of multiple style assignments (js-batch-dom-css)
+      p.style.cssText = `
+        left: ${Math.random() * 100}%;
+        top: ${Math.random() * 100}%;
+        width: ${size}px;
+        height: ${size}px;
+        animation-duration: ${duration}s;
+        animation-delay: ${delay}s;
+        background-color: ${colors[(Math.random() * colors.length) | 0]};
+      `;
+
+      fragment.appendChild(p);
+    }
+
+    // Single DOM write — one reflow instead of 15
+    container.appendChild(fragment);
+
+    // Pause animations when tab hidden
+    document.addEventListener('visibilitychange', () => {
+      container.style.animationPlayState = document.hidden ? 'paused' : 'running';
+    });
   });
 </script>
 
@@ -76,52 +59,52 @@
     height: 100vh;
     pointer-events: none;
     z-index: -5;
+    contain: strict;
   }
 
   .floating-particle {
     position: absolute;
     border-radius: 50%;
-    opacity: 0.6;
+    opacity: 0.5;
     animation: float linear infinite;
-    pointer-events: auto;
-    transition: all 0.3s ease;
+    pointer-events: none;
+    will-change: transform, opacity;
   }
 
   @keyframes float {
     0% {
-      transform: translateY(100vh) translateX(0px) rotate(0deg);
+      transform: translateY(100vh) translateX(0px);
       opacity: 0;
     }
     10% {
-      opacity: 0.6;
+      opacity: 0.5;
     }
     90% {
-      opacity: 0.6;
+      opacity: 0.5;
     }
     100% {
-      transform: translateY(-100px) translateX(100px) rotate(360deg);
+      transform: translateY(-100px) translateX(80px);
       opacity: 0;
     }
   }
 
-  /* Alternative floating patterns */
   .floating-particle:nth-child(odd) {
     animation-name: floatReverse;
   }
 
   @keyframes floatReverse {
     0% {
-      transform: translateY(-100px) translateX(100px) rotate(360deg);
+      transform: translateY(-100px) translateX(80px);
       opacity: 0;
     }
     10% {
-      opacity: 0.4;
+      opacity: 0.35;
     }
     90% {
-      opacity: 0.4;
+      opacity: 0.35;
     }
     100% {
-      transform: translateY(100vh) translateX(-100px) rotate(0deg);
+      transform: translateY(100vh) translateX(-80px);
       opacity: 0;
     }
   }
@@ -132,15 +115,15 @@
 
   @keyframes floatDiagonal {
     0% {
-      transform: translateY(100vh) translateX(-50px) rotate(0deg);
+      transform: translateY(100vh) translateX(-40px);
       opacity: 0;
     }
     50% {
-      opacity: 0.8;
-      transform: translateY(50vh) translateX(50px) rotate(180deg);
+      opacity: 0.6;
+      transform: translateY(50vh) translateX(40px);
     }
     100% {
-      transform: translateY(-100px) translateX(150px) rotate(360deg);
+      transform: translateY(-100px) translateX(100px);
       opacity: 0;
     }
   }
