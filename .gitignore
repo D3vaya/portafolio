@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # local folders
 .history
+
+# generated CV PDF
+public/cv-juan-carlos-ayala.pdf

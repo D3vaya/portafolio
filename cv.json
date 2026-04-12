@@ -1,12 +1,12 @@
 {
   "basics": {
     "name": "Juan Carlos Ayala Higuera",
-    "label": "Tech Lead Frontend con más de 12 años de experiencia",
+    "label": "Tech Lead | Geek | Technology Lover | Sr. Frontend Engineer",
     "image": "/perfil2.jpeg",
     "email": "j.ayala.higuera@gmail.com",
     "phone": "+569 35222613",
     "url": "https://www.linkedin.com/in/juan-carlos-ayala-higuera-50520a62/",
-    "summary": "Soy Tech Lead Frontend con más de 12 años de experiencia liderando equipos y desarrollando soluciones web escalables, enfocadas en rendimiento y experiencia de usuario. Mi especialidad es el desarrollo frontend con React, Next.js y TypeScript, junto a arquitecturas modernas basadas en GCP y patrones serverless. He liderado equipos técnicos y participado en proyectos de alto tráfico en industrias como fintech y gambling, siempre con una mirada integral del ciclo de desarrollo, desde la idea hasta la producción.",
+    "summary": "Tech Lead Frontend con más de 12 años de experiencia liderando equipos y desarrollando soluciones web escalables, enfocadas en rendimiento y experiencia de usuario. Obsesionado con el conocimiento y amante del desarrollo de software, con inagotables ganas de aprender todo lo relacionado con el mundo de la tecnología. Mi especialidad es el desarrollo frontend con React, Next.js y TypeScript, junto a arquitecturas modernas basadas en GCP y patrones serverless. He liderado equipos técnicos y participado en proyectos de alto tráfico en industrias como fintech, telco, ecommerce y gambling, siempre con una mirada integral del ciclo de desarrollo, desde la idea hasta la producción.",
     "location": {
       "address": "Santa amalia #3544, depto 824.",
       "postalCode": "",
@@ -38,60 +38,96 @@
       "position": "Sr. Frontend Engineer",
       "image": "/images/juegalocom.png",
       "url": "https://juegalo.com",
-      "startDate": "2025-04-07",
+      "startDate": "2025-04-01",
       "endDate": null,
       "summary": "En Juegalo.com, plataforma de casino online operando en mercados altamente regulados, lidero el desarrollo frontend de nuevas funcionalidades de juego y flujos críticos para el negocio. Utilizo Next.js y Google Cloud Platform (GCP) para construir experiencias rápidas, seguras y confiables. Mi rol implica trabajar codo a codo con diseño, producto y backend, asegurando calidad técnica, performance y disponibilidad continua en una plataforma que atiende miles de sesiones simultáneas.",
-      "highlights": ["Started the company"]
+      "highlights": [
+        "Liderazgo frontend en plataforma regulada de alto tráfico",
+        "Stack Next.js + GCP para experiencias serverless",
+        "Colaboración cross-funcional con diseño, producto y backend"
+      ]
     },
     {
       "name": "ETpay",
       "position": "Sr. Frontend Engineer",
-      "image": "/images/etpay2.svg",
+      "image": "/images/etpay.png",
       "url": "https://etpay.com",
-      "startDate": "2024-06-24",
-      "endDate": "2025-04-07",
+      "startDate": "2024-06-01",
+      "endDate": "2025-05-01",
       "summary": "En ETpay, una fintech con operaciones en Chile y México, me encargué del desarrollo de interfaces orientadas a pagos e integraciones bancarias. Mi foco fue optimizar la velocidad y tasa de éxito de las transacciones, trabajando con micro-frontends y una arquitectura modular. Participé activamente en decisiones de arquitectura, CI/CD y mejoras UX basadas en datos. El stack incluía React, Next.js, GCP y herramientas de trazabilidad para monitoreo en producción.",
-      "highlights": ["Started the company"]
+      "highlights": [
+        "Arquitectura de micro-frontends para escalabilidad",
+        "Mejora en tasa de éxito de transacciones",
+        "CI/CD y trazabilidad en producción"
+      ]
     },
     {
       "name": "Mercado Libre",
       "position": "Software Engineer",
       "image": "/images/mercado-libre.png",
       "url": "https://www.mercadolibre.cl/",
-      "startDate": "2023-09-09",
-      "endDate": "2024-12-13",
+      "startDate": "2023-04-01",
+      "endDate": "2024-03-01",
       "summary": "Formé parte de un equipo senior encargado de construir y mantener microservicios de alto rendimiento usando Java, Spring Boot, Redis y la infraestructura interna Fury. Mi foco fue backend, orientado a disponibilidad, performance y escalabilidad de servicios críticos. Participé en la evolución de sistemas distribuidos en un entorno con altos volúmenes de tráfico y estándares de clase mundial.",
-      "highlights": ["Started the company"]
+      "highlights": [
+        "Microservicios con Java + Spring Boot + Redis",
+        "Sistemas distribuidos de alta disponibilidad",
+        "Estándares de clase mundial en plataforma Fury"
+      ]
     },
     {
       "name": "WOM",
-      "position": "Software Engineer",
+      "position": "Sr. Software Engineer",
       "image": "/images/wom.png",
       "url": "https://www.wom.cl/",
-      "startDate": "2021-09-09",
-      "endDate": "2023-04-01",
+      "startDate": "2020-11-01",
+      "endDate": "2023-05-01",
       "summary": "Lideré el equipo frontend encargado del ecommerce de WOM, desarrollando con React y Gatsby.js. Mi responsabilidad incluyó liderazgo técnico, mentoring de developers junior, y coordinación con diseño y QA para asegurar entregas iterativas de alta calidad. Enfocado en performance y conversión, implementamos mejoras que redujeron el LCP y aumentaron la tasa de éxito de compra.",
-      "highlights": ["Started the company"]
+      "highlights": [
+        "Liderazgo técnico del equipo frontend de ecommerce",
+        "Reducción de LCP y mejora de conversión",
+        "Mentoring de developers junior"
+      ]
     },
     {
-      "name": "ZentaGroup",
+      "name": "Zenta Group",
       "position": "Tech Lead",
       "image": "/images/zenta.jpeg",
       "url": "https://zentagroup.com/",
-      "startDate": "2017-04-01",
-      "endDate": "2020-09-01",
+      "startDate": "2017-03-01",
+      "endDate": "2020-11-01",
       "summary": "Como Tech Lead en ZentaGroup, coordiné equipos multidisciplinarios para construir productos desde cero para startups. Definí arquitecturas full stack usando React, Angular, Firebase, MongoDB, PostgreSQL, PHP, y gestioné entregas técnicas con foco en calidad, escalabilidad y time-to-market. Fomenté un entorno de aprendizaje, capacitando a perfiles junior e integrando buenas prácticas desde el inicio.",
-      "highlights": ["Started the company"]
+      "highlights": [
+        "Arquitectura full stack para productos desde cero",
+        "Liderazgo de equipos multidisciplinarios",
+        "Capacitación y buenas prácticas desde el inicio"
+      ]
     },
     {
-      "name": "Nbit",
-      "position": "Software Developer",
+      "name": "[nbit] :: Asesorías Informáticas",
+      "position": "Software Engineer",
       "url": "https://nbit.cl/",
       "image": "/images/nbit.png",
-      "startDate": "2014-03-01",
+      "startDate": "2014-01-01",
       "endDate": "2017-03-01",
       "summary": "Desarrollé soluciones para los sectores educativo e inmobiliario, implementando plataformas de gestión académica y de corretaje. Lideré proyectos end-to-end, desde el diseño hasta el despliegue, usando un stack variado (PHP, MySQL, JS, Firebase). También gestioné equipos técnicos y colaboré en la mejora continua de productos digitales según requerimientos de clientes.",
-      "highlights": ["Started the company"]
+      "highlights": [
+        "Proyectos end-to-end en educación e inmobiliaria",
+        "Stack PHP, MySQL, JS, Firebase",
+        "Gestión de equipos técnicos"
+      ]
+    },
+    {
+      "name": "INSOTEC",
+      "position": "Analista Programador",
+      "url": "",
+      "startDate": "2014-06-01",
+      "endDate": "2014-11-01",
+      "summary": "Análisis y desarrollo de soluciones software como Analista Programador, participando en el ciclo completo desde la definición de requerimientos hasta la implementación y mantenimiento de aplicaciones empresariales.",
+      "highlights": [
+        "Análisis de requerimientos y desarrollo",
+        "Mantenimiento de aplicaciones empresariales"
+      ]
     }
   ],
   "volunteer": [
@@ -107,34 +143,34 @@
   ],
   "education": [
     {
-      "institution": "Duoc UC",
-      "url": "https://www.duoc.cl/",
-      "area": "Diseño Gráfico",
-      "studyType": "Bachelor",
-      "startDate": "2017-03-01",
-      "endDate": "2018-11-21",
-      "score": "4.0",
-      "courses": ["DB1101 - Basic SQL"]
-    },
-    {
-      "institution": "Universidad Ucinf(ahora UGM)",
+      "institution": "Universidad Gabriela Mistral",
       "url": "https://www.ugm.cl/",
       "area": "Ingeniería en Informática",
       "studyType": "Bachelor",
       "startDate": "2016-03-01",
-      "endDate": "2017-11-21",
-      "score": "4.0",
-      "courses": ["DB1101 - Basic SQL"]
+      "endDate": "2017-12-01",
+      "score": "",
+      "courses": []
     },
     {
-      "institution": "Universidad Ucinf(ahora UGM)",
-      "url": "https://www.ugm.cl/",
-      "area": "Analisis de sistemas",
+      "institution": "Duoc UC",
+      "url": "https://www.duoc.cl/",
+      "area": "Diseño Web y Diseño Gráfico",
       "studyType": "Bachelor",
-      "startDate": "2013-03-01",
-      "endDate": "2014-11-21",
-      "score": "4.0",
-      "courses": ["DB1101 - Basic SQL"]
+      "startDate": "2017-03-01",
+      "endDate": "2018-11-01",
+      "score": "",
+      "courses": []
+    },
+    {
+      "institution": "Universidad de Ciencias de la Informática",
+      "url": "https://www.ucinf.cl/",
+      "area": "Análisis de Sistemas",
+      "studyType": "Technical",
+      "startDate": "2012-03-01",
+      "endDate": "2013-12-01",
+      "score": "",
+      "courses": []
     }
   ],
   "awards": [
@@ -147,10 +183,34 @@
   ],
   "certificates": [
     {
-      "name": "Certificate",
-      "date": "2021-11-07",
-      "issuer": "Company",
-      "url": "https://certificate.com"
+      "name": "Programación en GO",
+      "date": "2023-01-01",
+      "issuer": "Platzi",
+      "url": ""
+    },
+    {
+      "name": "Pensamiento Computacional con Python",
+      "date": "2022-01-01",
+      "issuer": "Platzi",
+      "url": ""
+    },
+    {
+      "name": "Docker for the Absolute Beginner",
+      "date": "2021-01-01",
+      "issuer": "KodeKloud",
+      "url": ""
+    },
+    {
+      "name": "Curso Profesional de Git y GitHub",
+      "date": "2020-01-01",
+      "issuer": "Platzi",
+      "url": ""
+    },
+    {
+      "name": "Asincronismo con JavaScript",
+      "date": "2020-01-01",
+      "issuer": "Platzi",
+      "url": ""
     }
   ],
   "publications": [
@@ -378,7 +438,11 @@
   "languages": [
     {
       "language": "Spanish",
-      "fluency": "Native speaker"
+      "fluency": "Nativo / Bilingüe"
+    },
+    {
+      "language": "English",
+      "fluency": "Elemental"
     }
   ],
   "interests": [
