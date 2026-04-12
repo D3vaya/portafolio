@@ -1,7 +1,7 @@
 {
   "basics": {
     "name": "Juan Carlos Ayala Higuera",
-    "label": "Tech Lead | Geek | Technology Lover | Sr. Frontend Engineer",
+    "label": "Tech Lead | Geek | Technology Lover | Sr. Frontend Engineer Lead",
     "image": "/perfil2.jpeg",
     "email": "j.ayala.higuera@gmail.com",
     "phone": "+569 35222613",
@@ -35,7 +35,7 @@
   "work": [
     {
       "name": "Juegalo.com",
-      "position": "Sr. Frontend Engineer",
+      "position": "Sr. Frontend Engineer Lead",
       "image": "/images/juegalocom.png",
       "url": "https://juegalo.com",
       "startDate": "2025-04-01",
