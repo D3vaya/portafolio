@@ -405,6 +405,9 @@ const contactItems = [
   })),
 ].filter(Boolean);
 
+// Los nombres de idioma vienen en inglés desde cv.json
+const languageName = { Spanish: "Español", English: "Inglés" };
+
 const CVDocument = () =>
   h(
     Document,
@@ -455,7 +458,7 @@ const CVDocument = () =>
           h(
             View,
             { style: styles.legend },
-            LegendItem("Dominio", { backgroundColor: INK, borderColor: INK }),
+            LegendItem("Experto", { backgroundColor: INK, borderColor: INK }),
             LegendItem("Avanzado", { backgroundColor: "#FFFFFF", borderColor: "#B5B8BF" }),
             LegendItem("Intermedio", { backgroundColor: "#FFFFFF", borderColor: LINE })
           )
@@ -514,7 +517,7 @@ const CVDocument = () =>
                   h(
                     View,
                     { key: lang.language },
-                    h(Text, { style: styles.entryTitle }, lang.language),
+                    h(Text, { style: styles.entryTitle }, languageName[lang.language] ?? lang.language),
                     h(Text, { style: styles.cardMeta }, lang.fluency)
                   )
                 )
@@ -528,7 +531,7 @@ const CVDocument = () =>
         ? h(
             View,
             { style: styles.section },
-            SectionTitle("Certificaciones"),
+            SectionTitle("Cursos y certificados"),
             h(View, { style: styles.certs }, ...certificates.map(Certificate))
           )
         : null
