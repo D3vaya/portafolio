@@ -1,6 +1,6 @@
-// Capas de un harness, de la más externa a la más interna.
+// Capas de un agente: el harness alrededor y el modelo al centro, que es lo que el harness envuelve.
 export const layers = [
-  { id: "evaluacion", name: "Evaluación" },
+  { id: "evaluacion", name: "Verificación" },
   { id: "orquestacion", name: "Orquestación" },
   { id: "control", name: "Control" },
   { id: "memoria", name: "Memoria" },
@@ -18,7 +18,7 @@ export const steps: Step[] = [
   {
     title: "Llega una tarea",
     say: "¡Tarea nueva!",
-    text: "Alguien pide algo concreto: agregar inicio de sesión con Google. Claude Code, el harness, la recibe y decide cómo resolverla.",
+    text: "Alguien pide algo concreto: agregar inicio de sesión con Google. Claude Code, el harness, la recibe y arma el contexto para resolverla.",
     active: ["tarea", "core"],
     messages: [{ from: "tarea", to: "core", label: "agrega login con Google" }],
   },
@@ -36,7 +36,7 @@ export const steps: Step[] = [
   {
     title: "Piensa con el modelo",
     say: "Pensando un plan…",
-    text: "Con ese contexto le pide un plan al modelo. El modelo razona; el harness decide qué hacer con la respuesta.",
+    text: "Con ese contexto le pide un plan al modelo. El modelo razona y propone acciones; el harness las ejecuta y las controla.",
     layer: "modelo",
     active: ["core", "modelo"],
     messages: [
@@ -67,7 +67,7 @@ export const steps: Step[] = [
   {
     title: "Un hook frena lo peligroso",
     say: "Eso no. Bloqueado.",
-    text: "Antes de cada acción corre un hook. Un push forzado a main queda bloqueado sin que una persona tenga que estar vigilando.",
+    text: "Antes de ejecutar un comando corre un hook. Un push forzado a main queda bloqueado sin que una persona tenga que estar vigilando.",
     layer: "control",
     active: ["implementador", "github"],
     messages: [{ from: "implementador", to: "github", label: "git push --force", blocked: true }],
@@ -75,14 +75,14 @@ export const steps: Step[] = [
   {
     title: "Verifica antes de entregar",
     say: "Verificando…",
-    text: "Un verificador abre la app en un navegador real, prueba el flujo completo y corre los casos de evaluación.",
+    text: "Un verificador abre la app en un navegador real, prueba el flujo completo y corre las pruebas.",
     layer: "evaluacion",
     active: ["core", "verificador", "navegador"],
     messages: [
       { from: "core", to: "verificador", label: "verifica" },
       { from: "verificador", to: "navegador", label: "abre /login", delay: 1200 },
       { from: "navegador", to: "verificador", label: "captura ok", delay: 2400 },
-      { from: "verificador", to: "core", label: "12 de 12 casos", delay: 3600 },
+      { from: "verificador", to: "core", label: "12 de 12 pruebas", delay: 3600 },
     ],
   },
   {
@@ -96,7 +96,7 @@ export const steps: Step[] = [
   {
     title: "Entrega con evidencia",
     say: "Listo, con evidencia",
-    text: "El resultado vuelve con pruebas: el pull request, los casos que pasaron y la captura. Así debería cerrar cualquier tarea de un agente.",
+    text: "El resultado vuelve con pruebas: el pull request, las pruebas que pasaron y la captura. Así debería cerrar cualquier tarea de un agente.",
     active: ["core", "tarea"],
     messages: [{ from: "core", to: "tarea", label: "PR listo, 12 de 12" }],
   },
