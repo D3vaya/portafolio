@@ -95,8 +95,8 @@ await patchAccents().catch((err) => console.warn(`Parche de acentos omitido: ${e
 
 const styles = StyleSheet.create({
   page: {
-    paddingTop: 34,
-    paddingBottom: 48,
+    paddingTop: 28,
+    paddingBottom: 44,
     paddingHorizontal: 44,
     fontFamily: "Schibsted",
     fontSize: 9.5,
@@ -121,61 +121,44 @@ const styles = StyleSheet.create({
   photo: { width: 78, height: 78, borderRadius: 10, objectFit: "cover" },
 
   summary: {
-    marginTop: 16,
-    paddingTop: 12,
+    marginTop: 12,
+    paddingTop: 9,
     borderTopWidth: 2,
     borderTopColor: INK,
     fontSize: 9.5,
     lineHeight: 1.45,
   },
 
-  section: { marginTop: 14 },
-  sectionHead: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 },
+  section: { marginTop: 11 },
+  sectionHead: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 7 },
   sectionBar: { width: 16, height: 4, backgroundColor: ACCENT },
   sectionTitle: { fontFamily: "Anybody", fontWeight: 800, fontSize: 15, letterSpacing: -0.4 },
 
   specialties: { flexDirection: "row", gap: 10 },
   specialty: { flex: 1, backgroundColor: PANEL, borderRadius: 6, padding: 10, borderTopWidth: 3, borderTopColor: ACCENT },
   specialtyTitle: { fontFamily: "Anybody", fontWeight: 700, fontSize: 12.5, letterSpacing: -0.3 },
-  specialtyLead: { fontSize: 9, color: MUTED, marginTop: 2, marginBottom: 6, lineHeight: LH },
-  chips: { flexDirection: "row", flexWrap: "wrap", gap: 4 },
-  chip: {
-    fontSize: 9,
-    lineHeight: 1.2,
-    paddingHorizontal: 5,
-    paddingVertical: 2,
-    borderRadius: 3,
-    borderWidth: 0.75,
-    borderColor: "#C9CBD1",
-    backgroundColor: "#FFFFFF",
-  },
-  chipMaster: { backgroundColor: INK, borderColor: INK, color: "#ECEDEF", fontWeight: 500 },
-  chipMedio: { color: MUTED, borderColor: LINE },
+  specialtyItems: { fontSize: 9, lineHeight: LH },
   otherSkills: { flexDirection: "row", marginTop: 8, gap: 8 },
   otherLabel: { width: 78, fontWeight: 700, fontSize: 9, lineHeight: LH },
   otherText: { flex: 1, fontSize: 9, color: MUTED, lineHeight: LH },
-  legend: { flexDirection: "row", gap: 10, marginLeft: "auto", alignItems: "center" },
-  legendItem: { flexDirection: "row", alignItems: "center", gap: 4 },
-  legendText: { fontSize: 8, color: MUTED },
-  legendSwatch: { width: 8, height: 8, borderRadius: 2, borderWidth: 0.75 },
 
   job: { flexDirection: "row", gap: 12 },
-  rail: { width: 30, alignItems: "center" },
+  rail: { width: 22, alignItems: "center" },
   logoTile: {
-    width: 30,
-    height: 30,
-    borderRadius: 6,
+    width: 22,
+    height: 22,
+    borderRadius: 5,
     borderWidth: 0.75,
     borderColor: LINE,
     backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
-    padding: 4,
+    padding: 3,
   },
-  logo: { width: 22, height: 22, objectFit: "contain" },
+  logo: { width: 16, height: 16, objectFit: "contain" },
   logoInitial: { fontFamily: "Anybody", fontWeight: 800, fontSize: 12, color: MUTED },
   railLine: { flexGrow: 1, width: 1, backgroundColor: LINE, marginTop: 4 },
-  jobBody: { flex: 1, paddingBottom: 10 },
+  jobBody: { flex: 1, paddingBottom: 6 },
   jobHead: { flexDirection: "row", justifyContent: "space-between", alignItems: "baseline", gap: 8, marginBottom: 2 },
   jobCompany: { fontFamily: "Anybody", fontWeight: 700, fontSize: 12.5, letterSpacing: -0.3 },
   jobDate: { fontSize: 9, color: MUTED, lineHeight: LH },
@@ -188,18 +171,20 @@ const styles = StyleSheet.create({
   bulletText: { flex: 1 },
 
   grid: { flexDirection: "row", gap: 10 },
-  card: { flex: 1, borderWidth: 0.75, borderColor: LINE, borderRadius: 6, padding: 9 },
+  productRow: { flexDirection: "row", gap: 10, alignItems: "baseline", marginBottom: 4 },
+  productName: { width: 108, fontFamily: "Anybody", fontWeight: 700, fontSize: 11, letterSpacing: -0.2 },
+  productText: { flex: 1, fontSize: 9, color: "#2E3038", lineHeight: LH },
+  eduName: { width: 150, fontSize: 9.5, fontWeight: 700, lineHeight: LH },
+  productLink: { fontSize: 9, color: ACCENT_TEXT, textDecoration: "none", fontWeight: 500 },
   cardTitle: { fontFamily: "Anybody", fontWeight: 700, fontSize: 12.5, letterSpacing: -0.3 },
   cardText: { fontSize: 9, color: "#2E3038", marginTop: 2, lineHeight: LH },
   cardMeta: { fontSize: 9, color: MUTED, lineHeight: LH },
   cardLink: { fontSize: 9, color: ACCENT_TEXT, textDecoration: "none", marginTop: 4, fontWeight: 500, lineHeight: LH },
 
-  certs: { flexDirection: "row", flexWrap: "wrap", columnGap: 16, rowGap: 6 },
   cert: { width: "48.4%", borderLeftWidth: 2, borderLeftColor: ACCENT, paddingLeft: 7 },
   entryTitle: { fontSize: 9.5, fontWeight: 700, color: INK, lineHeight: LH },
   eduItem: { flex: 1, width: "auto" },
   langItem: { flex: 0.7, width: "auto" },
-  certName: { fontSize: 9.5, fontWeight: 500, color: INK, textDecoration: "none", lineHeight: LH },
 
   footer: {
     position: "absolute",
@@ -256,14 +241,13 @@ function groupSkills(skills) {
   return { ai, frontend, other };
 }
 
-const { basics, work, education, skills, projects = [], languages, certificates } = cv;
+const { basics, work, education, skills, projects = [] } = cv;
 const skillGroups = groupSkills(skills);
 const profileImage = resolveImage(basics.image);
-// El rol más reciente va completo; el resto se resume en sus primeras frases
+// Resumen rápido de una página: solo el rol actual lleva una frase de contexto
 const sentences = (text, count) =>
   text.split(/(?<=[.!?])\s+/).slice(0, count).join(" ");
-const summaryFor = (job, index) =>
-  index === 0 ? job.summary : sentences(job.summary, index < 5 ? 2 : 1);
+const summaryFor = (job, index) => (index === 0 ? sentences(job.summary, 1) : "");
 
 function splitName(name) {
   const words = name.split(" ");
@@ -281,44 +265,19 @@ function SectionTitle(title, extra) {
   );
 }
 
-function Chip(skill) {
-  return h(
-    Text,
-    {
-      key: skill.name,
-      style: [
-        styles.chip,
-        skill.level === "Master" && styles.chipMaster,
-        skill.level === "Medio" && styles.chipMedio,
-      ].filter(Boolean),
-    },
-    skill.name
-  );
-}
-
-function Specialty(title, lead, items) {
+function Specialty(title, items) {
   return h(
     View,
     { style: styles.specialty },
     h(Text, { style: styles.specialtyTitle }, title),
-    h(Text, { style: styles.specialtyLead }, lead),
-    h(View, { style: styles.chips }, ...items.map(Chip))
-  );
-}
-
-function LegendItem(label, swatch) {
-  return h(
-    View,
-    { key: label, style: styles.legendItem },
-    h(View, { style: [styles.legendSwatch, swatch] }),
-    h(Text, { style: styles.legendText }, label)
+    h(Text, { style: styles.specialtyItems }, items.map((skill) => skill.name).join(", "))
   );
 }
 
 function Job(job, index) {
   const logo = resolveImage(job.image);
   const isLast = index === work.length - 1;
-  const showHighlights = index === 0 && job.highlights?.length;
+  const showHighlights = false;
   const summary = summaryFor(job, index);
   return h(
     View,
@@ -351,7 +310,7 @@ function Job(job, index) {
         ),
         h(Text, { style: styles.jobDate }, range(job.startDate, job.endDate))
       ),
-      h(Text, { style: styles.jobSummary }, summary),
+      summary ? h(Text, { style: styles.jobSummary }, summary) : null,
       showHighlights
         ? h(
             View,
@@ -370,27 +329,14 @@ function Job(job, index) {
   );
 }
 
+// Una línea por producto: nombre, descripción y enlace
 function Product(project) {
   return h(
     View,
-    { key: project.name, style: styles.card, wrap: false },
-    h(Text, { style: styles.cardTitle }, project.name),
-    h(Text, { style: styles.cardText }, project.description),
-    project.url
-      ? h(Link, { src: project.url, style: styles.cardLink }, prettyUrl(project.url))
-      : null
-  );
-}
-
-function Certificate(cert) {
-  const meta = [cert.issuer, cert.date ? formatDate(cert.date) : null].filter(Boolean).join(", ");
-  return h(
-    View,
-    { key: cert.name, style: styles.cert, wrap: false },
-    cert.url
-      ? h(Link, { src: cert.url, style: styles.certName }, cert.name)
-      : h(Text, { style: styles.certName }, cert.name),
-    h(Text, { style: styles.cardMeta }, meta)
+    { key: project.name, style: styles.productRow, wrap: false },
+    h(Text, { style: styles.productName }, project.name),
+    h(Text, { style: styles.productText }, project.description),
+    project.url ? h(Link, { src: project.url, style: styles.productLink }, prettyUrl(project.url)) : null
   );
 }
 
@@ -404,9 +350,6 @@ const contactItems = [
     src: p.url,
   })),
 ].filter(Boolean);
-
-// Los nombres de idioma vienen en inglés desde cv.json
-const languageName = { Spanish: "Español", English: "Inglés" };
 
 const CVDocument = () =>
   h(
@@ -453,21 +396,12 @@ const CVDocument = () =>
       h(
         View,
         { style: styles.section, wrap: false },
-        SectionTitle(
-          "Especialidades",
-          h(
-            View,
-            { style: styles.legend },
-            LegendItem("Experto", { backgroundColor: INK, borderColor: INK }),
-            LegendItem("Avanzado", { backgroundColor: "#FFFFFF", borderColor: "#B5B8BF" }),
-            LegendItem("Intermedio", { backgroundColor: "#FFFFFF", borderColor: LINE })
-          )
-        ),
+        SectionTitle("Especialidades"),
         h(
           View,
           { style: styles.specialties },
-          Specialty("Frontend", "Next.js primero, performance web y micro-frontends.", skillGroups.frontend),
-          Specialty("IA y agentes", "Harnesses, contexto, herramientas y evaluación.", skillGroups.ai)
+          Specialty("Frontend", skillGroups.frontend),
+          Specialty("IA y agentes", skillGroups.ai)
         ),
         skillGroups.other.length
           ? h(
@@ -488,53 +422,26 @@ const CVDocument = () =>
             View,
             { style: styles.section, wrap: false },
             SectionTitle("Productos"),
-            h(View, { style: styles.grid }, ...projects.map(Product))
+            // Los productos donde trabajo ya aparecen en Experiencia
+            ...projects.filter((p) => !work.some((job) => job.name === p.name)).map(Product)
           )
         : null,
 
-      // Educación e idiomas
+      // Educación, una línea por entrada
       h(
         View,
         { style: styles.section, wrap: false },
-        SectionTitle("Educación e idiomas"),
-        h(
-          View,
-          { style: styles.grid },
-          ...education.map((edu) =>
-            h(
-              View,
-              { key: `${edu.institution}-${edu.area}`, style: [styles.cert, styles.eduItem] },
-              h(Text, { style: styles.entryTitle }, edu.area),
-              h(Text, { style: styles.cardMeta }, edu.institution),
-              h(Text, { style: styles.cardMeta }, range(edu.startDate, edu.endDate))
-            )
-          ),
-          languages?.length
-            ? h(
-                View,
-                { style: [styles.cert, styles.langItem] },
-                ...languages.map((lang) =>
-                  h(
-                    View,
-                    { key: lang.language },
-                    h(Text, { style: styles.entryTitle }, languageName[lang.language] ?? lang.language),
-                    h(Text, { style: styles.cardMeta }, lang.fluency)
-                  )
-                )
-              )
-            : null
-        )
-      ),
-
-      // Certificaciones
-      certificates?.length
-        ? h(
+        SectionTitle("Educación"),
+        ...education.map((edu) =>
+          h(
             View,
-            { style: styles.section },
-            SectionTitle("Cursos y certificados"),
-            h(View, { style: styles.certs }, ...certificates.map(Certificate))
+            { key: `${edu.institution}-${edu.area}`, style: styles.productRow },
+            h(Text, { style: styles.eduName }, edu.area),
+            h(Text, { style: styles.productText }, edu.institution),
+            h(Text, { style: styles.cardMeta }, range(edu.startDate, edu.endDate))
           )
-        : null
+        )
+      )
     )
   );
 

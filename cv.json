@@ -697,7 +697,7 @@
     {
       "name": "Monoke",
       "isActive": true,
-      "description": "La ficha clínica universal de las mascotas de Chile: portable, verificable y legible por cualquier clínica.",
+      "description": "Ficha clínica universal de las mascotas de Chile, legible en cualquier clínica.",
       "highlights": [
         "Pases de Apple Wallet y Google Wallet",
         "API REST y webhooks firmados",
@@ -708,7 +708,7 @@
     {
       "name": "Carcassonne Latam",
       "isActive": true,
-      "description": "Carcassonne online 1v1 con reloj, ranking, torneos y un rival de IA para la comunidad latinoamericana.",
+      "description": "Carcassonne online 1v1 para Latinoamérica, con rival de IA.",
       "highlights": [
         "Bot IA para practicar",
         "Escalafón y liga",
