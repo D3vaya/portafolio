@@ -6,11 +6,10 @@ import Harness from "@/components/Harness.astro"
 import Contact from "@/components/Contact.astro"
 import Analytics from "@vercel/analytics/astro"
 import { basics, work } from "@cv"
-import { yearsSince } from "@/lib/time"
+import { careerYears } from "@/lib/time"
 
-const firstJob = work.reduce((a, b) => (a.startDate < b.startDate ? a : b))
 const description =
-  `Ingeniero de harnesses para agentes de IA y tech lead con ${yearsSince(firstJob.startDate)} años en producción. Head of Engineering en Porteria; creador de Monoke y Carcassonne Latam.`
+  `Ingeniero de harnesses para agentes de IA y tech lead con ${careerYears(work)} años en producción. Head of Engineering en Porteria; creador de Monoke y Carcassonne Latam.`
 
 // Cada enlace lleva a la placa y hace la pregunta que corresponde
 const nav = [

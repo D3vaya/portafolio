@@ -8,6 +8,15 @@ export const layers = [
   { id: "modelo", name: "Modelo" },
 ]
 
+// Mascota de Claude Code en píxeles: cada carácter es un cuadrante de 1 de ancho por 2 de alto.
+// La usan el diagrama del harness y Mascot.astro.
+export const MASCOT_BODY = [
+  "...############...",
+  "...##.######.##...",
+  "..###############.",
+  ".#.############...",
+]
+
 // Ventana de contexto de la simulación. Las cifras son ilustrativas, pero de un orden plausible.
 export const CONTEXT_WINDOW = 200_000
 // Si la próxima pregunta no cabe holgada, el harness compacta antes de seguir

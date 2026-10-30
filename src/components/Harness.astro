@@ -122,7 +122,7 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
 </section>
 
 <script>
-  import { buildPrompts, fmt, layers, planRun, CONTEXT_WINDOW, type Counts, type Prompt, type Step } from "@/data/harness"
+  import { buildPrompts, fmt, layers, planRun, CONTEXT_WINDOW, MASCOT_BODY, type Counts, type Prompt, type Step } from "@/data/harness"
   import { commit, fold, isToolCall, newSession, totals, type Session } from "@/lib/contexto"
 
   const layerName: Record<string, string> = Object.fromEntries(layers.map((l) => [l.id, l.name]))
@@ -186,18 +186,12 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
   // ▝▜█████▛▘
   //   ▘▘ ▝▝
   // Cada carácter son 2×2 cuadrantes; cada cuadrante mide 1 de ancho por 2 de alto.
-  const BODY = [
-    "...############...",
-    "...##.######.##...",
-    "..###############.",
-    ".#.############...",
-  ]
   const mascot = (parent: Element, size: number) => {
     const g = el("g", { class: "mascot", "shape-rendering": "crispEdges" }, parent)
     const u = size / 18
     const px = (x: number, y: number, cls: string) =>
       el("rect", { class: cls, x: x * u, y: y * u * 2, width: u + 0.6, height: u * 2 + 0.6 }, g)
-    BODY.forEach((row, y) => [...row].forEach((c, x) => c === "#" && px(x, y, "body")))
+    MASCOT_BODY.forEach((row, y) => [...row].forEach((c, x) => c === "#" && px(x, y, "body")))
     px(5, 1, "eye")
     px(12, 1, "eye")
     px(4, 4, "leg leg-a")
@@ -329,6 +323,7 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     for (const [id, node] of segEls) {
       if (ids.has(id)) continue
       segEls.delete(id)
+      node.dataset.leaving = ""
       node.style.width = "0%"
       setTimeout(() => node.remove(), reduceMotion ? 0 : 700)
     }
@@ -342,7 +337,8 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
         segEls.set(s.id, node)
       }
       // El orden de la barra sigue al de la ventana: lo fijo, la historia y la pregunta en curso
-      const at = gauge.bar.children[i]
+      // Los que se están yendo no cuentan para la posición
+      const at = gauge.bar.querySelectorAll(":scope > :not([data-leaving])")[i]
       if (at !== node) gauge.bar.insertBefore(node, at ?? null)
       void node.offsetWidth
       node.style.width = pct(s.tokens)
@@ -369,6 +365,9 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
   type Run = {
     prompt: Prompt
     steps: Step[]
+    // Duración de cada paso y de la corrida entera, para la barra de la consola
+    durations: number[]
+    total: number
     base: Session
     done: boolean
     revealed: boolean
@@ -584,13 +583,12 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     renderContext(fold(r.base, r.steps, index, reduceMotion ? Infinity : elapsed))
     built.nodeEls.core.classList.toggle("is-busy", busy)
     if (!reduceMotion) built.bubble.text.textContent = sayFull.slice(0, Math.floor(elapsed / 38))
-    const dur = stepDuration(s)
+    const dur = r.durations[index]
     stepButtons[index]?.style.setProperty("--p", String(Math.min(1, elapsed / dur)))
     // Avance de toda la corrida para la barra de la consola
     if (!r.revealed) {
-      const all = r.steps.map(stepDuration)
-      const done = all.slice(0, index).reduce((n, d) => n + d, 0) + Math.min(elapsed, dur)
-      think.bar.style.transform = `scaleX(${done / all.reduce((n, d) => n + d, 0)})`
+      const done = r.durations.slice(0, index).reduce((n, d) => n + d, 0) + Math.min(elapsed, dur)
+      think.bar.style.transform = `scaleX(${done / r.total})`
     }
   }
 
@@ -695,7 +693,8 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     if (run && !run.revealed) skip()
     const base = session
     const steps = planRun(p, prompts.length, { ...totals(base.segs), cacheWritten: base.cacheWritten })
-    run = { prompt: p, steps, base, done: false, revealed: false, byUser }
+    const durations = steps.map(stepDuration)
+    run = { prompt: p, steps, durations, total: durations.reduce((n, d) => n + d, 0), base, done: false, revealed: false, byUser }
 
     // Lo más reciente va abajo, como en una terminal
     const article = qa(p.id)
@@ -752,6 +751,8 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
   // ---------- Controles ----------
   const setPaused = (p: boolean) => {
     userPaused = p
+    // En pausa la respuesta no llega a liberar la página: se libera ya
+    if (p) unlock()
     toggle.textContent = p ? "Reproducir" : "Pausar"
     toggle.setAttribute("aria-pressed", String(p))
     kick()
@@ -792,6 +793,8 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     const p = a && fromHash(a.hash)
     if (!p) return
     e.preventDefault()
+    // Con una pregunta propia en curso no se cambia la URL: ask() la ignoraría
+    if (run && run.byUser && !run.revealed) return
     history.pushState(null, "", `#${p.anchor}`)
     ask(p)
   })

@@ -1,11 +1,10 @@
 ---
 import { basics, work } from "@cv"
-import { yearsSince } from "@/lib/time"
+import { careerYears } from "@/lib/time"
 
 const [first, last] = [basics.name.split(" ").slice(0, 2), basics.name.split(" ").slice(2)]
 const lead = work.find((job) => job.name === "Porteria")
-const firstJob = work.reduce((a, b) => (a.startDate < b.startDate ? a : b))
-const years = yearsSince(firstJob.startDate)
+const years = careerYears(work)
 ---
 
 <section class="hero wrap" aria-labelledby="name">
@@ -38,6 +37,8 @@ const years = yearsSince(firstJob.startDate)
     const target = name.clientWidth
     const narrow = widthAt(el, 50)
     const wide = widthAt(el, 150)
+    // Sin eje de ancho (fuente de respaldo) no hay nada que ajustar
+    if (wide === narrow) return 100
     const stretch = 50 + ((target - narrow) / (wide - narrow)) * 100
     return Math.max(50, Math.min(150, stretch))
   }

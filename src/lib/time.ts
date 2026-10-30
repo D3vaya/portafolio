@@ -33,6 +33,10 @@ export const duration = (start: string, end: string | null) => {
 export const yearsSince = (start: string) =>
   Math.floor((NOW.getTime() - toDate(start).getTime()) / (365.25 * 24 * 3600 * 1000))
 
+// Años desde el primer trabajo del CV
+export const careerYears = (jobs: { startDate: string }[]) =>
+  yearsSince(jobs.reduce((a, b) => (a.startDate < b.startDate ? a : b)).startDate)
+
 // Asigna cada intervalo a la primera fila libre, como un flame chart
 // cuando dos tareas se solapan.
 export const assignRows = <T extends { from: number; to: number }>(items: T[]) => {

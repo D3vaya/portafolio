@@ -1,8 +1,6 @@
 ---
 import { skills, work } from "@cv"
-import { yearsSince } from "@/lib/time"
-
-const firstJob = work.reduce((a, b) => (a.startDate < b.startDate ? a : b))
+import { careerYears } from "@/lib/time"
 
 type Pillar = {
   id: string
@@ -18,7 +16,7 @@ type Pillar = {
 const pillars: Pillar[] = [
   {
     id: "frontend",
-    kicker: `${yearsSince(firstJob.startDate)} años`,
+    kicker: `${careerYears(work)} años`,
     name: "Frontend",
     claim: "Interfaces rápidas para productos con mucho tráfico, desde la arquitectura hasta el detalle visual.",
     lead: {

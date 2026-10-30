@@ -1,4 +1,6 @@
 ---
+import { MASCOT_BODY } from "@/data/harness"
+
 // Mascota de Claude Code en píxeles, desde su arte de terminal (ver Harness.astro).
 interface Props {
   size?: number
@@ -6,8 +8,7 @@ interface Props {
 }
 
 const { size = 72, class: className } = Astro.props
-const BODY = ["...############...", "...##.######.##...", "..###############.", ".#.############..."]
-const cells = BODY.flatMap((row, y) => [...row].flatMap((c, x) => (c === "#" ? [{ x, y }] : [])))
+const cells = MASCOT_BODY.flatMap((row, y) => [...row].flatMap((c, x) => (c === "#" ? [{ x, y }] : [])))
 const legs = [
   { x: 4, y: 4 },
   { x: 6, y: 4 },

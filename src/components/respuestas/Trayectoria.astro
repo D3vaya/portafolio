@@ -1,6 +1,6 @@
 ---
 import { work, education } from "@cv"
-import { assignRows, duration, formatMonth, toYear, yearsSince } from "@/lib/time"
+import { assignRows, duration, formatMonth, toYear, careerYears } from "@/lib/time"
 
 const studyLabel: Record<string, string> = {
   Bachelor: "Carrera",
@@ -33,7 +33,7 @@ const initials = (name: string) =>
     .slice(0, 2)
     .map((w) => w[0])
     .join("")
-const totalYears = yearsSince(byStart[0].startDate)
+const totalYears = careerYears(work)
 ---
 
 <div class="resp trace-section">

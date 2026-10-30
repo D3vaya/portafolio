@@ -277,7 +277,6 @@ function Specialty(title, items) {
 function Job(job, index) {
   const logo = resolveImage(job.image);
   const isLast = index === work.length - 1;
-  const showHighlights = false;
   const summary = summaryFor(job, index);
   return h(
     View,
@@ -310,21 +309,7 @@ function Job(job, index) {
         ),
         h(Text, { style: styles.jobDate }, range(job.startDate, job.endDate))
       ),
-      summary ? h(Text, { style: styles.jobSummary }, summary) : null,
-      showHighlights
-        ? h(
-            View,
-            { style: styles.bullets },
-            ...job.highlights.map((text, i) =>
-              h(
-                View,
-                { key: i, style: styles.bullet },
-                h(View, { style: styles.bulletMark }),
-                h(Text, { style: styles.bulletText }, text)
-              )
-            )
-          )
-        : null
+      summary ? h(Text, { style: styles.jobSummary }, summary) : null
     )
   );
 }
