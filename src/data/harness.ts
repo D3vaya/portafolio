@@ -179,14 +179,16 @@ export const services = [
     what: "Reviso cómo se usan hoy los agentes: qué contexto reciben, qué herramientas tocan, qué se revisa antes de aceptar su trabajo y cuánto cuesta.",
     get: "Un informe con los problemas encontrados y un plan priorizado para resolverlos.",
     layers: ["contexto", "herramientas", "control", "evaluacion"],
+    tools: [],
   },
   {
-    id: "claude-code",
-    name: "Claude Code listo para tu equipo",
-    when: "Cada persona usa Claude Code a su manera y el resultado depende de quién lo use.",
-    what: "Configuro skills, hooks, permisos e instrucciones por repositorio, y conecto por MCP las herramientas que el equipo ya usa.",
+    id: "equipo",
+    name: "Tu asistente de código, listo para el equipo",
+    when: "Cada persona usa su asistente de IA a su manera y el resultado depende de quién lo use.",
+    what: "En la herramienta que el equipo ya usa, configuro instrucciones por repositorio, reglas, permisos y validaciones automáticas, y conecto por MCP los sistemas con los que trabajan.",
     get: "Un harness compartido dentro de tus repositorios, documentado para que el equipo lo mantenga.",
     layers: ["contexto", "control", "memoria", "orquestacion"],
+    tools: ["Claude Code", "Cursor", "Kiro"],
   },
   {
     id: "producto",
@@ -195,5 +197,6 @@ export const services = [
     what: "Diseño las herramientas que usa el agente, sus límites y los casos de evaluación, y lo integro a tu producto.",
     get: "La funcionalidad en producción, con métricas para saber si un cambio la mejora o la empeora.",
     layers: ["modelo", "herramientas", "evaluacion"],
+    tools: ["API de Claude", "Vercel AI SDK"],
   },
 ]

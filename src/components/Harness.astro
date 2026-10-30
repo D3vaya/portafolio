@@ -23,6 +23,7 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
 
   <div class="wrap">
     <h3 class="run-title">Así se ve un harness funcionando</h3>
+    <p class="run-note">El ejemplo usa Claude Code. El esquema es el mismo con otras herramientas.</p>
   </div>
 
   <div class="wrap run" data-run>
@@ -84,6 +85,11 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
                 <dd>{svc.get}</dd>
               </div>
             </dl>
+            {svc.tools.length > 0 && (
+              <p class="service-tools">
+                <span>Con experiencia en</span> {svc.tools.join(", ")}
+              </p>
+            )}
             <ul class="service-layers" aria-label="Capas del harness que cubre">
               {svc.layers.map((id) => (
                 <li>{layerName[id]}</li>
@@ -94,12 +100,22 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
       }
     </div>
 
+    <div class="faq">
+      <h4>¿Y si mi equipo no usa Claude Code?</h4>
+      <p>
+        No hace falta. El harness es una forma de trabajar, no un producto. Instrucciones del proyecto, permisos,
+        validaciones automáticas y sistemas conectados por MCP existen, con distintos nombres, en Claude Code, Cursor y
+        Kiro, que son las herramientas que he configurado; las evaluaciones se construyen aparte, sea cual sea la
+        herramienta. Si tu equipo usa otra, parto por entender cómo la usan y te digo con franqueza qué se puede lograr
+        con ella.
+      </p>
+    </div>
+
     <div class="proof">
       <p class="proof-title">Lo que lo respalda</p>
       <ul>
         <li>Soy Head of Engineering en Porteria, que usa IA en alertas y en un chat para crear KPIs.</li>
         <li>Construyo y mantengo Monoke y Carcassonne Latam con desarrollo asistido por agentes.</li>
-        <li><a href="#aprendizaje">Cursos de Anthropic</a> sobre Claude Code, con credencial verificable.</li>
       </ul>
     </div>
 
@@ -1126,6 +1142,46 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     font-size: var(--t-1);
   }
 
+  .run-note {
+    margin-top: 0.4rem;
+    color: var(--niebla);
+  }
+
+  .service-tools {
+    margin-top: 1.25rem;
+    font-size: 0.9375rem;
+  }
+
+  .service-tools span {
+    display: block;
+    font-family: var(--display);
+    font-weight: 700;
+    font-stretch: 80%;
+    color: var(--senal-texto);
+  }
+
+  .faq {
+    max-width: 46rem;
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+    border: 1px solid var(--linea);
+    border-left: 3px solid var(--senal);
+    border-radius: 14px;
+  }
+
+  .faq h4 {
+    margin: 0;
+    font-family: var(--display);
+    font-size: var(--t2);
+    font-weight: 800;
+    font-stretch: 82%;
+    line-height: 1.1;
+  }
+
+  .faq p {
+    margin-top: 0.75rem;
+  }
+
   .proof {
     margin-top: clamp(2.5rem, 5vw, 3.5rem);
     padding-top: 1.25rem;
@@ -1141,7 +1197,7 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
 
   .proof ul {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem 2rem;
     margin-top: 0.75rem;
   }
