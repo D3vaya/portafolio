@@ -42,6 +42,8 @@ interface Profiles {
 interface Work {
   name: string
   position: string
+  industry: string
+  stack: Array<string>
   url: string
   startDate: DateStr
   endDate: DateStr | null

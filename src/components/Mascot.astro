@@ -1,0 +1,31 @@
+---
+// Mascota de Claude Code en píxeles, desde su arte de terminal (ver Harness.astro).
+interface Props {
+  size?: number
+  class?: string
+}
+
+const { size = 72, class: className } = Astro.props
+const BODY = ["...############...", "...##.######.##...", "..###############.", ".#.############..."]
+const cells = BODY.flatMap((row, y) => [...row].flatMap((c, x) => (c === "#" ? [{ x, y }] : [])))
+const legs = [
+  { x: 4, y: 4 },
+  { x: 6, y: 4 },
+  { x: 11, y: 4.5 },
+  { x: 13, y: 4.5 },
+]
+---
+
+<svg
+  class:list={["mascot", className]}
+  viewBox="0 0 18 12"
+  width={size}
+  height={(size * 12) / 18}
+  shape-rendering="crispEdges"
+  aria-hidden="true"
+>
+  {cells.map((c) => <rect x={c.x} y={c.y * 2} width="1.05" height="2.05" fill="#d97757" />)}
+  {legs.map((c) => <rect x={c.x} y={c.y * 2} width="1.05" height="2.05" fill="#d97757" />)}
+  <rect x="5" y="2" width="1" height="2" fill="#15161a" />
+  <rect x="12" y="2" width="1" height="2" fill="#15161a" />
+</svg>

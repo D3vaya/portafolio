@@ -1,0 +1,107 @@
+---
+import { basics, work } from "@cv"
+import { yearsSince } from "@/lib/time"
+
+const [first, last] = [basics.name.split(" ").slice(0, 2), basics.name.split(" ").slice(2)]
+const lead = work.find((job) => job.name === "Porteria")
+const firstJob = work.reduce((a, b) => (a.startDate < b.startDate ? a : b))
+const years = yearsSince(firstJob.startDate)
+---
+
+<section class="hero wrap" aria-labelledby="name">
+  <h1 class="name" id="name" data-name>
+    <span>{first.join(" ")}</span>
+    <span>{last.join(" ")}</span>
+  </h1>
+
+  <p class="lede">
+    Construyo los harnesses que vuelven confiables a los agentes de IA. Detrás hay {years} años llevando productos web a
+    producción en fintech, telecomunicaciones, e-commerce y gaming regulado. Hoy lidero el desarrollo de
+    {lead && <a href={lead.url}>{lead.name}</a>}, control de accesos con IA en más de 350 porterías de Chile.
+  </p>
+</section>
+
+<script>
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches
+
+  // Nombre: cada línea ocupa exactamente el ancho disponible usando el eje de ancho de la fuente
+  const name = document.querySelector<HTMLElement>("[data-name]")!
+  const lines = [...name.querySelectorAll<HTMLElement>("span")]
+
+  const widthAt = (el: HTMLElement, stretch: number) => {
+    el.style.transition = "none"
+    el.style.fontStretch = `${stretch}%`
+    return el.getBoundingClientRect().width
+  }
+
+  const fitStretch = (el: HTMLElement) => {
+    const target = name.clientWidth
+    const narrow = widthAt(el, 50)
+    const wide = widthAt(el, 150)
+    const stretch = 50 + ((target - narrow) / (wide - narrow)) * 100
+    return Math.max(50, Math.min(150, stretch))
+  }
+
+  const fitName = (animate: boolean) => {
+    const targets = lines.map(fitStretch)
+    lines.forEach((el) => (el.style.fontStretch = "50%"))
+    void name.offsetWidth
+    lines.forEach((el, i) => {
+      el.style.transition = animate ? "" : "none"
+      el.style.fontStretch = `${targets[i]}%`
+    })
+  }
+
+  const run = async () => {
+    await document.fonts.ready
+    fitName(!reduceMotion)
+  }
+
+  if (document.readyState === "complete") run()
+  else addEventListener("load", run, { once: true })
+
+  let resizeTimer: number
+  let lastWidth = innerWidth
+  addEventListener("resize", () => {
+    // En móvil la barra de direcciones dispara resize solo de alto
+    if (innerWidth === lastWidth) return
+    lastWidth = innerWidth
+    clearTimeout(resizeTimer)
+    resizeTimer = window.setTimeout(() => fitName(false), 120)
+  })
+</script>
+
+<style>
+  .hero {
+    padding-block: clamp(2.5rem, 8vh, 6rem) clamp(3.5rem, 10vh, 7rem);
+  }
+
+  .name {
+    font-size: clamp(3.25rem, 16vw, 11rem);
+    font-weight: 850;
+    line-height: 0.86;
+    letter-spacing: -0.01em;
+    margin-inline: -0.04em;
+  }
+
+  .name span {
+    display: block;
+    width: max-content;
+    white-space: nowrap;
+    font-stretch: 72%;
+    transition: font-stretch 1.6s cubic-bezier(0.2, 0.7, 0.1, 1);
+  }
+
+  .lede {
+    max-width: 36em;
+    margin-top: clamp(1.75rem, 4vw, 3rem);
+    font-size: var(--t1);
+    line-height: 1.4;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .name span {
+      transition: none !important;
+    }
+  }
+</style>

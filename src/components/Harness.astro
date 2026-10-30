@@ -1,0 +1,1160 @@
+---
+import { layers, steps } from "@/data/harness"
+
+const layerName = Object.fromEntries(layers.map((l) => [l.id, l.name]))
+const first = steps[0]
+---
+
+<section class="harness" id="harness" aria-labelledby="harness-title">
+  <div class="wrap head">
+    <h2 id="harness-title">Harness engineering</h2>
+    <p class="intro">
+      Un agente de IA es un modelo más todo lo que lo rodea: el contexto que recibe, las herramientas que usa, la memoria
+      que conserva, los controles que lo frenan y las evaluaciones que dicen si funcionó. A eso se le llama harness, y es lo
+      que construyo. Mira uno trabajar.
+    </p>
+  </div>
+
+  <div class="wrap run" data-run>
+    <div class="board" data-board>
+      <dl class="hud" aria-label="Contadores de la simulación">
+        <div><dt>Agentes activos</dt><dd data-hud="agents">1</dd></div>
+        <div><dt>Mensajes</dt><dd data-hud="messages">0</dd></div>
+        <div><dt>Herramientas</dt><dd data-hud="tools">0</dd></div>
+        <div><dt>Bloqueos</dt><dd data-hud="blocked">0</dd></div>
+      </dl>
+      <div class="canvas" data-canvas aria-hidden="true"></div>
+    </div>
+
+    <div class="caption" aria-live="polite">
+      <p class="caption-meta">
+        <span data-step-count>Paso 1 de {steps.length}</span>
+        <span class="caption-layer" data-step-layer>{first.layer ? `Capa: ${layerName[first.layer]}` : ""}</span>
+      </p>
+      <h3 data-step-title>{first.title}</h3>
+      <p data-step-text>{first.text}</p>
+    </div>
+
+    <div class="controls">
+      <button class="toggle" type="button" data-toggle aria-pressed="false">Pausar</button>
+      <ol class="steps" aria-label="Pasos de la corrida">
+        {
+          steps.map((s, i) => (
+            <li>
+              <button type="button" data-step={i} aria-label={`Paso ${i + 1}: ${s.title}`} aria-current={i === 0 ? "step" : undefined}>
+                <span class="steps-bar" />
+                <span class="steps-title">{s.title}</span>
+              </button>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <h3 class="layers-title">Las piezas</h3>
+    <dl class="layers">
+      {
+        layers.map((l) => (
+          <div class="layer" id={`capa-${l.id}`}>
+            <dt>{l.name}</dt>
+            <dd>
+              <p class="layer-lead">{l.lead}</p>
+              <p>{l.body}</p>
+              <ul>
+                {l.practice.map((p) => (
+                  <li>{p}</li>
+                ))}
+              </ul>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+    <p class="note">La corrida es una simulación ilustrativa de cómo trabajo, no una sesión grabada.</p>
+  </div>
+
+</section>
+
+<script>
+  import { layers, steps, type Step } from "@/data/harness"
+
+  const layerName: Record<string, string> = Object.fromEntries(layers.map((l) => [l.id, l.name]))
+
+  const NS = "http://www.w3.org/2000/svg"
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches
+  const compact = matchMedia("(max-width: 40rem)")
+  const TRAVEL = 1150
+  const AGENTS = ["explorador", "implementador", "verificador"]
+  const TOOLS = ["github", "navegador"]
+
+  // ---------- Diagrama: nodos y pistas, en horizontal y en vertical ----------
+  type Pos = { x: number; y: number }
+  type Mode = "wide" | "tall"
+  const nodes: Record<string, { title: string; sub: string; wide: Pos; tall: Pos }> = {
+    tarea: { title: "Tarea", sub: "una persona pide", wide: { x: 110, y: 90 }, tall: { x: 75, y: 50 } },
+    modelo: { title: "Modelo", sub: "razona", wide: { x: 500, y: 70 }, tall: { x: 325, y: 50 } },
+    skills: { title: "Skills", sub: "contexto", wide: { x: 110, y: 340 }, tall: { x: 75, y: 185 } },
+    memoria: { title: "Memoria", sub: "entre sesiones", wide: { x: 110, y: 590 }, tall: { x: 325, y: 185 } },
+    core: { title: "Claude Code", sub: "harness y orquestador", wide: { x: 500, y: 370 }, tall: { x: 200, y: 360 } },
+    explorador: { title: "Explorador", sub: "subagente", wide: { x: 890, y: 120 }, tall: { x: 70, y: 555 } },
+    implementador: { title: "Implementador", sub: "subagente", wide: { x: 890, y: 320 }, tall: { x: 200, y: 555 } },
+    verificador: { title: "Verificador", sub: "subagente con evals", wide: { x: 890, y: 520 }, tall: { x: 330, y: 555 } },
+    github: { title: "GitHub", sub: "servidor MCP", wide: { x: 640, y: 640 }, tall: { x: 110, y: 705 } },
+    navegador: { title: "Navegador", sub: "servidor MCP", wide: { x: 890, y: 670 }, tall: { x: 330, y: 705 } },
+  }
+
+  // h: horizontal, vertical, horizontal. v: vertical, horizontal, vertical.
+  // mid: fracción del recorrido donde la pista dobla.
+  type Route = { mode: "h" | "v"; mid: number }
+  const edges: { a: string; b: string; wide: Route; tall: Route; hook?: boolean }[] = [
+    { a: "tarea", b: "core", wide: { mode: "h", mid: 0.35 }, tall: { mode: "h", mid: 0.6 } },
+    { a: "skills", b: "core", wide: { mode: "h", mid: 0.5 }, tall: { mode: "v", mid: 0.74 } },
+    { a: "memoria", b: "core", wide: { mode: "h", mid: 0.55 }, tall: { mode: "v", mid: 0.74 } },
+    { a: "modelo", b: "core", wide: { mode: "v", mid: 0.5 }, tall: { mode: "h", mid: 0.6 } },
+    { a: "core", b: "explorador", wide: { mode: "h", mid: 0.6 }, tall: { mode: "v", mid: 0.5 } },
+    { a: "core", b: "implementador", wide: { mode: "h", mid: 0.5 }, tall: { mode: "v", mid: 0.5 } },
+    { a: "core", b: "verificador", wide: { mode: "h", mid: 0.4 }, tall: { mode: "v", mid: 0.5 } },
+    { a: "implementador", b: "github", wide: { mode: "h", mid: 0.5 }, tall: { mode: "v", mid: 0.5 }, hook: true },
+    { a: "verificador", b: "navegador", wide: { mode: "v", mid: 0.5 }, tall: { mode: "v", mid: 0.5 } },
+  ]
+
+  const layout = {
+    wide: { w: 1000, h: 730, node: { w: 180, h: 70 }, core: { w: 230, h: 220 }, font: 19, packet: 17, bubble: 18 },
+    tall: { w: 400, h: 750, node: { w: 118, h: 58 }, core: { w: 170, h: 160 }, font: 14, packet: 14, bubble: 14 },
+  }
+
+  const el = (tag: string, attrs: Record<string, string | number> = {}, parent?: Element) => {
+    const node = document.createElementNS(NS, tag) as SVGGraphicsElement
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, String(v))
+    parent?.appendChild(node)
+    return node
+  }
+
+  const routePath = (p: Pos, q: Pos, r: Route) => {
+    if (r.mode === "h") {
+      const mx = p.x + (q.x - p.x) * r.mid
+      return `M${p.x} ${p.y} H${mx} V${q.y} H${q.x}`
+    }
+    const my = p.y + (q.y - p.y) * r.mid
+    return `M${p.x} ${p.y} V${my} H${q.x} V${q.y}`
+  }
+
+  // Mascota de Claude Code dibujada desde su arte de terminal:
+  //  ▐▛███▜▌
+  // ▝▜█████▛▘
+  //   ▘▘ ▝▝
+  // Cada carácter son 2×2 cuadrantes; cada cuadrante mide 1 de ancho por 2 de alto.
+  const BODY = [
+    "...############...",
+    "...##.######.##...",
+    "..###############.",
+    ".#.############...",
+  ]
+  const mascot = (parent: Element, size: number) => {
+    const g = el("g", { class: "mascot", "shape-rendering": "crispEdges" }, parent)
+    const u = size / 18
+    const px = (x: number, y: number, cls: string) =>
+      el("rect", { class: cls, x: x * u, y: y * u * 2, width: u + 0.6, height: u * 2 + 0.6 }, g)
+    BODY.forEach((row, y) => [...row].forEach((c, x) => c === "#" && px(x, y, "body")))
+    px(5, 1, "eye")
+    px(12, 1, "eye")
+    px(4, 4, "leg leg-a")
+    px(6, 4, "leg leg-b")
+    px(11, 4.5, "leg leg-a")
+    px(13, 4.5, "leg leg-b")
+    return g
+  }
+
+  type Built = {
+    svg: SVGSVGElement
+    nodeEls: Record<string, Element>
+    paths: Map<string, SVGPathElement>
+    signals: Map<string, SVGPathElement>
+    packets: Element
+    bubble: { g: Element; rect: Element; text: SVGTextElement }
+  }
+
+  const canvas = document.querySelector<HTMLElement>("[data-canvas]")!
+  const board = document.querySelector<HTMLElement>("[data-board]")!
+  let built: Built
+
+  const build = (): Built => {
+    const mode: Mode = compact.matches ? "tall" : "wide"
+    const L = layout[mode]
+    canvas.replaceChildren()
+    const svg = el("svg", { viewBox: `0 0 ${L.w} ${L.h}`, class: "board-svg" }) as SVGSVGElement
+    svg.style.setProperty("--font", `${L.font}px`)
+    svg.style.setProperty("--packet", `${L.packet}px`)
+    svg.style.setProperty("--bubble", `${L.bubble}px`)
+    canvas.appendChild(svg)
+
+    const tracesG = el("g", {}, svg)
+    const paths = new Map<string, SVGPathElement>()
+    const signals = new Map<string, SVGPathElement>()
+    const pos = (id: string) => nodes[id][mode]
+
+    edges.forEach((e, i) => {
+      const d = routePath(pos(e.a), pos(e.b), e[mode])
+      const key = `${e.a}>${e.b}`
+      const trace = el("path", { d, class: "trace" }, tracesG) as SVGPathElement
+      const len = trace.getTotalLength()
+      trace.style.setProperty("--len", String(len))
+      trace.style.setProperty("--d", `${i * 90}ms`)
+      paths.set(key, trace)
+      signals.set(key, el("path", { d, class: "trace-signal" }, tracesG) as SVGPathElement)
+      if (e.hook) {
+        const mid = trace.getPointAtLength(len * 0.38)
+        const hook = el("g", { transform: `translate(${mid.x} ${mid.y})` }, tracesG)
+        const body = el("g", { class: "hook" }, hook)
+        el("rect", { x: -30, y: -13, width: 60, height: 26, rx: 13 }, body)
+        el("text", { y: 5, "text-anchor": "middle" }, body).textContent = "hook"
+      }
+    })
+
+    const nodesG = el("g", {}, svg)
+    const nodeEls: Record<string, Element> = {}
+    Object.entries(nodes).forEach(([id, n], i) => {
+      const p = pos(id)
+      const isCore = id === "core"
+      const isAgent = AGENTS.includes(id)
+      const size = isCore ? L.core : L.node
+      const outer = el("g", { transform: `translate(${p.x} ${p.y})` }, nodesG)
+      const g = el("g", { class: `node${isCore ? " is-core" : ""}${isAgent ? " is-agent" : ""}` }, outer)
+      g.style.setProperty("--d", `${300 + i * 70}ms`)
+      el("rect", { class: "chip", x: -size.w / 2, y: -size.h / 2, width: size.w, height: size.h, rx: 8 }, g)
+      for (const side of [-1, 1]) {
+        for (let k = 1; k <= 3; k++) {
+          const y = -size.h / 2 + (size.h / 4) * k
+          el("rect", { class: "pin", x: side > 0 ? size.w / 2 : -size.w / 2 - 6, y: y - 2, width: 6, height: 4 }, g)
+        }
+      }
+      if (isCore) {
+        const holder = el("g", { transform: `translate(${-size.w * 0.3} ${-size.h * 0.4})` }, g)
+        mascot(holder, size.w * 0.6)
+        el("text", { class: "node-title", y: size.h * 0.25, "text-anchor": "middle" }, g).textContent = n.title
+        el("text", { class: "node-sub", y: size.h * 0.25 + L.font * 1.2, "text-anchor": "middle" }, g).textContent = n.sub
+      } else {
+        el("text", { class: "node-title", y: isAgent ? 4 : -2, "text-anchor": "middle" }, g).textContent = n.title
+        el("text", { class: "node-sub", y: (isAgent ? 6 : 0) + L.font * 1.05, "text-anchor": "middle" }, g).textContent = n.sub
+      }
+      // Los subagentes son copias pequeñas de la mascota que aparecen al delegar
+      if (isAgent) {
+        const mini = size.w * 0.26
+        const holder = el("g", { transform: `translate(${-mini / 2} ${-size.h / 2 - mini * 0.45})`, class: "mini" }, g)
+        mascot(holder, mini)
+      }
+      nodeEls[id] = g
+    })
+
+    // Globo de diálogo de la mascota
+    const core = pos("core")
+    const bubbleG = el("g", { transform: `translate(${core.x + L.core.w * 0.12} ${core.y - L.core.h / 2 - L.bubble * 1.9})` }, svg)
+    const bubble = el("g", { class: "bubble" }, bubbleG)
+    const rect = el("rect", { x: 0, y: -L.bubble * 1.05, height: L.bubble * 2.1, rx: L.bubble * 1.05 }, bubble)
+    el("path", { class: "bubble-tail", d: `M${L.bubble * 0.8} ${L.bubble * 0.9} l${-L.bubble * 0.5} ${L.bubble * 0.9} l${L.bubble * 1.1} ${-L.bubble * 0.9}z` }, bubble)
+    const text = el("text", { x: L.bubble * 0.9, y: L.bubble * 0.36 }, bubble) as SVGTextElement
+
+    return { svg, nodeEls, paths, signals, packets: el("g", {}, svg), bubble: { g: bubble, rect, text } }
+  }
+
+  // ---------- Línea de tiempo ----------
+  const stepDuration = (s: Step) =>
+    Math.max(4400, ...s.messages.map((m) => (m.delay ?? 0) + TRAVEL + (m.blocked ? 2000 : 1400)))
+
+  type Live = { packet: Element; label: SVGTextElement; path: SVGPathElement; signal: SVGPathElement; reverse: boolean; arrived: boolean; counted: boolean }
+  let index = 0
+  let elapsed = 0
+  let last = 0
+  let userPaused = reduceMotion
+  let visible = false
+  let booted = reduceMotion
+  let live: Live[] = []
+  const counts = { agents: 1, messages: 0, tools: 0, blocked: 0 }
+
+  const hud = Object.fromEntries(
+    [...document.querySelectorAll<HTMLElement>("[data-hud]")].map((d) => [d.dataset.hud!, d]),
+  ) as Record<keyof typeof counts, HTMLElement>
+  const renderHud = () => {
+    for (const k of Object.keys(counts) as (keyof typeof counts)[]) hud[k].textContent = String(counts[k])
+  }
+
+  const spawnedUpTo = (i: number) => new Set(steps.slice(0, i + 1).flatMap((s) => s.active.filter((a) => AGENTS.includes(a))))
+
+  // Contadores acumulados de los pasos ya completos
+  const countBefore = (i: number) => {
+    counts.messages = 0
+    counts.tools = 0
+    counts.blocked = 0
+    for (const s of steps.slice(0, i)) {
+      for (const m of s.messages) {
+        if (m.blocked) counts.blocked++
+        else counts.messages++
+        if (TOOLS.includes(m.to)) counts.tools++
+      }
+    }
+    counts.agents = 1 + spawnedUpTo(i).size
+  }
+
+  const findPath = (from: string, to: string) => {
+    const key = built.paths.has(`${from}>${to}`) ? `${from}>${to}` : `${to}>${from}`
+    return { path: built.paths.get(key)!, signal: built.signals.get(key)!, reverse: key !== `${from}>${to}` }
+  }
+
+  const sizeRect = (rect: Element, label: SVGTextElement, pad: number) => {
+    const w = label.getComputedTextLength() + pad
+    rect.setAttribute("x", String(-w / 2))
+    rect.setAttribute("width", String(w))
+  }
+
+  const makePacket = (text: string) => {
+    const big = !compact.matches
+    const g = el("g", { class: "packet" }, built.packets)
+    const rect = el("rect", { rx: big ? 17 : 14, y: big ? -17 : -14, height: big ? 34 : 28 }, g)
+    const label = el("text", { "text-anchor": "middle", y: big ? 6 : 5 }, g) as SVGTextElement
+    label.textContent = text
+    sizeRect(rect, label, 26)
+    return { packet: g, label }
+  }
+
+  const caption = {
+    count: document.querySelector("[data-step-count]")!,
+    layer: document.querySelector("[data-step-layer]")!,
+    title: document.querySelector("[data-step-title]")!,
+    text: document.querySelector("[data-step-text]")!,
+  }
+  const stepButtons = [...document.querySelectorAll<HTMLButtonElement>("[data-step]")]
+  let sayFull = ""
+
+  const enter = (i: number) => {
+    index = (i + steps.length) % steps.length
+    elapsed = 0
+    const s = steps[index]
+    countBefore(index)
+    renderHud()
+    built.packets.replaceChildren()
+    for (const signal of built.signals.values()) signal.classList.remove("is-on")
+    live = s.messages.map((m) => ({ ...makePacket(m.label), ...findPath(m.from, m.to), arrived: false, counted: false }))
+    const spawned = spawnedUpTo(index)
+    for (const [id, g] of Object.entries(built.nodeEls)) {
+      g.classList.toggle("is-active", s.active.includes(id))
+      g.classList.toggle("is-spawned", spawned.has(id))
+      g.classList.remove("is-pulse", "is-alarmed")
+    }
+    built.nodeEls.core.classList.toggle("is-thinking", s.layer === "modelo")
+
+    // El globo se dimensiona con el texto completo y luego se escribe letra a letra
+    sayFull = s.say
+    const { rect, text, g } = built.bubble
+    text.textContent = sayFull
+    const w = text.getComputedTextLength() + Number(text.getAttribute("x")) * 2
+    rect.setAttribute("width", String(w))
+    text.textContent = reduceMotion ? sayFull : ""
+    g.classList.remove("is-in")
+    void g.getBoundingClientRect()
+    g.classList.add("is-in")
+
+    caption.count.textContent = `Paso ${index + 1} de ${steps.length}`
+    caption.layer.textContent = s.layer ? `Capa: ${layerName[s.layer]}` : ""
+    caption.title.textContent = s.title
+    caption.text.textContent = s.text
+    stepButtons.forEach((b, k) => {
+      if (k === index) b.setAttribute("aria-current", "step")
+      else b.removeAttribute("aria-current")
+      b.classList.toggle("is-done", k < index)
+      b.style.setProperty("--p", "0")
+    })
+    draw()
+  }
+
+  const draw = () => {
+    const s = steps[index]
+    let busy = false
+    s.messages.forEach((m, k) => {
+      const item = live[k]
+      // Con movimiento reducido cada mensaje queda quieto a mitad de camino
+      const raw = reduceMotion ? 0.5 : (elapsed - (m.delay ?? 0)) / TRAVEL
+      const t = Math.min(Math.max(raw, 0), m.blocked ? 0.5 : 1)
+      const len = item.path.getTotalLength()
+      const at = item.path.getPointAtLength(len * (item.reverse ? 1 - t : t))
+      const moving = raw >= 0 && raw <= 1
+      const blocked = Boolean(m.blocked) && raw >= 0.5
+      item.packet.setAttribute("transform", `translate(${at.x} ${at.y})`)
+      item.packet.classList.toggle("is-visible", reduceMotion || moving || blocked)
+      if (blocked && !item.packet.classList.contains("is-blocked")) {
+        item.packet.classList.add("is-blocked")
+        item.label.textContent = "bloqueado por hook"
+        sizeRect(item.packet.querySelector("rect")!, item.label, 26)
+        built.nodeEls.implementador.classList.add("is-alarmed")
+      }
+      item.signal.classList.toggle("is-on", moving && !blocked)
+      if (moving && (m.from === "core" || m.to === "core")) busy = true
+      if (!item.counted && (raw >= 1 || blocked)) {
+        item.counted = true
+        if (m.blocked) counts.blocked++
+        else counts.messages++
+        if (TOOLS.includes(m.to)) counts.tools++
+        renderHud()
+      }
+      if (!item.arrived && raw >= 1 && !m.blocked) {
+        item.arrived = true
+        const target = built.nodeEls[m.to]
+        target.classList.remove("is-pulse")
+        void target.getBoundingClientRect()
+        target.classList.add("is-pulse")
+      }
+    })
+    counts.agents = 1 + spawnedUpTo(index).size
+    hud.agents.textContent = String(counts.agents)
+    built.nodeEls.core.classList.toggle("is-busy", busy)
+    if (!reduceMotion) built.bubble.text.textContent = sayFull.slice(0, Math.floor(elapsed / 38))
+    stepButtons[index].style.setProperty("--p", String(Math.min(1, elapsed / stepDuration(s))))
+  }
+
+  // El bucle solo corre mientras la animación avanza; se reactiva con kick()
+  let raf = 0
+  const running = () => !userPaused && visible && booted
+  const loop = (now: number) => {
+    if (!running()) {
+      raf = 0
+      last = 0
+      return
+    }
+    const dt = last ? Math.min(now - last, 100) : 0
+    last = now
+    elapsed += dt
+    if (elapsed >= stepDuration(steps[index])) enter(index + 1)
+    else draw()
+    raf = requestAnimationFrame(loop)
+  }
+  const kick = () => {
+    if (!raf && running()) raf = requestAnimationFrame(loop)
+  }
+
+  // ---------- Arranque: las pistas se dibujan y los chips se encienden ----------
+  const boot = () => {
+    board.classList.add("is-booted")
+    if (reduceMotion) return
+    setTimeout(() => {
+      booted = true
+      enter(0)
+      kick()
+    }, 1700)
+  }
+
+  // ---------- Controles ----------
+  const toggle = document.querySelector<HTMLButtonElement>("[data-toggle]")!
+  const setPaused = (p: boolean) => {
+    userPaused = p
+    toggle.textContent = p ? "Reproducir" : "Pausar"
+    toggle.setAttribute("aria-pressed", String(p))
+    kick()
+  }
+  toggle.addEventListener("click", () => setPaused(!userPaused))
+  stepButtons.forEach((b, k) =>
+    b.addEventListener("click", () => {
+      booted = true
+      board.classList.add("is-booted")
+      enter(k)
+      kick()
+    }),
+  )
+
+  let started = false
+  new IntersectionObserver(
+    ([entry]) => {
+      visible = entry.isIntersecting
+      if (visible && !started) {
+        started = true
+        boot()
+      }
+      kick()
+    },
+    { threshold: 0.25 },
+  ).observe(board)
+
+  built = build()
+  setPaused(userPaused)
+  enter(0)
+
+  compact.addEventListener("change", () => {
+    built = build()
+    enter(index)
+  })
+</script>
+
+<style>
+  /* Banda oscura a todo el ancho: redefine los tokens dentro de la sección */
+  .harness {
+    --fondo: #111214;
+    --hondo: #0a0b0d;
+    --papel: #ecedef;
+    --niebla: #9a9ea8;
+    --linea: rgb(236 237 239 / 0.13);
+    --senal-texto: #ff7a45;
+    position: relative;
+    padding-block: clamp(5rem, 12vw, 9rem);
+    background:
+      radial-gradient(60rem 40rem at 50% 45%, rgb(255 91 31 / 0.14), transparent 70%),
+      var(--fondo);
+    color: var(--papel);
+  }
+
+  .harness ::selection {
+    background: var(--senal);
+    color: var(--sobre);
+  }
+
+  h2 {
+    font-size: clamp(3rem, 10vw, 9rem);
+    font-weight: 850;
+    font-stretch: 70%;
+    line-height: 0.88;
+    letter-spacing: -0.01em;
+  }
+
+  .intro {
+    max-width: 40em;
+    margin-top: 1.5rem;
+    font-size: var(--t1);
+    line-height: 1.45;
+    color: var(--niebla);
+  }
+
+  .run {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  /* ---------- Placa ---------- */
+  .board {
+    position: relative;
+    background-color: var(--hondo);
+    background-image: radial-gradient(rgb(236 237 239 / 0.09) 1px, transparent 1.3px);
+    background-size: 22px 22px;
+    border: 1px solid var(--linea);
+    border-radius: 16px;
+    padding: clamp(0.5rem, 2vw, 1.5rem);
+    box-shadow: 0 40px 120px -40px rgb(255 91 31 / 0.35);
+  }
+
+  .hud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.5rem;
+    padding: 0.25rem 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--linea);
+    margin-bottom: 0.5rem;
+  }
+
+  .hud div {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .hud dt {
+    color: var(--niebla);
+    font-size: var(--t-1);
+  }
+
+  .hud dd {
+    margin: 0;
+    font-family: var(--display);
+    font-size: var(--t1);
+    font-weight: 800;
+    font-stretch: 80%;
+    font-variant-numeric: tabular-nums;
+    color: var(--senal);
+  }
+
+  .canvas :global(.board-svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    font-family: var(--texto);
+  }
+
+  .canvas :global(.trace) {
+    fill: none;
+    stroke: rgb(255 91 31 / 0.3);
+    stroke-width: 3;
+    stroke-linejoin: round;
+    stroke-dasharray: var(--len);
+    stroke-dashoffset: var(--len);
+    transition: stroke-dashoffset 1.1s cubic-bezier(0.6, 0, 0.2, 1) var(--d);
+  }
+
+  .is-booted .canvas :global(.trace) {
+    stroke-dashoffset: 0;
+  }
+
+  .canvas :global(.trace-signal) {
+    fill: none;
+    stroke: var(--senal);
+    stroke-width: 3.5;
+    stroke-linejoin: round;
+    stroke-dasharray: 8 10;
+    opacity: 0;
+    filter: drop-shadow(0 0 6px rgb(255 91 31 / 0.9));
+    transition: opacity 0.3s ease;
+    animation: flow 0.5s linear infinite;
+  }
+
+  .canvas :global(.trace-signal.is-on) {
+    opacity: 1;
+  }
+
+  @keyframes flow {
+    to {
+      stroke-dashoffset: -18;
+    }
+  }
+
+  .canvas :global(.hook) {
+    opacity: 0;
+    transition: opacity 0.5s ease 1.2s;
+  }
+
+  .is-booted .canvas :global(.hook) {
+    opacity: 1;
+  }
+
+  .canvas :global(.hook rect) {
+    fill: var(--hondo);
+    stroke: var(--alto);
+    stroke-width: 1.5;
+  }
+
+  .canvas :global(.hook text) {
+    fill: #ff8a78;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  /* Nodos: chips que se encienden en cascada al arrancar */
+  .canvas :global(.node) {
+    opacity: 0;
+    transform: scale(0.8);
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      opacity 0.5s ease var(--d),
+      transform 0.6s cubic-bezier(0.3, 1.6, 0.5, 1) var(--d);
+  }
+
+  .is-booted .canvas :global(.node) {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Subagentes en espera: solo un contorno punteado */
+  .is-booted .canvas :global(.node.is-agent:not(.is-spawned)) {
+    opacity: 0.3;
+    transform: scale(0.9);
+    transition-delay: 0s;
+  }
+
+  .canvas :global(.is-agent:not(.is-spawned) .chip) {
+    stroke-dasharray: 5 5;
+  }
+
+  .canvas :global(.mini) {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .canvas :global(.is-spawned .mini) {
+    opacity: 1;
+  }
+
+  .canvas :global(.chip) {
+    fill: #17181c;
+    stroke: var(--linea);
+    stroke-width: 1.5;
+    transition: stroke 0.3s ease;
+  }
+
+  .canvas :global(.pin) {
+    fill: rgb(255 91 31 / 0.5);
+  }
+
+  .canvas :global(.node-title) {
+    fill: var(--papel);
+    font-family: var(--display);
+    font-size: var(--font);
+    font-weight: 700;
+    font-stretch: 80%;
+  }
+
+  .canvas :global(.node-sub) {
+    fill: var(--niebla);
+    font-size: calc(var(--font) * 0.75);
+  }
+
+  .canvas :global(.node text),
+  .canvas :global(.node .pin) {
+    transition: opacity 0.4s ease;
+  }
+
+  .canvas :global(.node:not(.is-active, .is-core) text),
+  .canvas :global(.node:not(.is-active, .is-core) .pin) {
+    opacity: 0.45;
+  }
+
+  .canvas :global(.node.is-active .chip) {
+    stroke: var(--senal);
+    stroke-width: 2;
+  }
+
+  .canvas :global(.node.is-active) {
+    filter: drop-shadow(0 0 14px rgb(255 91 31 / 0.35));
+  }
+
+  .canvas :global(.node.is-pulse .chip) {
+    animation: pulse 0.8s ease-out;
+  }
+
+  @keyframes pulse {
+    from {
+      fill: rgb(255 91 31 / 0.55);
+    }
+  }
+
+  .canvas :global(.is-alarmed .chip) {
+    stroke: var(--alto);
+    animation: alarm 0.6s ease 2;
+  }
+
+  @keyframes alarm {
+    50% {
+      fill: rgb(229 52 29 / 0.35);
+    }
+  }
+
+  .canvas :global(.is-core .chip) {
+    stroke-width: 2;
+  }
+
+  /* Mascota */
+  .canvas :global(.mascot) {
+    animation: bob 2.4s ease-in-out infinite;
+  }
+
+  .canvas :global(.mascot .body),
+  .canvas :global(.mascot .leg) {
+    fill: var(--claude);
+  }
+
+  .canvas :global(.mascot .eye) {
+    fill: var(--hondo);
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: blink 4.5s infinite;
+  }
+
+  .canvas :global(.is-core.is-busy .mascot) {
+    animation-duration: 0.6s;
+  }
+
+  .canvas :global(.is-core.is-busy .leg-a),
+  .canvas :global(.is-agent.is-active .leg-a) {
+    animation: step 0.3s steps(2, jump-none) infinite alternate;
+  }
+
+  .canvas :global(.is-core.is-busy .leg-b),
+  .canvas :global(.is-agent.is-active .leg-b) {
+    animation: step 0.3s steps(2, jump-none) infinite alternate-reverse;
+  }
+
+  .canvas :global(.is-thinking .eye) {
+    animation: look 0.9s ease-in-out infinite alternate;
+  }
+
+  @keyframes bob {
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  @keyframes blink {
+    0%,
+    92%,
+    100% {
+      transform: scaleY(1);
+    }
+    95% {
+      transform: scaleY(0.1);
+    }
+  }
+
+  @keyframes step {
+    to {
+      transform: translateY(-4px);
+    }
+  }
+
+  @keyframes look {
+    from {
+      transform: translate(-3px, -3px);
+    }
+    to {
+      transform: translate(3px, -3px);
+    }
+  }
+
+  /* Globo de diálogo */
+  .canvas :global(.bubble) {
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: left bottom;
+  }
+
+  .is-booted .canvas :global(.bubble.is-in) {
+    animation: pop 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) forwards;
+  }
+
+  .canvas :global(.bubble rect),
+  .canvas :global(.bubble-tail) {
+    fill: var(--papel);
+  }
+
+  .canvas :global(.bubble text) {
+    fill: var(--sobre);
+    font-family: var(--display);
+    font-size: var(--bubble);
+    font-weight: 700;
+    font-stretch: 85%;
+  }
+
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Mensajes en tránsito */
+  .canvas :global(.packet) {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    filter: drop-shadow(0 0 10px rgb(255 91 31 / 0.75));
+  }
+
+  .canvas :global(.packet.is-visible) {
+    opacity: 1;
+  }
+
+  .canvas :global(.packet rect) {
+    fill: var(--senal);
+  }
+
+  .canvas :global(.packet text) {
+    fill: var(--sobre);
+    font-size: var(--packet);
+    font-weight: 700;
+  }
+
+  .canvas :global(.packet.is-blocked) {
+    filter: drop-shadow(0 0 12px rgb(229 52 29 / 0.9));
+    animation: shake 0.45s ease;
+  }
+
+  .canvas :global(.packet.is-blocked rect) {
+    fill: var(--alto);
+  }
+
+  .canvas :global(.packet.is-blocked text) {
+    fill: #fff;
+  }
+
+  @keyframes shake {
+    25% {
+      translate: -6px 0;
+    }
+    75% {
+      translate: 6px 0;
+    }
+  }
+
+  /* ---------- Narración ---------- */
+  .caption {
+    max-width: 44rem;
+    min-height: 10rem;
+  }
+
+  .caption-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    color: var(--niebla);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .caption-layer {
+    color: var(--senal-texto);
+  }
+
+  .caption h3 {
+    margin-top: 0.4rem;
+    font-size: var(--t3);
+    font-stretch: 85%;
+  }
+
+  .caption p:last-child {
+    margin-top: 0.6rem;
+    font-size: var(--t1);
+    line-height: 1.4;
+  }
+
+  .controls {
+    display: flex;
+    align-items: start;
+    gap: 1.25rem;
+  }
+
+  .toggle {
+    flex: none;
+    padding: 0.5rem 1.1rem;
+    border: 1px solid var(--senal);
+    border-radius: 999px;
+    background: none;
+    color: var(--senal-texto);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .toggle:hover {
+    background: var(--senal);
+    color: var(--sobre);
+  }
+
+  .steps {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    gap: 0.4rem;
+  }
+
+  .steps button {
+    width: 100%;
+    padding: 0.45rem 0 0;
+    border: 0;
+    background: none;
+    color: var(--niebla);
+    font: inherit;
+    font-size: 0.8125rem;
+    line-height: 1.25;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .steps-bar {
+    position: relative;
+    display: block;
+    height: 4px;
+    margin-bottom: 0.5rem;
+    background: var(--linea);
+    overflow: hidden;
+  }
+
+  .steps-bar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--senal);
+    transform-origin: left;
+    transform: scaleX(var(--p, 0));
+  }
+
+  .is-done .steps-bar::after {
+    transform: scaleX(1);
+    opacity: 0.45;
+  }
+
+  .steps [aria-current="step"],
+  .steps button:hover {
+    color: var(--papel);
+  }
+
+  /* ---------- Las piezas ---------- */
+  .layers-title {
+    margin-top: clamp(4rem, 9vw, 6rem);
+    font-size: var(--t3);
+    font-stretch: 85%;
+  }
+
+  .layers {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+    gap: 0 2.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .layer {
+    padding: 1.25rem 0 1.5rem;
+    border-top: 1px solid var(--linea);
+  }
+
+  .layer dt {
+    font-family: var(--display);
+    font-size: var(--t1);
+    font-weight: 700;
+    font-stretch: 82%;
+  }
+
+  .layer dd {
+    margin: 0;
+  }
+
+  .layer-lead {
+    margin-top: 0.25rem;
+    color: var(--senal-texto);
+  }
+
+  .layer dd p + p {
+    margin-top: 0.6rem;
+  }
+
+  .layer ul {
+    margin-top: 0.75rem;
+    font-size: 0.9375rem;
+    color: var(--niebla);
+  }
+
+  .layer li + li {
+    margin-top: 0.3rem;
+  }
+
+  .layer li::before {
+    content: "";
+    display: inline-block;
+    width: 0.45rem;
+    height: 0.45rem;
+    margin-right: 0.6rem;
+    background: var(--senal);
+    vertical-align: 0.1rem;
+  }
+
+  .note {
+    margin-top: 2rem;
+    color: var(--niebla);
+    font-size: var(--t-1);
+  }
+
+  /* En pantallas anchas la narración acompaña al tablero */
+  @media (min-width: 72rem) {
+    .run {
+      grid-template-columns: minmax(0, 8fr) minmax(0, 3.6fr);
+      grid-template-rows: auto 1fr;
+      gap: 1.5rem 2.5rem;
+      align-items: start;
+    }
+
+    .board {
+      grid-row: 1 / 3;
+    }
+
+    .caption {
+      min-height: 15rem;
+    }
+
+    .caption p:last-child {
+      font-size: var(--t0);
+      line-height: 1.5;
+    }
+
+    .controls {
+      flex-direction: column;
+    }
+
+    .steps {
+      width: 100%;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+
+    .steps button {
+      display: grid;
+      grid-template-columns: 4px 1fr;
+      gap: 0.75rem;
+      padding: 0;
+    }
+
+    .steps-bar {
+      height: auto;
+      min-height: 2rem;
+      margin: 0;
+    }
+
+    .steps-bar::after {
+      transform-origin: top;
+      transform: scaleY(var(--p, 0));
+    }
+
+    .is-done .steps-bar::after {
+      transform: scaleY(1);
+    }
+
+    .steps-title {
+      align-self: center;
+      padding-block: 0.3rem;
+      font-size: 0.875rem;
+    }
+  }
+
+  /* En móvil la narración queda pegada abajo mientras el tablero está a la vista */
+  @media (max-width: 40rem) {
+    .caption {
+      position: sticky;
+      bottom: 0;
+      z-index: 2;
+      min-height: 0;
+      margin-inline: calc(var(--gutter) * -1);
+      padding: 0.9rem var(--gutter) 1rem;
+      background: var(--hondo);
+      border-top: 2px solid var(--senal);
+    }
+
+    .caption h3 {
+      font-size: var(--t2);
+    }
+
+    .caption p:last-child {
+      font-size: var(--t0);
+    }
+
+    .hud {
+      gap: 0.25rem 1rem;
+    }
+  }
+
+  @media (max-width: 52rem) {
+    .controls {
+      flex-direction: column;
+    }
+
+    .steps {
+      width: 100%;
+    }
+
+    .steps-title {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .canvas :global(*) {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>

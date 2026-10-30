@@ -1,109 +1,102 @@
 ---
 import Layout from "@/layouts/Layout.astro"
+import Hero from "@/components/Hero.astro"
+import Measure from "@/components/Measure.astro"
+import Trace from "@/components/Trace.astro"
+import Harness from "@/components/Harness.astro"
+import Products from "@/components/Products.astro"
+import About from "@/components/About.astro"
+import Stack from "@/components/Stack.astro"
+import Learning from "@/components/Learning.astro"
+import Contact from "@/components/Contact.astro"
+import Analytics from "@vercel/analytics/astro"
+import { basics, work } from "@cv"
+import { yearsSince } from "@/lib/time"
 
-import About from "@/components/sections/About.astro"
-import EducationNetwork from "@/components/sections/EducationNetwork.astro"
-import EducationGithub from "@/components/sections/EducationGithub.astro"
-import Experience from "@/components/sections/Experience.astro"
-import Hero from "@/components/sections/Hero.astro"
-import Skills from "@/components/sections/Skills.astro"
-import KeyboardManager from "@/components/KeyboardManager.astro"
-import MatrixRain from "@/components/MatrixRain.astro"
-import FloatingParticles from "@/components/FloatingParticles.astro"
-import Navigation from "@/components/Navigation.astro"
-import PageLoader from "@/components/PageLoader.astro"
-import CustomCursor from "@/components/CustomCursor.astro"
-import Analytics from '@vercel/analytics/astro'
-import { basics } from "@cv"
-const { name, label } = basics
+const firstJob = work.reduce((a, b) => (a.startDate < b.startDate ? a : b))
+const description =
+  `Ingeniero de harnesses para agentes de IA y tech lead con ${yearsSince(firstJob.startDate)} años en producción. Líder de desarrollo en Porteria; creador de Monoke y Carcassonne Latam.`
+
+const nav = [
+  { href: "#harness", label: "Harness" },
+  { href: "#productos", label: "Productos" },
+  { href: "#trayectoria", label: "Trayectoria" },
+  { href: "#contacto", label: "Contacto" },
+]
 ---
 
-<Layout title={`${name} - ${label}`}>
-  <PageLoader />
-  <CustomCursor />
-  <MatrixRain />
-  <FloatingParticles />
-  <Navigation />
-  <main>
-    <section id="hero"><Hero /></section>
-    <section id="about"><About /></section>
-    <section id="experience"><Experience /></section>
-    <section id="education"><EducationGithub /></section>
-    <section id="edu-network"><EducationNetwork /></section>
-    <section id="skills"><Skills /></section>
+<Layout title={`${basics.name}, AI harness engineer`} description={description}>
+  <a class="skip" href="#contenido">Saltar al contenido</a>
+  <header class="wrap top">
+    <a class="home" href="/">jcayala.dev</a>
+    <nav aria-label="Secciones">
+      <ul>
+        {nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+      </ul>
+    </nav>
+  </header>
+  <main id="contenido" tabindex="-1">
+    <Hero />
+    <Measure />
+    <Harness />
+    <Products />
+    <Trace />
+    <About />
+    <Stack />
+    <Learning />
   </main>
+  <Contact />
   <Analytics />
-  <KeyboardManager />
 </Layout>
 
-<script>
-  import { gsap, prefersReducedMotion } from "@/scripts/gsap-init";
-
-  document.addEventListener("DOMContentLoaded", () => {
-    if (prefersReducedMotion()) return;
-
-    // Section scroll-triggered reveals (replaces CSS fadeInUp animations)
-    document.querySelectorAll("main > section").forEach((section, i) => {
-      // Skip hero (index 0) - it has its own animation
-      if (i === 0) return;
-
-      gsap.from(section, {
-        y: 50,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-      });
-    });
-
-    // Background parallax - slower gradient movement
-    gsap.to("html", {
-      backgroundPosition: "50% 100%",
-      ease: "none",
-      scrollTrigger: {
-        trigger: document.body,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 1,
-      },
-    });
-  });
-</script>
-
 <style>
-  html {
-    scroll-behavior: smooth;
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding-block: 1.25rem;
+    font-size: 0.9375rem;
   }
 
-  main {
-    padding: 0 4rem 4rem;
-    margin: auto;
-    width: 100%;
-    max-width: 1200px;
-    position: relative;
-    z-index: 1;
+  .home {
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 80%;
+    text-decoration: none;
   }
 
-  main > section {
-    margin-bottom: 6rem;
+  .top ul {
+    display: flex;
+    gap: 1.5rem;
   }
 
-  /* Hero section - full width, no constrained padding */
-  main > section:first-child {
-    margin-bottom: 2rem;
+  .top nav a {
+    text-decoration: none;
   }
 
-  @media (max-width: 768px) {
-    main {
-      padding: 0 1.5rem 2rem;
-    }
+  .top nav a:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--senal);
+  }
 
-    main > section {
-      margin-bottom: 4rem;
+  .skip {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    padding: 0.5rem 1rem;
+    background: var(--senal);
+    color: var(--sobre);
+    z-index: 10;
+  }
+
+  .skip:focus {
+    top: 1rem;
+  }
+
+  @media (max-width: 36rem) {
+    .top nav {
+      display: none;
     }
   }
 </style>

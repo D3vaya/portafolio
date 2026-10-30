@@ -1,12 +1,12 @@
 {
   "basics": {
     "name": "Juan Carlos Ayala Higuera",
-    "label": "Tech Lead | Geek | Technology Lover | Sr. Frontend Engineer Lead",
+    "label": "AI Harness Engineer | Tech Lead | Sr. Frontend Engineer Lead",
     "image": "/perfil2.jpeg",
     "email": "j.ayala.higuera@gmail.com",
     "phone": "+569 35222613",
     "url": "https://www.linkedin.com/in/juan-carlos-ayala-higuera-50520a62/",
-    "summary": "Tech Lead Frontend con más de 12 años de experiencia liderando equipos y desarrollando soluciones web escalables, enfocadas en rendimiento y experiencia de usuario. Obsesionado con el conocimiento y amante del desarrollo de software, con inagotables ganas de aprender todo lo relacionado con el mundo de la tecnología. Mi especialidad es el desarrollo frontend con React, Next.js y TypeScript, junto a arquitecturas modernas basadas en GCP y patrones serverless. He liderado equipos técnicos y participado en proyectos de alto tráfico en industrias como fintech, telco, ecommerce y gambling, siempre con una mirada integral del ciclo de desarrollo, desde la idea hasta la producción.",
+    "summary": "Ingeniero de software con más de 12 años llevando productos a producción y hoy especializado en IA aplicada: diseño los harnesses que vuelven confiables a los agentes, con contexto, herramientas, memoria, control y evaluación alrededor del modelo. Soy líder de desarrollo en Porteria, donde trabajo en frontend y backend y asesoro a la empresa en decisiones técnicas y de producto, y mantengo por iniciativa propia productos como Monoke y Carcassonne Latam, construidos con flujos de desarrollo asistidos por agentes. Vengo del frontend de alto tráfico en fintech, telco, e-commerce y gaming regulado, y sigo midiendo todo: rendimiento, costo y calidad de cada respuesta.",
     "location": {
       "address": "Santa amalia #3544, depto 824.",
       "postalCode": "",
@@ -34,8 +34,35 @@
   },
   "work": [
     {
+      "name": "Porteria",
+      "position": "Líder de desarrollo",
+      "industry": "Control de accesos con IA",
+      "stack": [
+        "Frontend",
+        "Backend",
+        "IA aplicada",
+        "Agentes"
+      ],
+      "image": "/images/logos/porteria.png",
+      "url": "https://porteria.com/",
+      "startDate": "2025-10-01",
+      "endDate": null,
+      "summary": "En Porteria, empresa chilena de control de accesos potenciado por IA, lidero el desarrollo de sus productos. Trabajo en frontend, backend y en la integración de IA en la operación diaria de las porterías, y asesoro a la empresa en decisiones técnicas y de producto. La plataforma opera en más de 350 porterías, la usan más de 3.500 guardias y ya registra más de 6 millones de controles de acceso.",
+      "highlights": [
+        "Lidero el desarrollo de Porteria Empresas y Porteria Home",
+        "Frontend, backend e IA en la operación: alertas inteligentes y un chat para crear KPIs propios",
+        "Asesoría técnica y de producto a la dirección de la empresa"
+      ]
+    },
+    {
       "name": "Juegalo.com",
       "position": "Sr. Frontend Engineer Lead",
+      "industry": "Gaming regulado",
+      "stack": [
+        "Next.js",
+        "TypeScript",
+        "GCP"
+      ],
       "image": "/images/juegalocom.png",
       "url": "https://juegalo.com",
       "startDate": "2025-04-01",
@@ -50,7 +77,14 @@
     {
       "name": "ETpay",
       "position": "Sr. Frontend Engineer",
-      "image": "/images/etpay.png",
+      "industry": "Fintech",
+      "stack": [
+        "React",
+        "Next.js",
+        "Micro-frontends",
+        "GCP"
+      ],
+      "image": "/images/etpay.svg",
       "url": "https://etpay.com",
       "startDate": "2024-06-01",
       "endDate": "2025-05-01",
@@ -64,6 +98,12 @@
     {
       "name": "Mercado Libre",
       "position": "Software Engineer",
+      "industry": "E-commerce",
+      "stack": [
+        "Java",
+        "Spring Boot",
+        "Redis"
+      ],
       "image": "/images/mercado-libre.png",
       "url": "https://www.mercadolibre.cl/",
       "startDate": "2023-04-01",
@@ -78,6 +118,12 @@
     {
       "name": "WOM",
       "position": "Sr. Software Engineer",
+      "industry": "Telecomunicaciones",
+      "stack": [
+        "React",
+        "Gatsby",
+        "Performance web"
+      ],
       "image": "/images/wom.png",
       "url": "https://www.wom.cl/",
       "startDate": "2020-11-01",
@@ -92,6 +138,15 @@
     {
       "name": "Zenta Group",
       "position": "Tech Lead",
+      "industry": "Startups",
+      "stack": [
+        "React",
+        "Angular",
+        "Firebase",
+        "MongoDB",
+        "PostgreSQL",
+        "PHP"
+      ],
       "image": "/images/zenta.jpeg",
       "url": "https://zentagroup.com/",
       "startDate": "2017-03-01",
@@ -106,6 +161,13 @@
     {
       "name": "[nbit] :: Asesorías Informáticas",
       "position": "Software Engineer",
+      "industry": "Educación e inmobiliaria",
+      "stack": [
+        "PHP",
+        "MySQL",
+        "JavaScript",
+        "Firebase"
+      ],
       "url": "https://nbit.cl/",
       "image": "/images/nbit.png",
       "startDate": "2014-01-01",
@@ -120,6 +182,8 @@
     {
       "name": "INSOTEC",
       "position": "Analista Programador",
+      "industry": "Software empresarial",
+      "stack": [],
       "url": "",
       "startDate": "2014-06-01",
       "endDate": "2014-11-01",
@@ -138,7 +202,9 @@
       "startDate": "2012-01-01",
       "endDate": "2013-01-01",
       "summary": "Description…",
-      "highlights": ["Awarded 'Volunteer of the Month'"]
+      "highlights": [
+        "Awarded 'Volunteer of the Month'"
+      ]
     }
   ],
   "education": [
@@ -183,34 +249,64 @@
   ],
   "certificates": [
     {
-      "name": "Programación en GO",
-      "date": "2023-01-01",
-      "issuer": "Platzi",
-      "url": ""
+      "name": "Claude Code in Action",
+      "date": "2026-10-13",
+      "issuer": "Claude Academy, de Anthropic",
+      "url": "https://academy.claude.com/verify/6aadb38fb4130b44e1c8fd720c20d741"
     },
     {
-      "name": "Pensamiento Computacional con Python",
-      "date": "2022-01-01",
-      "issuer": "Platzi",
-      "url": ""
+      "name": "Claude Code 101",
+      "date": "2026-10-12",
+      "issuer": "Claude Academy, de Anthropic",
+      "url": "https://academy.claude.com/verify/e1e4ab958b1f27ad96656719430541ce"
     },
     {
-      "name": "Docker for the Absolute Beginner",
+      "name": "Go: The Complete Developer's Guide (Golang)",
+      "date": "2022-04-04",
+      "issuer": "Udemy, Stephen Grider",
+      "url": "https://wom.udemy.com/certificate/UC-4d06c74a-eaec-4675-b46a-7983d7dfd0d3/"
+    },
+    {
+      "name": "Curso de Manipulación de Arrays en JavaScript",
+      "date": "2021-09-01",
+      "issuer": "Platzi",
+      "url": "https://platzi.com/p/D3vAya/curso/2461-course/diploma/detalle/"
+    },
+    {
+      "name": "Curso de ECMAScript 6+",
       "date": "2021-01-01",
+      "issuer": "Platzi",
+      "url": "https://platzi.com/p/D3vAya/curso/1815-ecmascript-6/diploma/detalle/"
+    },
+    {
+      "name": "Curso de Closures y Scope en JavaScript",
+      "date": "2021-01-01",
+      "issuer": "Platzi",
+      "url": "https://platzi.com/p/D3vAya/curso/1807-scope/diploma/detalle/"
+    },
+    {
+      "name": "Curso de Asincronismo con JavaScript",
+      "date": "2021-01-01",
+      "issuer": "Platzi",
+      "url": "https://platzi.com/p/D3vAya/curso/1789-asincronismo-js/diploma/detalle/"
+    },
+    {
+      "name": "REDUX en Angular con NGRX",
+      "date": "2020-08-18",
+      "issuer": "Udemy, Fernando Herrera",
+      "url": "https://www.udemy.com/certificate/UC-687edfd9-4f24-4e46-ab87-c355cee8cef4/"
+    },
+    {
+      "name": "ReactiveX - RxJs: De cero hasta los detalles",
+      "date": "2020-08-12",
+      "issuer": "Udemy, Fernando Herrera",
+      "url": "https://www.udemy.com/certificate/UC-c435dad6-1eda-4128-90c4-2f29f0f2430b/"
+    },
+    {
+      "name": "Docker Training Course for the Absolute Beginner",
+      "date": "",
       "issuer": "KodeKloud",
-      "url": ""
-    },
-    {
-      "name": "Curso Profesional de Git y GitHub",
-      "date": "2020-01-01",
-      "issuer": "Platzi",
-      "url": ""
-    },
-    {
-      "name": "Asincronismo con JavaScript",
-      "date": "2020-01-01",
-      "issuer": "Platzi",
-      "url": ""
+      "url": "https://learn.kodekloud.com/learn/certificate/7C9F9966B4-7C99A29B58-7C9966560C"
     }
   ],
   "publications": [
@@ -224,19 +320,87 @@
   ],
   "skills": [
     {
+      "name": "Claude Code",
+      "level": "Avanzado",
+      "keywords": [
+        "IA",
+        "Agentes"
+      ]
+    },
+    {
+      "name": "Model Context Protocol",
+      "level": "Avanzado",
+      "keywords": [
+        "IA",
+        "Agentes"
+      ]
+    },
+    {
+      "name": "Context engineering",
+      "level": "Avanzado",
+      "keywords": [
+        "IA",
+        "Agentes"
+      ]
+    },
+    {
+      "name": "Hooks y skills",
+      "level": "Avanzado",
+      "keywords": [
+        "IA",
+        "Agentes"
+      ]
+    },
+    {
+      "name": "Orquestación multi-agente",
+      "level": "Avanzado",
+      "keywords": [
+        "IA",
+        "Agentes"
+      ]
+    },
+    {
+      "name": "Memoria de agentes",
+      "level": "Avanzado",
+      "keywords": [
+        "IA",
+        "Agentes"
+      ]
+    },
+    {
+      "name": "Evals de agentes",
+      "level": "Medio",
+      "keywords": [
+        "IA",
+        "Agentes"
+      ]
+    },
+    {
       "name": "HTML",
       "level": "Master",
-      "keywords": ["Desarrollo Web", "Frontend"]
+      "keywords": [
+        "Desarrollo Web",
+        "Frontend"
+      ]
     },
     {
       "name": "CSS",
       "level": "Master",
-      "keywords": ["Desarrollo Web", "Frontend", "Diseño Responsive"]
+      "keywords": [
+        "Desarrollo Web",
+        "Frontend",
+        "Diseño Responsive"
+      ]
     },
     {
       "name": "JavaScript",
       "level": "Master",
-      "keywords": ["Desarrollo Web", "Frontend", "Backend", "Fullstack"]
+      "keywords": [
+        "Desarrollo Web",
+        "Frontend",
+        "Backend",
+        "Fullstack"
+      ]
     },
     {
       "name": "Tailwind",
@@ -261,17 +425,32 @@
     {
       "name": "Node Js",
       "level": "Avanzado",
-      "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
+      "keywords": [
+        "Desarrollo Web",
+        "Backend",
+        "JavaScript",
+        "Servidor"
+      ]
     },
     {
       "name": "Express",
       "level": "Avanzado",
-      "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
+      "keywords": [
+        "Desarrollo Web",
+        "Backend",
+        "JavaScript",
+        "Servidor"
+      ]
     },
     {
       "name": "Supabase",
       "level": "Avanzado",
-      "keywords": ["Desarrollo Web", "Backend", "JavaScript", "Servidor"]
+      "keywords": [
+        "Desarrollo Web",
+        "Backend",
+        "JavaScript",
+        "Servidor"
+      ]
     },
     {
       "name": "MySQL",
@@ -306,7 +485,11 @@
     {
       "name": "Git",
       "level": "Avanzado",
-      "keywords": ["Control de Versiones", "Colaboración", "Código Fuente"]
+      "keywords": [
+        "Control de Versiones",
+        "Colaboración",
+        "Código Fuente"
+      ]
     },
     {
       "name": "GitHub",
@@ -321,118 +504,161 @@
     {
       "name": "React",
       "level": "Avanzado",
-      "keywords": ["Desarrollo Web", "Frontend", "JavaScript Library", "UI"]
+      "keywords": [
+        "Desarrollo Web",
+        "Frontend",
+        "JavaScript Library",
+        "UI"
+      ]
     },
     {
       "name": "Elixir",
       "level": "Medio",
-      "keywords": ["Backend"]
+      "keywords": [
+        "Backend"
+      ]
     },
     {
       "name": "Phoenix Framework",
       "level": "Medio",
-      "keywords": ["Backend"]
+      "keywords": [
+        "Backend"
+      ]
     },
     {
       "name": "Go",
       "level": "Medio",
-      "keywords": ["Backend"]
+      "keywords": [
+        "Backend"
+      ]
     },
     {
       "name": "PHP",
       "level": "Medio",
-      "keywords": ["Backend"]
+      "keywords": [
+        "Backend"
+      ]
     },
     {
       "name": "Cake PHP",
       "level": "Avanzado",
-      "keywords": ["Backend"]
+      "keywords": [
+        "Backend"
+      ]
     },
     {
       "name": "Laravel",
       "level": "Medio",
-      "keywords": ["Backend"]
+      "keywords": [
+        "Backend"
+      ]
     },
-
     {
       "name": "Java",
       "level": "Medio",
-      "keywords": ["Backend"]
+      "keywords": [
+        "Backend"
+      ]
     },
     {
       "name": "Figma",
       "level": "Avanzado",
-      "keywords": ["UI"]
+      "keywords": [
+        "UI"
+      ]
     },
     {
       "name": "Gatsby JS",
       "level": "Avanzado",
-      "keywords": ["UI", "Frontend"]
+      "keywords": [
+        "UI",
+        "Frontend"
+      ]
     },
     {
       "name": "Next JS",
       "level": "Avanzado",
-      "keywords": ["Backend", "Frontend"]
+      "keywords": [
+        "Backend",
+        "Frontend"
+      ]
     },
     {
       "name": "GraphQL",
       "level": "Avanzado",
-      "keywords": ["Frontend"]
+      "keywords": [
+        "Frontend"
+      ]
     },
     {
       "name": "Astro",
       "level": "Medio",
-      "keywords": ["Frontend"]
+      "keywords": [
+        "Frontend"
+      ]
     },
     {
       "name": "Angular",
       "level": "Avanzado",
-      "keywords": ["Frontend"]
+      "keywords": [
+        "Frontend"
+      ]
     },
     {
       "name": "Vue JS",
       "level": "Medio",
-      "keywords": ["Frontend"]
+      "keywords": [
+        "Frontend"
+      ]
     },
     {
       "name": "Svelte",
       "level": "Medio",
-      "keywords": ["Frontend"]
+      "keywords": [
+        "Frontend"
+      ]
     },
     {
       "name": "Redis",
       "level": "Medio",
-      "keywords": ["Frontend"]
+      "keywords": [
+        "Frontend"
+      ]
     },
     {
       "name": "MongoDB",
       "level": "Medio",
-      "keywords": ["Frontend"]
+      "keywords": [
+        "Frontend"
+      ]
     },
     {
       "name": "AWS Lambda",
       "level": "Medio",
-      "keywords": ["Frontend"]
+      "keywords": [
+        "Frontend"
+      ]
     },
     {
       "name": "AWS EC2",
       "level": "Medio",
-      "keywords": ["Frontend"]
+      "keywords": [
+        "Frontend"
+      ]
     },
     {
       "name": "AWS S3",
       "level": "Medio",
-      "keywords": ["Frontend"]
-    },
-    {
-      "name": "AWS Lambda",
-      "level": "Medio",
-      "keywords": ["Frontend"]
+      "keywords": [
+        "Frontend"
+      ]
     },
     {
       "name": "AWS ELB / ASG",
       "level": "Medio",
-      "keywords": ["Frontend"]
+      "keywords": [
+        "Frontend"
+      ]
     }
   ],
   "languages": [
@@ -448,7 +674,10 @@
   "interests": [
     {
       "name": "Wildlife",
-      "keywords": ["Ferrets", "Unicorns"]
+      "keywords": [
+        "Ferrets",
+        "Unicorns"
+      ]
     }
   ],
   "references": [
@@ -459,51 +688,37 @@
   ],
   "projects": [
     {
-      "name": "mars.codes",
+      "name": "Porteria",
       "isActive": true,
-      "description": "Historia interactiva con retos de programación para viajar a Marte",
-      "highlights": ["Elige tu propia aventura", "En desarrollo"],
-      "url": "https://mars.codes"
-    },
-    {
-      "name": "AdventJS",
-      "isActive": true,
-      "description": "Retos de programación en JavaScript para cada día de diciembre hasta Navidad",
+      "description": "Control de accesos con IA para condominios, edificios y empresas en Chile.",
       "highlights": [
-        "+1 millón de visitas",
-        "Multidioma",
-        "JavaScript & TypeScript"
+        "+350 porterías activas",
+        "+3.500 guardias en la app",
+        "+6 millones de controles de acceso"
       ],
-      "url": "https://adventjs.dev"
+      "url": "https://porteria.com/"
     },
     {
-      "name": "Codember",
+      "name": "Monoke",
       "isActive": true,
-      "description": "Juego interactivo de programación con retos y secretos",
-      "highlights": ["+2000 usuarios activos", "Retos para cualquier lenguaje"],
-      "url": "https://codember.dev"
+      "description": "La ficha clínica universal de las mascotas de Chile: portable, verificable y legible por cualquier clínica.",
+      "highlights": [
+        "Pases de Apple Wallet y Google Wallet",
+        "API REST y webhooks firmados",
+        "Proyecto propio"
+      ],
+      "url": "https://monoke.vet/"
     },
     {
-      "name": "codi.link",
+      "name": "Carcassonne Latam",
       "isActive": true,
-      "description": "Playground de código HTML, CSS y JavaScript para compartir",
-      "highlights": ["100k visitas al mes", "Desarrollado por la comunidad"],
-      "url": "https://codi.link",
-      "github": "https://github.com/midudev/codi.link"
-    },
-    {
-      "name": "Pruebas Técnicas",
-      "isActive": true,
-      "description": "Lista de pruebas técnicas de empresas para practicar programación",
-      "highlights": ["100% gratuito", "+500 soluciones de la comunidad"],
-      "url": "https://pruebastecnicas.com",
-      "github": "https://github.com/midudev/pruebas-tecnicas"
-    },
-    {
-      "name": "miduConf",
-      "description": "Conferencia de programación en streaming para la comunidad hispanohablante con charlas top",
-      "highlights": ["+15k tickets repartidos", "+50k espectadores en directo"],
-      "url": "https://miduconf.com"
+      "description": "Carcassonne online 1v1 con reloj, ranking, torneos y un rival de IA para la comunidad latinoamericana.",
+      "highlights": [
+        "Bot IA para practicar",
+        "Escalafón y liga",
+        "Proyecto comunitario sin fines de lucro"
+      ],
+      "url": "https://carcassonne-latam.com/"
     }
   ]
 }

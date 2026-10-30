@@ -1,0 +1,262 @@
+---
+const products = [
+  {
+    name: "Porteria",
+    url: "https://porteria.com/",
+    domain: "porteria.com",
+    image: "/images/productos/porteria.webp",
+    role: "Líder de desarrollo, desde 2025",
+    pitch:
+      "Control de accesos con IA para condominios, edificios y empresas en Chile. Reemplaza el cuaderno de la portería por una app agéntica para guardias, un panel con IA para administradores y lectura de QR, cédulas y patentes.",
+    mine: "Lidero el desarrollo de Porteria Empresas y Porteria Home. Trabajo en frontend y backend, ayudo a llevar la IA a la operación diaria y asesoro a la empresa en decisiones técnicas y de producto.",
+    stats: [
+      { value: "+350", label: "porterías activas" },
+      { value: "+3.500", label: "guardias usando la app" },
+      { value: "+6 M", label: "controles de acceso" },
+      { value: "+10.000", label: "usuarios diarios" },
+    ],
+  },
+  {
+    name: "Monoke",
+    url: "https://monoke.vet/",
+    domain: "monoke.vet",
+    image: "/images/productos/monoke.webp",
+    role: "Proyecto propio",
+    pitch:
+      "La ficha clínica universal de las mascotas de Chile. Un historial portable que cualquier clínica lee con un QR, pases de Apple Wallet y Google Wallet que se actualizan con cada vacuna y recordatorios automáticos antes de cada dosis.",
+    facts: [
+      "Fichas SOAP versionadas y recetas con QR verificable",
+      "API REST y webhooks firmados con HMAC-SHA256",
+      "Cada acceso a la ficha queda auditado; cumple la Ley 21.719 de datos personales",
+    ],
+  },
+  {
+    name: "Carcassonne Latam",
+    url: "https://carcassonne-latam.com/",
+    domain: "carcassonne-latam.com",
+    image: "/images/productos/carcassonne.webp",
+    role: "Proyecto propio, comunitario y sin fines de lucro",
+    pitch:
+      "Carcassonne online 1v1 con reloj, ranking y torneos para la comunidad latinoamericana, en español. Incluye un rival de IA para practicar a cualquier hora, importación de partidas y un directorio de lugares donde jugar en persona.",
+    facts: [
+      "Bot IA que juega partidas completas contra la comunidad",
+      "Escalafón y liga con jugadores de Chile y Argentina",
+      "Guías por nivel y calendario de torneos presenciales",
+    ],
+  },
+]
+---
+
+<section class="products" id="productos" aria-labelledby="products-title">
+  <div class="wrap">
+    <h2 id="products-title">En producción</h2>
+    <p class="intro">
+      Productos con usuarios reales. Monoke y Carcassonne Latam los mantengo por iniciativa propia, con desarrollo
+      asistido por agentes: yo defino y reviso; los agentes implementan, prueban y verifican en el navegador.
+    </p>
+  </div>
+
+  {
+    products.map((p, i) => (
+      <article class:list={["product wrap", { "is-lead": i === 0 }]} aria-labelledby={`product-${i}`}>
+        <a class="shot" href={p.url} tabindex="-1" aria-hidden="true">
+          <img src={p.image} alt="" width="1440" height="900" loading="lazy" decoding="async" />
+        </a>
+        <div class="copy">
+          <p class="role">{p.role}</p>
+          <h3 id={`product-${i}`}>
+            <a href={p.url}>{p.name}</a>
+          </h3>
+          <p class="pitch">{p.pitch}</p>
+          {p.mine && <p class="mine">{p.mine}</p>}
+          {p.facts && (
+            <ul class="facts">
+              {p.facts.map((f) => (
+                <li>{f}</li>
+              ))}
+            </ul>
+          )}
+          <a class="visit" href={p.url}>
+            Visitar {p.domain}
+          </a>
+        </div>
+        {p.stats && (
+          <dl class="stats">
+            {p.stats.map((s) => (
+              <div>
+                <dt>{s.label}</dt>
+                <dd>{s.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+      </article>
+    ))
+  }
+</section>
+
+<style>
+  .products {
+    padding-block: clamp(4rem, 10vw, 8rem);
+  }
+
+  h2 {
+    font-size: var(--t4);
+    font-stretch: 78%;
+  }
+
+  .intro {
+    max-width: 40em;
+    margin-top: 1rem;
+    color: var(--niebla);
+  }
+
+  .product {
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: start;
+    margin-top: clamp(3rem, 7vw, 5rem);
+  }
+
+  .product + .product {
+    padding-top: clamp(3rem, 7vw, 5rem);
+    background: linear-gradient(var(--linea), var(--linea)) top center / calc(100% - 2 * var(--gutter)) 1px no-repeat;
+  }
+
+  /* Los productos propios alternan lado para que la página respire */
+  .product:nth-of-type(odd):not(.is-lead) .shot {
+    order: 2;
+  }
+
+  .shot {
+    display: block;
+    background: var(--fondo);
+    border: 1px solid var(--linea);
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+  }
+
+  .shot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    filter: grayscale(1) contrast(1.1);
+    mix-blend-mode: luminosity;
+    transition: filter 0.4s ease;
+  }
+
+  /* El color aparece cuando la persona se interesa por ese producto */
+  .product:hover .shot img,
+  .product:focus-within .shot img {
+    filter: none;
+    mix-blend-mode: normal;
+  }
+
+  .role {
+    color: var(--niebla);
+  }
+
+  h3 {
+    margin-top: 0.4rem;
+    font-size: clamp(2.5rem, 6vw, 4.75rem);
+    font-weight: 850;
+    font-stretch: 72%;
+    line-height: 0.95;
+  }
+
+  h3 a {
+    text-decoration: none;
+  }
+
+  h3 a:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--senal);
+    text-decoration-thickness: 0.06em;
+  }
+
+  .pitch {
+    margin-top: 1.25rem;
+    font-size: var(--t1);
+    line-height: 1.4;
+  }
+
+  .mine {
+    margin-top: 1rem;
+    padding-left: 1rem;
+    border-left: 3px solid var(--senal);
+  }
+
+  .facts {
+    margin-top: 1.5rem;
+  }
+
+  .facts li {
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--linea);
+  }
+
+  .visit {
+    display: inline-block;
+    margin-top: 1.5rem;
+    font-weight: 600;
+  }
+
+  .stats {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    background: var(--senal);
+    color: var(--sobre);
+  }
+
+  /* El número va arriba para que todas las cifras queden alineadas */
+  .stats div {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+
+  .stats div + div {
+    border-left: 1px solid color-mix(in srgb, var(--sobre) 25%, transparent);
+  }
+
+  .stats dt {
+    font-size: 0.9375rem;
+  }
+
+  .stats dd {
+    margin: 0 0 0.35rem;
+    font-family: var(--display);
+    font-size: clamp(2.25rem, 5vw, 4rem);
+    font-weight: 850;
+    font-stretch: 75%;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 52rem) {
+    .product {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .product:nth-of-type(odd):not(.is-lead) .shot {
+      order: 0;
+    }
+
+    .stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .stats div:nth-child(3) {
+      border-left: 0;
+    }
+
+    .stats div:nth-child(n + 3) {
+      border-top: 1px solid color-mix(in srgb, var(--sobre) 25%, transparent);
+    }
+  }
+</style>

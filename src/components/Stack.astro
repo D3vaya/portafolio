@@ -1,0 +1,482 @@
+---
+import { skills, work } from "@cv"
+import { yearsSince } from "@/lib/time"
+
+const firstJob = work.reduce((a, b) => (a.startDate < b.startDate ? a : b))
+
+type Pillar = {
+  id: string
+  kicker: string
+  name: string
+  claim: string
+  lead: { name: string; proof: string }
+  items: { name: string; proof: string }[]
+  toolbox?: { name: string; tools: string[] }[]
+  more?: string[]
+}
+
+// Las dos especialidades van primero, con evidencia de dónde las usé.
+const pillars: Pillar[] = [
+  {
+    id: "frontend",
+    kicker: `${yearsSince(firstJob.startDate)} años`,
+    name: "Frontend",
+    claim: "Interfaces rápidas para productos con mucho tráfico, de la arquitectura al último píxel.",
+    lead: {
+      name: "Next.js",
+      proof: "Mi base para productos en producción. En Juegalo.com y ETpay: renderizado en servidor, rutas API y despliegue serverless en GCP.",
+    },
+    items: [
+      { name: "React", proof: "Desde 2017: el e-commerce de WOM, los flujos de pago de ETpay y productos desde cero en Zenta." },
+      { name: "TypeScript", proof: "Tipado de punta a punta en todo lo que construyo hoy." },
+      { name: "Performance web", proof: "Core Web Vitals como requisito. En WOM bajamos el LCP y subió la conversión; esta página se mide sola." },
+      { name: "Micro-frontends", proof: "Arquitectura modular en ETpay para que varios equipos publiquen sin pisarse." },
+    ],
+    toolbox: [
+      {
+        name: "Frameworks",
+        tools: ["Next.js App Router", "React 19", "Server Components", "Server Actions", "Astro", "Remix", "Vue", "Nuxt", "Svelte", "Angular", "Gatsby"],
+      },
+      {
+        name: "UI y estilos",
+        tools: ["Tailwind CSS", "shadcn/ui", "Radix UI", "CSS Modules", "Framer Motion", "GSAP", "Storybook", "Figma"],
+      },
+      {
+        name: "Estado y datos",
+        tools: ["TanStack Query", "SWR", "Zustand", "Redux Toolkit", "React Hook Form", "Zod", "GraphQL", "tRPC"],
+      },
+      {
+        name: "Calidad",
+        tools: ["Vitest", "Jest", "Testing Library", "Playwright", "ESLint", "Biome", "Lighthouse CI"],
+      },
+      {
+        name: "Build y entrega",
+        tools: ["Vite", "Turbopack", "Turborepo", "pnpm", "Module Federation", "Vercel", "Cloud Run", "PWA"],
+      },
+    ],
+  },
+  {
+    id: "ia",
+    kicker: "Hoy",
+    name: "IA y agentes",
+    claim: "Harnesses que llevan agentes de una demo a producción: contexto, herramientas, memoria, control y evaluación.",
+    lead: {
+      name: "Claude Code",
+      proof: "Mi entorno de trabajo diario, configurado a fondo: skills, hooks, subagentes y memoria persistente entre sesiones.",
+    },
+    items: [
+      { name: "Model Context Protocol", proof: "Servidores MCP que conectan agentes con GitHub, navegadores y datos reales." },
+      { name: "Orquestación multi-agente", proof: "Subagentes en paralelo, cada uno en su worktree, con verificación cruzada." },
+      { name: "IA en producto", proof: "Chat para crear KPIs y alertas inteligentes en Porteria; Bot IA rival en Carcassonne Latam." },
+      { name: "Evals de agentes", proof: "Casos con criterio de éxito y trazas por paso para saber si un cambio mejora o empeora." },
+    ],
+    toolbox: [
+      { name: "Modelos y APIs", tools: ["LLMs", "Claude API", "Tool use", "Prompt caching", "Structured outputs"] },
+      { name: "Harness", tools: ["Claude Code", "Hooks", "Skills", "Subagentes", "Memoria persistente", "Permisos"] },
+      { name: "Ecosistema", tools: ["MCP", "Agent SDK", "RAG", "Evals", "Trazas", "Orquestación multi-agente"] },
+      {
+        name: "Forma de trabajo",
+        tools: ["Desarrollo asistido por agentes", "Context engineering", "Prompt engineering", "Worktrees en paralelo"],
+      },
+    ],
+  },
+]
+
+const groups = [
+  { name: "Servidor", members: ["Node Js", "Express", "Cake PHP", "Java", "Go", "PHP", "Laravel", "Elixir", "Phoenix Framework"] },
+  { name: "Datos", members: ["PostgreSQL", "MySQL", "Firebase", "Supabase", "MongoDB", "Redis"] },
+  { name: "Nube y equipo", members: ["Git", "GitHub", "AWS Lambda", "AWS EC2", "AWS S3", "AWS ELB / ASG"] },
+]
+
+const levels: Record<string, { weight: number; label: string; tone: string }> = {
+  Master: { weight: 3, label: "Experto", tone: "is-expert" },
+  Avanzado: { weight: 2, label: "Avanzado", tone: "is-advanced" },
+  Medio: { weight: 1, label: "Intermedio", tone: "is-mid" },
+}
+
+const byName = new Map(skills.map((s) => [s.name, s]))
+const map = groups.map((g) => {
+  const items = g.members
+    .map((name) => byName.get(name))
+    .filter((s): s is (typeof skills)[number] => Boolean(s))
+    .map((s) => ({ name: s.name, ...levels[s.level] }))
+  return { ...g, items }
+})
+---
+
+<section class="wrap stack-section" id="stack" aria-labelledby="stack-title">
+  <h2 id="stack-title">Stack</h2>
+  <p class="intro">Dos especialidades, cada una con dónde la usé. Debajo, todo lo demás que sé usar.</p>
+
+  <div class="pillars">
+    {
+      pillars.map((p) => (
+        <article class:list={["pillar", `is-${p.id}`]} aria-labelledby={`pillar-${p.id}`}>
+          <p class="kicker">{p.kicker}</p>
+          <h3 id={`pillar-${p.id}`}>{p.name}</h3>
+          <p class="claim">{p.claim}</p>
+
+          <div class="lead">
+            <p class="lead-name">{p.lead.name}</p>
+            <p class="lead-proof">{p.lead.proof}</p>
+          </div>
+
+          <dl class="items">
+            {p.items.map((item) => (
+              <div>
+                <dt>{item.name}</dt>
+                <dd>{item.proof}</dd>
+              </div>
+            ))}
+          </dl>
+
+          {p.toolbox && (
+            <dl class="toolbox">
+              {p.toolbox.map((box) => (
+                <div>
+                  <dt>{box.name}</dt>
+                  <dd>
+                    <ul class="more">
+                      {box.tools.map((t) => (
+                        <li>{t}</li>
+                      ))}
+                    </ul>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          {p.more && (
+            <ul class="more more-end" aria-label={`Más en ${p.name}`}>
+              {p.more.map((m) => (
+                <li>{m}</li>
+              ))}
+            </ul>
+          )}
+        </article>
+      ))
+    }
+  </div>
+
+  <h3 class="rest-title">Todo lo demás</h3>
+  <ul class="legend" aria-label="Niveles">
+    {Object.values(levels).map((l) => <li class={l.tone}>{l.label}</li>)}
+  </ul>
+
+  <div class="map">
+    {
+      map.map((group) => (
+        <section class="group" aria-label={group.name}>
+          <h4>
+            {group.name}
+            <span>{group.items.length}</span>
+          </h4>
+          <ul class="tiles">
+            {group.items.map((item) => (
+              <li class:list={["tile", item.tone]} style={`--w: ${item.weight}`}>
+                <span class="tile-name">{item.name}</span>
+                <span class="tile-level">{item.label}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .stack-section {
+    padding-block: clamp(4rem, 10vw, 8rem);
+  }
+
+  h2 {
+    font-size: var(--t4);
+    font-stretch: 78%;
+  }
+
+  .intro {
+    max-width: 38em;
+    margin-top: 1rem;
+    color: var(--niebla);
+  }
+
+  /* ---------- Especialidades ---------- */
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1rem, 2vw, 1.5rem);
+    margin-top: clamp(2rem, 5vw, 3rem);
+  }
+
+  .pillar {
+    display: flex;
+    flex-direction: column;
+    padding: clamp(1.5rem, 3.5vw, 2.75rem);
+    border-radius: 18px;
+    background: #fff;
+    border: 1px solid var(--linea);
+  }
+
+  /* IA va en grafito, como la banda del harness */
+  .pillar.is-ia {
+    --papel: #ecedef;
+    --niebla: #a3a7b1;
+    --linea: rgb(236 237 239 / 0.16);
+    --senal-texto: #ff7a45;
+    background: #15161a;
+    color: var(--papel);
+    border-color: #15161a;
+  }
+
+  .kicker {
+    color: var(--senal-texto);
+    font-weight: 600;
+  }
+
+  .is-ia .kicker {
+    color: var(--senal);
+  }
+
+  .pillar h3 {
+    margin-top: 0.25rem;
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-weight: 850;
+    font-stretch: 70%;
+    line-height: 0.9;
+  }
+
+  .claim {
+    max-width: 30em;
+    margin-top: 1rem;
+    font-size: var(--t1);
+    line-height: 1.35;
+  }
+
+  .lead {
+    margin-top: 2rem;
+    padding: 1.25rem 1.25rem 1.4rem;
+    border-radius: 12px;
+    background: var(--senal);
+    color: var(--sobre);
+  }
+
+  .lead-name {
+    font-family: var(--display);
+    font-size: clamp(2.25rem, 4.5vw, 3.25rem);
+    font-weight: 850;
+    font-stretch: 85%;
+    line-height: 1;
+  }
+
+  .lead-proof {
+    margin-top: 0.6rem;
+    max-width: 34em;
+  }
+
+  .items {
+    margin-top: 1.5rem;
+  }
+
+  .items div {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: 1rem;
+    padding: 0.85rem 0;
+    border-top: 1px solid var(--linea);
+  }
+
+  .items dt {
+    font-family: var(--display);
+    font-size: var(--t1);
+    font-weight: 750;
+    font-stretch: 80%;
+    line-height: 1.1;
+  }
+
+  .items dd {
+    margin: 0;
+    color: var(--niebla);
+    font-size: 0.9375rem;
+  }
+
+  .more {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .more-end {
+    margin-top: auto;
+    padding-top: 1.5rem;
+  }
+
+  .toolbox {
+    margin-top: 1.75rem;
+  }
+
+  .toolbox div + div {
+    margin-top: 1rem;
+  }
+
+  .toolbox dt {
+    margin-bottom: 0.45rem;
+    font-family: var(--display);
+    font-weight: 700;
+    font-stretch: 80%;
+    color: var(--senal-texto);
+  }
+
+  .toolbox dd {
+    margin: 0;
+  }
+
+  .more li {
+    padding: 0.25rem 0.7rem;
+    border: 1px solid var(--linea);
+    border-radius: 999px;
+    font-size: 0.875rem;
+  }
+
+  /* ---------- Todo lo demás ---------- */
+  .rest-title {
+    margin-top: clamp(3rem, 7vw, 4.5rem);
+    font-size: var(--t2);
+    font-stretch: 85%;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: 0.75rem;
+    font-size: var(--t-1);
+  }
+
+  .legend li::before {
+    content: "";
+    display: inline-block;
+    width: 0.9rem;
+    height: 0.9rem;
+    margin-right: 0.45rem;
+    vertical-align: -0.12rem;
+    border-radius: 3px;
+  }
+
+  .map {
+    display: grid;
+    grid-template-columns: 13fr 11fr 9fr;
+    gap: 2px;
+    margin-top: 1rem;
+    background: var(--linea);
+    border: 2px solid var(--linea);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .group {
+    display: flex;
+    flex-direction: column;
+    background: var(--hondo);
+    min-width: 0;
+  }
+
+  .group h4 {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0;
+    padding: 0.7rem 0.75rem;
+    font-family: var(--display);
+    font-size: var(--t0);
+    font-weight: 700;
+    font-stretch: 80%;
+  }
+
+  .group h4 span {
+    color: var(--niebla);
+    font-weight: 500;
+  }
+
+  .tiles {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: stretch;
+    gap: 2px;
+    padding: 2px;
+  }
+
+  .tile {
+    flex: var(--w) 1 calc(var(--w) * 4.75rem);
+    min-height: calc(2.4rem + var(--w) * 0.9rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0.5rem 0.65rem;
+    min-width: 0;
+  }
+
+  .tile-name {
+    font-family: var(--display);
+    font-weight: 700;
+    font-stretch: 82%;
+    font-size: calc(0.85rem + var(--w) * 0.15rem);
+    line-height: 1.05;
+    overflow-wrap: anywhere;
+  }
+
+  .tile-level {
+    font-size: 0.75rem;
+  }
+
+  .is-expert,
+  .legend .is-expert::before {
+    background: var(--senal);
+    color: var(--sobre);
+  }
+
+  .is-advanced,
+  .legend .is-advanced::before {
+    background: color-mix(in srgb, var(--papel) 10%, transparent);
+  }
+
+  .is-mid {
+    box-shadow: inset 0 0 0 1px var(--linea);
+    color: var(--niebla);
+  }
+
+  .legend .is-mid::before {
+    box-shadow: inset 0 0 0 1px var(--niebla);
+  }
+
+  .legend li {
+    background: none;
+    color: var(--papel);
+  }
+
+  @media (max-width: 64rem) {
+    .pillars {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .map {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .group:first-child {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .map {
+      grid-template-columns: 1fr;
+    }
+
+    .items div {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.25rem;
+    }
+  }
+</style>

@@ -1,0 +1,275 @@
+---
+import { certificates } from "@cv"
+import Mascot from "@/components/Mascot.astro"
+
+// Las que no traen fecha en la credencial van al final
+const sorted = [...certificates].sort((a, b) => (b.date || "0").localeCompare(a.date || "0"))
+const academy = sorted.filter((c) => c.issuer.startsWith("Claude Academy"))
+const formatDate = (date: string) =>
+  date ? new Date(`${date}T00:00:00`).toLocaleDateString("es-CL", { month: "short", year: "numeric" }) : "Sin fecha"
+
+const focus = [
+  {
+    name: "LLMs",
+    text: "Cómo razonan, cómo se les entrega contexto y cuánto cuesta cada respuesta: ventanas de contexto, caching y elección de modelo por tarea.",
+  },
+  {
+    name: "Harness engineering",
+    text: "Skills, hooks, subagentes, memoria y permisos: todo lo que convierte a un modelo en un agente en el que se puede confiar.",
+  },
+  {
+    name: "El entorno de IA",
+    text: "MCP, evals, orquestación multi-agente y SDKs de agentes, probados en mis propios productos antes de recomendarlos.",
+  },
+]
+---
+
+<section class="wrap learning" id="aprendizaje" aria-labelledby="learning-title">
+  <h2 id="learning-title">Sigo aprendiendo</h2>
+
+  <article class="now" aria-labelledby="now-title">
+    <div class="now-head">
+      <Mascot size={96} class="now-mascot" />
+      <div>
+        <p class="kicker">Ahora mismo</p>
+        <h3 id="now-title">
+          Me estoy profundizando en LLMs, harness engineering y todo el entorno de IA, con Claude Code como base.
+        </h3>
+      </div>
+    </div>
+    <dl class="focus">
+      {
+        focus.map((f) => (
+          <div>
+            <dt>{f.name}</dt>
+            <dd>{f.text}</dd>
+          </div>
+        ))
+      }
+    </dl>
+    <div class="badges">
+      <p class="base">Claude Code es mi entorno diario: lo configuro, lo extiendo y lo uso para construir mis productos. Certificado por Anthropic:</p>
+      <ul>
+        {
+          academy.map((c) => (
+            <li>
+              <a href={c.url} rel="noopener">
+                <span class="badge-name">{c.name}</span>
+                <span class="badge-meta">Claude Academy, {formatDate(c.date)}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </article>
+
+  <h3 class="courses-title">Certificaciones</h3>
+  <p class="courses-intro">Cada una enlaza a su credencial verificable.</p>
+  <ol class="list">
+    {
+      sorted.map((c) => (
+        <li>
+          {c.date ? <time datetime={c.date}>{c.date.slice(0, 4)}</time> : <span class="no-date">Sin fecha</span>}
+          <span class="course">{c.url ? <a href={c.url} rel="noopener">{c.name}</a> : c.name}</span>
+          <span class="issuer">{c.issuer}</span>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .learning {
+    padding-block: clamp(4rem, 10vw, 8rem);
+  }
+
+  h2 {
+    font-size: var(--t4);
+    font-stretch: 78%;
+  }
+
+  /* ---------- Ahora mismo ---------- */
+  .now {
+    --papel: #ecedef;
+    --niebla: #a3a7b1;
+    --linea: rgb(236 237 239 / 0.16);
+    margin-top: clamp(2rem, 5vw, 3rem);
+    padding: clamp(1.5rem, 4vw, 3rem);
+    border-radius: 18px;
+    background:
+      radial-gradient(40rem 20rem at 0% 0%, rgb(255 91 31 / 0.18), transparent 70%),
+      #15161a;
+    color: var(--papel);
+  }
+
+  .now-head {
+    display: flex;
+    align-items: center;
+    gap: clamp(1.25rem, 3vw, 2.25rem);
+  }
+
+  .now-head :global(.now-mascot) {
+    flex: none;
+    animation: bob 2.4s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  .kicker {
+    color: var(--senal);
+    font-weight: 600;
+  }
+
+  .now h3 {
+    margin-top: 0.35rem;
+    max-width: 22em;
+    font-size: clamp(1.75rem, 3.6vw, 2.75rem);
+    font-weight: 800;
+    font-stretch: 82%;
+    line-height: 1.05;
+  }
+
+  .focus {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-top: clamp(1.75rem, 4vw, 2.5rem);
+  }
+
+  .focus div {
+    padding-top: 1rem;
+    border-top: 2px solid var(--senal);
+  }
+
+  .focus dt {
+    font-family: var(--display);
+    font-size: var(--t1);
+    font-weight: 750;
+    font-stretch: 82%;
+  }
+
+  .focus dd {
+    margin: 0.4rem 0 0;
+    color: var(--niebla);
+  }
+
+  .badges {
+    margin-top: 2rem;
+  }
+
+  .base {
+    color: var(--niebla);
+    font-size: 0.9375rem;
+  }
+
+  .badges ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.9rem;
+  }
+
+  .badges a {
+    display: flex;
+    flex-direction: column;
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--senal);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .badges a:hover {
+    background: rgb(255 91 31 / 0.12);
+  }
+
+  .badge-name {
+    font-family: var(--display);
+    font-size: var(--t1);
+    font-weight: 750;
+    font-stretch: 82%;
+    line-height: 1.1;
+  }
+
+  .badge-meta {
+    color: var(--niebla);
+    font-size: var(--t-1);
+  }
+
+  /* ---------- Cursos ---------- */
+  .courses-title {
+    margin-top: clamp(3rem, 7vw, 4rem);
+    font-size: var(--t2);
+    font-stretch: 85%;
+  }
+
+  .courses-intro {
+    margin-top: 0.5rem;
+    color: var(--niebla);
+  }
+
+  .list {
+    margin-top: 1.25rem;
+    border-top: 1px solid var(--linea);
+  }
+
+  .list li {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: baseline;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--linea);
+  }
+
+  time,
+  .no-date {
+    color: var(--niebla);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .course {
+    font-family: var(--display);
+    font-size: var(--t1);
+    font-weight: 700;
+    font-stretch: 85%;
+    line-height: 1.15;
+  }
+
+  .issuer {
+    color: var(--niebla);
+  }
+
+  @media (max-width: 52rem) {
+    .focus {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .now-head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .list li {
+      grid-template-columns: 3.5rem minmax(0, 1fr);
+      row-gap: 0.25rem;
+    }
+
+    .issuer {
+      grid-column: 2;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .now-head :global(.now-mascot) {
+      animation: none;
+    }
+  }
+</style>

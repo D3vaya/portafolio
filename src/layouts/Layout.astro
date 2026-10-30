@@ -1,58 +1,41 @@
 ---
+import "@fontsource-variable/anybody/wdth.css"
+import "@fontsource-variable/schibsted-grotesk/wght.css"
+import anybodyLatin from "@fontsource-variable/anybody/files/anybody-latin-wdth-normal.woff2?url"
+import schibstedLatin from "@fontsource-variable/schibsted-grotesk/files/schibsted-grotesk-latin-wght-normal.woff2?url"
 import { basics } from "@cv"
 
 interface Props {
   title: string
+  description: string
 }
 
-const { title } = Astro.props
-
-const { image, summary, url } = basics
-
-// Truncate description for meta tags (max 155 chars)
-const metaDescription = summary.length > 155 ? summary.slice(0, 152) + '...' : summary
-const siteUrl = 'https://www.jcayala.dev'
-const ogImage = `${siteUrl}${image}`
+const { title, description } = Astro.props
+const siteUrl = "https://www.jcayala.dev"
+const ogImage = `${siteUrl}${basics.image}`
 ---
 
 <!doctype html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
-    <meta name="description" content={metaDescription} />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#ecedef" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={siteUrl} />
-
-    {/* Preconnect to all external origins */}
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-
-    {/* Preload hero avatar (LCP candidate) */}
-    <link rel="preload" as="image" href={image} />
-
-    {/* Non-render-blocking font loading */}
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" /></noscript>
-
-    {/* Devicon — load async (not critical for initial paint) */}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" /></noscript>
+    <link rel="preload" as="font" type="font/woff2" href={anybodyLatin} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={schibstedLatin} crossorigin />
 
     <meta property="og:url" content={siteUrl} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={metaDescription} />
+    <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
-
     <meta name="twitter:card" content="summary_large_image" />
-    <meta property="twitter:domain" content="www.jcayala.dev" />
-    <meta property="twitter:url" content={siteUrl} />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={metaDescription} />
+    <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
   </head>
   <body>
@@ -61,43 +44,43 @@ const ogImage = `${siteUrl}${image}`
 </html>
 
 <style is:global>
-  html {
-    font-family:
-      "JetBrains Mono",
-      Menlo,
-      Monaco,
-      Lucida Console,
-      "Courier New",
-      Courier,
-      monospace;
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
-    letter-spacing: -0.025rem;
-    min-height: 100vh;
-    color: #00ff9f;
-  }
+  /*
+   * Placa de circuito
+   * La página se mide a sí misma en el navegador de quien la visita,
+   * dibuja la trayectoria como un flame chart y muestra un harness de
+   * agentes funcionando: mensajes que viajan por pistas de cobre.
+   */
+  :root {
+    /* Claro técnico: gris perla, grafito y naranja eléctrico */
+    --fondo: #ecedef;
+    --hondo: #f8f8f9;
+    --papel: #15161a;
+    --niebla: #5e626d;
+    --senal: #ff5b1f;
+    --senal-texto: #c2410c;
+    --sobre: #15161a;
+    --linea: rgb(21 22 26 / 0.14);
+    /* Acción bloqueada por un hook */
+    --alto: #e5341d;
+    /* Solo para la mascota de Claude Code */
+    --claude: #d97757;
 
-  body,
-  figure {
-    margin: 0;
-    padding: 0;
-    background: transparent;
-  }
+    --display: "Anybody Variable", "Arial Narrow", sans-serif;
+    --texto: "Schibsted Grotesk Variable", system-ui, sans-serif;
 
-  a {
-    text-decoration: none;
-    color: #00ff9f;
-    transition: all 0.3s ease;
-  }
+    /* Escala modular 1.333 */
+    --t-1: 0.8125rem;
+    --t0: 1.0625rem;
+    --t1: 1.4rem;
+    --t2: 1.875rem;
+    --t3: 2.5rem;
+    --t4: clamp(2.75rem, 7vw, 4.5rem);
+    --t5: clamp(3.5rem, 13.5vw, 11.5rem);
 
-  a:hover {
-    color: #ff006f;
-    text-shadow: 0 0 10px #ff006f;
-  }
+    --gutter: clamp(1rem, 4vw, 3.5rem);
+    --max: 82rem;
 
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    color-scheme: light;
   }
 
   *,
@@ -106,205 +89,101 @@ const ogImage = `${siteUrl}${image}`
     box-sizing: border-box;
   }
 
+  html {
+    background: var(--fondo);
+    color: var(--papel);
+    font-family: var(--texto);
+    font-size: 100%;
+    line-height: 1.55;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background: var(--fondo);
+    font-size: var(--t0);
+    font-kerning: normal;
+    text-rendering: optimizeLegibility;
+  }
+
   h1,
   h2,
   h3,
-  h4 {
+  p,
+  ul,
+  ol,
+  dl,
+  dd,
+  figure {
     margin: 0;
-    font-family:
-      "Space Grotesk",
-      system-ui,
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      Roboto,
-      sans-serif;
-    color: #ffffff;
-    text-shadow: 0 0 20px #00ff9f;
+    padding: 0;
+  }
+
+  ul,
+  ol {
+    list-style: none;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--display);
+    font-weight: 800;
+    line-height: 1;
+    text-wrap: balance;
   }
 
   p {
-    color: #b3b3b3 !important;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    margin: 0;
     text-wrap: pretty;
-    text-shadow: 0 0 5px rgba(179, 179, 179, 0.3);
   }
 
-  /* Ensure all text elements are visible */
-  article, section, div {
-    color: #b3b3b3;
-  }
-
-  /* Override any dark text colors */
-  * {
+  a {
     color: inherit;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    color: #ffffff !important;
+  a:hover {
+    text-decoration-color: var(--senal);
+    text-decoration-thickness: 2px;
   }
 
-  /* Specific overrides for dark text */
-  .dark-text-fix {
-    color: #ffffff !important;
+  :focus-visible {
+    outline: 3px solid var(--senal);
+    outline-offset: 3px;
   }
 
-  .print {
-    display: none !important;
-  }
-
-  @media print {
-    .no-print {
-      display: none !important;
-    }
-
-    .print {
-      display: block !important;
-    }
-
-    astro-dev-toolbar {
-      display: none !important;
-    }
-
-    article {
-      break-inside: avoid;
-    }
-  }
-
-  /* Cyberpunk Animations and Effects */
-  @keyframes neonGlow {
-    0%, 100% { text-shadow: 0 0 5px #00ff9f, 0 0 10px #00ff9f, 0 0 15px #00ff9f; }
-    50% { text-shadow: 0 0 10px #00ff9f, 0 0 20px #00ff9f, 0 0 30px #00ff9f, 0 0 40px #ff006f; }
-  }
-
-  @keyframes glitch {
-    0% { transform: translateX(0); }
-    20% { transform: translateX(-2px); }
-    40% { transform: translateX(2px); }
-    60% { transform: translateX(-1px); }
-    80% { transform: translateX(1px); }
-    100% { transform: translateX(0); }
-  }
-
-  @keyframes scanline {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100vw); }
-  }
-
-  .neon-text {
-    animation: neonGlow 2s ease-in-out infinite alternate;
-  }
-
-  .glitch-effect {
-    animation: glitch 0.3s linear infinite;
-  }
-
-  /* Scrollbar styling */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: rgba(26, 26, 46, 0.3);
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, #00ff9f, #ff006f);
-    border-radius: 4px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(45deg, #ff006f, #00ff9f);
-  }
-
-  /* Selection styling */
   ::selection {
-    background: rgba(0, 255, 159, 0.3);
-    color: #ffffff;
+    background: var(--senal);
+    color: var(--sobre);
   }
 
-  ::-moz-selection {
-    background: rgba(0, 255, 159, 0.3);
-    color: #ffffff;
+  .wrap {
+    width: 100%;
+    max-width: var(--max);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
   }
 
-  /* Holographic border effect */
-  .holo-border {
-    position: relative;
-    border: 2px solid transparent;
-    background: linear-gradient(135deg, rgba(0, 255, 159, 0.1), rgba(255, 0, 111, 0.1));
-  }
-
-  .holo-border::before {
-    content: '';
+  .visually-hidden {
     position: absolute;
-    inset: -2px;
-    background: linear-gradient(45deg, #00ff9f, #ff006f, #00ff9f);
-    border-radius: inherit;
-    z-index: -1;
-    animation: neonGlow 3s linear infinite;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
   }
 
-  /* Global cyberpunk modal styles */
-  .hotkeypad,
-  [data-hotkeypad] {
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.98), rgba(26, 26, 46, 0.98)) !important;
-    border: 2px solid #00ff9f !important;
-    border-radius: 15px !important;
-    backdrop-filter: blur(20px) !important;
-    box-shadow:
-      0 0 40px rgba(0, 255, 159, 0.4),
-      inset 0 0 40px rgba(0, 255, 159, 0.1) !important;
-    z-index: 100000 !important;
-  }
-
-  /* Accessibility: prefers-reduced-motion */
   @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
     *,
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
-
-    .neon-text,
-    .glitch-effect {
-      animation: none !important;
-    }
-
-    #matrix-rain,
-    #particles-container {
-      display: none !important;
-    }
-
-    .custom-cursor {
-      display: none !important;
-    }
-
-    /* Ensure all content is visible */
-    main > section,
-    [data-exp-card],
-    [data-exp-node],
-    [data-skill-chip],
-    [data-ext-card],
-    [data-edu-card],
-    [data-code-line],
-    [data-tab],
-    [data-ln],
-    [data-window],
-    [data-neo-line],
-    [data-stat-bar],
-    [data-stat-row],
-    [data-readme-el],
-    [data-process-row],
-    [data-taskbar],
-    [data-taskbar-btn] {
-      opacity: 1 !important;
-      transform: none !important;
     }
   }
 </style>
