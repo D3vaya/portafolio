@@ -1,12 +1,12 @@
 {
   "basics": {
     "name": "Juan Carlos Ayala Higuera",
-    "label": "AI Harness Engineer | Tech Lead | Sr. Frontend Engineer Lead",
+    "label": "Head of Engineering | AI Harness Engineer | Tech Lead",
     "image": "/perfil2.jpeg",
     "email": "j.ayala.higuera@gmail.com",
     "phone": "+569 35222613",
     "url": "https://www.linkedin.com/in/juan-carlos-ayala-higuera-50520a62/",
-    "summary": "Ingeniero de software con más de 12 años llevando productos a producción. Vengo del frontend de alto tráfico y de liderar equipos; hoy me enfoco en IA aplicada: diseño lo que rodea al modelo (contexto, herramientas, memoria, control y evaluación) para que un agente sea confiable. Soy líder de desarrollo en Porteria, donde trabajo en frontend y backend y asesoro a la empresa en decisiones técnicas y de producto. Por mi cuenta construyo y mantengo Monoke y Carcassonne Latam con desarrollo asistido por agentes. Mido lo que construyo: rendimiento, costo y calidad.",
+    "summary": "Ingeniero de software con más de 12 años llevando productos a producción. Vengo del frontend de alto tráfico y de liderar equipos; hoy me enfoco en IA aplicada: diseño lo que rodea al modelo (contexto, herramientas, memoria, control y evaluación) para que un agente sea confiable. Soy Head of Engineering en Porteria, donde lidero el desarrollo de frontend y backend y asesoro a la empresa en decisiones técnicas y de producto. Por mi cuenta construyo y mantengo Monoke y Carcassonne Latam con desarrollo asistido por agentes. Mido lo que construyo: rendimiento, costo y calidad.",
     "location": {
       "address": "Santa amalia #3544, depto 824.",
       "postalCode": "",
@@ -35,7 +35,7 @@
   "work": [
     {
       "name": "Porteria",
-      "position": "Líder de desarrollo",
+      "position": "Head of Engineering",
       "industry": "Control de accesos con IA",
       "stack": [
         "Frontend",
@@ -49,7 +49,7 @@
       "endDate": null,
       "summary": "En Porteria, empresa chilena de control de accesos con IA, lidero el desarrollo de sus productos. Trabajo en frontend, backend y en la integración de IA en la operación diaria de las porterías, y asesoro a la empresa en decisiones técnicas y de producto.",
       "highlights": [
-        "Lidero el desarrollo de Porteria Empresas y Porteria Home",
+        "Como Head of Engineering, lidero el desarrollo de Porteria Empresas y Porteria Home",
         "Frontend, backend e IA en la operación: alertas inteligentes y un chat para crear KPIs propios",
         "Asesoría técnica y de producto a la dirección de la empresa"
       ]
