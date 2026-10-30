@@ -1,10 +1,12 @@
 ---
-import { basics, languages } from "@cv"
+import { basics, languages, work } from "@cv"
+import { formatMonth } from "@/lib/time"
 
 const spoken = languages.map((l) => `${l.language === "Spanish" ? "Español" : l.language === "English" ? "Inglés" : l.language} (${l.fluency.toLowerCase()})`)
+const current = work.filter((job) => !job.endDate)
 ---
 
-<section class="wrap about" id="sobre-mi" aria-labelledby="about-title">
+<div class="resp about">
   <figure class="portrait">
     <picture>
       <source srcset="/perfil2.webp" type="image/webp" />
@@ -12,8 +14,15 @@ const spoken = languages.map((l) => `${l.language === "Spanish" ? "Español" : l
     </picture>
   </figure>
   <div class="body">
-    <h2 id="about-title">Sobre mí</h2>
-    <p>{basics.summary}</p>
+    <p class="summary">{basics.summary}</p>
+    {
+      current.map((job) => (
+        <p class="now">
+          <span>Hoy</span>
+          {job.position} en {job.url ? <a href={job.url}>{job.name}</a> : job.name}, desde {formatMonth(job.startDate)}.
+        </p>
+      ))
+    }
     <dl class="facts">
       <div>
         <dt>Base</dt>
@@ -25,15 +34,14 @@ const spoken = languages.map((l) => `${l.language === "Spanish" ? "Español" : l
       </div>
     </dl>
   </div>
-</section>
+</div>
 
 <style>
   .about {
     display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: clamp(2rem, 6vw, 6rem);
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    gap: clamp(1.5rem, 5vw, 4rem);
     align-items: start;
-    padding-block: clamp(4rem, 10vw, 8rem);
   }
 
   .portrait {
@@ -56,23 +64,29 @@ const spoken = languages.map((l) => `${l.language === "Spanish" ? "Español" : l
     mix-blend-mode: luminosity;
   }
 
-  h2 {
-    font-size: var(--t4);
-    font-stretch: 78%;
-  }
-
-  .body p {
+  .summary {
     max-width: 36em;
-    margin-top: 1.5rem;
     font-size: var(--t1);
     line-height: 1.45;
+  }
+
+  .now {
+    margin-top: 1.5rem;
+    max-width: 36em;
+    font-size: var(--t0);
+  }
+
+  .now span {
+    display: block;
+    color: var(--senal-texto);
+    font-weight: 600;
   }
 
   .facts {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.5rem;
-    margin-top: 2.5rem;
+    margin-top: 2rem;
     padding-top: 1.25rem;
     border-top: 1px solid var(--linea);
   }
@@ -92,7 +106,7 @@ const spoken = languages.map((l) => `${l.language === "Spanish" ? "Español" : l
     }
 
     .portrait {
-      max-width: 22rem;
+      max-width: 18rem;
     }
 
     .facts {

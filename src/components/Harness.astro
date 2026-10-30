@@ -1,21 +1,36 @@
 ---
-import { CONTEXT_WINDOW, layers, steps } from "@/data/harness"
+import { certificates, skills, work } from "@cv"
+import { CONTEXT_WINDOW, buildPrompts } from "@/data/harness"
+import Perfil from "@/components/respuestas/Perfil.astro"
+import Trayectoria from "@/components/respuestas/Trayectoria.astro"
+import Productos from "@/components/respuestas/Productos.astro"
+import Stack from "@/components/respuestas/Stack.astro"
+import Aprendizaje from "@/components/respuestas/Aprendizaje.astro"
+import Contacto from "@/components/respuestas/Contacto.astro"
 
-const layerName = Object.fromEntries(layers.map((l) => [l.id, l.name]))
-const first = steps[0]
+const counts = { work: work.length, skills: skills.length, certificates: certificates.length }
+const prompts = buildPrompts(counts)
+const bodies: Record<string, (props: Record<string, never>) => unknown> = {
+  perfil: Perfil,
+  trayectoria: Trayectoria,
+  productos: Productos,
+  stack: Stack,
+  aprendizaje: Aprendizaje,
+  contacto: Contacto,
+}
 const windowK = `${CONTEXT_WINDOW / 1000}k`
 ---
 
-<section class="harness" id="harness" aria-labelledby="harness-title">
+<section class="harness" id="harness" aria-labelledby="harness-title" data-counts={JSON.stringify(counts)}>
   <div class="wrap head">
-    <h2 id="harness-title">Harness engineering</h2>
+    <h2 id="harness-title">Pregúntale a mi harness</h2>
     <p class="problem">
-      Todo lo que rodea al modelo para que un agente trabaje bien: contexto, herramientas, controles y pruebas. Así se ve
-      por dentro lo que hace Claude Code cuando le llega un prompt, en una simulación.
+      Este CV corre sobre un harness. Elige una pregunta y mira cómo se arma la respuesta. Es una simulación con mi
+      contenido real.
     </p>
   </div>
 
-  <div class="wrap run" data-run>
+  <div class="wrap run js-only" data-run>
     <div class="board" data-board>
       <dl class="hud" aria-label="Contadores de la simulación">
         <div><dt>Tokens en contexto</dt><dd data-hud="tokens">0</dd></div>
@@ -37,55 +52,106 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
       </div>
     </div>
 
-    <div class="caption" aria-live="polite">
-      <p class="caption-meta">
-        <span data-step-count>Paso 1 de {steps.length}</span>
-        <span class="caption-layer" data-step-layer>{first.layer ? `Capa: ${layerName[first.layer]}` : ""}</span>
-      </p>
-      <h3 data-step-title>{first.title}</h3>
-      <p data-step-text>{first.text}</p>
+    <div class="side">
+      <div class="ask">
+        <p class="ask-label" id="ask-label">Elige una pregunta</p>
+        <ul class="chips" aria-labelledby="ask-label">
+          {
+            prompts.map((p) => (
+              <li>
+                <button type="button" class="chip" data-ask={p.id} aria-controls={p.anchor}>
+                  {p.label}
+                </button>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="caption">
+        <p class="caption-meta">
+          <span data-step-count>En espera</span>
+          <span class="caption-layer" data-step-layer></span>
+        </p>
+        <p class="caption-title" data-step-title>El harness está listo</p>
+        <p class="caption-text" data-step-text>Cuando llegue una pregunta vas a ver cada paso en la placa.</p>
+      </div>
+
+      <div class="controls">
+        <button class="toggle" type="button" data-toggle aria-pressed="false">Pausar</button>
+        <ol class="steps" aria-label="Pasos de la corrida" data-steps></ol>
+      </div>
     </div>
 
-    <div class="controls">
-      <button class="toggle" type="button" data-toggle aria-pressed="false">Pausar</button>
-      <ol class="steps" aria-label="Pasos de la corrida" style={`--n: ${steps.length}`}>
-        {
-          steps.map((s, i) => (
-            <li>
-              <button type="button" data-step={i} aria-label={`Paso ${i + 1}: ${s.title}`} aria-current={i === 0 ? "step" : undefined}>
-                <span class="steps-bar" />
-                <span class="steps-title">{s.title}</span>
-              </button>
-            </li>
-          ))
-        }
-      </ol>
+    <!-- En móvil el estado del paso queda pegado abajo mientras la placa está a la vista -->
+    <div class="status-bar" aria-hidden="true">
+      <span class="dot" data-bar-dot></span>
+      <span class="status-text" data-bar-text>En espera</span>
     </div>
   </div>
 
+  <div class="wrap console" data-console>
+    <p class="visually-hidden" aria-live="polite" data-announce></p>
+    {
+      prompts.map((p) => {
+        const Body = bodies[p.id]
+        return (
+          <article class="qa" id={p.anchor} data-qa={p.id} aria-labelledby={`q-${p.id}`}>
+            <h3 class="qa-q" id={`q-${p.id}`} tabindex="-1">
+              {p.label}
+            </h3>
+            <p class="qa-status js-only" data-qa-status />
+            <div class="qa-a" data-qa-body>
+              <Body />
+              <div class="qa-next js-only">
+                <p>Pregunta otra cosa</p>
+                <ul>
+                  {prompts
+                    .filter((o) => o.id !== p.id)
+                    .map((o) => (
+                      <li>
+                        <button type="button" class="chip" data-ask={o.id} aria-controls={o.anchor}>
+                          {o.label}
+                        </button>
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            </div>
+          </article>
+        )
+      })
+    }
+  </div>
 </section>
 
 <script>
-  import { CONTEXT_WINDOW, layers, steps, type Message, type Segment, type Step } from "@/data/harness"
+  import { buildPrompts, fmt, layers, planRun, CONTEXT_WINDOW, type Counts, type Prompt, type Step } from "@/data/harness"
+  import { commit, fold, isToolCall, newSession, totals, type Session } from "@/lib/contexto"
 
   const layerName: Record<string, string> = Object.fromEntries(layers.map((l) => [l.id, l.name]))
+  const section = document.querySelector<HTMLElement>("#harness")!
+  const prompts = buildPrompts(JSON.parse(section.dataset.counts!) as Counts)
 
   const NS = "http://www.w3.org/2000/svg"
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches
   const compact = matchMedia("(max-width: 40rem)")
   const TRAVEL = 1150
+  // Ritmo de la simulación: acelera todo el reloj (paquetes, globo, barra y pasos)
+  // para que una respuesta llegue en unos 12 s; los botones de pasos permiten revisarlos con calma
+  const SPEED = 2.4
 
   // ---------- Diagrama: nodos y pistas, en horizontal y en vertical ----------
   type Pos = { x: number; y: number }
   type Mode = "wide" | "tall"
   const nodes: Record<string, { title: string; sub: string; wide: Pos; tall: Pos }> = {
-    usuario: { title: "Usuario", sub: "escribe el prompt", wide: { x: 130, y: 90 }, tall: { x: 80, y: 45 } },
+    usuario: { title: "Tú", sub: "eliges la pregunta", wide: { x: 130, y: 90 }, tall: { x: 80, y: 45 } },
     modelo: { title: "Modelo", sub: "razona y propone", wide: { x: 500, y: 70 }, tall: { x: 320, y: 45 } },
     memoria: { title: "Memoria", sub: "CLAUDE.md y notas", wide: { x: 130, y: 320 }, tall: { x: 80, y: 160 } },
     cache: { title: "Caché de prompt", sub: "inicio repetido", wide: { x: 870, y: 320 }, tall: { x: 320, y: 160 } },
     core: { title: "Claude Code", sub: "el harness", wide: { x: 500, y: 320 }, tall: { x: 200, y: 320 } },
-    skills: { title: "Skills", sub: "bajo demanda", wide: { x: 130, y: 550 }, tall: { x: 80, y: 530 } },
-    herramientas: { title: "Herramientas", sub: "lee, edita, ejecuta", wide: { x: 500, y: 600 }, tall: { x: 320, y: 530 } },
+    skills: { title: "Skills", sub: "una por tema", wide: { x: 130, y: 550 }, tall: { x: 80, y: 530 } },
+    herramientas: { title: "Herramientas", sub: "leer_cv, publicar", wide: { x: 500, y: 600 }, tall: { x: 320, y: 530 } },
     navegador: { title: "Navegador", sub: "servidor MCP", wide: { x: 870, y: 600 }, tall: { x: 320, y: 650 } },
   }
 
@@ -238,34 +304,8 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     return { svg, mode, nodeEls, paths, signals, packets: el("g", {}, svg), bubble: { g: bubble, rect, text } }
   }
 
+
   // ---------- Ventana de contexto ----------
-  // Se recalcula desde los datos: todo lo de los pasos previos más lo que ya ocurrió en el actual
-  const contextAt = (i: number, t: number) => {
-    const segs: Segment[] = []
-    let cached = false
-    steps.slice(0, i + 1).forEach((s, k) => {
-      const now = k < i ? Infinity : t
-      const c = s.context
-      if (!c) return
-      for (const a of c.add ?? []) {
-        if ((a.delay ?? 0) > now) continue
-        const found = segs.find((x) => x.id === a.id)
-        if (found) found.tokens += a.tokens
-        else segs.push({ ...a })
-      }
-      if (c.cache && c.cache.delay <= now) cached = true
-      if (c.compact && c.compact.delay <= now) {
-        segs.splice(0, segs.length, ...segs.filter((x) => x.fixed || x.keep))
-        segs.push({ id: "resumen", label: "Resumen", tokens: c.compact.tokens })
-      }
-    })
-    const total = segs.reduce((n, x) => n + x.tokens, 0)
-    const prefix = segs.filter((x) => x.fixed).reduce((n, x) => n + x.tokens, 0)
-    return { segs, cached, total, prefix }
-  }
-
-  const fmt = (n: number) => (n < 1000 ? String(n) : `${Math.round(n / 100) / 10}k`.replace(".", ","))
-
   const gauge = {
     bar: document.querySelector<HTMLElement>("[data-gauge-bar]")!,
     cache: document.querySelector<HTMLElement>("[data-gauge-cache]")!,
@@ -275,10 +315,14 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
   const segEls = new Map<string, HTMLElement>()
   let gaugeKey = ""
 
-  const renderContext = (ctx: ReturnType<typeof contextAt>) => {
+  const hud = Object.fromEntries(
+    [...document.querySelectorAll<HTMLElement>("[data-hud]")].map((d) => [d.dataset.hud!, d]),
+  ) as Record<"tokens" | "cached" | "tools" | "blocked", HTMLElement>
+
+  const renderContext = (ctx: ReturnType<typeof fold>) => {
     hud.tokens.textContent = fmt(ctx.total)
-    hud.cached.textContent = fmt(ctx.cached ? ctx.prefix : 0)
-    const key = `${ctx.cached}|${ctx.segs.map((s) => `${s.id}:${s.tokens}`).join()}`
+    hud.cached.textContent = fmt(ctx.cacheRead)
+    const key = ctx.segs.map((s) => `${s.id}:${s.tokens}:${s.cached ? 1 : 0}`).join()
     if (key === gaugeKey) return
     gaugeKey = key
     const pct = (n: number) => `${(n / CONTEXT_WINDOW) * 100}%`
@@ -290,75 +334,84 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
       node.style.width = "0%"
       setTimeout(() => node.remove(), reduceMotion ? 0 : 700)
     }
-    for (const s of ctx.segs) {
+    ctx.segs.forEach((s, i) => {
       let node = segEls.get(s.id)
       if (!node) {
         node = document.createElement("span")
         node.className = "seg"
         node.dataset.seg = s.id
         node.style.width = "0%"
-        gauge.bar.appendChild(node)
         segEls.set(s.id, node)
-        void node.offsetWidth
       }
+      // El orden de la barra sigue al de la ventana: lo fijo, la historia y la pregunta en curso
+      const at = gauge.bar.children[i]
+      if (at !== node) gauge.bar.insertBefore(node, at ?? null)
+      void node.offsetWidth
       node.style.width = pct(s.tokens)
-      node.classList.toggle("is-cached", ctx.cached && Boolean(s.fixed))
-    }
-    gauge.cache.style.width = pct(ctx.prefix)
-    gauge.cache.classList.toggle("is-on", ctx.cached)
-    gauge.total.classList.toggle("is-full", ctx.total / CONTEXT_WINDOW >= 0.9)
+      node.classList.toggle("is-cached", Boolean(s.cached))
+    })
+    gauge.cache.style.width = pct(ctx.cachedSum)
+    gauge.cache.classList.toggle("is-on", ctx.cachedSum > 0)
+    gauge.total.classList.toggle("is-full", ctx.total / CONTEXT_WINDOW >= 0.8)
     gauge.total.textContent = `${fmt(ctx.total)} de ${fmt(CONTEXT_WINDOW)} tokens · ${Math.round((ctx.total / CONTEXT_WINDOW) * 100)} %`
     gauge.legend.replaceChildren(
       ...ctx.segs.map((s) => {
         const li = document.createElement("li")
         li.dataset.seg = s.id
-        li.classList.toggle("is-cached", ctx.cached && Boolean(s.fixed))
-        const sw = document.createElement("i")
+        li.classList.toggle("is-cached", Boolean(s.cached))
         const b = document.createElement("b")
         b.textContent = fmt(s.tokens)
-        li.append(sw, `${s.label} `, b)
+        li.append(document.createElement("i"), `${s.label} `, b)
         return li
       }),
     )
   }
 
-  // ---------- Línea de tiempo ----------
+  // ---------- Corrida de una pregunta ----------
+  type Run = {
+    prompt: Prompt
+    steps: Step[]
+    base: Session
+    done: boolean
+    revealed: boolean
+    byUser: boolean
+    trigger: Element | null
+  }
+  let session = newSession()
+  let run: Run | null = null
+
   const stepDuration = (s: Step) => {
     const c = s.context
     return Math.max(
-      4400,
-      ...s.messages.map((m) => (m.delay ?? 0) + TRAVEL + (m.blocked ? 2000 : 1400)),
-      ...(c?.add ?? []).map((a) => (a.delay ?? 0) + 1400),
-      c?.compact ? c.compact.delay + 2400 : 0,
+      4200,
+      ...s.messages.map((m) => (m.delay ?? 0) + TRAVEL + (m.blocked ? 2000 : 1300)),
+      ...(c?.add ?? []).map((a) => (a.delay ?? 0) + 1300),
+      c?.cache ? c.cache.delay + 1300 : 0,
+      c?.compact ? c.compact.delay + 2200 : 0,
     )
   }
-
-  // Una llamada a herramienta: lo que el harness manda a la terminal o a un servidor MCP
-  const isToolCall = (m: Message) => !m.blocked && (m.to === "navegador" || (m.to === "herramientas" && m.from === "core"))
 
   type Live = { packet: Element; label: SVGTextElement; path: SVGPathElement; signal: SVGPathElement; reverse: boolean; arrived: boolean; counted: boolean }
   let index = 0
   let elapsed = 0
   let last = 0
-  let userPaused = reduceMotion
+  let atEnd = false
+  let userPaused = false
   let visible = false
   let booted = reduceMotion
   let live: Live[] = []
   const counts = { tools: 0, blocked: 0 }
 
-  const hud = Object.fromEntries(
-    [...document.querySelectorAll<HTMLElement>("[data-hud]")].map((d) => [d.dataset.hud!, d]),
-  ) as Record<"tokens" | "cached" | "tools" | "blocked", HTMLElement>
   const renderHud = () => {
     hud.tools.textContent = String(counts.tools)
     hud.blocked.textContent = String(counts.blocked)
   }
 
-  // Contadores acumulados de los pasos ya completos
-  const countBefore = (i: number) => {
-    counts.tools = 0
-    counts.blocked = 0
-    for (const m of steps.slice(0, i).flatMap((s) => s.messages)) {
+  // Contadores de la sesión más los pasos ya completos de esta corrida
+  const countBefore = (r: Run, i: number) => {
+    counts.tools = r.base.tools
+    counts.blocked = r.base.blocked
+    for (const m of r.steps.slice(0, i).flatMap((s) => s.messages)) {
       if (m.blocked) counts.blocked++
       if (isToolCall(m)) counts.tools++
     }
@@ -385,21 +438,71 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     return { packet: g, label }
   }
 
+  const $ = <T extends Element = HTMLElement>(sel: string, root: ParentNode = document) => root.querySelector<T>(sel)!
   const caption = {
-    count: document.querySelector("[data-step-count]")!,
-    layer: document.querySelector("[data-step-layer]")!,
-    title: document.querySelector("[data-step-title]")!,
-    text: document.querySelector("[data-step-text]")!,
+    count: $("[data-step-count]"),
+    layer: $("[data-step-layer]"),
+    title: $("[data-step-title]"),
+    text: $("[data-step-text]"),
   }
-  const stepButtons = [...document.querySelectorAll<HTMLButtonElement>("[data-step]")]
+  const statusBar = { text: $("[data-bar-text]"), dot: $("[data-bar-dot]") }
+  const stepList = $<HTMLOListElement>("[data-steps]")
+  const consoleEl = $("[data-console]")
+  const announcer = $("[data-announce]")
+  const toggle = $<HTMLButtonElement>("[data-toggle]")
+  const runEl = $("[data-run]")
+  const chips = [...document.querySelectorAll<HTMLButtonElement>(".side [data-ask]")]
+  const qa = (id: string) => $(`[data-qa="${id}"]`)
+  let stepButtons: HTMLButtonElement[] = []
   let sayFull = ""
 
+  const setStatus = (r: Run, text: string, liveNow: boolean) => {
+    const status = $("[data-qa-status]", qa(r.prompt.id))
+    status.textContent = text
+    status.classList.toggle("is-live", liveNow)
+    statusBar.text.textContent = text
+    statusBar.dot.classList.toggle("is-live", liveNow)
+  }
+
+  const renderStepList = (r: Run) => {
+    stepList.style.setProperty("--n", String(r.steps.length))
+    stepButtons = r.steps.map((s, k) => {
+      const b = document.createElement("button")
+      b.type = "button"
+      b.dataset.step = String(k)
+      b.setAttribute("aria-label", `Paso ${k + 1}: ${s.title}`)
+      const bar = document.createElement("span")
+      bar.className = "steps-bar"
+      const title = document.createElement("span")
+      title.className = "steps-title"
+      title.textContent = s.title
+      b.append(bar, title)
+      return b
+    })
+    stepList.replaceChildren(
+      ...stepButtons.map((b) => {
+        const li = document.createElement("li")
+        li.append(b)
+        return li
+      }),
+    )
+  }
+
   const enter = (i: number) => {
-    index = (i + steps.length) % steps.length
+    if (!run) return
+    const r = run
+    index = Math.max(0, Math.min(i, r.steps.length - 1))
     elapsed = 0
-    const s = steps[index]
+    atEnd = false
+    const s = r.steps[index]
+    countBefore(r, index)
     // Sin animación el paso se muestra ya completo
-    countBefore(reduceMotion ? index + 1 : index)
+    if (reduceMotion) {
+      for (const m of s.messages) {
+        if (m.blocked) counts.blocked++
+        if (isToolCall(m)) counts.tools++
+      }
+    }
     renderHud()
     built.packets.replaceChildren()
     for (const signal of built.signals.values()) signal.classList.remove("is-on")
@@ -421,10 +524,11 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     void g.getBoundingClientRect()
     g.classList.add("is-in")
 
-    caption.count.textContent = `Paso ${index + 1} de ${steps.length}`
+    caption.count.textContent = `Paso ${index + 1} de ${r.steps.length}`
     caption.layer.textContent = s.layer ? `Capa: ${layerName[s.layer]}` : ""
     caption.title.textContent = s.title
     caption.text.textContent = s.text
+    if (!r.done) setStatus(r, `Paso ${index + 1} de ${r.steps.length} · ${s.title}`, true)
     stepButtons.forEach((b, k) => {
       if (k === index) b.setAttribute("aria-current", "step")
       else b.removeAttribute("aria-current")
@@ -435,7 +539,9 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
   }
 
   const draw = () => {
-    const s = steps[index]
+    if (!run) return
+    const r = run
+    const s = r.steps[index]
     const stop = layout[built.mode].hook.stop
     let busy = false
     s.messages.forEach((m, k) => {
@@ -451,7 +557,7 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
       item.packet.classList.toggle("is-visible", reduceMotion || moving || blocked)
       if (blocked && !item.packet.classList.contains("is-blocked")) {
         item.packet.classList.add("is-blocked")
-        item.label.textContent = "bloqueado por hook"
+        item.label.textContent = m.blocked!
         sizeRect(item.packet.querySelector("rect")!, item.label, 26)
         built.nodeEls[m.from].classList.add("is-alarmed")
       }
@@ -469,17 +575,77 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
         target.classList.remove("is-pulse")
         void target.getBoundingClientRect()
         target.classList.add("is-pulse")
+        if (s.reveal && m.to === "usuario") reveal(r)
       }
     })
-    renderContext(contextAt(index, reduceMotion ? Infinity : elapsed))
+    if (reduceMotion && s.reveal) reveal(r)
+    renderContext(fold(r.base, r.steps, index, reduceMotion ? Infinity : elapsed))
     built.nodeEls.core.classList.toggle("is-busy", busy)
     if (!reduceMotion) built.bubble.text.textContent = sayFull.slice(0, Math.floor(elapsed / 38))
-    stepButtons[index].style.setProperty("--p", String(Math.min(1, elapsed / stepDuration(s))))
+    stepButtons[index]?.style.setProperty("--p", String(Math.min(1, elapsed / stepDuration(s))))
+  }
+
+  // ---------- Respuesta en la consola ----------
+  const inView = (node: Element, share = 0.25) => {
+    const r = node.getBoundingClientRect()
+    const seen = Math.min(r.bottom, innerHeight) - Math.max(r.top, 0)
+    return seen > Math.min(r.height, innerHeight) * share
+  }
+
+  const reveal = (r: Run) => {
+    if (r.revealed) return
+    r.revealed = true
+    const article = qa(r.prompt.id)
+    const body = $("[data-qa-body]", article)
+    body.querySelectorAll<HTMLElement>(":scope > .resp > *, :scope > .qa-next").forEach((c, i) => c.style.setProperty("--i", String(i)))
+    body.classList.add("is-in")
+    announcer.textContent = `Respuesta lista: ${r.prompt.label}`
+    // La respuesta ya está: la sesión queda al día aunque la placa salga de la vista
+    finishRun(r)
+    // Solo se mueve la página si quien preguntó sigue mirando la placa
+    if (r.byUser && inView(runEl, 0.2)) {
+      article.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" })
+    }
+    if (r.trigger && document.activeElement === r.trigger) $<HTMLElement>(".qa-q", article).focus({ preventScroll: true })
+  }
+
+  const finishRun = (r: Run) => {
+    if (r.done) return
+    session = commit(r.base, r.steps, { id: r.prompt.skill, tokens: r.prompt.skillTokens })
+    r.done = true
+    reveal(r)
+    setStatus(r, `Respondida en ${r.steps.length} pasos · skill «${r.prompt.skill}» · simulación`, false)
+  }
+
+  const startRun = (p: Prompt, byUser: boolean, trigger: Element | null = null) => {
+    ensureBuilt()
+    // Una pregunta nueva cierra la anterior de inmediato
+    if (run && !run.done) finishRun(run)
+    const base = session
+    const steps = planRun(p, prompts.length, { ...totals(base.segs), cacheWritten: base.cacheWritten })
+    run = { prompt: p, steps, base, done: false, revealed: false, byUser, trigger }
+
+    // Lo más reciente queda arriba, junto a la placa
+    const article = qa(p.id)
+    $("[data-qa-body]", article).classList.remove("is-in")
+    consoleEl.insertBefore(article, announcer.nextSibling)
+    article.classList.add("is-asked")
+    announcer.textContent = `Preguntaste: ${p.label}`
+    for (const c of chips) c.setAttribute("aria-pressed", String(c.dataset.ask === p.id))
+
+    renderStepList(run)
+    booted = true
+    board.classList.add("is-booted")
+    if (reduceMotion) {
+      enter(steps.length - 1)
+      finishRun(run)
+    } else enter(0)
+    kick()
   }
 
   // El bucle solo corre mientras la animación avanza; se reactiva con kick()
   let raf = 0
-  const running = () => !userPaused && visible && booted
+  const running = () => !userPaused && visible && booted && Boolean(run) && !atEnd && !reduceMotion
   const loop = (now: number) => {
     if (!running()) {
       raf = 0
@@ -488,28 +654,25 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     }
     const dt = last ? Math.min(now - last, 100) : 0
     last = now
-    elapsed += dt
-    if (elapsed >= stepDuration(steps[index])) enter(index + 1)
-    else draw()
+    elapsed += dt * SPEED
+    const r = run!
+    if (elapsed >= stepDuration(r.steps[index])) {
+      if (index < r.steps.length - 1) enter(index + 1)
+      else {
+        // Al final la placa queda quieta en el último paso
+        draw()
+        stepButtons[index]?.classList.add("is-done")
+        atEnd = true
+        finishRun(r)
+      }
+    } else draw()
     raf = requestAnimationFrame(loop)
   }
   const kick = () => {
     if (!raf && running()) raf = requestAnimationFrame(loop)
   }
 
-  // ---------- Arranque: las pistas se dibujan y los chips se encienden ----------
-  const boot = () => {
-    board.classList.add("is-booted")
-    if (reduceMotion) return
-    setTimeout(() => {
-      booted = true
-      enter(0)
-      kick()
-    }, 1700)
-  }
-
   // ---------- Controles ----------
-  const toggle = document.querySelector<HTMLButtonElement>("[data-toggle]")!
   const setPaused = (p: boolean) => {
     userPaused = p
     toggle.textContent = p ? "Reproducir" : "Pausar"
@@ -517,15 +680,46 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     kick()
   }
   toggle.addEventListener("click", () => setPaused(!userPaused))
-  stepButtons.forEach((b, k) =>
-    b.addEventListener("click", () => {
-      ensureBuilt()
-      booted = true
-      board.classList.add("is-booted")
-      enter(k)
-      kick()
-    }),
-  )
+
+  stepList.addEventListener("click", (e) => {
+    const b = (e.target as Element).closest<HTMLButtonElement>("[data-step]")
+    if (!b || !run) return
+    enter(Number(b.dataset.step))
+    kick()
+  })
+
+  // Preguntar desde un chip, el menú o un enlace: la placa se pone a la vista y arranca
+  const ask = (p: Prompt, trigger: Element | null) => {
+    if (!inView(runEl, 0.5)) runEl.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" })
+    started = true
+    startRun(p, true, trigger)
+  }
+
+  section.addEventListener("click", (e) => {
+    const b = (e.target as Element).closest<HTMLButtonElement>("[data-ask]")
+    if (!b) return
+    ask(prompts.find((p) => p.id === b.dataset.ask)!, b)
+  })
+
+  const fromHash = (hash: string) => prompts.find((p) => `#${p.anchor}` === hash)
+  document.addEventListener("click", (e) => {
+    const a = (e.target as Element).closest<HTMLAnchorElement>('a[href^="#"]')
+    const p = a && fromHash(a.hash)
+    if (!p) return
+    e.preventDefault()
+    history.pushState(null, "", `#${p.anchor}`)
+    ask(p, null)
+  })
+  // Atrás, adelante o un ancla escrita a mano: se espera un cuadro para que el salto
+  // del navegador al ancla no gane
+  const onHash = () => {
+    requestAnimationFrame(() => {
+      const p = fromHash(location.hash)
+      if (p && !(run && run.prompt === p && !run.done)) ask(p, null)
+    })
+  }
+  addEventListener("popstate", onHash)
+  addEventListener("hashchange", onHash)
 
   // El diagrama se construye recién cuando la sección se acerca a la pantalla:
   // medir el SVG al cargar la página retrasaba el primer pintado
@@ -534,7 +728,6 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     if (isBuilt) return
     isBuilt = true
     built = build()
-    enter(0)
   }
 
   new IntersectionObserver(
@@ -544,29 +737,46 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     { rootMargin: "100% 0px" },
   ).observe(board)
 
+  // La primera vez que la placa se ve, el harness responde solo «¿Quién es Juan Carlos?»
   let started = false
+  const pending = fromHash(location.hash)
   new IntersectionObserver(
     ([entry]) => {
       visible = entry.isIntersecting
       if (visible && !started) {
-        ensureBuilt()
         started = true
-        boot()
+        ensureBuilt()
+        board.classList.add("is-booted")
+        const first = pending ?? prompts[0]
+        if (reduceMotion) startRun(first, Boolean(pending))
+        else setTimeout(() => !run && startRun(first, Boolean(pending)), 1700)
       }
       kick()
     },
     { threshold: 0.25 },
   ).observe(board)
 
-  setPaused(userPaused)
+  // Si se llega con un ancla de respuesta, se va directo a la placa. Se espera a `load`
+  // porque hasta entonces el navegador insiste en llevar la página al ancla.
+  if (pending) {
+    const go = () => runEl.scrollIntoView({ block: "start" })
+    if (document.readyState === "complete") go()
+    else addEventListener("load", () => requestAnimationFrame(go), { once: true })
+  }
+
+  setPaused(false)
 
   compact.addEventListener("change", () => {
     if (!isBuilt) return
     built = build()
-    enter(index)
+    if (run) {
+      const t = elapsed
+      enter(index)
+      elapsed = t
+      draw()
+    }
   })
 </script>
-
 
 <style>
   /* Banda oscura a todo el ancho: redefine los tokens dentro de la sección */
@@ -1023,8 +1233,14 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
   .gauge :global([data-seg="resultados"]) {
     --c: #8b909b;
   }
-  .gauge :global([data-seg="turnos"]) {
-    --c: #5d616b;
+  .gauge :global([data-seg="respuesta"]) {
+    --c: #a9adb7;
+  }
+  .gauge :global([data-seg="conversacion"]) {
+    --c: #6c707a;
+  }
+  .gauge :global([data-seg="readjuntas"]) {
+    --c: #c4c8d0;
   }
   .gauge :global([data-seg="resumen"]) {
     --c: #ecedef;
@@ -1111,12 +1327,60 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     font-variant-numeric: tabular-nums;
   }
 
-  /* ---------- Narración ---------- */
-  .caption {
-    max-width: 44rem;
-    min-height: 10rem;
+
+  /* ---------- Sin JavaScript: solo las respuestas, una tras otra ---------- */
+  :global(html:not(.js)) .js-only {
+    display: none;
   }
 
+  :global(html.js) .qa:not(.is-asked),
+  :global(html.js) .qa-a:not(.is-in) {
+    display: none;
+  }
+
+  /* ---------- Preguntas ---------- */
+  .side {
+    display: grid;
+    gap: 1.5rem;
+    align-content: start;
+  }
+
+  .ask-label {
+    color: var(--niebla);
+    font-size: var(--t-1);
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+  }
+
+  .chip {
+    padding: 0.5rem 0.95rem;
+    border: 1px solid var(--senal);
+    border-radius: 999px;
+    background: none;
+    color: var(--papel);
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.25;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .chip:hover,
+  .chip[aria-pressed="true"] {
+    background: var(--senal);
+    color: var(--sobre);
+  }
+
+  /* ---------- Narración ---------- */
   .caption-meta {
     display: flex;
     flex-wrap: wrap;
@@ -1129,16 +1393,19 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     color: var(--senal-texto);
   }
 
-  .caption h3 {
+  .caption-title {
     margin-top: 0.4rem;
-    font-size: var(--t3);
+    font-family: var(--display);
+    font-size: var(--t2);
+    font-weight: 800;
     font-stretch: 85%;
+    line-height: 1;
+    text-wrap: balance;
   }
 
-  .caption p:last-child {
+  .caption-text {
     margin-top: 0.6rem;
-    font-size: var(--t1);
-    line-height: 1.4;
+    line-height: 1.45;
   }
 
   .controls {
@@ -1164,14 +1431,15 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     color: var(--sobre);
   }
 
+  /* Los pasos se arman con cada corrida, por eso van como globales */
   .steps {
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    grid-template-columns: repeat(var(--n, 6), minmax(0, 1fr));
     gap: 0.4rem;
   }
 
-  .steps button {
+  .steps :global(button) {
     width: 100%;
     padding: 0.45rem 0 0;
     border: 0;
@@ -1184,7 +1452,7 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     cursor: pointer;
   }
 
-  .steps-bar {
+  .steps :global(.steps-bar) {
     position: relative;
     display: block;
     height: 4px;
@@ -1193,7 +1461,7 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     overflow: hidden;
   }
 
-  .steps-bar::after {
+  .steps :global(.steps-bar::after) {
     content: "";
     position: absolute;
     inset: 0;
@@ -1202,14 +1470,38 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     transform: scaleX(var(--p, 0));
   }
 
-  .is-done .steps-bar::after {
+  .steps :global(.is-done .steps-bar::after) {
     transform: scaleX(1);
     opacity: 0.45;
   }
 
-  .steps [aria-current="step"],
-  .steps button:hover {
+  .steps :global([aria-current="step"]),
+  .steps :global(button:hover) {
     color: var(--papel);
+  }
+
+  .status-bar {
+    display: none;
+  }
+
+  .dot {
+    flex: none;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--niebla);
+  }
+
+  .dot.is-live,
+  .qa-status.is-live::before {
+    background: var(--senal);
+    animation: blinkdot 1s ease-in-out infinite;
+  }
+
+  @keyframes blinkdot {
+    50% {
+      opacity: 0.3;
+    }
   }
 
   /* ---------- Subtítulo ---------- */
@@ -1221,25 +1513,125 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     color: var(--niebla);
   }
 
+  /* ---------- Consola: pregunta, estado y respuesta ---------- */
+  .console {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4rem);
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .qa {
+    display: grid;
+    gap: 0.75rem;
+    scroll-margin-top: 1rem;
+  }
+
+  /* La pregunta va como el mensaje de quien escribe, a la derecha */
+  .qa-q {
+    justify-self: end;
+    max-width: min(32rem, 100%);
+    padding: 0.65rem 1.1rem;
+    border-radius: 18px 18px 4px 18px;
+    background: var(--senal);
+    color: var(--sobre);
+    font-size: var(--t1);
+    font-weight: 800;
+    font-stretch: 85%;
+    line-height: 1.15;
+  }
+
+  .qa-q:focus {
+    outline: none;
+  }
+
+  .qa-q:focus-visible {
+    outline: 3px solid var(--papel);
+  }
+
+  .qa-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 1.5rem;
+    color: var(--niebla);
+    font-size: var(--t-1);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .qa-status::before {
+    content: "";
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--niebla);
+  }
+
+  /* La respuesta es una hoja clara dentro de la banda: el CV con sus colores de siempre */
+  .qa-a {
+    --fondo: #ecedef;
+    --hondo: #f8f8f9;
+    --papel: #15161a;
+    --niebla: #5e626d;
+    --senal-texto: #c2410c;
+    --linea: rgb(21 22 26 / 0.14);
+    padding: clamp(1.25rem, 4vw, 3rem);
+    border-radius: 18px;
+    background: var(--fondo);
+    color: var(--papel);
+  }
+
+  .qa-a ::selection {
+    background: var(--senal);
+    color: var(--sobre);
+  }
+
+  .qa-a.is-in {
+    animation: sheet 0.5s ease both;
+  }
+
+  .qa-a.is-in :global(.resp > *),
+  .qa-a.is-in .qa-next {
+    animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.1, 1) both;
+    animation-delay: calc(var(--i, 0) * 110ms + 150ms);
+  }
+
+  @keyframes sheet {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+
+  .qa-next {
+    margin-top: clamp(2rem, 5vw, 3rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--linea);
+  }
+
+  .qa-next p {
+    color: var(--niebla);
+    font-size: var(--t-1);
+  }
+
+  .qa-next ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+  }
+
   @media (min-width: 72rem) {
     .run {
       grid-template-columns: minmax(0, 8fr) minmax(0, 3.6fr);
-      grid-template-rows: auto 1fr;
       gap: 1.5rem 2.5rem;
       align-items: start;
-    }
-
-    .board {
-      grid-row: 1 / 3;
-    }
-
-    .caption {
-      min-height: 15rem;
-    }
-
-    .caption p:last-child {
-      font-size: var(--t0);
-      line-height: 1.5;
     }
 
     .controls {
@@ -1252,62 +1644,32 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
       gap: 0;
     }
 
-    .steps button {
+    .steps :global(button) {
       display: grid;
       grid-template-columns: 4px 1fr;
       gap: 0.75rem;
       padding: 0;
     }
 
-    .steps-bar {
+    .steps :global(.steps-bar) {
       height: auto;
-      min-height: 2rem;
+      min-height: 1.75rem;
       margin: 0;
     }
 
-    .steps-bar::after {
+    .steps :global(.steps-bar::after) {
       transform-origin: top;
       transform: scaleY(var(--p, 0));
     }
 
-    .is-done .steps-bar::after {
+    .steps :global(.is-done .steps-bar::after) {
       transform: scaleY(1);
     }
 
-    .steps-title {
+    .steps :global(.steps-title) {
       align-self: center;
-      padding-block: 0.3rem;
+      padding-block: 0.25rem;
       font-size: 0.875rem;
-    }
-  }
-
-  /* En móvil la narración queda pegada abajo mientras el tablero está a la vista */
-  @media (max-width: 40rem) {
-    .caption {
-      position: sticky;
-      bottom: 0;
-      z-index: 2;
-      min-height: 0;
-      margin-inline: calc(var(--gutter) * -1);
-      padding: 0.9rem var(--gutter) 1rem;
-      background: var(--hondo);
-      border-top: 2px solid var(--senal);
-    }
-
-    .caption h3 {
-      font-size: var(--t2);
-    }
-
-    .caption p:last-child {
-      font-size: var(--t0);
-    }
-
-    .hud {
-      gap: 0.25rem 1rem;
-    }
-
-    .gauge-legend {
-      min-height: 4.4rem;
     }
   }
 
@@ -1320,16 +1682,57 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
       width: 100%;
     }
 
-    .steps-title {
+    .steps :global(.steps-title) {
       display: none;
+    }
+  }
+
+  /* En móvil el estado del paso queda pegado abajo mientras la placa está a la vista */
+  @media (max-width: 40rem) {
+    .status-bar {
+      position: sticky;
+      bottom: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-inline: calc(var(--gutter) * -1);
+      padding: 0.75rem var(--gutter);
+      background: var(--hondo);
+      border-top: 2px solid var(--senal);
+      font-size: 0.9375rem;
+      font-weight: 600;
+    }
+
+    .caption-title {
+      font-size: var(--t1);
+    }
+
+    .hud {
+      gap: 0.25rem 1rem;
+    }
+
+    .gauge-legend {
+      min-height: 4.4rem;
+    }
+
+    .chip {
+      font-size: 0.875rem;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .canvas :global(*),
-    .gauge :global(*) {
+    .gauge :global(*),
+    .qa-a,
+    .qa-a :global(*) {
       animation: none !important;
       transition: none !important;
+    }
+
+    .dot.is-live,
+    .qa-status.is-live::before {
+      animation: none;
     }
 
     .is-booted .canvas :global(.bubble.is-in) {

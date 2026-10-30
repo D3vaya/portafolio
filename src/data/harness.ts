@@ -1,7 +1,6 @@
 // Capas de un agente: el harness alrededor y el modelo al centro, que es lo que el harness envuelve.
 export const layers = [
   { id: "evaluacion", name: "Verificación" },
-  { id: "orquestacion", name: "Orquestación" },
   { id: "control", name: "Control" },
   { id: "memoria", name: "Memoria" },
   { id: "herramientas", name: "Herramientas" },
@@ -11,19 +10,20 @@ export const layers = [
 
 // Ventana de contexto de la simulación. Las cifras son ilustrativas, pero de un orden plausible.
 export const CONTEXT_WINDOW = 200_000
+// Si la próxima pregunta no cabe holgada, el harness compacta antes de seguir
+export const COMPACT_AT = 0.85
 
 // Un tramo de la ventana. `fixed`: la parte estable del inicio, la que reutiliza la caché.
-// `keep`: sobrevive a la compactación (Claude Code vuelve a adjuntar las skills usadas).
-export type Segment = { id: string; label: string; tokens: number; fixed?: boolean; keep?: boolean; delay?: number }
+export type Segment = { id: string; label: string; tokens: number; fixed?: boolean; delay?: number }
 export type ContextChange = {
   add?: Segment[]
-  cache?: { delay: number }
+  cache?: { delay: number; mode: "write" | "read" }
   compact?: { delay: number; tokens: number }
 }
 
-// Lo que hace el harness con un prompt, de que llega hasta que responde. Cada mensaje viaja
-// por una pista entre dos nodos del diagrama; `delay` y la duración están en ms.
-export type Message = { from: string; to: string; label: string; delay?: number; blocked?: boolean }
+// Cada mensaje viaja por una pista entre dos nodos del diagrama; `delay` está en ms.
+// `blocked`: el texto que muestra el paquete cuando un hook lo detiene.
+export type Message = { from: string; to: string; label: string; delay?: number; blocked?: string }
 export type Step = {
   title: string
   say: string
@@ -32,131 +32,317 @@ export type Step = {
   active: string[]
   messages: Message[]
   context?: ContextChange
+  // El paso en que la respuesta llega a la consola
+  reveal?: boolean
 }
 
-export const steps: Step[] = [
+export type Prompt = {
+  id: string
+  // Ancla de la respuesta; también la usa el menú
+  anchor: string
+  label: string
+  packet: string
+  skill: string
+  skillTokens: number
+  answerTokens: number
+  // Lo propio de cada pregunta: herramientas, verificación o hooks
+  steps: Step[]
+}
+
+export const FIXED: Segment[] = [
+  { id: "sistema", label: "Sistema", tokens: 3_000, fixed: true },
+  { id: "defs", label: "Herramientas", tokens: 12_000, fixed: true },
+  { id: "memoria", label: "CLAUDE.md y memoria", tokens: 2_000, fixed: true, delay: 1100 },
+  { id: "indice", label: "Skills (índice)", tokens: 1_000, fixed: true, delay: 1600 },
+]
+
+export const fmt = (n: number) => (n < 1000 ? String(n) : `${Math.round(n / 100) / 10}k`.replace(".", ","))
+
+// Una lectura de datos: el modelo la pide, el harness la ejecuta y el resultado vuelve al contexto
+const readStep = (o: { title: string; say: string; text: string; ask: string; call: string; result: string; tokens: number }): Step => ({
+  title: o.title,
+  say: o.say,
+  text: o.text,
+  layer: "herramientas",
+  active: ["core", "modelo", "herramientas"],
+  messages: [
+    { from: "modelo", to: "core", label: o.ask },
+    { from: "core", to: "herramientas", label: o.call, delay: 1300 },
+    { from: "herramientas", to: "core", label: o.result, delay: 2600 },
+  ],
+  context: { add: [{ id: "resultados", label: "Resultados", tokens: o.tokens, delay: 3700 }] },
+})
+
+// Antes de responder, el borrador se compara con la fuente
+const verifyStep = (what: string, n: number): Step => ({
+  title: "Verifica contra el CV",
+  say: "Verificando…",
+  text: `Antes de responder compara ${what} del borrador con cv.json. Si algo no cuadra, lo corrige antes de mostrártelo.`,
+  layer: "evaluacion",
+  active: ["core", "herramientas"],
+  messages: [
+    { from: "core", to: "herramientas", label: "compara con cv.json" },
+    { from: "herramientas", to: "core", label: `${n} de ${n} cuadran`, delay: 1500 },
+  ],
+  context: { add: [{ id: "resultados", label: "Resultados", tokens: 1_000, delay: 2600 }] },
+})
+
+// Los conteos vienen del CV. Se pasan como números para no mandar cv.json entero al navegador,
+// que además trae datos privados.
+export type Counts = { work: number; skills: number; certificates: number }
+
+export const buildPrompts = (n: Counts): Prompt[] => [
   {
-    title: "Llega el prompt",
-    say: "¡Prompt nuevo!",
-    text: "Escribes «Agrega login con Google». El mensaje no va directo al modelo: primero lo recibe Claude Code, el harness.",
-    active: ["usuario", "core"],
-    messages: [{ from: "usuario", to: "core", label: "Agrega login con Google" }],
-  },
-  {
-    title: "Arma el contexto",
-    say: "Armando contexto",
-    text: "Junta el prompt con lo que cargó al abrir la sesión: instrucciones de sistema, herramientas, CLAUDE.md y memoria. De las skills solo entra el índice: nombre y descripción.",
-    layer: "contexto",
-    active: ["core", "memoria", "skills"],
-    messages: [
-      { from: "memoria", to: "core", label: "CLAUDE.md + memoria" },
-      { from: "skills", to: "core", label: "índice de skills", delay: 500 },
+    id: "perfil",
+    anchor: "sobre-mi",
+    label: "¿Quién es Juan Carlos?",
+    packet: "¿Quién es?",
+    skill: "perfil",
+    skillTokens: 3_000,
+    answerTokens: 1_500,
+    steps: [
+      readStep({
+        title: "Lee el CV",
+        say: "Leyendo el CV",
+        text: "El modelo pide los datos básicos. El harness ejecuta leer_cv y devuelve el resumen y el rol actual al contexto.",
+        ask: "pide datos básicos",
+        call: 'leer_cv("basics")',
+        result: "resumen + rol actual",
+        tokens: 14_000,
+      }),
     ],
-    context: {
-      add: [
-        { id: "sistema", label: "Sistema", tokens: 3_000, fixed: true },
-        { id: "defs", label: "Herramientas", tokens: 12_000, fixed: true },
-        { id: "memoria", label: "CLAUDE.md y memoria", tokens: 2_000, fixed: true, delay: 1100 },
-        { id: "indice", label: "Skills (índice)", tokens: 1_000, fixed: true, delay: 1600 },
-        { id: "prompt", label: "Prompt", tokens: 20, delay: 1900 },
-      ],
-    },
   },
   {
-    title: "Reusa la caché de prompt",
-    say: "Esto ya lo tengo",
-    text: "El inicio del contexto es idéntico al de la llamada anterior, así que se lee desde la caché y no se procesa otra vez. La primera llamada lo guarda; las siguientes lo reutilizan: más barato y más rápido.",
-    layer: "contexto",
-    active: ["core", "cache"],
-    messages: [
-      { from: "core", to: "cache", label: "¿mismo inicio?" },
-      { from: "cache", to: "core", label: "18k desde caché", delay: 1400 },
-    ],
-    context: { cache: { delay: 2500 } },
-  },
-  {
-    title: "El modelo decide",
-    say: "Pensando…",
-    text: "El modelo lee el contexto y, por la descripción de cada skill, decide usar la de autenticación. El modelo propone; el harness ejecuta.",
-    layer: "modelo",
-    active: ["core", "modelo"],
-    messages: [
-      { from: "core", to: "modelo", label: "contexto + prompt" },
-      { from: "modelo", to: "core", label: "usar skill: auth", delay: 1600 },
+    id: "trayectoria",
+    anchor: "trayectoria",
+    label: "¿Dónde ha trabajado?",
+    packet: "¿Dónde trabajó?",
+    skill: "trayectoria",
+    skillTokens: 3_000,
+    answerTokens: 3_000,
+    steps: [
+      readStep({
+        title: "Lee su experiencia",
+        say: "Leyendo roles",
+        text: "El modelo pide la experiencia laboral. El harness ejecuta leer_cv y devuelve cada rol con fechas, logros y stack.",
+        ask: "pide experiencia",
+        call: 'leer_cv("work")',
+        result: `${n.work} roles + estudios`,
+        tokens: 26_000,
+      }),
+      verifyStep("cada fecha y cargo", n.work),
     ],
   },
   {
-    title: "Carga la skill",
-    say: "Cargo la skill auth",
-    text: "Recién ahora el harness carga las instrucciones completas de esa skill. Las demás siguen ocupando solo su nombre y descripción.",
-    layer: "contexto",
-    active: ["core", "skills"],
-    messages: [{ from: "skills", to: "core", label: "SKILL.md de auth" }],
-    context: { add: [{ id: "skill", label: "Skill auth", tokens: 4_000, keep: true, delay: 1100 }] },
-  },
-  {
-    title: "Usa herramientas",
-    say: "Leyendo archivos",
-    text: "El modelo pide buscar y leer archivos. El harness ejecuta cada herramienta y devuelve el resultado al contexto.",
-    layer: "herramientas",
-    active: ["core", "modelo", "herramientas"],
-    messages: [
-      { from: "modelo", to: "core", label: "busca la sesión" },
-      { from: "core", to: "herramientas", label: "grep session", delay: 1300 },
-      { from: "herramientas", to: "core", label: "3 archivos", delay: 2600 },
+    id: "productos",
+    anchor: "productos",
+    label: "¿Qué productos tiene en producción?",
+    packet: "¿Qué productos?",
+    skill: "productos",
+    skillTokens: 3_000,
+    answerTokens: 3_000,
+    steps: [
+      {
+        title: "Lee y abre los sitios",
+        say: "Abriendo sitios",
+        text: "Lee los proyectos del CV y, con un servidor MCP de navegador, abre cada sitio para mirarlo antes de describirlo.",
+        layer: "herramientas",
+        active: ["core", "modelo", "herramientas", "navegador"],
+        messages: [
+          { from: "modelo", to: "core", label: "pide proyectos" },
+          { from: "core", to: "herramientas", label: 'leer_cv("projects")', delay: 1300 },
+          { from: "herramientas", to: "navegador", label: "abre 3 sitios", delay: 2400 },
+          { from: "navegador", to: "herramientas", label: "3 capturas", delay: 3600 },
+          { from: "herramientas", to: "core", label: "proyectos + capturas", delay: 4800 },
+        ],
+        context: { add: [{ id: "resultados", label: "Resultados", tokens: 58_000, delay: 5900 }] },
+      },
     ],
-    context: { add: [{ id: "resultados", label: "Resultados", tokens: 9_000, delay: 3700 }] },
   },
   {
-    title: "Hooks y permisos",
-    say: "Eso no. Bloqueado.",
-    text: "Antes de ejecutar una herramienta, el harness revisa los permisos y corre los hooks configurados, como PreToolUse. Editar archivos pasa; git push --force queda bloqueado.",
-    layer: "control",
-    active: ["core", "herramientas"],
-    messages: [
-      { from: "core", to: "herramientas", label: "edita auth.ts" },
-      { from: "core", to: "herramientas", label: "git push --force", delay: 1700, blocked: true },
+    id: "stack",
+    anchor: "stack",
+    label: "¿Qué stack maneja?",
+    packet: "¿Qué stack?",
+    skill: "stack",
+    skillTokens: 3_000,
+    answerTokens: 3_000,
+    steps: [
+      readStep({
+        title: "Lee sus habilidades",
+        say: "Leyendo el stack",
+        text: "El modelo pide las habilidades. El harness ejecuta leer_cv y devuelve la lista con la que se arman las dos especialidades.",
+        ask: "pide habilidades",
+        call: 'leer_cv("skills")',
+        result: `${n.skills} habilidades`,
+        tokens: 16_000,
+      }),
     ],
-    context: { add: [{ id: "resultados", label: "Resultados", tokens: 2_000, delay: 1100 }] },
   },
   {
-    title: "Verifica",
-    say: "Verificando…",
-    text: "Corre las pruebas y abre la app en un navegador real con un servidor MCP. Los resultados vuelven al contexto para corregir si algo falla.",
-    layer: "evaluacion",
-    active: ["core", "herramientas", "navegador"],
-    messages: [
-      { from: "core", to: "herramientas", label: "npm test" },
-      { from: "herramientas", to: "navegador", label: "abre /login", delay: 900 },
-      { from: "navegador", to: "herramientas", label: "captura ok", delay: 2100 },
-      { from: "herramientas", to: "core", label: "12 de 12 pruebas", delay: 3300 },
+    id: "aprendizaje",
+    anchor: "aprendizaje",
+    label: "¿Qué está aprendiendo?",
+    packet: "¿Qué aprende?",
+    skill: "aprendizaje",
+    skillTokens: 3_000,
+    answerTokens: 2_000,
+    steps: [
+      readStep({
+        title: "Lee sus cursos",
+        say: "Leyendo cursos",
+        text: "El modelo pide cursos y certificados. El harness ejecuta leer_cv y devuelve cada uno con su fecha y su credencial.",
+        ask: "pide cursos",
+        call: 'leer_cv("certificates")',
+        result: `${n.certificates} cursos`,
+        tokens: 11_000,
+      }),
+      verifyStep("cada curso y fecha", n.certificates),
     ],
-    context: { add: [{ id: "resultados", label: "Resultados", tokens: 6_000, delay: 4400 }] },
   },
   {
-    title: "Compacta el contexto",
-    say: "Hago espacio",
-    text: "Tras muchas vueltas la ventana se llena. El harness pide un resumen de la conversación y lo deja en lugar de los turnos antiguos; la parte fija y la skill en uso se mantienen.",
-    layer: "contexto",
-    active: ["core", "modelo"],
-    messages: [
-      { from: "core", to: "modelo", label: "resume lo anterior", delay: 1100 },
-      { from: "modelo", to: "core", label: "resumen", delay: 2500 },
-    ],
-    context: {
-      add: [{ id: "turnos", label: "Más turnos", tokens: 146_000 }],
-      compact: { delay: 3700, tokens: 7_000 },
-    },
-  },
-  {
-    title: "Responde y recuerda",
-    say: "Listo, con evidencia",
-    text: "La respuesta vuelve con evidencia: los cambios y las pruebas que pasaron. Lo que vale la pena queda en memoria para la próxima sesión.",
-    layer: "memoria",
-    active: ["core", "usuario", "memoria"],
-    messages: [
-      { from: "core", to: "usuario", label: "Listo: 12 de 12 pruebas" },
-      { from: "core", to: "memoria", label: "callback en /auth/cb", delay: 900 },
+    id: "contacto",
+    anchor: "contacto",
+    label: "¿Cómo lo contacto?",
+    packet: "¿Cómo contactarlo?",
+    skill: "contacto",
+    skillTokens: 2_000,
+    answerTokens: 1_000,
+    steps: [
+      readStep({
+        title: "Lee sus datos",
+        say: "Leyendo datos",
+        text: "El modelo pide los datos de contacto. El CV trae de todo: correo, perfiles, teléfono y dirección.",
+        ask: "pide contacto",
+        call: 'leer_cv("basics")',
+        result: "correo, redes, teléfono…",
+        tokens: 9_000,
+      }),
+      {
+        title: "Un hook filtra lo privado",
+        say: "Eso no se publica",
+        text: "La respuesta sale por una herramienta de publicación. Antes, un hook PreToolUse revisa qué va a salir: bloquea el teléfono y la dirección, y deja pasar el correo y los perfiles.",
+        layer: "control",
+        active: ["core", "herramientas"],
+        messages: [
+          { from: "core", to: "herramientas", label: "publica teléfono", blocked: "bloqueado: dato privado" },
+          { from: "core", to: "herramientas", label: "publica correo y redes", delay: 2600 },
+        ],
+      },
     ],
   },
 ]
+
+// ---------- Pasos comunes a toda pregunta ----------
+const arrive = (p: Prompt): Step => ({
+  title: "Llega la pregunta",
+  say: "¡Pregunta nueva!",
+  text: `Elegiste «${p.label}». No va directo al modelo: primero la recibe Claude Code, el harness.`,
+  active: ["usuario", "core"],
+  messages: [{ from: "usuario", to: "core", label: p.packet }],
+  context: { add: [{ id: "prompt", label: "Pregunta", tokens: 30, delay: 1100 }] },
+})
+
+const assemble = (skillCount: number): Step => ({
+  title: "Arma el contexto",
+  say: "Armando contexto",
+  text: "Junta la pregunta con lo que cargó al abrir la sesión: instrucciones de sistema, herramientas, CLAUDE.md y memoria. De las skills solo entra el índice: nombre y descripción.",
+  layer: "contexto",
+  active: ["core", "memoria", "skills"],
+  messages: [
+    { from: "memoria", to: "core", label: "CLAUDE.md + memoria" },
+    { from: "skills", to: "core", label: `índice: ${skillCount} skills`, delay: 500 },
+  ],
+  context: { add: FIXED },
+})
+
+const fixedTokens = FIXED.reduce((n, s) => n + s.tokens, 0)
+
+const writeCache = (): Step => ({
+  title: "Escribe la caché",
+  say: "Guardo el inicio",
+  text: "Es la primera llamada de la sesión: el inicio estable del contexto queda en la caché de prompt. Las próximas preguntas lo leerán de ahí, más barato y más rápido.",
+  layer: "contexto",
+  active: ["core", "cache"],
+  messages: [
+    { from: "core", to: "cache", label: "guarda el inicio" },
+    { from: "cache", to: "core", label: `${fmt(fixedTokens)} en caché`, delay: 1400 },
+  ],
+  context: { cache: { delay: 2500, mode: "write" } },
+})
+
+const readCache = (tokens: number, compacted: boolean): Step => ({
+  title: "Reusa la caché",
+  say: "Esto ya lo tengo",
+  text: compacted
+    ? `Tras el resumen solo la parte fija sigue idéntica: sistema, herramientas y CLAUDE.md. Esos ${fmt(tokens)} tokens salen de la caché.`
+    : `Todo lo anterior, incluidas las preguntas ya respondidas, es idéntico al inicio de la llamada previa: ${fmt(tokens)} tokens salen de la caché en vez de procesarse otra vez.`,
+  layer: "contexto",
+  active: ["core", "cache"],
+  messages: [
+    { from: "core", to: "cache", label: "¿mismo inicio?" },
+    { from: "cache", to: "core", label: `${fmt(tokens)} desde caché`, delay: 1400 },
+  ],
+  context: { cache: { delay: 2500, mode: "read" } },
+})
+
+const compactStep = (): Step => ({
+  title: "Compacta el contexto",
+  say: "Hago espacio",
+  text: "La ventana está por llenarse. El harness pide al modelo un resumen de la conversación y lo deja en lugar de las preguntas anteriores; las skills usadas se vuelven a adjuntar.",
+  layer: "contexto",
+  active: ["core", "modelo"],
+  messages: [
+    { from: "core", to: "modelo", label: "resume lo anterior", delay: 300 },
+    { from: "modelo", to: "core", label: "resumen", delay: 1700 },
+  ],
+  context: { compact: { delay: 2900, tokens: 6_000 } },
+})
+
+const choose = (p: Prompt): Step => ({
+  title: "El modelo elige la skill",
+  say: "Pensando…",
+  text: `El modelo lee la pregunta y el índice de skills. Por su descripción elige «${p.skill}». El modelo propone; el harness ejecuta.`,
+  layer: "modelo",
+  active: ["core", "modelo"],
+  messages: [
+    { from: "core", to: "modelo", label: "pregunta + contexto" },
+    { from: "modelo", to: "core", label: `usar skill: ${p.skill}`, delay: 1600 },
+  ],
+})
+
+const load = (p: Prompt): Step => ({
+  title: "Carga la skill",
+  say: `Cargo «${p.skill}»`,
+  text: `Recién ahora el harness carga las instrucciones completas de «${p.skill}». Las demás skills siguen ocupando solo su descripción.`,
+  layer: "contexto",
+  active: ["core", "skills"],
+  messages: [{ from: "skills", to: "core", label: `SKILL.md: ${p.skill}` }],
+  context: { add: [{ id: "skill", label: `Skill ${p.skill}`, tokens: p.skillTokens, delay: 1100 }] },
+})
+
+const answer = (p: Prompt): Step => ({
+  title: "Responde",
+  say: "Aquí tienes",
+  text: "La respuesta llega a la consola, armada con el contenido real de mi CV. Es una simulación: está escrita de antemano.",
+  active: ["core", "usuario"],
+  messages: [{ from: "core", to: "usuario", label: "respuesta lista" }],
+  context: { add: [{ id: "respuesta", label: "Respuesta", tokens: p.answerTokens, delay: 1100 }] },
+  reveal: true,
+})
+
+// Lo que suma una pregunta a la ventana, para decidir si hay que compactar antes
+export const estimate = (p: Prompt) =>
+  30 + p.skillTokens + p.answerTokens + p.steps.flatMap((s) => s.context?.add ?? []).reduce((n, a) => n + a.tokens, 0)
+
+// Arma la corrida de una pregunta según cómo está la sesión
+export const planRun = (p: Prompt, skillCount: number, state: { total: number; fixed: number; cacheWritten: boolean }): Step[] => {
+  const steps = [arrive(p)]
+  if (!state.cacheWritten) steps.push(assemble(skillCount), writeCache())
+  else {
+    const compacted = state.total + estimate(p) > COMPACT_AT * CONTEXT_WINDOW
+    if (compacted) steps.push(compactStep())
+    steps.push(readCache(compacted ? state.fixed : state.total, compacted))
+  }
+  return [...steps, choose(p), load(p), ...p.steps, answer(p)]
+}

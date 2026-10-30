@@ -36,23 +36,20 @@ const products = [
 ]
 ---
 
-<section class="products" id="productos" aria-labelledby="products-title">
-  <div class="wrap">
-    <h2 id="products-title">En producción</h2>
-    <p class="intro">Porteria es donde trabajo. Monoke y Carcassonne Latam los construyo por mi cuenta, con agentes.</p>
-  </div>
+<div class="resp products">
+  <p class="intro">Porteria es donde trabajo. Monoke y Carcassonne Latam los construyo por mi cuenta, con agentes.</p>
 
   {
     products.map((p, i) => (
-      <article class:list={["product wrap", { "is-lead": i === 0 }]} aria-labelledby={`product-${i}`}>
+      <article class:list={["product", { "is-lead": i === 0 }]} aria-labelledby={`product-${i}`}>
         <a class="shot" href={p.url} tabindex="-1" aria-hidden="true">
           <img src={p.image} alt="" width="960" height="600" loading="lazy" decoding="async" />
         </a>
         <div class="copy">
           <p class="role">{p.role}</p>
-          <h3 id={`product-${i}`}>
+          <h4 id={`product-${i}`}>
             <a href={p.url}>{p.name}</a>
-          </h3>
+          </h4>
           <p class="pitch">{p.pitch}</p>
           <a class="visit" href={p.url}>
             Visitar {p.domain}
@@ -71,21 +68,11 @@ const products = [
       </article>
     ))
   }
-</section>
+</div>
 
 <style>
-  .products {
-    padding-block: clamp(4rem, 10vw, 8rem);
-  }
-
-  h2 {
-    font-size: var(--t4);
-    font-stretch: 78%;
-  }
-
   .intro {
     max-width: 40em;
-    margin-top: 1rem;
     color: var(--niebla);
   }
 
@@ -94,12 +81,12 @@ const products = [
     grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
     gap: clamp(1.5rem, 4vw, 3.5rem);
     align-items: start;
-    margin-top: clamp(3rem, 7vw, 5rem);
+    margin-top: clamp(2rem, 5vw, 3.5rem);
   }
 
   .product + .product {
-    padding-top: clamp(3rem, 7vw, 5rem);
-    background: linear-gradient(var(--linea), var(--linea)) top center / calc(100% - 2 * var(--gutter)) 1px no-repeat;
+    padding-top: clamp(2rem, 5vw, 3.5rem);
+    background: linear-gradient(var(--linea), var(--linea)) top center / 100% 1px no-repeat;
   }
 
   /* Los productos propios alternan lado para que la página respire */
@@ -137,19 +124,20 @@ const products = [
     color: var(--niebla);
   }
 
-  h3 {
+  h4 {
     margin-top: 0.4rem;
-    font-size: clamp(2.5rem, 6vw, 4.75rem);
+    font-family: var(--display);
+    font-size: clamp(2.5rem, 5.5vw, 4.25rem);
     font-weight: 850;
     font-stretch: 72%;
     line-height: 0.95;
   }
 
-  h3 a {
+  h4 a {
     text-decoration: none;
   }
 
-  h3 a:hover {
+  h4 a:hover {
     text-decoration: underline;
     text-decoration-color: var(--senal);
     text-decoration-thickness: 0.06em;

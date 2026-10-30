@@ -36,8 +36,7 @@ const initials = (name: string) =>
 const totalYears = yearsSince(byStart[0].startDate)
 ---
 
-<section class="wrap trace-section" id="trayectoria" aria-labelledby="trace-title">
-  <h2 id="trace-title">Trayectoria</h2>
+<div class="resp trace-section">
   <p class="intro">
     {totalYears} años de trabajo. Cada barra es un rol y su largo, lo que duró. Elige una para ver el detalle.
   </p>
@@ -134,7 +133,7 @@ const totalYears = yearsSince(byStart[0].startDate)
             {job.endDate ? <time datetime={job.endDate}>{formatMonth(job.endDate)}</time> : "hoy"}
             <span class="job-duration">{duration(job.startDate, job.endDate)}</span>
           </p>
-          <h3>{job.position}</h3>
+          <h4>{job.position}</h4>
           <p class="job-where">
             {job.url ? <a href={job.url}>{job.name}</a> : job.name}
             <span>{job.industry}</span>
@@ -143,7 +142,7 @@ const totalYears = yearsSince(byStart[0].startDate)
           </div>
           <div class="job-facts">
             <div>
-              <h4>Lo más relevante</h4>
+              <h5>Lo más relevante</h5>
               <ul class="job-list">
                 {job.highlights.map((h) => (
                   <li>{h}</li>
@@ -152,7 +151,7 @@ const totalYears = yearsSince(byStart[0].startDate)
             </div>
             {job.stack.length > 0 && (
               <div>
-                <h4>Con qué</h4>
+                <h5>Con qué</h5>
                 <ul class="job-stack">
                   {job.stack.map((s) => (
                     <li>{s}</li>
@@ -209,7 +208,7 @@ const totalYears = yearsSince(byStart[0].startDate)
   </ol>
 
   <div class="tl-studies">
-    <h3>Estudios</h3>
+    <h4>Estudios</h4>
     <ul>
       {
         [...studies].sort((a, b) => b.from - a.from).map((s) => (
@@ -221,7 +220,7 @@ const totalYears = yearsSince(byStart[0].startDate)
       }
     </ul>
   </div>
-</section>
+</div>
 
 <script>
   const tabs = [...document.querySelectorAll<HTMLButtonElement>(".trace [role=tab]")]
@@ -270,19 +269,17 @@ const totalYears = yearsSince(byStart[0].startDate)
 </script>
 
 <style>
-  .trace-section {
-    padding-block: clamp(4rem, 10vw, 8rem);
-  }
-
-  h2 {
-    font-size: var(--t4);
-    font-stretch: 78%;
-  }
-
   .intro {
     max-width: 38em;
-    margin-top: 1rem;
     color: var(--niebla);
+  }
+
+  h4,
+  h5 {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 800;
+    line-height: 1;
   }
 
   /* ---------- Tira de empresas ---------- */
@@ -591,7 +588,7 @@ const totalYears = yearsSince(byStart[0].startDate)
     border-left: 1px solid var(--linea);
   }
 
-  .job h3 {
+  .job h4 {
     margin-top: 0.75rem;
     font-size: var(--t3);
     font-stretch: 85%;
@@ -614,7 +611,7 @@ const totalYears = yearsSince(byStart[0].startDate)
     margin-top: 2rem;
   }
 
-  .job h4 {
+  .job h5 {
     font-family: var(--display);
     font-stretch: 75%;
     font-weight: 600;
@@ -918,7 +915,7 @@ const totalYears = yearsSince(byStart[0].startDate)
       margin-top: 2.5rem;
     }
 
-    .tl-studies h3 {
+    .tl-studies h4 {
       font-size: var(--t2);
       font-stretch: 85%;
     }

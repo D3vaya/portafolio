@@ -10,17 +10,15 @@ const formatDate = (date: string) =>
 
 ---
 
-<section class="wrap learning" id="aprendizaje" aria-labelledby="learning-title">
-  <h2 id="learning-title">Sigo aprendiendo</h2>
-
+<div class="resp learning">
   <article class="now" aria-labelledby="now-title">
     <div class="now-head">
       <Mascot size={96} class="now-mascot" />
       <div>
         <p class="kicker">Ahora mismo</p>
-        <h3 id="now-title">
+        <h4 id="now-title">
           Estoy profundizando en LLMs, harness engineering y el ecosistema de IA, con Claude Code como base.
-        </h3>
+        </h4>
       </div>
     </div>
     <div class="badges">
@@ -40,7 +38,7 @@ const formatDate = (date: string) =>
     </div>
   </article>
 
-  <h3 class="courses-title">Cursos y certificados</h3>
+  <h4 class="courses-title">Cursos y certificados</h4>
   <ol class="list">
     {
       sorted.map((c) => (
@@ -52,16 +50,14 @@ const formatDate = (date: string) =>
       ))
     }
   </ol>
-</section>
+</div>
 
 <style>
-  .learning {
-    padding-block: clamp(4rem, 10vw, 8rem);
-  }
-
-  h2 {
-    font-size: var(--t4);
-    font-stretch: 78%;
+  h4 {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 800;
+    line-height: 1;
   }
 
   /* ---------- Ahora mismo ---------- */
@@ -69,7 +65,6 @@ const formatDate = (date: string) =>
     --papel: #ecedef;
     --niebla: #a3a7b1;
     --linea: rgb(236 237 239 / 0.16);
-    margin-top: clamp(2rem, 5vw, 3rem);
     padding: clamp(1.5rem, 4vw, 3rem);
     border-radius: 18px;
     background:
@@ -100,7 +95,7 @@ const formatDate = (date: string) =>
     font-weight: 600;
   }
 
-  .now h3 {
+  .now h4 {
     margin-top: 0.35rem;
     max-width: 22em;
     font-size: clamp(1.75rem, 3.6vw, 2.75rem);
@@ -154,7 +149,7 @@ const formatDate = (date: string) =>
 
   /* ---------- Cursos ---------- */
   .courses-title {
-    margin-top: clamp(3rem, 7vw, 4rem);
+    margin-top: clamp(2.5rem, 6vw, 3.5rem);
     font-size: var(--t2);
     font-stretch: 85%;
   }

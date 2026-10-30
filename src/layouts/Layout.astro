@@ -18,6 +18,8 @@ const ogImage = `${siteUrl}${basics.image}`
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <!-- Con JavaScript las respuestas del harness esperan su pregunta; sin él se ven todas -->
+    <script is:inline>document.documentElement.classList.add("js")</script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />

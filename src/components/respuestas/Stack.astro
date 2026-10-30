@@ -79,8 +79,7 @@ const known = new Set(skills.map((s) => s.name))
 const rest = groups.map((g) => ({ name: g.name, items: g.members.filter((m) => known.has(m)) }))
 ---
 
-<section class="wrap stack-section" id="stack" aria-labelledby="stack-title">
-  <h2 id="stack-title">Stack</h2>
+<div class="resp stack-section">
   <p class="intro">Dos especialidades y las herramientas que manejo en cada una.</p>
 
   <div class="pillars">
@@ -88,7 +87,7 @@ const rest = groups.map((g) => ({ name: g.name, items: g.members.filter((m) => k
       pillars.map((p) => (
         <article class:list={["pillar", `is-${p.id}`]} aria-labelledby={`pillar-${p.id}`}>
           <p class="kicker">{p.kicker}</p>
-          <h3 id={`pillar-${p.id}`}>{p.name}</h3>
+          <h4 id={`pillar-${p.id}`}>{p.name}</h4>
           <p class="claim">{p.claim}</p>
 
           <div class="lead">
@@ -124,7 +123,7 @@ const rest = groups.map((g) => ({ name: g.name, items: g.members.filter((m) => k
     }
   </div>
 
-  <h3 class="rest-title">Además</h3>
+  <h4 class="rest-title">Además</h4>
   <dl class="rest">
     {
       rest.map((group) => (
@@ -135,26 +134,19 @@ const rest = groups.map((g) => ({ name: g.name, items: g.members.filter((m) => k
       ))
     }
   </dl>
-</section>
-      ))
-    }
-  </div>
-</section>
+</div>
 
 <style>
-  .stack-section {
-    padding-block: clamp(4rem, 10vw, 8rem);
-  }
-
-  h2 {
-    font-size: var(--t4);
-    font-stretch: 78%;
-  }
-
   .intro {
     max-width: 38em;
-    margin-top: 1rem;
     color: var(--niebla);
+  }
+
+  h4 {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 800;
+    line-height: 1;
   }
 
   /* ---------- Especialidades ---------- */
@@ -162,7 +154,7 @@ const rest = groups.map((g) => ({ name: g.name, items: g.members.filter((m) => k
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: clamp(1rem, 2vw, 1.5rem);
-    margin-top: clamp(2rem, 5vw, 3rem);
+    margin-top: clamp(1.5rem, 4vw, 2.25rem);
   }
 
   .pillar {
@@ -194,7 +186,7 @@ const rest = groups.map((g) => ({ name: g.name, items: g.members.filter((m) => k
     color: var(--senal);
   }
 
-  .pillar h3 {
+  .pillar h4 {
     margin-top: 0.25rem;
     font-size: clamp(3rem, 7vw, 5.5rem);
     font-weight: 850;
@@ -270,7 +262,7 @@ const rest = groups.map((g) => ({ name: g.name, items: g.members.filter((m) => k
 
   /* ---------- Todo lo demás ---------- */
   .rest-title {
-    margin-top: clamp(3rem, 7vw, 4.5rem);
+    margin-top: clamp(2.5rem, 6vw, 3.5rem);
     font-size: var(--t2);
     font-stretch: 85%;
   }

@@ -1,0 +1,63 @@
+---
+import { basics } from "@cv"
+
+// Solo datos públicos: el teléfono y la dirección del CV no se muestran
+const [user, domain] = basics.email.split("@")
+---
+
+<div class="resp contact">
+  <p class="intro">Por correo es lo más directo. También estoy en estos perfiles:</p>
+  <a class="mail" href={`mailto:${basics.email}`}>{user}<wbr />@{domain}</a>
+  <ul class="links">
+    {
+      basics.profiles.map((p) => (
+        <li>
+          <a href={p.url} rel="me">
+            {p.network}
+          </a>
+        </li>
+      ))
+    }
+    <li><a href="/cv-juan-carlos-ayala.pdf" download>Descargar CV en PDF</a></li>
+  </ul>
+</div>
+
+<style>
+  .intro {
+    color: var(--niebla);
+  }
+
+  .mail {
+    display: block;
+    margin-top: 1rem;
+    font-family: var(--display);
+    font-size: clamp(1.6rem, 5vw, 3.75rem);
+    font-weight: 800;
+    font-stretch: 72%;
+    line-height: 1.05;
+    text-decoration-thickness: 0.06em;
+    text-underline-offset: 0.12em;
+    overflow-wrap: anywhere;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.75rem;
+  }
+
+  .links a {
+    display: inline-block;
+    padding: 0.5rem 1.1rem;
+    border: 1px solid var(--papel);
+    border-radius: 999px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .links a:hover {
+    background: var(--senal);
+    border-color: var(--senal);
+  }
+</style>

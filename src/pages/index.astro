@@ -2,12 +2,7 @@
 import Layout from "@/layouts/Layout.astro"
 import Hero from "@/components/Hero.astro"
 import Measure from "@/components/Measure.astro"
-import Trace from "@/components/Trace.astro"
 import Harness from "@/components/Harness.astro"
-import Products from "@/components/Products.astro"
-import About from "@/components/About.astro"
-import Stack from "@/components/Stack.astro"
-import Learning from "@/components/Learning.astro"
 import Contact from "@/components/Contact.astro"
 import Analytics from "@vercel/analytics/astro"
 import { basics, work } from "@cv"
@@ -17,10 +12,12 @@ const firstJob = work.reduce((a, b) => (a.startDate < b.startDate ? a : b))
 const description =
   `Ingeniero de harnesses para agentes de IA y tech lead con ${yearsSince(firstJob.startDate)} años en producción. Head of Engineering en Porteria; creador de Monoke y Carcassonne Latam.`
 
+// Cada enlace lleva a la placa y hace la pregunta que corresponde
 const nav = [
-  { href: "#harness", label: "Harness" },
-  { href: "#productos", label: "Productos" },
+  { href: "#sobre-mi", label: "Perfil" },
   { href: "#trayectoria", label: "Trayectoria" },
+  { href: "#productos", label: "Productos" },
+  { href: "#stack", label: "Stack" },
   { href: "#contacto", label: "Contacto" },
 ]
 ---
@@ -39,11 +36,6 @@ const nav = [
     <Hero />
     <Measure />
     <Harness />
-    <Products />
-    <Trace />
-    <About />
-    <Stack />
-    <Learning />
   </main>
   <Contact />
   <Analytics />
