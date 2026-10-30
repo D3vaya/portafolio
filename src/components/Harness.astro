@@ -133,9 +133,14 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches
   const compact = matchMedia("(max-width: 40rem)")
   const TRAVEL = 1150
-  // Ritmo de la simulación: acelera todo el reloj (paquetes, globo, barra y pasos)
-  // para que una respuesta llegue en unos 6 s; los botones de pasos permiten revisarlos con calma
-  const SPEED = 2.8
+  // Ritmo de la simulación: acelera todo el reloj (paquetes, globo, barra y pasos).
+  // La primera respuesta llega en unos 5 s y cada pregunta siguiente va algo más rápido,
+  // como con la caché ya caliente; los botones de pasos permiten revisarlos con calma
+  const SPEED_BASE = 3.4
+  const SPEED_STEP = 0.5
+  const SPEED_MAX = 4.9
+  let asked = 0
+  let speed = SPEED_BASE
   // Cuánto queda a la vista un paquete al llegar, y el mínimo de un paso, en tiempo de simulación
   const HOLD = 500
   const MIN_STEP = 1800
@@ -692,6 +697,8 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     // Una pregunta nueva cierra la anterior de inmediato
     if (run && !run.revealed) skip()
     const base = session
+    speed = Math.min(SPEED_MAX, SPEED_BASE + SPEED_STEP * asked)
+    asked++
     const steps = planRun(p, prompts.length, { ...totals(base.segs), cacheWritten: base.cacheWritten })
     const durations = steps.map(stepDuration)
     run = { prompt: p, steps, durations, total: durations.reduce((n, d) => n + d, 0), base, done: false, revealed: false, byUser }
@@ -730,7 +737,7 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     }
     const dt = last ? Math.min(now - last, 100) : 0
     last = now
-    elapsed += dt * SPEED
+    elapsed += dt * speed
     const r = run!
     if (elapsed >= stepDuration(r.steps[index])) {
       if (index < r.steps.length - 1) enter(index + 1)
