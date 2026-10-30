@@ -169,3 +169,31 @@ export const steps: Step[] = [
     messages: [{ from: "core", to: "tarea", label: "PR listo, 12 de 12" }],
   },
 ]
+
+// Lo que ofrezco: cada servicio dice para quién es, qué hago y qué queda.
+export const services = [
+  {
+    id: "diagnostico",
+    name: "Diagnóstico de tu flujo con agentes",
+    when: "Los agentes ya están en uso, pero los resultados son irregulares y nadie sabe bien por qué.",
+    what: "Reviso cómo se usan hoy los agentes: qué contexto reciben, qué herramientas tocan, qué se revisa antes de aceptar su trabajo y cuánto cuesta.",
+    get: "Un informe con los problemas encontrados y un plan priorizado para resolverlos.",
+    layers: ["contexto", "herramientas", "control", "evaluacion"],
+  },
+  {
+    id: "claude-code",
+    name: "Claude Code listo para tu equipo",
+    when: "Cada persona usa Claude Code a su manera y el resultado depende de quién lo use.",
+    what: "Configuro skills, hooks, permisos e instrucciones por repositorio, y conecto por MCP las herramientas que el equipo ya usa.",
+    get: "Un harness compartido dentro de tus repositorios, documentado para que el equipo lo mantenga.",
+    layers: ["contexto", "control", "memoria", "orquestacion"],
+  },
+  {
+    id: "producto",
+    name: "Agentes dentro de tu producto",
+    when: "Quieres una funcionalidad con IA que funcione con usuarios reales, no solo en la demo.",
+    what: "Diseño las herramientas que usa el agente, sus límites y los casos de evaluación, y lo integro a tu producto.",
+    get: "La funcionalidad en producción, con métricas para saber si un cambio la mejora o la empeora.",
+    layers: ["modelo", "herramientas", "evaluacion"],
+  },
+]
