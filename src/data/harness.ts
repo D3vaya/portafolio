@@ -67,10 +67,10 @@ const readStep = (o: { title: string; say: string; text: string; ask: string; ca
   active: ["core", "modelo", "herramientas"],
   messages: [
     { from: "modelo", to: "core", label: o.ask },
-    { from: "core", to: "herramientas", label: o.call, delay: 1300 },
-    { from: "herramientas", to: "core", label: o.result, delay: 2600 },
+    { from: "core", to: "herramientas", label: o.call, delay: 1250 },
+    { from: "herramientas", to: "core", label: o.result, delay: 2500 },
   ],
-  context: { add: [{ id: "resultados", label: "Resultados", tokens: o.tokens, delay: 3700 }] },
+  context: { add: [{ id: "resultados", label: "Resultados", tokens: o.tokens, delay: 3400 }] },
 })
 
 // Antes de responder, el borrador se compara con la fuente
@@ -82,9 +82,9 @@ const verifyStep = (what: string, n: number): Step => ({
   active: ["core", "herramientas"],
   messages: [
     { from: "core", to: "herramientas", label: "compara con cv.json" },
-    { from: "herramientas", to: "core", label: `${n} de ${n} cuadran`, delay: 1500 },
+    { from: "herramientas", to: "core", label: `${n} de ${n} cuadran`, delay: 1250 },
   ],
-  context: { add: [{ id: "resultados", label: "Resultados", tokens: 1_000, delay: 2600 }] },
+  context: { add: [{ id: "resultados", label: "Resultados", tokens: 1_000, delay: 2400 }] },
 })
 
 // Los conteos vienen del CV. Se pasan como números para no mandar cv.json entero al navegador,
@@ -150,12 +150,12 @@ export const buildPrompts = (n: Counts): Prompt[] => [
         active: ["core", "modelo", "herramientas", "navegador"],
         messages: [
           { from: "modelo", to: "core", label: "pide proyectos" },
-          { from: "core", to: "herramientas", label: 'leer_cv("projects")', delay: 1300 },
-          { from: "herramientas", to: "navegador", label: "abre 3 sitios", delay: 2400 },
-          { from: "navegador", to: "herramientas", label: "3 capturas", delay: 3600 },
-          { from: "herramientas", to: "core", label: "proyectos + capturas", delay: 4800 },
+          { from: "core", to: "herramientas", label: 'leer_cv("projects")', delay: 1250 },
+          { from: "herramientas", to: "navegador", label: "abre 3 sitios", delay: 2500 },
+          { from: "navegador", to: "herramientas", label: "3 capturas", delay: 3750 },
+          { from: "herramientas", to: "core", label: "proyectos + capturas", delay: 5000 },
         ],
-        context: { add: [{ id: "resultados", label: "Resultados", tokens: 58_000, delay: 5900 }] },
+        context: { add: [{ id: "resultados", label: "Resultados", tokens: 58_000, delay: 5600 }] },
       },
     ],
   },
@@ -226,7 +226,7 @@ export const buildPrompts = (n: Counts): Prompt[] => [
         active: ["core", "herramientas"],
         messages: [
           { from: "core", to: "herramientas", label: "publica teléfono", blocked: "bloqueado: dato privado" },
-          { from: "core", to: "herramientas", label: "publica correo y redes", delay: 2600 },
+          { from: "core", to: "herramientas", label: "publica correo y redes", delay: 2200 },
         ],
       },
     ],
@@ -266,9 +266,9 @@ const writeCache = (): Step => ({
   active: ["core", "cache"],
   messages: [
     { from: "core", to: "cache", label: "guarda el inicio" },
-    { from: "cache", to: "core", label: `${fmt(fixedTokens)} en caché`, delay: 1400 },
+    { from: "cache", to: "core", label: `${fmt(fixedTokens)} en caché`, delay: 1250 },
   ],
-  context: { cache: { delay: 2500, mode: "write" } },
+  context: { cache: { delay: 2300, mode: "write" } },
 })
 
 const readCache = (tokens: number, compacted: boolean): Step => ({
@@ -281,9 +281,9 @@ const readCache = (tokens: number, compacted: boolean): Step => ({
   active: ["core", "cache"],
   messages: [
     { from: "core", to: "cache", label: "¿mismo inicio?" },
-    { from: "cache", to: "core", label: `${fmt(tokens)} desde caché`, delay: 1400 },
+    { from: "cache", to: "core", label: `${fmt(tokens)} desde caché`, delay: 1250 },
   ],
-  context: { cache: { delay: 2500, mode: "read" } },
+  context: { cache: { delay: 2300, mode: "read" } },
 })
 
 const compactStep = (): Step => ({
@@ -293,10 +293,10 @@ const compactStep = (): Step => ({
   layer: "contexto",
   active: ["core", "modelo"],
   messages: [
-    { from: "core", to: "modelo", label: "resume lo anterior", delay: 300 },
-    { from: "modelo", to: "core", label: "resumen", delay: 1700 },
+    { from: "core", to: "modelo", label: "resume lo anterior" },
+    { from: "modelo", to: "core", label: "resumen", delay: 1250 },
   ],
-  context: { compact: { delay: 2900, tokens: 6_000 } },
+  context: { compact: { delay: 2500, tokens: 6_000 } },
 })
 
 const choose = (p: Prompt): Step => ({
@@ -307,7 +307,7 @@ const choose = (p: Prompt): Step => ({
   active: ["core", "modelo"],
   messages: [
     { from: "core", to: "modelo", label: "pregunta + contexto" },
-    { from: "modelo", to: "core", label: `usar skill: ${p.skill}`, delay: 1600 },
+    { from: "modelo", to: "core", label: `usar skill: ${p.skill}`, delay: 1250 },
   ],
 })
 

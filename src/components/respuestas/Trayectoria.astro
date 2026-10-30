@@ -287,7 +287,7 @@ const totalYears = yearsSince(byStart[0].startDate)
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.6rem;
-    margin-top: clamp(2rem, 5vw, 3rem);
+    margin-top: clamp(2rem, 5cqi, 3rem);
   }
 
   .company {
@@ -348,7 +348,7 @@ const totalYears = yearsSince(byStart[0].startDate)
     font-variant-numeric: tabular-nums;
   }
 
-  @media (max-width: 52rem) {
+  @container (max-width: 52rem) {
     .companies {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -560,18 +560,18 @@ const totalYears = yearsSince(byStart[0].startDate)
   .details {
     border: 1px solid var(--linea);
     border-top: 0;
-    padding: clamp(1.25rem, 3vw, 2.5rem);
+    padding: clamp(1.25rem, 3cqi, 2.5rem);
   }
 
   .job-head {
     display: flex;
     align-items: center;
-    gap: clamp(1rem, 3vw, 1.75rem);
+    gap: clamp(1rem, 3cqi, 1.75rem);
   }
 
   .job-logo {
-    width: clamp(4.5rem, 9vw, 6rem);
-    height: clamp(4.5rem, 9vw, 6rem);
+    width: clamp(4.5rem, 9cqi, 6rem);
+    height: clamp(4.5rem, 9cqi, 6rem);
     padding: 0.5rem;
     border-radius: 14px;
     font-size: var(--t2);
@@ -638,7 +638,7 @@ const totalYears = yearsSince(byStart[0].startDate)
   }
 
   /* ---------- Pantallas angostas: el tiempo corre hacia abajo, lo reciente arriba ---------- */
-  @media (max-width: 52rem) {
+  @container (max-width: 52rem) {
     .trace {
       --col: 3rem;
       --axis: 3.25rem;
@@ -664,7 +664,7 @@ const totalYears = yearsSince(byStart[0].startDate)
       top: auto;
       bottom: calc(var(--s) * 100%);
       height: auto;
-      width: calc(100vw);
+      width: 100cqi;
       padding: 0 0 0.25rem 0.35rem;
       border-left: 0;
       border-bottom: 1px solid var(--linea);
@@ -773,7 +773,7 @@ const totalYears = yearsSince(byStart[0].startDate)
     display: none;
   }
 
-  @media (max-width: 52rem) {
+  @container (max-width: 52rem) {
     .companies,
     .trace,
     .details {

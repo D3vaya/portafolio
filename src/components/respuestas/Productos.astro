@@ -79,13 +79,13 @@ const products = [
   .product {
     display: grid;
     grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-    gap: clamp(1.5rem, 4vw, 3.5rem);
+    gap: clamp(1.5rem, 4cqi, 3.5rem);
     align-items: start;
-    margin-top: clamp(2rem, 5vw, 3.5rem);
+    margin-top: clamp(2rem, 5cqi, 3.5rem);
   }
 
   .product + .product {
-    padding-top: clamp(2rem, 5vw, 3.5rem);
+    padding-top: clamp(2rem, 5cqi, 3.5rem);
     background: linear-gradient(var(--linea), var(--linea)) top center / 100% 1px no-repeat;
   }
 
@@ -127,7 +127,7 @@ const products = [
   h4 {
     margin-top: 0.4rem;
     font-family: var(--display);
-    font-size: clamp(2.5rem, 5.5vw, 4.25rem);
+    font-size: clamp(2rem, 8cqi, 4.25rem);
     font-weight: 850;
     font-stretch: 72%;
     line-height: 0.95;
@@ -182,14 +182,14 @@ const products = [
   .stats dd {
     margin: 0 0 0.35rem;
     font-family: var(--display);
-    font-size: clamp(2.25rem, 5vw, 4rem);
+    font-size: clamp(1.75rem, 7cqi, 4rem);
     font-weight: 850;
     font-stretch: 75%;
     line-height: 1;
     font-variant-numeric: tabular-nums;
   }
 
-  @media (max-width: 52rem) {
+  @container (max-width: 52rem) {
     .product {
       grid-template-columns: minmax(0, 1fr);
     }

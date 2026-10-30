@@ -65,7 +65,7 @@ const formatDate = (date: string) =>
     --papel: #ecedef;
     --niebla: #a3a7b1;
     --linea: rgb(236 237 239 / 0.16);
-    padding: clamp(1.5rem, 4vw, 3rem);
+    padding: clamp(1.1rem, 4cqi, 3rem);
     border-radius: 18px;
     background:
       radial-gradient(40rem 20rem at 0% 0%, rgb(255 91 31 / 0.18), transparent 70%),
@@ -76,7 +76,7 @@ const formatDate = (date: string) =>
   .now-head {
     display: flex;
     align-items: center;
-    gap: clamp(1.25rem, 3vw, 2.25rem);
+    gap: clamp(1.25rem, 3cqi, 2.25rem);
   }
 
   .now-head :global(.now-mascot) {
@@ -98,7 +98,7 @@ const formatDate = (date: string) =>
   .now h4 {
     margin-top: 0.35rem;
     max-width: 22em;
-    font-size: clamp(1.75rem, 3.6vw, 2.75rem);
+    font-size: clamp(1.35rem, 5cqi, 2.75rem);
     font-weight: 800;
     font-stretch: 82%;
     line-height: 1.05;
@@ -149,7 +149,7 @@ const formatDate = (date: string) =>
 
   /* ---------- Cursos ---------- */
   .courses-title {
-    margin-top: clamp(2.5rem, 6vw, 3.5rem);
+    margin-top: clamp(2.5rem, 6cqi, 3.5rem);
     font-size: var(--t2);
     font-stretch: 85%;
   }
@@ -192,14 +192,14 @@ const formatDate = (date: string) =>
     color: var(--niebla);
   }
 
-  @media (max-width: 52rem) {
+  @container (max-width: 52rem) {
     .now-head {
       flex-direction: column;
       align-items: flex-start;
     }
   }
 
-  @media (max-width: 36rem) {
+  @container (max-width: 36rem) {
     .list li {
       grid-template-columns: 3.5rem minmax(0, 1fr);
       row-gap: 0.25rem;

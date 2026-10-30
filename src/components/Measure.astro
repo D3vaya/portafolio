@@ -633,6 +633,8 @@ const metrics = [
     font-stretch: 78%;
     line-height: 1.05;
     max-width: 22em;
+    /* Espacio reservado: la frase llega al final y no debe empujar lo de abajo */
+    min-height: 2.1em;
     opacity: 0;
     transform: translateY(0.5rem);
     transition:
@@ -697,6 +699,10 @@ const metrics = [
   }
 
   @media (max-width: 52rem) {
+    .race-verdict {
+      min-height: 3.2em;
+    }
+
     .measure {
       --cols: minmax(0, 1fr) 3.5rem minmax(0, 1.2fr);
     }

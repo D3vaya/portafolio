@@ -22,40 +22,90 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
 ---
 
 <section class="harness" id="harness" aria-labelledby="harness-title" data-counts={JSON.stringify(counts)}>
-  <div class="wrap head">
-    <h2 id="harness-title">Pregúntale a mi harness</h2>
-    <p class="problem">
-      Este CV corre sobre un harness. Elige una pregunta y mira cómo se arma la respuesta. Es una simulación con mi
-      contenido real.
-    </p>
-  </div>
-
-  <div class="wrap run js-only" data-run>
-    <div class="board" data-board>
-      <dl class="hud" aria-label="Contadores de la simulación">
-        <div><dt>Tokens en contexto</dt><dd data-hud="tokens">0</dd></div>
-        <div><dt>Desde caché</dt><dd data-hud="cached">0</dd></div>
-        <div><dt>Herramientas usadas</dt><dd data-hud="tools">0</dd></div>
-        <div><dt>Bloqueos</dt><dd data-hud="blocked">0</dd></div>
-      </dl>
-      <div class="canvas" data-canvas aria-hidden="true"></div>
-      <div class="gauge" aria-hidden="true">
-        <p class="gauge-head">
-          <span class="gauge-title">Ventana de contexto <span class="gauge-tag">simulación</span></span>
-          <span class="gauge-total" data-gauge-total>0 de {windowK} tokens</span>
-        </p>
-        <div class="gauge-track">
-          <div class="gauge-bar" data-gauge-bar></div>
-          <span class="gauge-cache" data-gauge-cache><span>en caché</span></span>
+  <div class="term wrap" data-term>
+    <div class="board-pane js-only" data-run>
+      <div class="board" data-board>
+        <dl class="hud" aria-label="Contadores de la simulación">
+          <div><dt>Tokens en contexto</dt><dd data-hud="tokens">0</dd></div>
+          <div><dt>Desde caché</dt><dd data-hud="cached">0</dd></div>
+          <div><dt>Herramientas usadas</dt><dd data-hud="tools">0</dd></div>
+          <div><dt>Bloqueos</dt><dd data-hud="blocked">0</dd></div>
+        </dl>
+        <div class="canvas" data-canvas aria-hidden="true"></div>
+        <div class="gauge" aria-hidden="true">
+          <p class="gauge-head">
+            <span class="gauge-title">Ventana de contexto <span class="gauge-tag">simulación</span></span>
+            <span class="gauge-total" data-gauge-total>0 de {windowK} tokens</span>
+          </p>
+          <div class="gauge-track">
+            <div class="gauge-bar" data-gauge-bar></div>
+            <span class="gauge-cache" data-gauge-cache><span>en caché</span></span>
+          </div>
+          <ul class="gauge-legend" data-gauge-legend></ul>
         </div>
-        <ul class="gauge-legend" data-gauge-legend></ul>
+      </div>
+
+      <div class="below">
+        <div class="caption">
+          <p class="caption-meta">
+            <span data-step-count>En espera</span>
+            <span class="caption-layer" data-step-layer></span>
+          </p>
+          <p class="caption-title" data-step-title>El harness está listo</p>
+          <p class="caption-text" data-step-text>Cuando llegue una pregunta vas a ver cada paso en la placa.</p>
+        </div>
+        <div class="controls">
+          <button class="toggle" type="button" data-toggle aria-pressed="false">Pausar</button>
+          <ol class="steps" aria-label="Pasos de la corrida" data-steps></ol>
+        </div>
       </div>
     </div>
 
-    <div class="side">
-      <div class="ask">
-        <p class="ask-label" id="ask-label">Elige una pregunta</p>
-        <ul class="chips" aria-labelledby="ask-label">
+    <div class="console">
+      <p class="titlebar js-only" aria-hidden="true">
+        <span class="lights"><i></i><i></i><i></i></span>
+        <span>jcayala — harness</span>
+      </p>
+
+      <div class="transcript" data-transcript>
+        <header class="motd">
+          <h2 id="harness-title">Pregúntale a mi harness</h2>
+          <p class="problem">
+            Este CV corre sobre un harness. Elige una pregunta y mira cómo se arma la respuesta. Es una simulación con
+            mi contenido real.
+          </p>
+        </header>
+        <p class="visually-hidden" aria-live="polite" data-announce></p>
+        {
+          prompts.map((p) => {
+            const Body = bodies[p.id]
+            return (
+              <article class="qa" id={p.anchor} data-qa={p.id} aria-labelledby={`q-${p.id}`}>
+                <h3 class="qa-q" id={`q-${p.id}`}>
+                  {p.label}
+                </h3>
+                <p class="qa-status js-only" data-qa-status />
+                <div class="qa-a" data-qa-body>
+                  <Body />
+                </div>
+              </article>
+            )
+          })
+        }
+        <div class="thinking js-only" data-thinking hidden>
+          <p class="think-line">
+            <span class="think-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span data-think-text>Pensando…</span>
+          </p>
+          <p class="think-sub" data-think-sub></p>
+          <div class="think-bar" aria-hidden="true"><span data-think-bar></span></div>
+          <button type="button" class="skip" data-skip>Ver respuesta ya <kbd>Esc</kbd></button>
+        </div>
+      </div>
+
+      <div class="input js-only">
+        <p class="input-label" id="ask-label">Elige una pregunta</p>
+        <ul class="chips" aria-labelledby="ask-label" data-chips>
           {
             prompts.map((p) => (
               <li>
@@ -67,61 +117,7 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
           }
         </ul>
       </div>
-
-      <div class="caption">
-        <p class="caption-meta">
-          <span data-step-count>En espera</span>
-          <span class="caption-layer" data-step-layer></span>
-        </p>
-        <p class="caption-title" data-step-title>El harness está listo</p>
-        <p class="caption-text" data-step-text>Cuando llegue una pregunta vas a ver cada paso en la placa.</p>
-      </div>
-
-      <div class="controls">
-        <button class="toggle" type="button" data-toggle aria-pressed="false">Pausar</button>
-        <ol class="steps" aria-label="Pasos de la corrida" data-steps></ol>
-      </div>
     </div>
-
-    <!-- En móvil el estado del paso queda pegado abajo mientras la placa está a la vista -->
-    <div class="status-bar" aria-hidden="true">
-      <span class="dot" data-bar-dot></span>
-      <span class="status-text" data-bar-text>En espera</span>
-    </div>
-  </div>
-
-  <div class="wrap console" data-console>
-    <p class="visually-hidden" aria-live="polite" data-announce></p>
-    {
-      prompts.map((p) => {
-        const Body = bodies[p.id]
-        return (
-          <article class="qa" id={p.anchor} data-qa={p.id} aria-labelledby={`q-${p.id}`}>
-            <h3 class="qa-q" id={`q-${p.id}`} tabindex="-1">
-              {p.label}
-            </h3>
-            <p class="qa-status js-only" data-qa-status />
-            <div class="qa-a" data-qa-body>
-              <Body />
-              <div class="qa-next js-only">
-                <p>Pregunta otra cosa</p>
-                <ul>
-                  {prompts
-                    .filter((o) => o.id !== p.id)
-                    .map((o) => (
-                      <li>
-                        <button type="button" class="chip" data-ask={o.id} aria-controls={o.anchor}>
-                          {o.label}
-                        </button>
-                      </li>
-                    ))}
-                </ul>
-              </div>
-            </div>
-          </article>
-        )
-      })
-    }
   </div>
 </section>
 
@@ -138,39 +134,42 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
   const compact = matchMedia("(max-width: 40rem)")
   const TRAVEL = 1150
   // Ritmo de la simulación: acelera todo el reloj (paquetes, globo, barra y pasos)
-  // para que una respuesta llegue en unos 12 s; los botones de pasos permiten revisarlos con calma
-  const SPEED = 2.4
+  // para que una respuesta llegue en unos 6 s; los botones de pasos permiten revisarlos con calma
+  const SPEED = 2.8
+  // Cuánto queda a la vista un paquete al llegar, y el mínimo de un paso, en tiempo de simulación
+  const HOLD = 500
+  const MIN_STEP = 1800
 
-  // ---------- Diagrama: nodos y pistas, en horizontal y en vertical ----------
+  // ---------- Diagrama: nodos y pistas, en ancho y en una versión compacta para móvil ----------
   type Pos = { x: number; y: number }
-  type Mode = "wide" | "tall"
-  const nodes: Record<string, { title: string; sub: string; wide: Pos; tall: Pos }> = {
-    usuario: { title: "Tú", sub: "eliges la pregunta", wide: { x: 130, y: 90 }, tall: { x: 80, y: 45 } },
-    modelo: { title: "Modelo", sub: "razona y propone", wide: { x: 500, y: 70 }, tall: { x: 320, y: 45 } },
-    memoria: { title: "Memoria", sub: "CLAUDE.md y notas", wide: { x: 130, y: 320 }, tall: { x: 80, y: 160 } },
-    cache: { title: "Caché de prompt", sub: "inicio repetido", wide: { x: 870, y: 320 }, tall: { x: 320, y: 160 } },
-    core: { title: "Claude Code", sub: "el harness", wide: { x: 500, y: 320 }, tall: { x: 200, y: 320 } },
-    skills: { title: "Skills", sub: "una por tema", wide: { x: 130, y: 550 }, tall: { x: 80, y: 530 } },
-    herramientas: { title: "Herramientas", sub: "leer_cv, publicar", wide: { x: 500, y: 600 }, tall: { x: 320, y: 530 } },
-    navegador: { title: "Navegador", sub: "servidor MCP", wide: { x: 870, y: 600 }, tall: { x: 320, y: 650 } },
+  type Mode = "wide" | "mini"
+  const nodes: Record<string, { title: string; sub: string; wide: Pos; mini: Pos }> = {
+    usuario: { title: "Tú", sub: "eliges la pregunta", wide: { x: 130, y: 90 }, mini: { x: 60, y: 36 } },
+    modelo: { title: "Modelo", sub: "razona y propone", wide: { x: 500, y: 70 }, mini: { x: 200, y: 36 } },
+    memoria: { title: "Memoria", sub: "CLAUDE.md y notas", wide: { x: 130, y: 320 }, mini: { x: 60, y: 150 } },
+    cache: { title: "Caché de prompt", sub: "inicio repetido", wide: { x: 870, y: 320 }, mini: { x: 340, y: 36 } },
+    core: { title: "Claude Code", sub: "el harness", wide: { x: 500, y: 320 }, mini: { x: 200, y: 150 } },
+    skills: { title: "Skills", sub: "una por tema", wide: { x: 130, y: 550 }, mini: { x: 60, y: 266 } },
+    herramientas: { title: "Herramientas", sub: "leer_cv, publicar", wide: { x: 500, y: 600 }, mini: { x: 200, y: 266 } },
+    navegador: { title: "Navegador", sub: "servidor MCP", wide: { x: 870, y: 600 }, mini: { x: 340, y: 266 } },
   }
 
   // Cada pista va de centro a centro pasando por `via`, siempre en ángulo recto.
   // Los tramos que caen dentro de un chip quedan tapados por él.
-  const edges: { a: string; b: string; wide: Pos[]; tall: Pos[]; hook?: boolean }[] = [
-    { a: "usuario", b: "core", wide: [{ x: 300, y: 90 }, { x: 300, y: 270 }, { x: 500, y: 270 }], tall: [{ x: 170, y: 45 }, { x: 170, y: 320 }] },
-    { a: "modelo", b: "core", wide: [], tall: [{ x: 230, y: 45 }, { x: 230, y: 320 }] },
-    { a: "memoria", b: "core", wide: [], tall: [{ x: 80, y: 320 }] },
-    { a: "skills", b: "core", wide: [{ x: 300, y: 550 }, { x: 300, y: 370 }, { x: 500, y: 370 }], tall: [{ x: 80, y: 320 }] },
-    { a: "cache", b: "core", wide: [], tall: [{ x: 320, y: 320 }] },
-    { a: "core", b: "herramientas", wide: [], tall: [{ x: 320, y: 320 }], hook: true },
-    { a: "herramientas", b: "navegador", wide: [], tall: [] },
+  const edges: { a: string; b: string; wide: Pos[]; mini: Pos[]; hook?: boolean }[] = [
+    { a: "usuario", b: "core", wide: [{ x: 300, y: 90 }, { x: 300, y: 270 }, { x: 500, y: 270 }], mini: [{ x: 60, y: 92 }, { x: 150, y: 92 }, { x: 150, y: 150 }] },
+    { a: "modelo", b: "core", wide: [], mini: [] },
+    { a: "memoria", b: "core", wide: [], mini: [] },
+    { a: "skills", b: "core", wide: [{ x: 300, y: 550 }, { x: 300, y: 370 }, { x: 500, y: 370 }], mini: [{ x: 60, y: 210 }, { x: 150, y: 210 }, { x: 150, y: 150 }] },
+    { a: "cache", b: "core", wide: [], mini: [{ x: 340, y: 92 }, { x: 250, y: 92 }, { x: 250, y: 150 }] },
+    { a: "core", b: "herramientas", wide: [], mini: [], hook: true },
+    { a: "herramientas", b: "navegador", wide: [], mini: [] },
   ]
 
   // hook: dónde va la insignia y dónde se detiene lo bloqueado, como fracción de la pista
   const layout = {
-    wide: { w: 1000, h: 660, node: { w: 180, h: 70 }, core: { w: 230, h: 220 }, font: 19, packet: 17, bubble: 18, hook: { at: 0.73, stop: 0.54 } },
-    tall: { w: 400, h: 685, node: { w: 118, h: 58 }, core: { w: 300, h: 140 }, font: 14, packet: 14, bubble: 14, hook: { at: 0.84, stop: 0.68 } },
+    wide: { w: 1000, h: 660, node: { w: 180, h: 70 }, core: { w: 230, h: 220 }, font: 21, packet: 18, bubble: 19, badge: 1.1, hook: { at: 0.73, stop: 0.54 } },
+    mini: { w: 400, h: 292, node: { w: 104, h: 46 }, core: { w: 136, h: 82 }, font: 12.5, packet: 11.5, bubble: 11.5, badge: 0.78, hook: { at: 0.7, stop: 0.47 } },
   }
 
   const el = (tag: string, attrs: Record<string, string | number> = {}, parent?: Element) => {
@@ -223,7 +222,7 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
   let built: Built
 
   const build = (): Built => {
-    const mode: Mode = compact.matches ? "tall" : "wide"
+    const mode: Mode = compact.matches ? "mini" : "wide"
     const L = layout[mode]
     canvas.replaceChildren()
     const svg = el("svg", { viewBox: `0 0 ${L.w} ${L.h}`, class: "board-svg" }) as SVGSVGElement
@@ -248,7 +247,7 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
       signals.set(key, el("path", { d, class: "trace-signal" }, tracesG) as SVGPathElement)
       if (e.hook) {
         const mid = trace.getPointAtLength(len * L.hook.at)
-        const hook = el("g", { transform: `translate(${mid.x} ${mid.y})` }, tracesG)
+        const hook = el("g", { transform: `translate(${mid.x} ${mid.y}) scale(${L.badge})` }, tracesG)
         const body = el("g", { class: "hook" }, hook)
         el("rect", { x: -30, y: -13, width: 60, height: 26, rx: 13 }, body)
         el("text", { y: 5, "text-anchor": "middle" }, body).textContent = "hook"
@@ -277,12 +276,11 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
         el("text", { class: "node-title", y: size.h * 0.25, "text-anchor": "middle" }, g).textContent = n.title
         el("text", { class: "node-sub", y: size.h * 0.25 + L.font * 1.2, "text-anchor": "middle" }, g).textContent = n.sub
       } else if (isCore) {
-        // En vertical el chip es ancho: la mascota a la izquierda y el globo dentro, a su derecha
-        const holder = el("g", { transform: `translate(${-size.w / 2 + 15} ${-size.h / 2 + 16})` }, g)
-        mascot(holder, 84)
-        const cx = -size.w / 2 + 57
-        el("text", { class: "node-title", x: cx, y: size.h * 0.2, "text-anchor": "middle" }, g).textContent = n.title
-        el("text", { class: "node-sub", x: cx, y: size.h * 0.2 + L.font * 1.2, "text-anchor": "middle" }, g).textContent = n.sub
+        // En la versión compacta la mascota va arriba y el globo sale hacia la derecha
+        const holder = el("g", { transform: `translate(-26 ${-size.h / 2 + 7})` }, g)
+        mascot(holder, 52)
+        el("text", { class: "node-title", y: size.h * 0.26, "text-anchor": "middle" }, g).textContent = n.title
+        el("text", { class: "node-sub", y: size.h * 0.26 + L.font * 1.1, "text-anchor": "middle" }, g).textContent = n.sub
       } else {
         el("text", { class: "node-title", y: -2, "text-anchor": "middle" }, g).textContent = n.title
         el("text", { class: "node-sub", y: L.font * 1.05, "text-anchor": "middle" }, g).textContent = n.sub
@@ -293,7 +291,7 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     // Globo de diálogo de la mascota
     const core = pos("core")
     const b = L.bubble
-    const at = mode === "wide" ? { x: core.x + L.core.w * 0.12, y: core.y - L.core.h / 2 - b * 1.9 } : { x: core.x - 38, y: core.y - 14 }
+    const at = mode === "wide" ? { x: core.x + L.core.w * 0.12, y: core.y - L.core.h / 2 - b * 1.9 } : { x: core.x + L.core.w / 2 + 12, y: core.y }
     const bubbleG = el("g", { transform: `translate(${at.x} ${at.y})` }, svg)
     const bubble = el("g", { class: `bubble is-${mode}` }, bubbleG)
     const rect = el("rect", { x: 0, y: -b * 1.05, height: b * 2.1, rx: b * 1.05 }, bubble)
@@ -375,7 +373,6 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     done: boolean
     revealed: boolean
     byUser: boolean
-    trigger: Element | null
   }
   let session = newSession()
   let run: Run | null = null
@@ -383,11 +380,11 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
   const stepDuration = (s: Step) => {
     const c = s.context
     return Math.max(
-      4200,
-      ...s.messages.map((m) => (m.delay ?? 0) + TRAVEL + (m.blocked ? 2000 : 1300)),
-      ...(c?.add ?? []).map((a) => (a.delay ?? 0) + 1300),
-      c?.cache ? c.cache.delay + 1300 : 0,
-      c?.compact ? c.compact.delay + 2200 : 0,
+      MIN_STEP,
+      ...s.messages.map((m) => (m.delay ?? 0) + TRAVEL + (m.blocked ? 1400 : HOLD)),
+      ...(c?.add ?? []).map((a) => (a.delay ?? 0) + HOLD),
+      c?.cache ? c.cache.delay + HOLD : 0,
+      c?.compact ? c.compact.delay + 1200 : 0,
     )
   }
 
@@ -429,12 +426,12 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
   }
 
   const makePacket = (text: string) => {
-    const big = built.mode === "wide"
+    const f = layout[built.mode].packet
     const g = el("g", { class: "packet" }, built.packets)
-    const rect = el("rect", { rx: big ? 17 : 14, y: big ? -17 : -14, height: big ? 34 : 28 }, g)
-    const label = el("text", { "text-anchor": "middle", y: big ? 6 : 5 }, g) as SVGTextElement
+    const rect = el("rect", { rx: f, y: -f, height: f * 2 }, g)
+    const label = el("text", { "text-anchor": "middle", y: f * 0.35 }, g) as SVGTextElement
     label.textContent = text
-    sizeRect(rect, label, 26)
+    sizeRect(rect, label, f * 1.5)
     return { packet: g, label }
   }
 
@@ -445,24 +442,26 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     title: $("[data-step-title]"),
     text: $("[data-step-text]"),
   }
-  const statusBar = { text: $("[data-bar-text]"), dot: $("[data-bar-dot]") }
+  const term = $("[data-term]")
+  const transcript = $("[data-transcript]")
+  const thinking = $("[data-thinking]")
+  const think = { text: $("[data-think-text]"), sub: $("[data-think-sub]"), bar: $("[data-think-bar]") }
   const stepList = $<HTMLOListElement>("[data-steps]")
-  const consoleEl = $("[data-console]")
   const announcer = $("[data-announce]")
   const toggle = $<HTMLButtonElement>("[data-toggle]")
-  const runEl = $("[data-run]")
-  const chips = [...document.querySelectorAll<HTMLButtonElement>(".side [data-ask]")]
+  const chips = [...document.querySelectorAll<HTMLButtonElement>("[data-chips] [data-ask]")]
   const qa = (id: string) => $(`[data-qa="${id}"]`)
   let stepButtons: HTMLButtonElement[] = []
   let sayFull = ""
 
-  const setStatus = (r: Run, text: string, liveNow: boolean) => {
-    const status = $("[data-qa-status]", qa(r.prompt.id))
-    status.textContent = text
-    status.classList.toggle("is-live", liveNow)
-    statusBar.text.textContent = text
-    statusBar.dot.classList.toggle("is-live", liveNow)
+  // Mientras una pregunta propia se responde, las demás esperan
+  const setBusy = (busy: boolean) => {
+    term.classList.toggle("is-busy", busy)
+    for (const c of chips) c.setAttribute("aria-disabled", String(busy))
   }
+
+  const follow = (top: number) =>
+    transcript.scrollTo({ top, behavior: reduceMotion ? "auto" : "smooth" })
 
   const renderStepList = (r: Run) => {
     stepList.style.setProperty("--n", String(r.steps.length))
@@ -528,7 +527,10 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     caption.layer.textContent = s.layer ? `Capa: ${layerName[s.layer]}` : ""
     caption.title.textContent = s.title
     caption.text.textContent = s.text
-    if (!r.done) setStatus(r, `Paso ${index + 1} de ${r.steps.length} · ${s.title}`, true)
+    if (!r.revealed) {
+      think.text.textContent = `Paso ${index + 1} de ${r.steps.length} · ${s.title}`
+      think.sub.textContent = s.text
+    }
     stepButtons.forEach((b, k) => {
       if (k === index) b.setAttribute("aria-current", "step")
       else b.removeAttribute("aria-current")
@@ -558,7 +560,7 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
       if (blocked && !item.packet.classList.contains("is-blocked")) {
         item.packet.classList.add("is-blocked")
         item.label.textContent = m.blocked!
-        sizeRect(item.packet.querySelector("rect")!, item.label, 26)
+        sizeRect(item.packet.querySelector("rect")!, item.label, layout[built.mode].packet * 1.5)
         built.nodeEls[m.from].classList.add("is-alarmed")
       }
       item.signal.classList.toggle("is-on", moving && !blocked)
@@ -582,31 +584,88 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     renderContext(fold(r.base, r.steps, index, reduceMotion ? Infinity : elapsed))
     built.nodeEls.core.classList.toggle("is-busy", busy)
     if (!reduceMotion) built.bubble.text.textContent = sayFull.slice(0, Math.floor(elapsed / 38))
-    stepButtons[index]?.style.setProperty("--p", String(Math.min(1, elapsed / stepDuration(s))))
+    const dur = stepDuration(s)
+    stepButtons[index]?.style.setProperty("--p", String(Math.min(1, elapsed / dur)))
+    // Avance de toda la corrida para la barra de la consola
+    if (!r.revealed) {
+      const all = r.steps.map(stepDuration)
+      const done = all.slice(0, index).reduce((n, d) => n + d, 0) + Math.min(elapsed, dur)
+      think.bar.style.transform = `scaleX(${done / all.reduce((n, d) => n + d, 0)})`
+    }
   }
+
+  // ---------- Bloqueo de scroll mientras responde ----------
+  // La página no se mueve; la conversación sí puede desplazarse por dentro
+  let locked = false
+  let unlockTimer = 0
+  const insideTranscript = (e: Event) => transcript.contains(e.target as Node)
+  const stopScroll = (e: Event) => {
+    if (!insideTranscript(e)) e.preventDefault()
+  }
+  const lock = () => {
+    if (locked) return
+    locked = true
+    const html = document.documentElement
+    const gap = innerWidth - html.clientWidth
+    html.style.overflow = "hidden"
+    if (gap > 0) html.style.paddingRight = `${gap}px`
+    addEventListener("wheel", stopScroll, { passive: false })
+    addEventListener("touchmove", stopScroll, { passive: false })
+  }
+  const unlock = () => {
+    clearTimeout(unlockTimer)
+    if (!locked) return
+    locked = false
+    const html = document.documentElement
+    html.style.overflow = ""
+    html.style.paddingRight = ""
+    removeEventListener("wheel", stopScroll)
+    removeEventListener("touchmove", stopScroll)
+  }
+
+  // Solo se bloquea con la terminal entera a la vista
+  const fullyInView = () => {
+    const r = section.getBoundingClientRect()
+    return Math.abs(r.top) <= 2 && r.bottom <= innerHeight + 2
+  }
+
+  // Lleva la terminal a la vista: su borde superior con el de la ventana
+  const bringIntoView = () =>
+    new Promise<void>((resolve) => {
+      const top = section.getBoundingClientRect().top
+      if (Math.abs(top) <= 2) return resolve()
+      let done = false
+      const finish = () => {
+        if (done) return
+        done = true
+        removeEventListener("scrollend", finish)
+        // Si algo arriba cambió de alto durante el viaje, se corrige el último tramo
+        const off = section.getBoundingClientRect().top
+        if (Math.abs(off) > 2) scrollTo({ top: scrollY + off, behavior: "instant" })
+        resolve()
+      }
+      addEventListener("scrollend", finish)
+      setTimeout(finish, 1100)
+      scrollTo({ top: scrollY + top, behavior: reduceMotion ? "auto" : "smooth" })
+    })
 
   // ---------- Respuesta en la consola ----------
-  const inView = (node: Element, share = 0.25) => {
-    const r = node.getBoundingClientRect()
-    const seen = Math.min(r.bottom, innerHeight) - Math.max(r.top, 0)
-    return seen > Math.min(r.height, innerHeight) * share
-  }
-
   const reveal = (r: Run) => {
     if (r.revealed) return
     r.revealed = true
     const article = qa(r.prompt.id)
     const body = $("[data-qa-body]", article)
-    body.querySelectorAll<HTMLElement>(":scope > .resp > *, :scope > .qa-next").forEach((c, i) => c.style.setProperty("--i", String(i)))
+    const blocks = body.querySelectorAll<HTMLElement>(":scope > .resp > *")
+    blocks.forEach((c, i) => c.style.setProperty("--i", String(i)))
+    thinking.hidden = true
     body.classList.add("is-in")
     announcer.textContent = `Respuesta lista: ${r.prompt.label}`
-    // La respuesta ya está: la sesión queda al día aunque la placa salga de la vista
+    // La sesión queda al día aunque la placa siga terminando su último paso
     finishRun(r)
-    // Solo se mueve la página si quien preguntó sigue mirando la placa
-    if (r.byUser && inView(runEl, 0.2)) {
-      article.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" })
-    }
-    if (r.trigger && document.activeElement === r.trigger) $<HTMLElement>(".qa-q", article).focus({ preventScroll: true })
+    setBusy(false)
+    follow(article.offsetTop - 12)
+    // La página se libera cuando la respuesta terminó de aparecer
+    unlockTimer = window.setTimeout(unlock, reduceMotion ? 0 : 150 + blocks.length * 110 + 600)
   }
 
   const finishRun = (r: Run) => {
@@ -614,24 +673,42 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     session = commit(r.base, r.steps, { id: r.prompt.skill, tokens: r.prompt.skillTokens })
     r.done = true
     reveal(r)
-    setStatus(r, `Respondida en ${r.steps.length} pasos · skill «${r.prompt.skill}» · simulación`, false)
+    $("[data-qa-status]", qa(r.prompt.id)).textContent = `Respondida en ${r.steps.length} pasos · skill «${r.prompt.skill}» · simulación`
   }
 
-  const startRun = (p: Prompt, byUser: boolean, trigger: Element | null = null) => {
+  // Termina la corrida en el acto: la placa salta al último paso con todo contado
+  const skip = () => {
+    const r = run
+    if (!r || r.revealed) return
+    enter(r.steps.length - 1)
+    elapsed = stepDuration(r.steps[index])
+    draw()
+    stepButtons[index]?.classList.add("is-done")
+    atEnd = true
+    finishRun(r)
+    unlock()
+  }
+
+  const startRun = (p: Prompt, byUser: boolean) => {
     ensureBuilt()
     // Una pregunta nueva cierra la anterior de inmediato
-    if (run && !run.done) finishRun(run)
+    if (run && !run.revealed) skip()
     const base = session
     const steps = planRun(p, prompts.length, { ...totals(base.segs), cacheWritten: base.cacheWritten })
-    run = { prompt: p, steps, base, done: false, revealed: false, byUser, trigger }
+    run = { prompt: p, steps, base, done: false, revealed: false, byUser }
 
-    // Lo más reciente queda arriba, junto a la placa
+    // Lo más reciente va abajo, como en una terminal
     const article = qa(p.id)
     $("[data-qa-body]", article).classList.remove("is-in")
-    consoleEl.insertBefore(article, announcer.nextSibling)
+    $("[data-qa-status]", article).textContent = ""
+    transcript.insertBefore(article, thinking)
     article.classList.add("is-asked")
+    thinking.hidden = false
+    think.bar.style.transform = "scaleX(0)"
     announcer.textContent = `Preguntaste: ${p.label}`
     for (const c of chips) c.setAttribute("aria-pressed", String(c.dataset.ask === p.id))
+    if (byUser) setBusy(true)
+    follow(transcript.scrollHeight)
 
     renderStepList(run)
     booted = true
@@ -680,25 +757,33 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     kick()
   }
   toggle.addEventListener("click", () => setPaused(!userPaused))
+  $("[data-skip]").addEventListener("click", skip)
+  addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && run && !run.revealed) skip()
+  })
 
   stepList.addEventListener("click", (e) => {
     const b = (e.target as Element).closest<HTMLButtonElement>("[data-step]")
-    if (!b || !run) return
+    if (!b || !run || !run.revealed) return
     enter(Number(b.dataset.step))
     kick()
   })
 
-  // Preguntar desde un chip, el menú o un enlace: la placa se pone a la vista y arranca
-  const ask = (p: Prompt, trigger: Element | null) => {
-    if (!inView(runEl, 0.5)) runEl.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" })
+  // Preguntar desde un chip, el menú o un enlace: la terminal se pone a la vista,
+  // responde y la página espera quieta hasta que la respuesta aparece
+  const ask = async (p: Prompt) => {
+    if (run && run.byUser && !run.revealed) return
     started = true
-    startRun(p, true, trigger)
+    startRun(p, true)
+    if (reduceMotion) return bringIntoView()
+    await bringIntoView()
+    if (run && run.prompt === p && !run.revealed && fullyInView()) lock()
   }
 
-  section.addEventListener("click", (e) => {
+  term.addEventListener("click", (e) => {
     const b = (e.target as Element).closest<HTMLButtonElement>("[data-ask]")
-    if (!b) return
-    ask(prompts.find((p) => p.id === b.dataset.ask)!, b)
+    if (!b || b.getAttribute("aria-disabled") === "true") return
+    ask(prompts.find((p) => p.id === b.dataset.ask)!)
   })
 
   const fromHash = (hash: string) => prompts.find((p) => `#${p.anchor}` === hash)
@@ -708,14 +793,14 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     if (!p) return
     e.preventDefault()
     history.pushState(null, "", `#${p.anchor}`)
-    ask(p, null)
+    ask(p)
   })
   // Atrás, adelante o un ancla escrita a mano: se espera un cuadro para que el salto
   // del navegador al ancla no gane
   const onHash = () => {
     requestAnimationFrame(() => {
       const p = fromHash(location.hash)
-      if (p && !(run && run.prompt === p && !run.done)) ask(p, null)
+      if (p && !(run && run.prompt === p && !run.revealed)) ask(p)
     })
   }
   addEventListener("popstate", onHash)
@@ -735,31 +820,37 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
       if (entry.isIntersecting) ensureBuilt()
     },
     { rootMargin: "100% 0px" },
-  ).observe(board)
+  ).observe(term)
 
-  // La primera vez que la placa se ve, el harness responde solo «¿Quién es Juan Carlos?»
-  let started = false
-  const pending = fromHash(location.hash)
+  // La placa se anima solo mientras se ve
   new IntersectionObserver(
     ([entry]) => {
       visible = entry.isIntersecting
-      if (visible && !started) {
-        started = true
-        ensureBuilt()
-        board.classList.add("is-booted")
-        const first = pending ?? prompts[0]
-        if (reduceMotion) startRun(first, Boolean(pending))
-        else setTimeout(() => !run && startRun(first, Boolean(pending)), 1700)
-      }
+      if (visible) board.classList.add("is-booted")
       kick()
     },
     { threshold: 0.25 },
   ).observe(board)
 
-  // Si se llega con un ancla de respuesta, se va directo a la placa. Se espera a `load`
+  // La primera vez que la terminal llena casi toda la pantalla responde sola
+  // «¿Quién es Juan Carlos?», sin bloquear nada: quien va de paso sigue de largo
+  let started = false
+  new IntersectionObserver(
+    ([entry]) => {
+      if (!entry.isIntersecting || started) return
+      started = true
+      ensureBuilt()
+      setTimeout(() => !run && startRun(prompts[0], false), reduceMotion ? 0 : 600)
+    },
+    { threshold: 0.6 },
+  ).observe(term)
+
+  // Si se llega con un ancla de respuesta, se pregunta al cargar. Se espera a `load`
   // porque hasta entonces el navegador insiste en llevar la página al ancla.
+  const pending = fromHash(location.hash)
   if (pending) {
-    const go = () => runEl.scrollIntoView({ block: "start" })
+    started = true
+    const go = () => ask(pending)
     if (document.readyState === "complete") go()
     else addEventListener("load", () => requestAnimationFrame(go), { once: true })
   }
@@ -788,9 +879,9 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     --linea: rgb(236 237 239 / 0.13);
     --senal-texto: #ff7a45;
     position: relative;
-    padding-block: clamp(5rem, 12vw, 9rem);
+    padding-block: clamp(4rem, 10vw, 7rem);
     background:
-      radial-gradient(60rem 40rem at 50% 45%, rgb(255 91 31 / 0.14), transparent 70%),
+      radial-gradient(60rem 40rem at 35% 45%, rgb(255 91 31 / 0.14), transparent 70%),
       var(--fondo);
     color: var(--papel);
   }
@@ -808,12 +899,6 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     letter-spacing: -0.01em;
   }
 
-  .run {
-    display: grid;
-    gap: 1.5rem;
-    margin-top: clamp(2.5rem, 6vw, 4rem);
-  }
-
   /* ---------- Placa ---------- */
   .board {
     position: relative;
@@ -822,7 +907,7 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     background-size: 22px 22px;
     border: 1px solid var(--linea);
     border-radius: 16px;
-    padding: clamp(0.5rem, 2vw, 1.5rem);
+    padding: clamp(0.5rem, 1.2vw, 1rem);
     box-shadow: 0 40px 120px -40px rgb(255 91 31 / 0.35);
   }
 
@@ -854,14 +939,6 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     font-stretch: 80%;
     font-variant-numeric: tabular-nums;
     color: var(--senal);
-  }
-
-  .canvas :global(.board-svg) {
-    display: block;
-    width: 100%;
-    height: auto;
-    overflow: visible;
-    font-family: var(--texto);
   }
 
   .canvas :global(.trace) {
@@ -1077,7 +1154,7 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     transform-origin: left bottom;
   }
 
-  .canvas :global(.bubble.is-tall) {
+  .canvas :global(.bubble.is-mini) {
     transform-origin: left center;
   }
 
@@ -1334,58 +1411,100 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
   }
 
   :global(html.js) .qa:not(.is-asked),
-  :global(html.js) .qa-a:not(.is-in) {
+  :global(html.js) .qa-a:not(.is-in),
+  .thinking[hidden] {
     display: none;
   }
 
-  /* ---------- Preguntas ---------- */
-  .side {
+  .transcript {
     display: grid;
-    gap: 1.5rem;
     align-content: start;
+    gap: clamp(2rem, 5vw, 3.5rem);
   }
 
-  .ask-label {
+  .problem {
+    max-width: 36em;
+    margin-top: clamp(1rem, 2.5vw, 1.5rem);
+    font-size: var(--t1);
+    line-height: 1.4;
     color: var(--niebla);
-    font-size: var(--t-1);
   }
 
-  .chips {
+  /* ---------- Terminal: ocupa la pantalla, la placa a un lado y la consola al otro ---------- */
+  :global(html.js) .harness {
+    height: 100dvh;
+    min-height: 36rem;
+    padding-block: clamp(0.75rem, 2.2vh, 1.5rem);
+  }
+
+  :global(html.js) .term {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: clamp(1rem, 1.8vw, 1.5rem);
+    height: 100%;
+  }
+
+  .board-pane {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.6rem;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-height: 0;
   }
 
-  .chip {
-    padding: 0.5rem 0.95rem;
-    border: 1px solid var(--senal);
-    border-radius: 999px;
-    background: none;
-    color: var(--papel);
-    font: inherit;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    line-height: 1.25;
-    text-align: left;
-    cursor: pointer;
-    transition:
-      background-color 0.2s ease,
-      color 0.2s ease;
+  .board-pane .board {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
   }
 
-  .chip:hover,
-  .chip[aria-pressed="true"] {
-    background: var(--senal);
-    color: var(--sobre);
+  .canvas {
+    position: relative;
+    flex: 1;
+    min-height: 0;
   }
 
-  /* ---------- Narración ---------- */
+  .canvas :global(.board-svg) {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    font-family: var(--texto);
+  }
+
+  .below {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  /* En la terminal el tablero gana alto: contadores y leyenda más compactos */
+  :global(html.js) .hud {
+    gap: 0.1rem 1.1rem;
+    padding-bottom: 0.5rem;
+  }
+
+  :global(html.js) .hud dt {
+    font-size: 0.75rem;
+  }
+
+  :global(html.js) .hud dd {
+    font-size: 1.2rem;
+  }
+
+  :global(html.js) .gauge-legend {
+    gap: 0.1rem 0.8rem;
+    min-height: 0;
+    font-size: 0.75rem;
+  }
+
   .caption-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem 1rem;
+    gap: 0.25rem 1rem;
     color: var(--niebla);
+    font-size: var(--t-1);
     font-variant-numeric: tabular-nums;
   }
 
@@ -1394,34 +1513,36 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
   }
 
   .caption-title {
-    margin-top: 0.4rem;
+    margin-top: 0.2rem;
     font-family: var(--display);
-    font-size: var(--t2);
+    font-size: var(--t1);
     font-weight: 800;
     font-stretch: 85%;
-    line-height: 1;
-    text-wrap: balance;
+    line-height: 1.05;
   }
 
   .caption-text {
-    margin-top: 0.6rem;
-    line-height: 1.45;
+    margin-top: 0.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    color: var(--niebla);
   }
 
   .controls {
     display: flex;
-    align-items: start;
-    gap: 1.25rem;
+    align-items: center;
+    gap: 1rem;
   }
 
   .toggle {
     flex: none;
-    padding: 0.5rem 1.1rem;
+    padding: 0.35rem 0.95rem;
     border: 1px solid var(--senal);
     border-radius: 999px;
     background: none;
     color: var(--senal-texto);
     font: inherit;
+    font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
   }
@@ -1436,27 +1557,26 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     flex: 1;
     display: grid;
     grid-template-columns: repeat(var(--n, 6), minmax(0, 1fr));
-    gap: 0.4rem;
+    gap: 0.3rem;
   }
 
   .steps :global(button) {
+    display: block;
     width: 100%;
-    padding: 0.45rem 0 0;
+    padding: 0.5rem 0;
     border: 0;
     background: none;
-    color: var(--niebla);
-    font: inherit;
-    font-size: 0.8125rem;
-    line-height: 1.25;
-    text-align: left;
     cursor: pointer;
+  }
+
+  .steps :global(.steps-title) {
+    display: none;
   }
 
   .steps :global(.steps-bar) {
     position: relative;
     display: block;
     height: 4px;
-    margin-bottom: 0.5rem;
     background: var(--linea);
     overflow: hidden;
   }
@@ -1475,63 +1595,83 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     opacity: 0.45;
   }
 
-  .steps :global([aria-current="step"]),
-  .steps :global(button:hover) {
-    color: var(--papel);
+  .steps :global(button:hover .steps-bar),
+  .steps :global([aria-current="step"] .steps-bar) {
+    background: rgb(236 237 239 / 0.3);
   }
 
-  .status-bar {
-    display: none;
+  /* ---------- Consola ---------- */
+  :global(html.js) .console {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border: 1px solid var(--linea);
+    border-radius: 16px;
+    background: var(--hondo);
+    overflow: hidden;
   }
 
-  .dot {
-    flex: none;
-    width: 0.55rem;
-    height: 0.55rem;
-    border-radius: 50%;
-    background: var(--niebla);
-  }
-
-  .dot.is-live,
-  .qa-status.is-live::before {
-    background: var(--senal);
-    animation: blinkdot 1s ease-in-out infinite;
-  }
-
-  @keyframes blinkdot {
-    50% {
-      opacity: 0.3;
-    }
-  }
-
-  /* ---------- Subtítulo ---------- */
-  .problem {
-    max-width: 36em;
-    margin-top: clamp(1.25rem, 2.5vw, 1.75rem);
-    font-size: var(--t1);
-    line-height: 1.4;
+  .titlebar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.9rem;
+    border-bottom: 1px solid var(--linea);
     color: var(--niebla);
+    font-size: var(--t-1);
+    font-variant-numeric: tabular-nums;
   }
 
-  /* ---------- Consola: pregunta, estado y respuesta ---------- */
-  .console {
-    display: grid;
-    gap: clamp(2.5rem, 6vw, 4rem);
-    margin-top: clamp(2.5rem, 6vw, 4rem);
+  .lights {
+    display: flex;
+    gap: 0.35rem;
+  }
+
+  .lights i {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    background: rgb(236 237 239 / 0.18);
+  }
+
+  .lights i:first-child {
+    background: var(--senal);
+  }
+
+  /* La conversación se desplaza por dentro, sin arrastrar la página */
+  :global(html.js) .transcript {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    gap: 1.5rem;
+    padding: 1.25rem clamp(0.9rem, 1.5vw, 1.25rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(236 237 239 / 0.2) transparent;
+  }
+
+  :global(html.js) .motd h2 {
+    font-size: clamp(2rem, 3.4vw, 3.25rem);
+    line-height: 0.92;
+  }
+
+  :global(html.js) .problem {
+    margin-top: 0.75rem;
+    font-size: var(--t0);
   }
 
   .qa {
     display: grid;
-    gap: 0.75rem;
-    scroll-margin-top: 1rem;
+    gap: 0.6rem;
   }
 
   /* La pregunta va como el mensaje de quien escribe, a la derecha */
   .qa-q {
     justify-self: end;
-    max-width: min(32rem, 100%);
-    padding: 0.65rem 1.1rem;
-    border-radius: 18px 18px 4px 18px;
+    max-width: min(30rem, 92%);
+    padding: 0.55rem 1rem;
+    border-radius: 16px 16px 4px 16px;
     background: var(--senal);
     color: var(--sobre);
     font-size: var(--t1);
@@ -1540,34 +1680,18 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     line-height: 1.15;
   }
 
-  .qa-q:focus {
-    outline: none;
-  }
-
-  .qa-q:focus-visible {
-    outline: 3px solid var(--papel);
-  }
-
   .qa-status {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-height: 1.5rem;
     color: var(--niebla);
     font-size: var(--t-1);
     font-variant-numeric: tabular-nums;
   }
 
-  .qa-status::before {
-    content: "";
-    flex: none;
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 50%;
-    background: var(--niebla);
+  .qa-status:empty {
+    display: none;
   }
 
-  /* La respuesta es una hoja clara dentro de la banda: el CV con sus colores de siempre */
+  /* La respuesta es una hoja clara dentro de la banda: el CV con sus colores de siempre.
+     Es contenedor: cada respuesta se acomoda al ancho de la consola, no al de la ventana. */
   .qa-a {
     --fondo: #ecedef;
     --hondo: #f8f8f9;
@@ -1575,10 +1699,20 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     --niebla: #5e626d;
     --senal-texto: #c2410c;
     --linea: rgb(21 22 26 / 0.14);
+    container-type: inline-size;
     padding: clamp(1.25rem, 4vw, 3rem);
     border-radius: 18px;
     background: var(--fondo);
     color: var(--papel);
+  }
+
+  :global(html.js) .qa-a {
+    --t1: 1.125rem;
+    --t2: 1.4rem;
+    --t3: 1.75rem;
+    padding: clamp(1rem, 2.5cqi, 1.5rem);
+    border-radius: 14px;
+    font-size: 0.9375rem;
   }
 
   .qa-a ::selection {
@@ -1587,12 +1721,11 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
   }
 
   .qa-a.is-in {
-    animation: sheet 0.5s ease both;
+    animation: sheet 0.4s ease both;
   }
 
-  .qa-a.is-in :global(.resp > *),
-  .qa-a.is-in .qa-next {
-    animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.1, 1) both;
+  .qa-a.is-in :global(.resp > *) {
+    animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.1, 1) both;
     animation-delay: calc(var(--i, 0) * 110ms + 150ms);
   }
 
@@ -1605,119 +1738,284 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
   @keyframes rise {
     from {
       opacity: 0;
-      transform: translateY(14px);
+      transform: translateY(12px);
     }
   }
 
-  .qa-next {
-    margin-top: clamp(2rem, 5vw, 3rem);
-    padding-top: 1.25rem;
+  /* Mientras responde: puntos, el paso en curso y el avance de toda la corrida */
+  .thinking {
+    display: grid;
+    gap: 0.45rem;
+    padding: 0.9rem 1rem 1rem;
+    border: 1px dashed rgb(255 91 31 / 0.5);
+    border-radius: 12px;
+  }
+
+  .think-line {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 600;
+  }
+
+  .think-dots {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .think-dots i {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: var(--senal);
+    animation: dot 1s ease-in-out infinite;
+  }
+
+  .think-dots i:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+
+  .think-dots i:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  @keyframes dot {
+    50% {
+      opacity: 0.25;
+      transform: translateY(-3px);
+    }
+  }
+
+  .think-sub {
+    color: var(--niebla);
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  .think-bar {
+    height: 3px;
+    border-radius: 999px;
+    background: var(--linea);
+    overflow: hidden;
+  }
+
+  .think-bar span {
+    display: block;
+    height: 100%;
+    background: var(--senal);
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+
+  .skip {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.2rem;
+    padding: 0.35rem 0.85rem;
+    border: 1px solid var(--linea);
+    border-radius: 999px;
+    background: none;
+    color: var(--papel);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .skip:hover {
+    border-color: var(--senal);
+  }
+
+  .skip kbd {
+    padding: 0 0.35rem;
+    border: 1px solid var(--linea);
+    border-radius: 4px;
+    font: inherit;
+    font-size: 0.75rem;
+    color: var(--niebla);
+  }
+
+  /* ---------- La entrada: las preguntas, abajo como el prompt de una terminal ---------- */
+  .input {
+    padding: 0.7rem 0.9rem 0.85rem;
     border-top: 1px solid var(--linea);
   }
 
-  .qa-next p {
+  .input-label {
     color: var(--niebla);
     font-size: var(--t-1);
   }
 
-  .qa-next ul {
+  .chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.6rem;
+    gap: 0.4rem;
+    margin-top: 0.45rem;
   }
 
-  @media (min-width: 72rem) {
-    .run {
-      grid-template-columns: minmax(0, 8fr) minmax(0, 3.6fr);
-      gap: 1.5rem 2.5rem;
-      align-items: start;
-    }
-
-    .controls {
-      flex-direction: column;
-    }
-
-    .steps {
-      width: 100%;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 0;
-    }
-
-    .steps :global(button) {
-      display: grid;
-      grid-template-columns: 4px 1fr;
-      gap: 0.75rem;
-      padding: 0;
-    }
-
-    .steps :global(.steps-bar) {
-      height: auto;
-      min-height: 1.75rem;
-      margin: 0;
-    }
-
-    .steps :global(.steps-bar::after) {
-      transform-origin: top;
-      transform: scaleY(var(--p, 0));
-    }
-
-    .steps :global(.is-done .steps-bar::after) {
-      transform: scaleY(1);
-    }
-
-    .steps :global(.steps-title) {
-      align-self: center;
-      padding-block: 0.25rem;
-      font-size: 0.875rem;
-    }
+  .chip {
+    padding: 0.4rem 0.85rem;
+    border: 1px solid var(--senal);
+    border-radius: 999px;
+    background: none;
+    color: var(--papel);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      opacity 0.2s ease;
   }
 
-  @media (max-width: 52rem) {
-    .controls {
-      flex-direction: column;
-    }
+  .chip:hover,
+  .chip[aria-pressed="true"] {
+    background: var(--senal);
+    color: var(--sobre);
+  }
 
-    .steps {
-      width: 100%;
-    }
+  .chip[aria-disabled="true"] {
+    opacity: 0.35;
+    cursor: progress;
+  }
 
-    .steps :global(.steps-title) {
+  .chip[aria-disabled="true"]:hover {
+    background: none;
+    color: var(--papel);
+  }
+
+  /* Pantallas bajas: la leyenda de la ventana se esconde para dejarle alto a la placa */
+  @media (max-height: 50rem) {
+    .gauge-legend {
       display: none;
     }
   }
 
-  /* En móvil el estado del paso queda pegado abajo mientras la placa está a la vista */
-  @media (max-width: 40rem) {
-    .status-bar {
-      position: sticky;
-      bottom: 0;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      margin-inline: calc(var(--gutter) * -1);
-      padding: 0.75rem var(--gutter);
-      background: var(--hondo);
-      border-top: 2px solid var(--senal);
-      font-size: 0.9375rem;
-      font-weight: 600;
+  @media (max-width: 64rem) {
+    :global(html.js) .term {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     }
 
-    .caption-title {
-      font-size: var(--t1);
+    .caption-text {
+      display: none;
+    }
+  }
+
+  /* Móvil: la placa compacta arriba y la consola llena el resto */
+  @media (max-width: 40rem) {
+    :global(html.js) .harness {
+      min-height: 32rem;
+      padding: 0.5rem 0;
+    }
+
+    :global(html.js) .term {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 0.5rem;
+      padding-inline: 0.5rem;
+    }
+
+    .board-pane .board {
+      flex: none;
+      padding: 0.35rem 0.4rem 0.5rem;
+      border-radius: 12px;
+    }
+
+    .canvas {
+      flex: none;
+      aspect-ratio: 400 / 292;
     }
 
     .hud {
-      gap: 0.25rem 1rem;
+      gap: 0 0.9rem;
+      padding: 0.1rem 0.3rem 0.35rem;
+      margin-bottom: 0.25rem;
     }
 
-    .gauge-legend {
-      min-height: 4.4rem;
+    .hud dt {
+      font-size: 0.6875rem;
     }
 
-    .chip {
-      font-size: 0.875rem;
+    .hud dd {
+      font-size: var(--t0);
+    }
+
+    .gauge {
+      margin-top: 0.25rem;
+      padding: 0.4rem 0.3rem 0;
+    }
+
+    .gauge-legend,
+    .gauge-tag,
+    .below {
+      display: none;
+    }
+
+    .gauge-head {
+      font-size: 0.6875rem;
+    }
+
+    .gauge-title {
+      font-size: 0.8125rem;
+    }
+
+    .gauge-track {
+      margin-top: 0.3rem;
+      padding-bottom: 1.1rem;
+    }
+
+    .gauge-bar {
+      height: 10px;
+    }
+
+    .gauge-cache {
+      top: 13px;
+    }
+
+    .gauge-cache span {
+      font-size: 0.6875rem;
+    }
+
+    .titlebar {
+      padding: 0.4rem 0.75rem;
+    }
+
+    :global(html.js) .transcript {
+      padding: 0.9rem 0.75rem;
+    }
+
+    :global(html.js) .motd h2 {
+      font-size: 1.75rem;
+    }
+
+    .qa-q {
+      font-size: 1.05rem;
+    }
+
+    /* Las preguntas en una sola fila que se desliza */
+    .input {
+      padding: 0.5rem 0 0.6rem;
+    }
+
+    .input-label {
+      padding-inline: 0.75rem;
+    }
+
+    .chips {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-inline: 0.75rem;
+      scrollbar-width: none;
+      overscroll-behavior-x: contain;
+    }
+
+    .chips li {
+      flex: none;
     }
   }
 
@@ -1725,14 +2023,10 @@ const windowK = `${CONTEXT_WINDOW / 1000}k`
     .canvas :global(*),
     .gauge :global(*),
     .qa-a,
-    .qa-a :global(*) {
+    .qa-a :global(*),
+    .think-dots i {
       animation: none !important;
       transition: none !important;
-    }
-
-    .dot.is-live,
-    .qa-status.is-live::before {
-      animation: none;
     }
 
     .is-booted .canvas :global(.bubble.is-in) {

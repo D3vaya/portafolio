@@ -40,7 +40,7 @@ const current = work.filter((job) => !job.endDate)
   .about {
     display: grid;
     grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
-    gap: clamp(1.5rem, 5vw, 4rem);
+    gap: clamp(1.5rem, 5cqi, 4rem);
     align-items: start;
   }
 
@@ -100,13 +100,13 @@ const current = work.filter((job) => !job.endDate)
     margin-top: 0.25rem;
   }
 
-  @media (max-width: 52rem) {
+  @container (max-width: 52rem) {
     .about {
       grid-template-columns: minmax(0, 1fr);
     }
 
     .portrait {
-      max-width: 18rem;
+      max-width: 13rem;
     }
 
     .facts {
