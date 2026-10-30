@@ -39,8 +39,8 @@ const totalYears = yearsSince(byStart[0].startDate)
 <section class="wrap trace-section" id="trayectoria" aria-labelledby="trace-title">
   <h2 id="trace-title">Trayectoria</h2>
   <p class="intro">
-    {totalYears} años de trabajo leídos como una traza de rendimiento: cada barra es un rol y su largo es el tiempo
-    que duró. Las barras apiladas son etapas que corrieron en paralelo, y las rayadas siguen corriendo. Elige una para ver el detalle.
+    {totalYears} años de trabajo como una traza de rendimiento: cada barra es un rol y su largo, lo que duró. Las
+    rayadas siguen en curso. Elige una para ver el detalle.
   </p>
 
   <ul class="companies" aria-label="Empresas, de la más reciente a la más antigua">
@@ -166,6 +166,63 @@ const totalYears = yearsSince(byStart[0].startDate)
         </div>
       ))
     }
+  </div>
+
+  <!-- En móvil la traza se vuelve una línea de tiempo en acordeón: el detalle se abre donde se toca -->
+  <ol class="timeline" aria-label="Trayectoria, de lo más reciente a lo más antiguo">
+    {
+      [...jobs].sort((a, b) => b.from - a.from).map((job) => (
+        <li>
+          <details class="tl" open={job === selected}>
+            <summary>
+              <span class="logo tl-logo">
+                {job.image ? <img src={job.image} alt="" width="48" height="48" loading="lazy" /> : initials(job.name)}
+              </span>
+              <span class="tl-text">
+                <span class="tl-name">{shortName(job.name)}</span>
+                <span class="tl-role">{job.position}</span>
+                <span class="tl-years">
+                  {`${job.startDate.slice(0, 4)} a ${job.endDate ? job.endDate.slice(0, 4) : "hoy"}, ${duration(job.startDate, job.endDate)}`}
+                </span>
+              </span>
+              <span class="tl-track" aria-hidden="true">
+                <span class:list={["tl-bar", { "is-running": !job.endDate }]} style={pos(job.from, job.to)} />
+              </span>
+            </summary>
+            <div class="tl-body">
+              <p>{job.summary}</p>
+              <ul class="job-list">
+                {job.highlights.map((h) => (
+                  <li>{h}</li>
+                ))}
+              </ul>
+              {job.stack.length > 0 && (
+                <ul class="job-stack">
+                  {job.stack.map((s) => (
+                    <li>{s}</li>
+                  ))}
+                </ul>
+              )}
+              {job.url && <a class="tl-link" href={job.url}>Visitar {shortName(job.name)}</a>}
+            </div>
+          </details>
+        </li>
+      ))
+    }
+  </ol>
+
+  <div class="tl-studies">
+    <h3>Estudios</h3>
+    <ul>
+      {
+        [...studies].sort((a, b) => b.from - a.from).map((s) => (
+          <li>
+            <span class="tl-study-name">{s.area}</span>
+            <span class="tl-years">{`${s.institution}, ${s.startDate.slice(0, 4)} a ${s.endDate.slice(0, 4)}`}</span>
+          </li>
+        ))
+      }
+    </ul>
   </div>
 </section>
 
@@ -719,6 +776,186 @@ const totalYears = yearsSince(byStart[0].startDate)
 
     .job-facts {
       grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  /* ---------- Línea de tiempo móvil ---------- */
+  .timeline,
+  .tl-studies {
+    display: none;
+  }
+
+  @media (max-width: 52rem) {
+    .companies,
+    .trace,
+    .details {
+      display: none;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 0.6rem;
+      margin-top: 2rem;
+    }
+
+    .tl {
+      border: 1px solid var(--linea);
+      border-radius: 14px;
+      background: var(--hondo);
+      overflow: hidden;
+    }
+
+    .tl[open] {
+      border-color: var(--senal);
+      box-shadow: inset 0 0 0 1px var(--senal);
+    }
+
+    .tl summary {
+      display: grid;
+      grid-template-columns: 3rem minmax(0, 1fr) 1.25rem;
+      gap: 0.4rem 0.85rem;
+      align-items: center;
+      padding: 0.85rem 0.9rem 0.8rem;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .tl summary::-webkit-details-marker {
+      display: none;
+    }
+
+    /* Indicador de abrir y cerrar */
+    .tl summary::after {
+      content: "";
+      grid-column: 3;
+      grid-row: 1;
+      width: 0.6rem;
+      height: 0.6rem;
+      justify-self: center;
+      border-right: 2px solid var(--niebla);
+      border-bottom: 2px solid var(--niebla);
+      transform: rotate(45deg) translateY(-2px);
+      transition: transform 0.2s ease;
+    }
+
+    .tl[open] summary::after {
+      transform: rotate(225deg) translateY(-2px);
+      border-color: var(--senal);
+    }
+
+    .tl-logo {
+      width: 3rem;
+      height: 3rem;
+      padding: 3px;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+
+    .tl-text {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .tl-name {
+      font-family: var(--display);
+      font-size: var(--t1);
+      font-weight: 800;
+      font-stretch: 80%;
+      line-height: 1.05;
+    }
+
+    .tl-role {
+      font-size: 0.9375rem;
+      line-height: 1.3;
+    }
+
+    .tl-years {
+      color: var(--niebla);
+      font-size: var(--t-1);
+    }
+
+    /* Mini traza: dónde cae el rol dentro de toda la carrera */
+    .tl-track {
+      grid-column: 1 / -1;
+      position: relative;
+      height: 6px;
+      margin-top: 0.35rem;
+      border-radius: 999px;
+      background: var(--linea);
+    }
+
+    .tl-bar {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: calc(var(--s) * 100%);
+      width: max(6px, calc(var(--l) * 100%));
+      border-radius: inherit;
+      background: var(--papel);
+    }
+
+    .tl[open] .tl-bar {
+      background: var(--senal);
+    }
+
+    .tl-bar.is-running {
+      background-image: repeating-linear-gradient(-45deg, transparent 0 3px, rgb(255 255 255 / 0.45) 3px 6px);
+    }
+
+    .tl-body {
+      padding: 0 0.9rem 1.1rem;
+    }
+
+    .tl-body > p {
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--linea);
+    }
+
+    .tl-body .job-list {
+      margin-top: 0.9rem;
+    }
+
+    .tl-body .job-stack {
+      margin-top: 0.9rem;
+    }
+
+    .tl-link {
+      display: inline-block;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+
+    .tl-studies {
+      display: block;
+      margin-top: 2.5rem;
+    }
+
+    .tl-studies h3 {
+      font-size: var(--t2);
+      font-stretch: 85%;
+    }
+
+    .tl-studies ul {
+      margin-top: 0.75rem;
+    }
+
+    .tl-studies li {
+      display: flex;
+      flex-direction: column;
+      padding: 0.75rem 0;
+      border-top: 1px solid var(--linea);
+    }
+
+    .tl-study-name {
+      font-family: var(--display);
+      font-weight: 750;
+      font-stretch: 82%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tl summary::after {
+      transition: none;
     }
   }
 </style>

@@ -6,7 +6,7 @@
     "email": "j.ayala.higuera@gmail.com",
     "phone": "+569 35222613",
     "url": "https://www.linkedin.com/in/juan-carlos-ayala-higuera-50520a62/",
-    "summary": "Ingeniero de software con más de 12 años llevando productos a producción y hoy especializado en IA aplicada: diseño los harnesses que vuelven confiables a los agentes, con contexto, herramientas, memoria, control y evaluación alrededor del modelo. Soy líder de desarrollo en Porteria, donde trabajo en frontend y backend y asesoro a la empresa en decisiones técnicas y de producto, y mantengo por iniciativa propia productos como Monoke y Carcassonne Latam, construidos con flujos de desarrollo asistidos por agentes. Vengo del frontend de alto tráfico en fintech, telco, e-commerce y gaming regulado, y sigo midiendo todo: rendimiento, costo y calidad de cada respuesta.",
+    "summary": "Ingeniero de software con más de 12 años llevando productos a producción. Vengo del frontend de alto tráfico y de liderar equipos; hoy me enfoco en IA aplicada: diseño lo que rodea al modelo (contexto, herramientas, memoria, control y evaluación) para que un agente sea confiable. Soy líder de desarrollo en Porteria, donde trabajo en frontend y backend y asesoro a la empresa en decisiones técnicas y de producto. Por mi cuenta construyo y mantengo Monoke y Carcassonne Latam con desarrollo asistido por agentes. Mido lo que construyo: rendimiento, costo y calidad.",
     "location": {
       "address": "Santa amalia #3544, depto 824.",
       "postalCode": "",
@@ -47,7 +47,7 @@
       "url": "https://porteria.com/",
       "startDate": "2025-10-01",
       "endDate": null,
-      "summary": "En Porteria, empresa chilena de control de accesos potenciado por IA, lidero el desarrollo de sus productos. Trabajo en frontend, backend y en la integración de IA en la operación diaria de las porterías, y asesoro a la empresa en decisiones técnicas y de producto. La plataforma opera en más de 350 porterías, la usan más de 3.500 guardias y ya registra más de 6 millones de controles de acceso.",
+      "summary": "En Porteria, empresa chilena de control de accesos con IA, lidero el desarrollo de sus productos. Trabajo en frontend, backend y en la integración de IA en la operación diaria de las porterías, y asesoro a la empresa en decisiones técnicas y de producto.",
       "highlights": [
         "Lidero el desarrollo de Porteria Empresas y Porteria Home",
         "Frontend, backend e IA en la operación: alertas inteligentes y un chat para crear KPIs propios",
@@ -67,10 +67,10 @@
       "url": "https://juegalo.com",
       "startDate": "2025-04-01",
       "endDate": null,
-      "summary": "En Juegalo.com, plataforma de casino online operando en mercados altamente regulados, lidero el desarrollo frontend de nuevas funcionalidades de juego y flujos críticos para el negocio. Utilizo Next.js y Google Cloud Platform (GCP) para construir experiencias rápidas, seguras y confiables. Mi rol implica trabajar codo a codo con diseño, producto y backend, asegurando calidad técnica, performance y disponibilidad continua en una plataforma que atiende miles de sesiones simultáneas.",
+      "summary": "En Juegalo.com, plataforma de casino online operando en mercados altamente regulados, lidero el desarrollo frontend de nuevas funcionalidades de juego y flujos críticos para el negocio. Uso Next.js y Google Cloud Platform (GCP). Mi rol implica trabajar codo a codo con diseño, producto y backend, cuidando calidad técnica, performance y disponibilidad en una plataforma con miles de sesiones simultáneas.",
       "highlights": [
         "Liderazgo frontend en plataforma regulada de alto tráfico",
-        "Stack Next.js + GCP para experiencias serverless",
+        "Next.js sobre GCP con despliegue serverless",
         "Colaboración cross-funcional con diseño, producto y backend"
       ]
     },
@@ -108,11 +108,11 @@
       "url": "https://www.mercadolibre.cl/",
       "startDate": "2023-04-01",
       "endDate": "2024-03-01",
-      "summary": "Formé parte de un equipo senior encargado de construir y mantener microservicios de alto rendimiento usando Java, Spring Boot, Redis y la infraestructura interna Fury. Mi foco fue backend, orientado a disponibilidad, performance y escalabilidad de servicios críticos. Participé en la evolución de sistemas distribuidos en un entorno con altos volúmenes de tráfico y estándares de clase mundial.",
+      "summary": "Formé parte de un equipo senior encargado de construir y mantener microservicios de alto rendimiento usando Java, Spring Boot, Redis y la infraestructura interna Fury. Mi foco fue backend, orientado a disponibilidad, performance y escalabilidad de servicios críticos. Participé en la evolución de sistemas distribuidos en un entorno con altos volúmenes de tráfico.",
       "highlights": [
         "Microservicios con Java + Spring Boot + Redis",
         "Sistemas distribuidos de alta disponibilidad",
-        "Estándares de clase mundial en plataforma Fury"
+        "Servicios sobre Fury, la plataforma interna de Mercado Libre"
       ]
     },
     {
@@ -151,7 +151,7 @@
       "url": "https://zentagroup.com/",
       "startDate": "2017-03-01",
       "endDate": "2020-11-01",
-      "summary": "Como Tech Lead en ZentaGroup, coordiné equipos multidisciplinarios para construir productos desde cero para startups. Definí arquitecturas full stack usando React, Angular, Firebase, MongoDB, PostgreSQL, PHP, y gestioné entregas técnicas con foco en calidad, escalabilidad y time-to-market. Fomenté un entorno de aprendizaje, capacitando a perfiles junior e integrando buenas prácticas desde el inicio.",
+      "summary": "Como Tech Lead en Zenta Group, coordiné equipos multidisciplinarios para construir productos desde cero para startups. Definí arquitecturas full stack usando React, Angular, Firebase, MongoDB, PostgreSQL, PHP, y gestioné entregas técnicas con foco en calidad, escalabilidad y time-to-market. Fomenté un entorno de aprendizaje, capacitando a perfiles junior e integrando buenas prácticas desde el inicio.",
       "highlights": [
         "Arquitectura full stack para productos desde cero",
         "Liderazgo de equipos multidisciplinarios",

@@ -8,7 +8,7 @@ export const layers = [
     practice: [
       "Conjuntos de casos con criterios de éxito explícitos",
       "Trazas paso a paso para encontrar dónde se equivocó el agente",
-      "En Carcassonne Latam, el Bot IA se mide partida a partida contra jugadores reales",
+      "En Carcassonne Latam, el Bot IA se evalúa en partidas completas",
     ],
   },
   {
@@ -68,8 +68,8 @@ export const layers = [
   {
     id: "modelo",
     name: "Modelo",
-    lead: "El motor. Potente, pero solo no termina nada.",
-    body: "Elegir modelo es la decisión más visible y la menos decisiva. Lo que separa una demo de un producto en producción es todo lo que lo rodea: eso es el harness.",
+    lead: "El motor. Por sí solo no termina nada.",
+    body: "Elegir modelo es la decisión más visible, pero no la única. Lo que separa una demo de un producto en producción es todo lo que lo rodea: eso es el harness.",
     practice: [
       "Modelo por tarea: razonamiento profundo donde importa, rapidez donde alcanza",
       "Costo por tarea medido, no estimado",
@@ -77,7 +77,7 @@ export const layers = [
   },
 ]
 
-// Una corrida real de punta a punta. Cada mensaje viaja por una pista
+// Una corrida ilustrativa, de la tarea a la entrega. Cada mensaje viaja por una pista
 // entre dos nodos del diagrama; `delay` y la duración están en ms.
 export type Message = { from: string; to: string; label: string; delay?: number; blocked?: boolean }
 export type Step = { title: string; say: string; text: string; layer?: string; active: string[]; messages: Message[] }
@@ -164,7 +164,7 @@ export const steps: Step[] = [
   {
     title: "Entrega con evidencia",
     say: "Listo, con evidencia",
-    text: "El resultado vuelve con pruebas: el pull request, los casos que pasaron y la captura. Así trabaja un agente en producción.",
+    text: "El resultado vuelve con pruebas: el pull request, los casos que pasaron y la captura. Así debería cerrar cualquier tarea de un agente.",
     active: ["core", "tarea"],
     messages: [{ from: "core", to: "tarea", label: "PR listo, 12 de 12" }],
   },

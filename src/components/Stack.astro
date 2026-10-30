@@ -21,16 +21,16 @@ const pillars: Pillar[] = [
     id: "frontend",
     kicker: `${yearsSince(firstJob.startDate)} años`,
     name: "Frontend",
-    claim: "Interfaces rápidas para productos con mucho tráfico, de la arquitectura al último píxel.",
+    claim: "Interfaces rápidas para productos con mucho tráfico, desde la arquitectura hasta el detalle visual.",
     lead: {
       name: "Next.js",
-      proof: "Mi base para productos en producción. En Juegalo.com y ETpay: renderizado en servidor, rutas API y despliegue serverless en GCP.",
+      proof: "Mi base para productos en producción. Lo uso hoy en Juegalo.com y lo usé en ETpay, ambos sobre GCP.",
     },
     items: [
       { name: "React", proof: "Desde 2017: el e-commerce de WOM, los flujos de pago de ETpay y productos desde cero en Zenta." },
-      { name: "TypeScript", proof: "Tipado de punta a punta en todo lo que construyo hoy." },
-      { name: "Performance web", proof: "Core Web Vitals como requisito. En WOM bajamos el LCP y subió la conversión; esta página se mide sola." },
-      { name: "Micro-frontends", proof: "Arquitectura modular en ETpay para que varios equipos publiquen sin pisarse." },
+      { name: "TypeScript", proof: "Mi lenguaje por defecto en todo lo que construyo hoy." },
+      { name: "Performance web", proof: "En WOM bajamos el LCP y subió la tasa de compra. Esta página muestra su propia medición más arriba." },
+      { name: "Micro-frontends", proof: "Arquitectura modular en ETpay para escalar el frontend de pagos." },
     ],
     toolbox: [
       {
@@ -59,14 +59,14 @@ const pillars: Pillar[] = [
     id: "ia",
     kicker: "Hoy",
     name: "IA y agentes",
-    claim: "Harnesses que llevan agentes de una demo a producción: contexto, herramientas, memoria, control y evaluación.",
+    claim: "Harnesses para que un agente funcione fuera de una demo.",
     lead: {
       name: "Claude Code",
-      proof: "Mi entorno de trabajo diario, configurado a fondo: skills, hooks, subagentes y memoria persistente entre sesiones.",
+      proof: "Mi entorno de trabajo diario, con skills, hooks, subagentes y memoria persistente configurados por mí.",
     },
     items: [
-      { name: "Model Context Protocol", proof: "Servidores MCP que conectan agentes con GitHub, navegadores y datos reales." },
-      { name: "Orquestación multi-agente", proof: "Subagentes en paralelo, cada uno en su worktree, con verificación cruzada." },
+      { name: "Model Context Protocol", proof: "Uso servidores MCP para conectar agentes con GitHub, el navegador y otros servicios." },
+      { name: "Orquestación multi-agente", proof: "Subagentes en paralelo y un verificador que revisa el trabajo de los demás." },
       { name: "IA en producto", proof: "Chat para crear KPIs y alertas inteligentes en Porteria; Bot IA rival en Carcassonne Latam." },
       { name: "Evals de agentes", proof: "Casos con criterio de éxito y trazas por paso para saber si un cambio mejora o empeora." },
     ],
@@ -106,7 +106,7 @@ const map = groups.map((g) => {
 
 <section class="wrap stack-section" id="stack" aria-labelledby="stack-title">
   <h2 id="stack-title">Stack</h2>
-  <p class="intro">Dos especialidades, cada una con dónde la usé. Debajo, todo lo demás que sé usar.</p>
+  <p class="intro">Dos especialidades, con dónde las apliqué y las herramientas que manejo en cada una. Debajo, el resto.</p>
 
   <div class="pillars">
     {
