@@ -1,8 +1,7 @@
 ---
-import "@fontsource-variable/anybody/wdth.css"
-import "@fontsource-variable/schibsted-grotesk/wght.css"
-import anybodyLatin from "@fontsource-variable/anybody/files/anybody-latin-wdth-normal.woff2?url"
-import schibstedLatin from "@fontsource-variable/schibsted-grotesk/files/schibsted-grotesk-latin-wght-normal.woff2?url"
+// Fuentes recortadas con scripts/subset-fonts.sh: solo los caracteres y rangos que usa el sitio
+import anybodyUrl from "@/assets/fonts/anybody.woff2?url"
+import schibstedUrl from "@/assets/fonts/schibsted.woff2?url"
 import { basics } from "@cv"
 
 interface Props {
@@ -24,9 +23,19 @@ const ogImage = `${siteUrl}${basics.image}`
     <meta name="description" content={description} />
     <meta name="theme-color" content="#ecedef" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="canonical" href={siteUrl} />
-    <link rel="preload" as="font" type="font/woff2" href={anybodyLatin} crossorigin />
-    <link rel="preload" as="font" type="font/woff2" href={schibstedLatin} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={anybodyUrl} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={schibstedUrl} crossorigin />
+    <style
+      is:inline
+      set:html={`
+        @font-face { font-family: "Anybody"; src: url(${anybodyUrl}) format("woff2"); font-weight: 500 900; font-stretch: 50% 150%; font-display: swap; }
+        @font-face { font-family: "Schibsted Grotesk"; src: url(${schibstedUrl}) format("woff2"); font-weight: 400 800; font-display: swap; }
+      `}
+    />
 
     <meta property="og:url" content={siteUrl} />
     <meta property="og:type" content="website" />
@@ -65,8 +74,8 @@ const ogImage = `${siteUrl}${basics.image}`
     /* Solo para la mascota de Claude Code */
     --claude: #d97757;
 
-    --display: "Anybody Variable", "Arial Narrow", sans-serif;
-    --texto: "Schibsted Grotesk Variable", system-ui, sans-serif;
+    --display: "Anybody", "Arial Narrow", sans-serif;
+    --texto: "Schibsted Grotesk", system-ui, sans-serif;
 
     /* Escala modular 1.333 */
     --t-1: 0.8125rem;
@@ -157,6 +166,13 @@ const ogImage = `${siteUrl}${basics.image}`
   ::selection {
     background: var(--senal);
     color: var(--sobre);
+  }
+
+  /* Las secciones bajo el pliegue se calculan recién cuando se acercan a la pantalla */
+  main > section:not(.hero, .measure),
+  .contact {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 1000px;
   }
 
   .wrap {

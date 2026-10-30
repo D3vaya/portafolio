@@ -8,20 +8,6 @@ const academy = sorted.filter((c) => c.issuer.startsWith("Claude Academy"))
 const formatDate = (date: string) =>
   date ? new Date(`${date}T00:00:00`).toLocaleDateString("es-CL", { month: "short", year: "numeric" }) : "Sin fecha"
 
-const focus = [
-  {
-    name: "LLMs",
-    text: "Cómo razonan, cómo se les entrega contexto y cuánto cuesta cada respuesta: ventanas de contexto, caching y elección de modelo por tarea.",
-  },
-  {
-    name: "Harness engineering",
-    text: "Skills, hooks, subagentes, memoria y permisos: todo lo que convierte a un modelo en un agente en el que se puede confiar.",
-  },
-  {
-    name: "El entorno de IA",
-    text: "MCP, evals, orquestación multi-agente y SDKs de agentes, que pruebo en mis propios productos.",
-  },
-]
 ---
 
 <section class="wrap learning" id="aprendizaje" aria-labelledby="learning-title">
@@ -37,16 +23,6 @@ const focus = [
         </h3>
       </div>
     </div>
-    <dl class="focus">
-      {
-        focus.map((f) => (
-          <div>
-            <dt>{f.name}</dt>
-            <dd>{f.text}</dd>
-          </div>
-        ))
-      }
-    </dl>
     <div class="badges">
       <p class="base">Cursos de Anthropic sobre Claude Code, con credencial verificable:</p>
       <ul>
@@ -65,7 +41,6 @@ const focus = [
   </article>
 
   <h3 class="courses-title">Cursos y certificados</h3>
-  <p class="courses-intro">Cada una enlaza a su credencial verificable.</p>
   <ol class="list">
     {
       sorted.map((c) => (
@@ -134,30 +109,6 @@ const focus = [
     line-height: 1.05;
   }
 
-  .focus {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.5rem;
-    margin-top: clamp(1.75rem, 4vw, 2.5rem);
-  }
-
-  .focus div {
-    padding-top: 1rem;
-    border-top: 2px solid var(--senal);
-  }
-
-  .focus dt {
-    font-family: var(--display);
-    font-size: var(--t1);
-    font-weight: 750;
-    font-stretch: 82%;
-  }
-
-  .focus dd {
-    margin: 0.4rem 0 0;
-    color: var(--niebla);
-  }
-
   .badges {
     margin-top: 2rem;
   }
@@ -208,11 +159,6 @@ const focus = [
     font-stretch: 85%;
   }
 
-  .courses-intro {
-    margin-top: 0.5rem;
-    color: var(--niebla);
-  }
-
   .list {
     margin-top: 1.25rem;
     border-top: 1px solid var(--linea);
@@ -233,6 +179,12 @@ const focus = [
     font-variant-numeric: tabular-nums;
   }
 
+  /* Área de toque mínima de 24 px */
+  .course a {
+    display: inline-block;
+    padding-block: 2px;
+  }
+
   .course {
     font-family: var(--display);
     font-size: var(--t1);
@@ -246,10 +198,6 @@ const focus = [
   }
 
   @media (max-width: 52rem) {
-    .focus {
-      grid-template-columns: minmax(0, 1fr);
-    }
-
     .now-head {
       flex-direction: column;
       align-items: flex-start;

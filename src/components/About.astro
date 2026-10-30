@@ -6,7 +6,10 @@ const spoken = languages.map((l) => `${l.language === "Spanish" ? "Español" : l
 
 <section class="wrap about" id="sobre-mi" aria-labelledby="about-title">
   <figure class="portrait">
-    <img src={basics.image} alt={`Retrato de ${basics.name}`} width="800" height="800" loading="lazy" decoding="async" />
+    <picture>
+      <source srcset="/perfil2.webp" type="image/webp" />
+      <img src={basics.image} alt={`Retrato de ${basics.name}`} width="800" height="800" loading="lazy" decoding="async" />
+    </picture>
   </figure>
   <div class="body">
     <h2 id="about-title">Sobre mí</h2>
@@ -38,6 +41,10 @@ const spoken = languages.map((l) => `${l.language === "Spanish" ? "Español" : l
     aspect-ratio: 1;
     overflow: hidden;
     border-bottom: 6px solid var(--senal);
+  }
+
+  .portrait picture {
+    display: contents;
   }
 
   .portrait img {

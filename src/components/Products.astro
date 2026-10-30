@@ -7,8 +7,7 @@ const products = [
     image: "/images/productos/porteria.webp",
     role: "Head of Engineering, desde 2025",
     pitch:
-      "Control de accesos con IA para condominios, edificios y empresas en Chile. Reemplaza el cuaderno de la portería por una app agéntica para guardias, un panel con IA para administradores y lectura de QR, cédulas y patentes.",
-    mine: "Lidero el desarrollo de Porteria Empresas y Porteria Home, en frontend y backend, y asesoro a la empresa en decisiones técnicas y de producto.",
+      "Control de accesos con IA para condominios, edificios y empresas en Chile: app para guardias, panel con IA y lectura de QR, cédulas y patentes.",
     stats: [
       { value: "+350", label: "porterías activas" },
       { value: "+3.500", label: "guardias usando la app" },
@@ -23,26 +22,16 @@ const products = [
     image: "/images/productos/monoke.webp",
     role: "Proyecto propio",
     pitch:
-      "La ficha clínica universal de las mascotas de Chile. Un historial portable que cualquier clínica lee con un QR, pases de Apple Wallet y Google Wallet que se actualizan con cada vacuna y recordatorios automáticos antes de cada dosis.",
-    facts: [
-      "Fichas SOAP versionadas y recetas con QR verificable",
-      "API REST y webhooks firmados con HMAC-SHA256",
-      "Cada acceso a la ficha queda auditado; cumple las leyes 19.628 y 21.719 de datos personales",
-    ],
+      "La ficha clínica universal de las mascotas de Chile: se lee con un QR en cualquier clínica, vive en Apple y Google Wallet y avisa antes de cada vacuna.",
   },
   {
     name: "Carcassonne Latam",
     url: "https://carcassonne-latam.com/",
     domain: "carcassonne-latam.com",
     image: "/images/productos/carcassonne.webp",
-    role: "Proyecto propio, comunitario y sin fines de lucro",
+    role: "Proyecto propio, sin fines de lucro",
     pitch:
-      "Carcassonne online 1v1 con reloj para la comunidad latinoamericana, en español, con ranking, liga y torneos.",
-    facts: [
-      "Bot IA rival para practicar a cualquier hora",
-      "Jugadores de Chile y Argentina en el escalafón",
-      "Importación de partidas, guías por nivel y directorio de lugares para jugar en persona",
-    ],
+      "Carcassonne online 1v1 en español para Latinoamérica, con ranking, torneos y un rival de IA para practicar.",
   },
 ]
 ---
@@ -50,17 +39,14 @@ const products = [
 <section class="products" id="productos" aria-labelledby="products-title">
   <div class="wrap">
     <h2 id="products-title">En producción</h2>
-    <p class="intro">
-      Porteria es donde trabajo. Monoke y Carcassonne Latam los construyo y mantengo por mi cuenta, con desarrollo
-      asistido por agentes: yo defino y reviso; los agentes implementan, prueban y verifican en el navegador.
-    </p>
+    <p class="intro">Porteria es donde trabajo. Monoke y Carcassonne Latam los construyo por mi cuenta, con agentes.</p>
   </div>
 
   {
     products.map((p, i) => (
       <article class:list={["product wrap", { "is-lead": i === 0 }]} aria-labelledby={`product-${i}`}>
         <a class="shot" href={p.url} tabindex="-1" aria-hidden="true">
-          <img src={p.image} alt="" width="1440" height="900" loading="lazy" decoding="async" />
+          <img src={p.image} alt="" width="960" height="600" loading="lazy" decoding="async" />
         </a>
         <div class="copy">
           <p class="role">{p.role}</p>
@@ -68,14 +54,6 @@ const products = [
             <a href={p.url}>{p.name}</a>
           </h3>
           <p class="pitch">{p.pitch}</p>
-          {p.mine && <p class="mine">{p.mine}</p>}
-          {p.facts && (
-            <ul class="facts">
-              {p.facts.map((f) => (
-                <li>{f}</li>
-              ))}
-            </ul>
-          )}
           <a class="visit" href={p.url}>
             Visitar {p.domain}
           </a>
@@ -181,21 +159,6 @@ const products = [
     margin-top: 1.25rem;
     font-size: var(--t1);
     line-height: 1.4;
-  }
-
-  .mine {
-    margin-top: 1rem;
-    padding-left: 1rem;
-    border-left: 3px solid var(--senal);
-  }
-
-  .facts {
-    margin-top: 1.5rem;
-  }
-
-  .facts li {
-    padding: 0.5rem 0;
-    border-top: 1px solid var(--linea);
   }
 
   .visit {

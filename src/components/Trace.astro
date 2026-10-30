@@ -39,8 +39,7 @@ const totalYears = yearsSince(byStart[0].startDate)
 <section class="wrap trace-section" id="trayectoria" aria-labelledby="trace-title">
   <h2 id="trace-title">Trayectoria</h2>
   <p class="intro">
-    {totalYears} años de trabajo como una traza de rendimiento: cada barra es un rol y su largo, lo que duró. Las
-    rayadas siguen en curso. Elige una para ver el detalle.
+    {totalYears} años de trabajo. Cada barra es un rol y su largo, lo que duró. Elige una para ver el detalle.
   </p>
 
   <ul class="companies" aria-label="Empresas, de la más reciente a la más antigua">
@@ -142,7 +141,6 @@ const totalYears = yearsSince(byStart[0].startDate)
           </p>
           </div>
           </div>
-          <p class="job-summary">{job.summary}</p>
           <div class="job-facts">
             <div>
               <h4>Lo más relevante</h4>
@@ -190,7 +188,6 @@ const totalYears = yearsSince(byStart[0].startDate)
               </span>
             </summary>
             <div class="tl-body">
-              <p>{job.summary}</p>
               <ul class="job-list">
                 {job.highlights.map((h) => (
                   <li>{h}</li>
@@ -610,11 +607,6 @@ const totalYears = yearsSince(byStart[0].startDate)
     color: var(--niebla);
   }
 
-  .job-summary {
-    max-width: 40em;
-    margin-top: 1.5rem;
-  }
-
   .job-facts {
     display: grid;
     grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
@@ -906,13 +898,9 @@ const totalYears = yearsSince(byStart[0].startDate)
       padding: 0 0.9rem 1.1rem;
     }
 
-    .tl-body > p {
-      padding-top: 0.9rem;
-      border-top: 1px solid var(--linea);
-    }
-
     .tl-body .job-list {
-      margin-top: 0.9rem;
+      padding-top: 0.4rem;
+      border-top: 1px solid var(--linea);
     }
 
     .tl-body .job-stack {

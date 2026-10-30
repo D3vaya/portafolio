@@ -15,15 +15,14 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
       entero.
     </p>
     <p class="intro">
-      Casi nunca el problema es el modelo: es lo que lo rodea. El contexto que recibe, las herramientas que puede usar, los
-      controles que lo frenan y las pruebas que dicen si funcionó. A eso se le llama harness. Lo diseño, lo construyo y lo
-      dejo funcionando en tu equipo.
+      Casi nunca es el modelo: es lo que lo rodea. A eso se le llama harness, y es lo que diseño y dejo funcionando en tu
+      equipo.
     </p>
   </div>
 
   <div class="wrap">
     <h3 class="run-title">Así se ve un harness funcionando</h3>
-    <p class="run-note">El ejemplo usa Claude Code. El esquema es el mismo con otras herramientas.</p>
+    <p class="run-note">Simulación ilustrativa con Claude Code. El esquema es el mismo con otras herramientas.</p>
   </div>
 
   <div class="wrap run" data-run>
@@ -65,9 +64,6 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
 
   <div class="wrap">
     <h3 class="help-title" id="como-ayudo">Cómo te puedo ayudar</h3>
-    <p class="help-intro">
-      Tres formas concretas. Sirven como proyecto puntual y también describen lo que aportaría dentro de tu equipo.
-    </p>
 
     <div class="services">
       {
@@ -76,10 +72,6 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
             <h4 id={`svc-${svc.id}`}>{svc.name}</h4>
             <p class="service-when">{svc.when}</p>
             <dl class="service-detail">
-              <div>
-                <dt>Qué hago</dt>
-                <dd>{svc.what}</dd>
-              </div>
               <div>
                 <dt>Qué te llevas</dt>
                 <dd>{svc.get}</dd>
@@ -90,11 +82,6 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
                 <span>Con experiencia en</span> {svc.tools.join(", ")}
               </p>
             )}
-            <ul class="service-layers" aria-label="Capas del harness que cubre">
-              {svc.layers.map((id) => (
-                <li>{layerName[id]}</li>
-              ))}
-            </ul>
           </article>
         ))
       }
@@ -103,28 +90,16 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     <div class="faq">
       <h4>¿Y si mi equipo no usa Claude Code?</h4>
       <p>
-        No hace falta. El harness es una forma de trabajar, no un producto. Instrucciones del proyecto, permisos,
-        validaciones automáticas y sistemas conectados por MCP existen, con distintos nombres, en Claude Code, Cursor y
-        Kiro, que son las herramientas que he configurado; las evaluaciones se construyen aparte, sea cual sea la
-        herramienta. Si tu equipo usa otra, parto por entender cómo la usan y te digo con franqueza qué se puede lograr
-        con ella.
+        No hace falta: el harness es una forma de trabajar, no un producto. He configurado Claude Code, Cursor y Kiro; si
+        usan otra, parto por entender cómo la usan y te digo con franqueza qué se puede lograr.
       </p>
-    </div>
-
-    <div class="proof">
-      <p class="proof-title">Lo que lo respalda</p>
-      <ul>
-        <li>Soy Head of Engineering en Porteria, que usa IA en alertas y en un chat para crear KPIs.</li>
-        <li>Construyo y mantengo Monoke y Carcassonne Latam con desarrollo asistido por agentes.</li>
-      </ul>
     </div>
 
     <div class="cta">
       <a class="cta-button" href={mailto}>Conversemos sobre tu caso</a>
-      <p>Si buscas a alguien que lidere esto dentro de tu equipo, también escríbeme.</p>
+      <p>También si buscas a alguien que lo lidere dentro de tu equipo.</p>
     </div>
 
-    <p class="note">La corrida de arriba es una simulación ilustrativa de cómo trabajo, no una sesión grabada.</p>
   </div>
 
 </section>
@@ -506,6 +481,7 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
   toggle.addEventListener("click", () => setPaused(!userPaused))
   stepButtons.forEach((b, k) =>
     b.addEventListener("click", () => {
+      ensureBuilt()
       booted = true
       board.classList.add("is-booted")
       enter(k)
@@ -513,11 +489,29 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     }),
   )
 
+  // El diagrama se construye recién cuando la sección se acerca a la pantalla:
+  // medir el SVG al cargar la página retrasaba el primer pintado
+  let isBuilt = false
+  const ensureBuilt = () => {
+    if (isBuilt) return
+    isBuilt = true
+    built = build()
+    enter(0)
+  }
+
+  new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) ensureBuilt()
+    },
+    { rootMargin: "100% 0px" },
+  ).observe(board)
+
   let started = false
   new IntersectionObserver(
     ([entry]) => {
       visible = entry.isIntersecting
       if (visible && !started) {
+        ensureBuilt()
         started = true
         boot()
       }
@@ -526,11 +520,10 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     { threshold: 0.25 },
   ).observe(board)
 
-  built = build()
   setPaused(userPaused)
-  enter(0)
 
   compact.addEventListener("change", () => {
+    if (!isBuilt) return
     built = build()
     enter(index)
   })
@@ -1068,14 +1061,6 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     line-height: 0.95;
   }
 
-  .help-intro {
-    max-width: 38em;
-    margin-top: 1rem;
-    color: var(--niebla);
-    font-size: var(--t1);
-    line-height: 1.4;
-  }
-
   .services {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1111,10 +1096,6 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     margin-top: 1.25rem;
   }
 
-  .service-detail div + div {
-    margin-top: 1rem;
-  }
-
   .service-detail dt {
     font-family: var(--display);
     font-weight: 700;
@@ -1124,22 +1105,6 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
 
   .service-detail dd {
     margin: 0.25rem 0 0;
-  }
-
-  .service-layers {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    margin-top: auto;
-    padding-top: 1.25rem;
-  }
-
-  .service-layers li {
-    padding: 0.15rem 0.6rem;
-    border: 1px solid var(--linea);
-    border-radius: 999px;
-    color: var(--niebla);
-    font-size: var(--t-1);
   }
 
   .run-note {
@@ -1182,31 +1147,6 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     margin-top: 0.75rem;
   }
 
-  .proof {
-    margin-top: clamp(2.5rem, 5vw, 3.5rem);
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--linea);
-  }
-
-  .proof-title {
-    font-family: var(--display);
-    font-weight: 700;
-    font-stretch: 80%;
-    color: var(--niebla);
-  }
-
-  .proof ul {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem 2rem;
-    margin-top: 0.75rem;
-  }
-
-  .proof li {
-    padding-left: 1rem;
-    border-left: 2px solid var(--senal);
-  }
-
   .cta {
     display: flex;
     flex-wrap: wrap;
@@ -1242,16 +1182,9 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
   }
 
   @media (max-width: 64rem) {
-    .services,
-    .proof ul {
+    .services {
       grid-template-columns: minmax(0, 1fr);
     }
-  }
-
-  .note {
-    margin-top: 2rem;
-    color: var(--niebla);
-    font-size: var(--t-1);
   }
 
   /* En pantallas anchas la narración acompaña al tablero */

@@ -1,80 +1,12 @@
 // Capas de un harness, de la más externa a la más interna.
 export const layers = [
-  {
-    id: "evaluacion",
-    name: "Evaluación",
-    lead: "Cómo sé que mejoró.",
-    body: "Cambiar un prompt sin evals es adivinar. Defino casos con criterios de éxito, mido la tasa de acierto y reviso la traza de cada fallo antes de dar algo por terminado.",
-    practice: [
-      "Conjuntos de casos con criterios de éxito explícitos",
-      "Trazas paso a paso para encontrar dónde se equivocó el agente",
-      "En Carcassonne Latam, el Bot IA se evalúa en partidas completas",
-    ],
-  },
-  {
-    id: "orquestacion",
-    name: "Orquestación",
-    lead: "Muchos agentes, un resultado.",
-    body: "Las tareas grandes se dividen: un agente planifica, otros investigan o implementan en paralelo en espacios aislados y otro verifica. El harness hace que se coordinen sin pisarse.",
-    practice: [
-      "Subagentes con contexto acotado para búsquedas y revisiones",
-      "Un worktree aislado por agente para trabajar en paralelo",
-      "Flujos con dependencias y verificación cruzada de hallazgos",
-    ],
-  },
-  {
-    id: "control",
-    name: "Control",
-    lead: "Qué pasa antes y después de cada acción.",
-    body: "Hooks que validan, bloquean o enriquecen cada llamada. Permisos por herramienta. Lo irreversible pide confirmación; lo rutinario fluye sin interrumpir a nadie.",
-    practice: [
-      "Hooks antes y después de cada herramienta para formato, pruebas y políticas",
-      "Permisos y comandos permitidos definidos por proyecto",
-      "Límites de costo y de tiempo por corrida",
-    ],
-  },
-  {
-    id: "memoria",
-    name: "Memoria",
-    lead: "Lo que sobrevive entre sesiones.",
-    body: "Sin memoria, cada sesión empieza de cero y repite errores. Con memoria mal curada, el agente arrastra supuestos viejos. Diseño qué se guarda, cuándo se olvida y cómo se verifica.",
-    practice: [
-      "Memoria persistente con búsqueda semántica entre sesiones",
-      "Decisiones guardadas como hechos verificables, no como transcripciones",
-    ],
-  },
-  {
-    id: "herramientas",
-    name: "Herramientas",
-    lead: "Qué puede tocar y con qué contrato.",
-    body: "Un agente vale lo que valen sus herramientas. Las diseño como una API: nombres claros, entradas tipadas y errores que le explican al modelo cómo corregir.",
-    practice: [
-      "Servidores MCP que conectan agentes con datos y servicios reales",
-      "En Porteria, un chat que arma KPIs consultando la operación",
-      "Navegador controlado por el agente para verificar lo que construye",
-    ],
-  },
-  {
-    id: "contexto",
-    name: "Contexto",
-    lead: "Qué sabe el agente en cada momento.",
-    body: "El contexto es un presupuesto. Instrucciones del proyecto, skills que se cargan solo cuando la tarea las necesita y resúmenes en lugar de volcados completos.",
-    practice: [
-      "Skills empaquetadas por dominio, con instrucciones y scripts propios",
-      "Instrucciones por repositorio que fijan convenciones y comandos",
-      "Compactación de sesiones largas sin perder decisiones",
-    ],
-  },
-  {
-    id: "modelo",
-    name: "Modelo",
-    lead: "El motor. Por sí solo no termina nada.",
-    body: "Elegir modelo es la decisión más visible, pero no la única. Lo que separa una demo de un producto en producción es todo lo que lo rodea: eso es el harness.",
-    practice: [
-      "Modelo por tarea: razonamiento profundo donde importa, rapidez donde alcanza",
-      "Costo por tarea medido, no estimado",
-    ],
-  },
+  { id: "evaluacion", name: "Evaluación" },
+  { id: "orquestacion", name: "Orquestación" },
+  { id: "control", name: "Control" },
+  { id: "memoria", name: "Memoria" },
+  { id: "herramientas", name: "Herramientas" },
+  { id: "contexto", name: "Contexto" },
+  { id: "modelo", name: "Modelo" },
 ]
 
 // Una corrida ilustrativa, de la tarea a la entrega. Cada mensaje viaja por una pista
@@ -170,33 +102,27 @@ export const steps: Step[] = [
   },
 ]
 
-// Lo que ofrezco: cada servicio dice para quién es, qué hago y qué queda.
+// Lo que ofrezco: cada servicio dice para cuándo es y qué queda.
 export const services = [
   {
     id: "diagnostico",
     name: "Diagnóstico de tu flujo con agentes",
-    when: "Los agentes ya están en uso, pero los resultados son irregulares y nadie sabe bien por qué.",
-    what: "Reviso cómo se usan hoy los agentes: qué contexto reciben, qué herramientas tocan, qué se revisa antes de aceptar su trabajo y cuánto cuesta.",
-    get: "Un informe con los problemas encontrados y un plan priorizado para resolverlos.",
-    layers: ["contexto", "herramientas", "control", "evaluacion"],
+    when: "Ya usan agentes, pero los resultados son irregulares.",
+    get: "Qué falla, cuánto cuesta y un plan priorizado para resolverlo.",
     tools: [],
   },
   {
     id: "equipo",
     name: "Tu asistente de código, listo para el equipo",
-    when: "Cada persona usa su asistente de IA a su manera y el resultado depende de quién lo use.",
-    what: "En la herramienta que el equipo ya usa, configuro instrucciones por repositorio, reglas, permisos y validaciones automáticas, y conecto por MCP los sistemas con los que trabajan.",
-    get: "Un harness compartido dentro de tus repositorios, documentado para que el equipo lo mantenga.",
-    layers: ["contexto", "control", "memoria", "orquestacion"],
+    when: "Cada persona usa su asistente de IA a su manera.",
+    get: "Reglas, permisos y conexiones compartidas en tus repositorios, documentadas.",
     tools: ["Claude Code", "Cursor", "Kiro"],
   },
   {
     id: "producto",
     name: "Agentes dentro de tu producto",
-    when: "Quieres una funcionalidad con IA que funcione con usuarios reales, no solo en la demo.",
-    what: "Diseño las herramientas que usa el agente, sus límites y los casos de evaluación, y lo integro a tu producto.",
-    get: "La funcionalidad en producción, con métricas para saber si un cambio la mejora o la empeora.",
-    layers: ["modelo", "herramientas", "evaluacion"],
+    when: "Quieres IA en tu producto que funcione fuera de la demo.",
+    get: "La funcionalidad en producción, con evaluaciones para medirla.",
     tools: ["API de Claude", "Vercel AI SDK"],
   },
 ]

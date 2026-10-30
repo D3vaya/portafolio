@@ -35,16 +35,6 @@ const metrics = [
     </div>
 
     <div class="race" data-race>
-      <div class="lane is-me">
-        <p class="lane-label">Esta página</p>
-        <div class="lane-track"><span class="lane-bar" data-race-me></span></div>
-        <p class="lane-value" data-race-me-value>—</p>
-      </div>
-      <div class="lane">
-        <p class="lane-label">Lo que Google considera una buena carga</p>
-        <div class="lane-track"><span class="lane-bar is-limit"></span></div>
-        <p class="lane-value">2,50 s</p>
-      </div>
       <p class="race-verdict" data-race-verdict></p>
     </div>
 
@@ -110,29 +100,36 @@ const metrics = [
 
   const collect = (): Data => {
     const nav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined
-    const fcp = performance.getEntriesByName("first-contentful-paint")[0]?.startTime
+    // Se cuenta desde que se pide la página final: las redirecciones previas
+    // (por ejemplo, el login de un preview protegido) no son parte de la carga
+    const t0 = nav?.fetchStart ?? 0
+    const since = (t: number | undefined) => (t === undefined ? undefined : Math.max(0, t - t0))
+    const fcp = since(performance.getEntriesByName("first-contentful-paint")[0]?.startTime)
+    const lcpFromStart = since(lcp)
     const resources = performance.getEntriesByType("resource") as PerformanceResourceTiming[]
     const bytes = resources.reduce((sum, r) => sum + r.encodedBodySize, nav?.encodedBodySize ?? 0)
-    const headline = lcp ?? fcp ?? nav?.domContentLoadedEventEnd ?? 0
+    const headline = lcpFromStart ?? fcp ?? since(nav?.domContentLoadedEventEnd) ?? 0
 
     // Lo que se pidió antes de que apareciera el contenido principal, en orden de llegada
     const rows: Row[] = []
     if (nav) {
-      rows.push({ name: "Documento HTML", type: "Documento", kb: nav.encodedBodySize / 1024, start: 0, end: nav.responseEnd })
+      rows.push({ name: "Documento HTML", type: "Documento", kb: nav.encodedBodySize / 1024, start: 0, end: nav.responseEnd - t0 })
     }
     for (const r of resources) {
-      if (r.startTime > headline * 1.1 || r.name.includes("/_vercel/")) continue
+      const start = r.startTime - t0
+      if (start > headline * 1.1 || r.name.includes("/_vercel/") || r.name.includes("vercel.live")) continue
       rows.push({
         name: fileName(r.name),
         type: typeOf(r.name, r.initiatorType),
         kb: r.encodedBodySize / 1024,
-        start: r.startTime,
-        end: Math.max(r.responseEnd, r.startTime + 1),
+        start,
+        end: Math.max(r.responseEnd - t0, start + 1),
       })
     }
     rows.sort((a, b) => a.start - b.start)
-    return { ttfb: nav ? nav.responseStart : 0, fcp, lcp, cls, kb: bytes / 1024, headline, rows: rows.slice(0, 9) }
+    return { ttfb: nav ? nav.responseStart - t0 : 0, fcp, lcp: lcpFromStart, cls, kb: bytes / 1024, headline, rows: rows.slice(0, 9) }
   }
+
 
   // ---------- Formato ----------
   const seconds = (ms: number) => (ms / 1000).toLocaleString("es-CL", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -241,9 +238,6 @@ const metrics = [
     paint(scaleMax)
     section.classList.add("is-finished")
     const ratio = GOOD / data.headline
-    const meBar = $("[data-race-me]")
-    meBar.style.setProperty("--w", String(Math.min(1, Math.max(0.006, data.headline / GOOD))))
-    $("[data-race-me-value]").textContent = `${seconds(data.headline)} s`
     $("[data-race-verdict]").textContent =
       !data.headline
         ? ""
@@ -275,7 +269,9 @@ const metrics = [
   }
 
   const ready = new Promise<void>((resolve) => {
-    const go = () => setTimeout(resolve, 150)
+    // Se mide cuando el navegador queda libre, para no competir con el primer pintado
+    const go = () =>
+      "requestIdleCallback" in window ? requestIdleCallback(() => resolve(), { timeout: 600 }) : setTimeout(resolve, 150)
     if (document.readyState === "complete") go()
     else addEventListener("load", go, { once: true })
   })
@@ -621,60 +617,13 @@ const metrics = [
     margin-top: clamp(2.5rem, 6vw, 4rem);
   }
 
-  .lane {
-    display: grid;
-    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) 4.5rem;
-    gap: 1rem;
-    align-items: center;
-  }
 
-  .lane-label {
-    color: var(--niebla);
-  }
 
-  .is-me .lane-label {
-    color: var(--papel);
-    font-weight: 600;
-  }
 
-  .lane-track {
-    height: 1.25rem;
-    border-radius: 999px;
-    background: rgb(236 237 239 / 0.06);
-    overflow: hidden;
-  }
 
-  .lane-bar {
-    display: block;
-    height: 100%;
-    border-radius: inherit;
-    background: var(--senal);
-    box-shadow: 0 0 20px rgb(255 91 31 / 0.8);
-    width: calc(var(--w, 0) * 100%);
-    transform-origin: left;
-    transform: scaleX(0);
-    transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.1, 1);
-  }
 
-  .lane-bar.is-limit {
-    --w: 1;
-    background: repeating-linear-gradient(-45deg, rgb(236 237 239 / 0.22) 0 8px, rgb(236 237 239 / 0.1) 8px 16px);
-    box-shadow: none;
-    transition-duration: 2.5s;
-    transition-timing-function: linear;
-  }
 
-  .is-finished .lane-bar {
-    transform: scaleX(1);
-  }
 
-  .lane-value {
-    font-family: var(--display);
-    font-weight: 800;
-    font-stretch: 80%;
-    font-variant-numeric: tabular-nums;
-    text-align: right;
-  }
 
   .race-verdict {
     margin-top: 0.75rem;
@@ -762,13 +711,6 @@ const metrics = [
       display: none;
     }
 
-    .lane {
-      grid-template-columns: minmax(0, 1fr) 4rem;
-    }
-
-    .lane-label {
-      grid-column: 1 / -1;
-    }
 
     .metrics {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -792,7 +734,6 @@ const metrics = [
       animation: none;
     }
 
-    .lane-bar,
     .race-verdict {
       transition: none;
     }

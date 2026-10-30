@@ -10,7 +10,6 @@ type Pillar = {
   name: string
   claim: string
   lead: { name: string; proof: string }
-  items: { name: string; proof: string }[]
   toolbox?: { name: string; tools: string[] }[]
   more?: string[]
 }
@@ -26,12 +25,6 @@ const pillars: Pillar[] = [
       name: "Next.js",
       proof: "Mi base para productos en producción. Lo usé en Juegalo.com y en ETpay, ambos sobre GCP.",
     },
-    items: [
-      { name: "React", proof: "Desde 2017: el e-commerce de WOM, los flujos de pago de ETpay y productos desde cero en Zenta." },
-      { name: "TypeScript", proof: "Mi lenguaje por defecto en todo lo que construyo hoy." },
-      { name: "Performance web", proof: "En WOM bajamos el LCP y subió la tasa de compra. Esta página muestra su propia medición más arriba." },
-      { name: "Micro-frontends", proof: "Arquitectura modular en ETpay para escalar el frontend de pagos." },
-    ],
     toolbox: [
       {
         name: "Frameworks",
@@ -64,12 +57,6 @@ const pillars: Pillar[] = [
       name: "Claude Code",
       proof: "Mi entorno de trabajo diario, con skills, hooks, subagentes y memoria persistente configurados por mí.",
     },
-    items: [
-      { name: "Model Context Protocol", proof: "Uso servidores MCP para conectar agentes con GitHub, el navegador y otros servicios." },
-      { name: "Orquestación multi-agente", proof: "Subagentes en paralelo y un verificador que revisa el trabajo de los demás." },
-      { name: "IA en producto", proof: "Chat para crear KPIs y alertas inteligentes en Porteria; Bot IA rival en Carcassonne Latam." },
-      { name: "Evals de agentes", proof: "Casos con criterio de éxito y trazas por paso para saber si un cambio mejora o empeora." },
-    ],
     toolbox: [
       { name: "Modelos y APIs", tools: ["LLMs", "API de Claude", "Vercel AI SDK", "Tool use", "Prompt caching", "Structured outputs"] },
       { name: "Harness", tools: ["Claude Code", "Cursor", "Kiro", "Hooks", "Skills", "Subagentes", "Memoria persistente", "Permisos"] },
@@ -88,25 +75,13 @@ const groups = [
   { name: "Nube y equipo", members: ["Git", "GitHub", "AWS Lambda", "AWS EC2", "AWS S3", "AWS ELB / ASG"] },
 ]
 
-const levels: Record<string, { weight: number; label: string; tone: string }> = {
-  Master: { weight: 3, label: "Experto", tone: "is-expert" },
-  Avanzado: { weight: 2, label: "Avanzado", tone: "is-advanced" },
-  Medio: { weight: 1, label: "Intermedio", tone: "is-mid" },
-}
-
-const byName = new Map(skills.map((s) => [s.name, s]))
-const map = groups.map((g) => {
-  const items = g.members
-    .map((name) => byName.get(name))
-    .filter((s): s is (typeof skills)[number] => Boolean(s))
-    .map((s) => ({ name: s.name, ...levels[s.level] }))
-  return { ...g, items }
-})
+const known = new Set(skills.map((s) => s.name))
+const rest = groups.map((g) => ({ name: g.name, items: g.members.filter((m) => known.has(m)) }))
 ---
 
 <section class="wrap stack-section" id="stack" aria-labelledby="stack-title">
   <h2 id="stack-title">Stack</h2>
-  <p class="intro">Dos especialidades, con dónde las apliqué y las herramientas que manejo en cada una. Debajo, el resto.</p>
+  <p class="intro">Dos especialidades y las herramientas que manejo en cada una.</p>
 
   <div class="pillars">
     {
@@ -120,15 +95,6 @@ const map = groups.map((g) => {
             <p class="lead-name">{p.lead.name}</p>
             <p class="lead-proof">{p.lead.proof}</p>
           </div>
-
-          <dl class="items">
-            {p.items.map((item) => (
-              <div>
-                <dt>{item.name}</dt>
-                <dd>{item.proof}</dd>
-              </div>
-            ))}
-          </dl>
 
           {p.toolbox && (
             <dl class="toolbox">
@@ -158,28 +124,18 @@ const map = groups.map((g) => {
     }
   </div>
 
-  <h3 class="rest-title">Todo lo demás</h3>
-  <ul class="legend" aria-label="Niveles">
-    {Object.values(levels).map((l) => <li class={l.tone}>{l.label}</li>)}
-  </ul>
-
-  <div class="map">
+  <h3 class="rest-title">Además</h3>
+  <dl class="rest">
     {
-      map.map((group) => (
-        <section class="group" aria-label={group.name}>
-          <h4>
-            {group.name}
-            <span>{group.items.length}</span>
-          </h4>
-          <ul class="tiles">
-            {group.items.map((item) => (
-              <li class:list={["tile", item.tone]} style={`--w: ${item.weight}`}>
-                <span class="tile-name">{item.name}</span>
-                <span class="tile-level">{item.label}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
+      rest.map((group) => (
+        <div>
+          <dt>{group.name}</dt>
+          <dd>{group.items.join(", ")}</dd>
+        </div>
+      ))
+    }
+  </dl>
+</section>
       ))
     }
   </div>
@@ -274,32 +230,6 @@ const map = groups.map((g) => {
     max-width: 34em;
   }
 
-  .items {
-    margin-top: 1.5rem;
-  }
-
-  .items div {
-    display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-    gap: 1rem;
-    padding: 0.85rem 0;
-    border-top: 1px solid var(--linea);
-  }
-
-  .items dt {
-    font-family: var(--display);
-    font-size: var(--t1);
-    font-weight: 750;
-    font-stretch: 80%;
-    line-height: 1.1;
-  }
-
-  .items dd {
-    margin: 0;
-    color: var(--niebla);
-    font-size: 0.9375rem;
-  }
-
   .more {
     display: flex;
     flex-wrap: wrap;
@@ -345,138 +275,41 @@ const map = groups.map((g) => {
     font-stretch: 85%;
   }
 
-  .legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.25rem;
-    margin-top: 0.75rem;
-    font-size: var(--t-1);
-  }
-
-  .legend li::before {
-    content: "";
-    display: inline-block;
-    width: 0.9rem;
-    height: 0.9rem;
-    margin-right: 0.45rem;
-    vertical-align: -0.12rem;
-    border-radius: 3px;
-  }
-
-  .map {
+  .rest {
     display: grid;
-    grid-template-columns: 13fr 11fr 9fr;
-    gap: 2px;
-    margin-top: 1rem;
-    background: var(--linea);
-    border: 2px solid var(--linea);
-    border-radius: 12px;
-    overflow: hidden;
+    gap: 0.6rem;
+    margin-top: 0.75rem;
   }
 
-  .group {
-    display: flex;
-    flex-direction: column;
-    background: var(--hondo);
-    min-width: 0;
-  }
-
-  .group h4 {
-    display: flex;
-    justify-content: space-between;
+  .rest div {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, 1fr);
     gap: 1rem;
-    margin: 0;
-    padding: 0.7rem 0.75rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--linea);
+  }
+
+  .rest dt {
     font-family: var(--display);
-    font-size: var(--t0);
     font-weight: 700;
     font-stretch: 80%;
   }
 
-  .group h4 span {
+  .rest dd {
+    margin: 0;
     color: var(--niebla);
-    font-weight: 500;
-  }
-
-  .tiles {
-    flex: 1;
-    display: flex;
-    flex-wrap: wrap;
-    align-content: stretch;
-    gap: 2px;
-    padding: 2px;
-  }
-
-  .tile {
-    flex: var(--w) 1 calc(var(--w) * 4.75rem);
-    min-height: calc(2.4rem + var(--w) * 0.9rem);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 0.5rem 0.65rem;
-    min-width: 0;
-  }
-
-  .tile-name {
-    font-family: var(--display);
-    font-weight: 700;
-    font-stretch: 82%;
-    font-size: calc(0.85rem + var(--w) * 0.15rem);
-    line-height: 1.05;
-    overflow-wrap: anywhere;
-  }
-
-  .tile-level {
-    font-size: 0.75rem;
-  }
-
-  .is-expert,
-  .legend .is-expert::before {
-    background: var(--senal);
-    color: var(--sobre);
-  }
-
-  .is-advanced,
-  .legend .is-advanced::before {
-    background: color-mix(in srgb, var(--papel) 10%, transparent);
-  }
-
-  .is-mid {
-    box-shadow: inset 0 0 0 1px var(--linea);
-    color: var(--niebla);
-  }
-
-  .legend .is-mid::before {
-    box-shadow: inset 0 0 0 1px var(--niebla);
-  }
-
-  .legend li {
-    background: none;
-    color: var(--papel);
   }
 
   @media (max-width: 64rem) {
     .pillars {
       grid-template-columns: minmax(0, 1fr);
     }
-
-    .map {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .group:first-child {
-      grid-column: 1 / -1;
-    }
   }
 
   @media (max-width: 36rem) {
-    .map {
-      grid-template-columns: 1fr;
-    }
-
-    .items div {
+    .rest div {
       grid-template-columns: minmax(0, 1fr);
-      gap: 0.25rem;
+      gap: 0.2rem;
     }
   }
 </style>
