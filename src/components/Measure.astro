@@ -1,0 +1,747 @@
+---
+const metrics = [
+  { id: "ttfb", name: "Respuesta del servidor", code: "TTFB" },
+  { id: "fcp", name: "Primer contenido visible", code: "FCP" },
+  { id: "lcp", name: "Contenido principal listo", code: "LCP" },
+  { id: "cls", name: "Saltos de diseño", code: "CLS" },
+  { id: "kb", name: "Peso total comprimido", code: "Transfer" },
+]
+---
+
+<section class="measure" id="medicion" aria-labelledby="measure-title" data-measure>
+  <div class="wrap">
+    <p class="live"><span class="dot" aria-hidden="true"></span>Medido en vivo, en tu navegador y con tu conexión</p>
+
+    <h2 id="measure-title" class="visually-hidden">Cuánto tardó esta página en cargar</h2>
+    <div class="counter" aria-hidden="true" data-counter-wrap>
+      <span class="counter-value" data-counter>0,00</span><span class="counter-unit">s</span>
+    </div>
+    <p class="verdict" aria-live="polite" data-verdict>Midiendo cuánto tardó esta página en aparecer en tu pantalla…</p>
+
+    <div class="replay" aria-hidden="true">
+      <div class="replay-head">
+        <p>Así cargó, archivo por archivo, <span data-slow>en cámara lenta</span></p>
+        <button type="button" class="again" data-again tabindex="-1">Repetir</button>
+      </div>
+      <div class="waterfall" data-waterfall>
+        <div class="wf-scale" data-scale></div>
+        <div class="wf-rows" data-rows></div>
+        <div class="wf-overlay" data-overlay>
+          <span class="wf-mark" data-mark="fcp"><span>Primer contenido</span></span>
+          <span class="wf-mark is-lcp" data-mark="lcp"><span>Contenido principal</span></span>
+          <span class="wf-head" data-head></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="race" data-race>
+      <p class="race-verdict" data-race-verdict></p>
+    </div>
+
+    <dl class="metrics">
+      {
+        metrics.map((m) => (
+          <div class="metric">
+            <dt>
+              {m.name}
+              <abbr>{m.code}</abbr>
+            </dt>
+            <dd data-metric={m.id}>—</dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <p class="closing">Trato a mis agentes igual que a esta página: si no tiene métrica, no está terminado.</p>
+  </div>
+</section>
+
+<script>
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches
+  const GOOD = 2500
+
+  // ---------- Medición real con Performance API ----------
+  let lcp: number | undefined
+  let cls = 0
+  try {
+    new PerformanceObserver((list) => {
+      const entries = list.getEntries()
+      lcp = entries[entries.length - 1].startTime
+    }).observe({ type: "largest-contentful-paint", buffered: true })
+    new PerformanceObserver((list) => {
+      for (const e of list.getEntries() as (PerformanceEntry & { value: number; hadRecentInput: boolean })[]) {
+        if (!e.hadRecentInput) cls += e.value
+      }
+    }).observe({ type: "layout-shift", buffered: true })
+  } catch {
+    // Safari no expone LCP ni CLS; se informa como no disponible.
+  }
+
+  type Row = { name: string; type: string; kb: number; start: number; end: number }
+  type Data = { ttfb: number; fcp?: number; lcp?: number; cls: number; kb: number; headline: number; rows: Row[] }
+
+  const typeOf = (url: string, initiator: string) => {
+    const path = url.split("?")[0]
+    if (/\.css$/.test(path)) return "CSS"
+    if (/\.m?js$/.test(path)) return "JavaScript"
+    if (/\.(woff2?|ttf|otf)$/.test(path)) return "Fuente"
+    if (/\.(png|jpe?g|webp|avif|gif|svg)$/.test(path)) return "Imagen"
+    return initiator === "fetch" || initiator === "xmlhttprequest" ? "Datos" : "Otro"
+  }
+
+  const fileName = (url: string) => {
+    try {
+      const u = new URL(url)
+      return u.pathname.split("/").filter(Boolean).pop() ?? u.host
+    } catch {
+      return url
+    }
+  }
+
+  const collect = (): Data => {
+    const nav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined
+    // Se cuenta desde que se pide la página final: las redirecciones previas
+    // (por ejemplo, el login de un preview protegido) no son parte de la carga
+    const t0 = nav?.fetchStart ?? 0
+    const since = (t: number | undefined) => (t === undefined ? undefined : Math.max(0, t - t0))
+    const fcp = since(performance.getEntriesByName("first-contentful-paint")[0]?.startTime)
+    const lcpFromStart = since(lcp)
+    const resources = performance.getEntriesByType("resource") as PerformanceResourceTiming[]
+    const bytes = resources.reduce((sum, r) => sum + r.encodedBodySize, nav?.encodedBodySize ?? 0)
+    const headline = lcpFromStart ?? fcp ?? since(nav?.domContentLoadedEventEnd) ?? 0
+
+    // Lo que se pidió antes de que apareciera el contenido principal, en orden de llegada
+    const rows: Row[] = []
+    if (nav) {
+      rows.push({ name: "Documento HTML", type: "Documento", kb: nav.encodedBodySize / 1024, start: 0, end: nav.responseEnd - t0 })
+    }
+    for (const r of resources) {
+      const start = r.startTime - t0
+      if (start > headline * 1.1 || r.name.includes("/_vercel/") || r.name.includes("vercel.live")) continue
+      rows.push({
+        name: fileName(r.name),
+        type: typeOf(r.name, r.initiatorType),
+        kb: r.encodedBodySize / 1024,
+        start,
+        end: Math.max(r.responseEnd - t0, start + 1),
+      })
+    }
+    rows.sort((a, b) => a.start - b.start)
+    return { ttfb: nav ? nav.responseStart - t0 : 0, fcp, lcp: lcpFromStart, cls, kb: bytes / 1024, headline, rows: rows.slice(0, 9) }
+  }
+
+
+  // ---------- Formato ----------
+  const seconds = (ms: number) => (ms / 1000).toLocaleString("es-CL", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  const kb = (v: number) => (v < 1 ? "<1 kB" : `${Math.round(v)} kB`)
+  const format = {
+    ttfb: (v: number) => `${Math.round(v)} ms`,
+    fcp: (v: number) => `${Math.round(v)} ms`,
+    lcp: (v: number) => `${Math.round(v)} ms`,
+    cls: (v: number) => v.toLocaleString("es-CL", { minimumFractionDigits: 3, maximumFractionDigits: 3 }),
+    kb: (v: number) => `${Math.round(v)} kB`,
+  }
+  const niceStep = (max: number, ticks: number) =>
+    [10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 5000].find((s) => max / s <= ticks) ?? 10000
+
+  // ---------- Construcción del waterfall ----------
+  const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)!
+  const section = $("[data-measure]")
+  const counter = $("[data-counter]")
+  const counterWrap = $("[data-counter-wrap]")
+  const head = $("[data-head]")
+  const marks = {
+    fcp: $("[data-mark='fcp']"),
+    lcp: $("[data-mark='lcp']"),
+  }
+
+  let data: Data
+  let scaleMax = 1
+  let bars: { el: HTMLElement; row: HTMLElement; start: number; end: number }[] = []
+
+  const build = () => {
+    const ruler = $("[data-scale]")
+    const rowsEl = $("[data-rows]")
+    const last = Math.max(data.headline, ...data.rows.map((r) => r.end))
+    const ticks = Math.max(2, Math.min(6, Math.floor(ruler.clientWidth / 95)))
+    const step = niceStep(last * 1.08, ticks)
+    scaleMax = step * Math.max(1, Math.ceil((last * 1.08) / step))
+
+    ruler.replaceChildren(
+      ...Array.from({ length: Math.round(scaleMax / step) + 1 }, (_, i) => {
+        const tick = document.createElement("span")
+        tick.style.setProperty("--x", String((i * step) / scaleMax))
+        tick.textContent = `${i * step} ms`
+        return tick
+      }),
+    )
+
+    bars = []
+    rowsEl.replaceChildren(
+      ...data.rows.map((r) => {
+        const row = document.createElement("div")
+        row.className = "wf-row"
+        row.dataset.type = r.type
+        row.innerHTML = `<span class="wf-name"></span><span class="wf-type"></span><span class="wf-size"></span><span class="wf-track"><span class="wf-bar"></span></span>`
+        row.querySelector(".wf-name")!.textContent = r.name
+        row.querySelector(".wf-type")!.textContent = r.type
+        row.querySelector(".wf-size")!.textContent = kb(r.kb)
+        const bar = row.querySelector<HTMLElement>(".wf-bar")!
+        bar.style.setProperty("--s", String(r.start / scaleMax))
+        bar.style.setProperty("--l", String((r.end - r.start) / scaleMax))
+        bars.push({ el: bar, row, start: r.start, end: r.end })
+        return row
+      }),
+    )
+
+    for (const key of ["fcp", "lcp"] as const) {
+      const v = data[key]
+      marks[key].hidden = v === undefined
+      if (v !== undefined) {
+        marks[key].style.setProperty("--x", String(v / scaleMax))
+        // Si la etiqueta no cabe a la derecha de la línea, se abre hacia la izquierda
+        const trackW = $("[data-overlay]").clientWidth
+        const labelW = (marks[key].firstElementChild as HTMLElement).offsetWidth
+        marks[key].toggleAttribute("data-flip", (v / scaleMax) * trackW + labelW + 8 > trackW)
+      }
+    }
+
+    // Cámara lenta: la repetición dura unos 3,5 s sin importar cuán rápida fue la carga
+    const slow = Math.max(1, Math.round(3500 / scaleMax))
+    $("[data-slow]").textContent = slow > 1 ? `en cámara lenta, ${slow} veces más lento` : "a velocidad real"
+    return slow
+  }
+
+  // ---------- Repetición ----------
+  let slow = 1
+  let raf = 0
+
+  const paint = (t: number) => {
+    const shown = Math.min(t, data.headline)
+    counter.textContent = seconds(shown)
+    counterWrap.style.setProperty("--p", String(data.headline ? Math.min(1, t / data.headline) : 1))
+    head.style.setProperty("--x", String(Math.min(1, t / scaleMax)))
+    for (const b of bars) {
+      const p = Math.min(1, Math.max(0, (t - b.start) / (b.end - b.start)))
+      b.el.style.setProperty("--p", String(p))
+      b.row.classList.toggle("is-started", t >= b.start)
+      b.row.classList.toggle("is-done", t >= b.end)
+    }
+    for (const key of ["fcp", "lcp"] as const) {
+      const v = data[key]
+      marks[key].classList.toggle("is-on", v !== undefined && t >= v)
+    }
+    section.classList.toggle("is-landed", t >= data.headline)
+  }
+
+  const finish = () => {
+    paint(scaleMax)
+    section.classList.add("is-finished")
+    const ratio = GOOD / data.headline
+    $("[data-race-verdict]").textContent =
+      !data.headline
+        ? ""
+        : data.headline <= GOOD
+        ? ratio < 1.05
+          ? "Justo en el umbral de lo que Google considera una buena carga."
+          : `${ratio.toLocaleString("es-CL", { maximumFractionDigits: 1 })} veces más rápida que lo que Google considera una buena carga.`
+        : "Esta vez quedó sobre el umbral de Google. La red y el dispositivo influyen; recarga para comparar."
+    for (const [key, f] of Object.entries(format)) {
+      const v = data[key as keyof typeof format]
+      const cell = document.querySelector(`[data-metric="${key}"]`)!
+      const unsupported = v === undefined || (key === "cls" && !PerformanceObserver.supportedEntryTypes?.includes("layout-shift"))
+      cell.textContent = unsupported ? "no disponible" : f(v)
+    }
+  }
+
+  const play = () => {
+    cancelAnimationFrame(raf)
+    section.classList.remove("is-finished", "is-landed")
+    if (reduceMotion) return finish()
+    const t0 = performance.now()
+    const tick = (now: number) => {
+      const t = (now - t0) / slow
+      if (t >= scaleMax) return finish()
+      paint(t)
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+  }
+
+  const ready = new Promise<void>((resolve) => {
+    // Se mide cuando el navegador queda libre, para no competir con el primer pintado
+    const go = () =>
+      "requestIdleCallback" in window ? requestIdleCallback(() => resolve(), { timeout: 600 }) : setTimeout(resolve, 150)
+    if (document.readyState === "complete") go()
+    else addEventListener("load", go, { once: true })
+  })
+
+  ready.then(() => {
+    data = collect()
+    $("[data-verdict]").textContent = data.headline
+      ? `Eso tardó esta página en aparecer en tu pantalla.`
+      : "Tu navegador no expone métricas de carga, pero la página está lista."
+    slow = build()
+    paint(0)
+    let started = false
+    new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started) {
+          started = true
+          play()
+        }
+      },
+      { threshold: 0.35 },
+    ).observe($("[data-waterfall]"))
+  })
+
+  $("[data-again]").addEventListener("click", play)
+
+  let resizeTimer: number
+  addEventListener("resize", () => {
+    if (!data) return
+    clearTimeout(resizeTimer)
+    resizeTimer = window.setTimeout(() => {
+      slow = build()
+      if (section.classList.contains("is-finished")) finish()
+    }, 150)
+  })
+</script>
+
+<style>
+  /* Banda oscura: el instrumento de medición */
+  .measure {
+    --fondo: #111214;
+    --hondo: #0a0b0d;
+    --papel: #ecedef;
+    --niebla: #9a9ea8;
+    --linea: rgb(236 237 239 / 0.13);
+    --senal-texto: #ff7a45;
+    --cols: minmax(0, 13rem) 6.5rem 4.5rem minmax(0, 1fr);
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(4rem, 9vw, 7rem);
+    background:
+      radial-gradient(50rem 30rem at 15% 20%, rgb(255 91 31 / 0.16), transparent 70%),
+      var(--fondo);
+    color: var(--papel);
+  }
+
+  .live {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.35rem 0.9rem 0.35rem 0.7rem;
+    border: 1px solid var(--linea);
+    border-radius: 999px;
+    color: var(--niebla);
+    font-size: var(--t-1);
+  }
+
+  .dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--senal);
+    box-shadow: 0 0 0 0 rgb(255 91 31 / 0.6);
+    animation: live 1.6s ease-out infinite;
+  }
+
+  @keyframes live {
+    to {
+      box-shadow: 0 0 0 10px rgb(255 91 31 / 0);
+    }
+  }
+
+  /* ---------- Contador ---------- */
+  .counter {
+    --p: 0;
+    display: flex;
+    align-items: baseline;
+    margin-top: 1rem;
+    margin-left: -0.05em;
+    font-family: var(--display);
+    font-size: clamp(6.5rem, 28vw, 22rem);
+    font-weight: 850;
+    line-height: 0.8;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  /* El número se ensancha a medida que avanza el tiempo */
+  .counter-value {
+    font-stretch: calc(60% + var(--p) * 45%);
+  }
+
+  .counter-unit {
+    margin-left: 0.06em;
+    font-size: 0.42em;
+    font-stretch: 80%;
+    color: var(--senal);
+  }
+
+  .is-landed .counter-value {
+    animation: land 0.7s ease-out;
+    color: var(--papel);
+  }
+
+  @keyframes land {
+    0% {
+      color: var(--senal);
+      text-shadow: 0 0 60px rgb(255 91 31 / 0.9);
+    }
+    100% {
+      text-shadow: 0 0 0 transparent;
+    }
+  }
+
+  .verdict {
+    max-width: 30em;
+    margin-top: clamp(1rem, 2.5vw, 1.75rem);
+    font-size: var(--t1);
+    line-height: 1.4;
+  }
+
+  /* ---------- Waterfall ---------- */
+  .replay {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    padding: clamp(1rem, 2.5vw, 1.75rem);
+    border: 1px solid var(--linea);
+    border-radius: 16px;
+    background: var(--hondo);
+  }
+
+  .replay-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    color: var(--niebla);
+  }
+
+  .again {
+    flex: none;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--senal);
+    border-radius: 999px;
+    background: none;
+    color: var(--senal-texto);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .is-finished .again {
+    opacity: 1;
+  }
+
+  .again:hover {
+    background: var(--senal);
+    color: var(--sobre);
+  }
+
+  .waterfall {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--cols);
+  }
+
+  .wf-scale {
+    grid-column: 4;
+    grid-row: 1;
+    position: relative;
+    height: 1.6rem;
+    border-bottom: 1px solid var(--linea);
+  }
+
+  .wf-scale :global(span) {
+    position: absolute;
+    left: calc(var(--x) * 100%);
+    bottom: 0.35rem;
+    font-size: 0.75rem;
+    color: var(--niebla);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    transform: translateX(-50%);
+  }
+
+  .wf-scale :global(span:first-child) {
+    transform: none;
+  }
+
+  .wf-scale :global(span:last-child) {
+    transform: translateX(-100%);
+  }
+
+  .wf-rows {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: subgrid;
+  }
+
+  .wf-rows :global(.wf-row) {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    align-items: center;
+    min-height: 2.25rem;
+    border-bottom: 1px solid var(--linea);
+    color: var(--niebla);
+    transition: color 0.25s ease;
+  }
+
+  .wf-rows :global(.wf-row.is-started) {
+    color: var(--papel);
+  }
+
+  .wf-rows :global(.wf-name) {
+    padding-right: 1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.875rem;
+  }
+
+  .wf-rows :global(.wf-type),
+  .wf-rows :global(.wf-size) {
+    color: var(--niebla);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .wf-rows :global(.wf-track) {
+    position: relative;
+    align-self: stretch;
+  }
+
+  .wf-rows :global(.wf-bar) {
+    position: absolute;
+    top: 50%;
+    left: calc(var(--s) * 100%);
+    width: max(3px, calc(var(--l) * 100%));
+    height: 0.75rem;
+    margin-top: -0.375rem;
+    border-radius: 3px;
+    background: var(--bar, var(--niebla));
+    transform-origin: left;
+    transform: scaleX(var(--p, 0));
+  }
+
+  .wf-rows :global(.wf-row.is-done .wf-bar) {
+    box-shadow: 0 0 12px color-mix(in srgb, var(--bar, var(--niebla)) 60%, transparent);
+  }
+
+  .wf-rows :global([data-type="Documento"]) {
+    --bar: #ff5b1f;
+  }
+
+  .wf-rows :global([data-type="CSS"]) {
+    --bar: #ff8a4c;
+  }
+
+  .wf-rows :global([data-type="JavaScript"]) {
+    --bar: #ffc08a;
+  }
+
+  .wf-rows :global([data-type="Fuente"]) {
+    --bar: #ecedef;
+  }
+
+  .wf-overlay {
+    grid-column: 4;
+    grid-row: 1 / 3;
+    position: relative;
+    pointer-events: none;
+  }
+
+  .wf-head {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--x, 0) * 100%);
+    width: 2px;
+    background: var(--papel);
+    box-shadow: 0 0 10px rgb(236 237 239 / 0.7);
+  }
+
+  .is-finished .wf-head {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .wf-mark {
+    position: absolute;
+    top: 1.6rem;
+    bottom: 0;
+    left: calc(var(--x, 0) * 100%);
+    border-left: 2px dashed var(--senal);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .wf-mark.is-on {
+    opacity: 1;
+  }
+
+  .wf-mark > span {
+    position: absolute;
+    bottom: 0.4rem;
+    left: 0.4rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    background: var(--senal);
+    color: var(--sobre);
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .wf-mark[data-flip] > span {
+    left: auto;
+    right: 0.4rem;
+  }
+
+  .wf-mark:not(.is-lcp) > span {
+    bottom: 2.2rem;
+    background: var(--papel);
+  }
+
+  /* ---------- Carrera contra el umbral ---------- */
+  .race {
+    display: grid;
+    gap: 0.9rem;
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+  }
+
+
+
+
+
+
+
+
+
+  .race-verdict {
+    margin-top: 0.75rem;
+    font-family: var(--display);
+    font-size: clamp(1.75rem, 4vw, 3rem);
+    font-weight: 850;
+    font-stretch: 78%;
+    line-height: 1.05;
+    max-width: 22em;
+    /* Espacio reservado: la frase llega al final y no debe empujar lo de abajo */
+    min-height: 2.1em;
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition:
+      opacity 0.5s ease 0.6s,
+      transform 0.5s ease 0.6s;
+  }
+
+  .is-finished .race-verdict {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ---------- Métricas técnicas ---------- */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    border-top: 1px solid var(--linea);
+  }
+
+  .metric {
+    padding: 1rem 1rem 0 0;
+  }
+
+  .metric + .metric {
+    padding-left: 1rem;
+    border-left: 1px solid var(--linea);
+  }
+
+  .metric dt {
+    font-size: var(--t-1);
+    line-height: 1.35;
+    color: var(--niebla);
+  }
+
+  .metric abbr {
+    display: block;
+    font-family: var(--display);
+    font-size: 0.9375rem;
+    font-stretch: 70%;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--papel);
+    opacity: 0.7;
+  }
+
+  .metric dd {
+    margin: 0.6rem 0 0;
+    font-family: var(--display);
+    font-size: var(--t2);
+    font-weight: 700;
+    font-stretch: 80%;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .closing {
+    margin-top: clamp(2.5rem, 6vw, 3.5rem);
+    color: var(--niebla);
+    font-size: var(--t1);
+  }
+
+  @media (max-width: 52rem) {
+    .race-verdict {
+      min-height: 3.2em;
+    }
+
+    .measure {
+      --cols: minmax(0, 1fr) 3.5rem minmax(0, 1.2fr);
+    }
+
+    /* En pantallas angostas el tipo se omite para dejar espacio a la barra */
+    .wf-scale,
+    .wf-overlay {
+      grid-column: 3;
+    }
+
+    .wf-rows :global(.wf-type) {
+      display: none;
+    }
+
+
+    .metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      row-gap: 1.25rem;
+    }
+
+    .metric,
+    .metric + .metric {
+      padding: 1rem 0 0;
+      border-left: 0;
+    }
+
+    .metric:nth-child(even) {
+      padding-left: 1rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dot,
+    .is-landed .counter-value {
+      animation: none;
+    }
+
+    .race-verdict {
+      transition: none;
+    }
+  }
+</style>

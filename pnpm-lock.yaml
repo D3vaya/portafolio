@@ -11,22 +11,28 @@ importers:
       '@astrojs/check':
         specifier: ^0.5.6
         version: 0.5.6(typescript@5.3.3)
+      '@fontsource-variable/anybody':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@fontsource-variable/schibsted-grotesk':
+        specifier: ^5.3.0
+        version: 5.3.0
       '@vercel/analytics':
         specifier: ^1.5.0
         version: 1.5.0(react@19.2.5)
       astro:
         specifier: 4.3.2
         version: 4.3.2(typescript@5.3.3)
-      gsap:
-        specifier: ^3.14.2
-        version: 3.14.2
-      hotkeypad:
-        specifier: 0.1.0
-        version: 0.1.0
       typescript:
         specifier: ^5.3.3
         version: 5.3.3
     devDependencies:
+      '@fontsource/anybody':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@fontsource/schibsted-grotesk':
+        specifier: ^5.3.0
+        version: 5.3.0
       '@react-pdf/renderer':
         specifier: ^4.4.1
         version: 4.4.1(react@19.2.5)
@@ -335,6 +341,18 @@ packages:
     engines: {node: '>=12'}
     cpu: [x64]
     os: [win32]
+
+  '@fontsource-variable/anybody@5.3.0':
+    resolution: {integrity: sha512-3u/FSV3mGv9xW3x+CdK9lAZYT1Y3NaRA1bexeoIuk9s5QE8sD8OOTcofvpPx0Z6M0Fq1WAJ06ZAw8hivdRQWHQ==}
+
+  '@fontsource-variable/schibsted-grotesk@5.3.0':
+    resolution: {integrity: sha512-ndS6H/KICWANchlHF3q4UdZD+xrZ3Ji0rUobIuXlgvDUzDfqZDsVuXPXZb636nJZMHE9zZ9Fmwgqazm8hMB50Q==}
+
+  '@fontsource/anybody@5.3.0':
+    resolution: {integrity: sha512-OSH1GXXbUhmFXhrQhQXE/UHbJUW6qks6ZM1iaBIISnScNPPaTBx6QKon+cNIoJb3sJz1j6+hjgz21WtFUbacag==}
+
+  '@fontsource/schibsted-grotesk@5.3.0':
+    resolution: {integrity: sha512-9k+Fd2eg7umKxI2JV2HtDcOkXEM0iJx0u4Iu1b+QHikVU8Sl/MtozJ/mtZfsltR6xnVGSQjpcxXQeJPW0KGpIA==}
 
   '@jridgewell/gen-mapping@0.3.3':
     resolution: {integrity: sha512-HLhSWOLRi875zjjMG/r+Nv0oCW8umGb0BgEhyX3dDX3egwZtB8PqLnjz3yedt8R5StBrzcg4aBpnh8UA9D1BoQ==}
@@ -1033,9 +1051,6 @@ packages:
     resolution: {integrity: sha512-5v6yZd4JK3eMI3FqqCouswVqwugaA9r4dNZB1wwcmrD02QkV5H0y7XBQW8QwQqEaZY1pM9aqORSORhJRdNK44Q==}
     engines: {node: '>=6.0'}
 
-  gsap@3.14.2:
-    resolution: {integrity: sha512-P8/mMxVLU7o4+55+1TCnQrPmgjPKnwkzkXOK1asnR9Jg2lna4tEY5qBJjMmAaOBDDZWtlRjBXjLa0w53G/uBLA==}
-
   has-flag@3.0.0:
     resolution: {integrity: sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw==}
     engines: {node: '>=4'}
@@ -1067,9 +1082,6 @@ packages:
 
   hastscript@8.0.0:
     resolution: {integrity: sha512-dMOtzCEd3ABUeSIISmrETiKuyydk1w0pa+gE/uormcTpSYuaNJPbX1NU3JLyscSLjwAQM8bWMhhIlnCqnRvDTw==}
-
-  hotkeypad@0.1.0:
-    resolution: {integrity: sha512-e9R4mp2B0YtjV7Rm9KpMMyMSMwvEjb1gHxnvpnMQD0ussSOobl6+Tr6rFCq2aNLgExkcfHtShyd/DQqM4qqHTw==}
 
   hsl-to-hex@1.0.0:
     resolution: {integrity: sha512-K6GVpucS5wFf44X0h2bLVRDsycgJmf9FF2elg+CrqD8GcFU8c6vYhgXn8NjUkFCwj+xDFb70qgLbTUm6sxwPmA==}
@@ -2495,6 +2507,14 @@ snapshots:
   '@esbuild/win32-x64@0.19.12':
     optional: true
 
+  '@fontsource-variable/anybody@5.3.0': {}
+
+  '@fontsource-variable/schibsted-grotesk@5.3.0': {}
+
+  '@fontsource/anybody@5.3.0': {}
+
+  '@fontsource/schibsted-grotesk@5.3.0': {}
+
   '@jridgewell/gen-mapping@0.3.3':
     dependencies:
       '@jridgewell/set-array': 1.1.2
@@ -3296,8 +3316,6 @@ snapshots:
       section-matter: 1.0.0
       strip-bom-string: 1.0.0
 
-  gsap@3.14.2: {}
-
   has-flag@3.0.0: {}
 
   hasown@2.0.0:
@@ -3380,8 +3398,6 @@ snapshots:
       hast-util-parse-selector: 4.0.0
       property-information: 6.4.1
       space-separated-tokens: 2.0.2
-
-  hotkeypad@0.1.0: {}
 
   hsl-to-hex@1.0.0:
     dependencies:

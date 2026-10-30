@@ -1,0 +1,218 @@
+---
+import { certificates } from "@cv"
+import Mascot from "@/components/Mascot.astro"
+
+// Las que no traen fecha en la credencial van al final
+const sorted = [...certificates].sort((a, b) => (b.date || "0").localeCompare(a.date || "0"))
+const academy = sorted.filter((c) => c.issuer.startsWith("Claude Academy"))
+const formatDate = (date: string) =>
+  date ? new Date(`${date}T00:00:00`).toLocaleDateString("es-CL", { month: "short", year: "numeric" }) : "Sin fecha"
+
+---
+
+<div class="resp learning">
+  <article class="now" aria-labelledby="now-title">
+    <div class="now-head">
+      <Mascot size={96} class="now-mascot" />
+      <div>
+        <p class="kicker">Ahora mismo</p>
+        <h4 id="now-title">
+          Estoy profundizando en LLMs, harness engineering y el ecosistema de IA, con Claude Code como base.
+        </h4>
+      </div>
+    </div>
+    <div class="badges">
+      <p class="base">Cursos de Anthropic sobre Claude Code, con credencial verificable:</p>
+      <ul>
+        {
+          academy.map((c) => (
+            <li>
+              <a href={c.url} rel="noopener">
+                <span class="badge-name">{c.name}</span>
+                <span class="badge-meta">Claude Academy, {formatDate(c.date)}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </article>
+
+  <h4 class="courses-title">Cursos y certificados</h4>
+  <ol class="list">
+    {
+      sorted.map((c) => (
+        <li>
+          {c.date ? <time datetime={c.date}>{c.date.slice(0, 4)}</time> : <span class="no-date">Sin fecha</span>}
+          <span class="course">{c.url ? <a href={c.url} rel="noopener">{c.name}</a> : c.name}</span>
+          <span class="issuer">{c.issuer}</span>
+        </li>
+      ))
+    }
+  </ol>
+</div>
+
+<style>
+  h4 {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  /* ---------- Ahora mismo ---------- */
+  .now {
+    --papel: #ecedef;
+    --niebla: #a3a7b1;
+    --linea: rgb(236 237 239 / 0.16);
+    padding: clamp(1.1rem, 4cqi, 3rem);
+    border-radius: 18px;
+    background:
+      radial-gradient(40rem 20rem at 0% 0%, rgb(255 91 31 / 0.18), transparent 70%),
+      #15161a;
+    color: var(--papel);
+  }
+
+  .now-head {
+    display: flex;
+    align-items: center;
+    gap: clamp(1.25rem, 3cqi, 2.25rem);
+  }
+
+  .now-head :global(.now-mascot) {
+    flex: none;
+    animation: bob 2.4s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  .kicker {
+    color: var(--senal);
+    font-weight: 600;
+  }
+
+  .now h4 {
+    margin-top: 0.35rem;
+    max-width: 22em;
+    font-size: clamp(1.35rem, 5cqi, 2.75rem);
+    font-weight: 800;
+    font-stretch: 82%;
+    line-height: 1.05;
+  }
+
+  .badges {
+    margin-top: 2rem;
+  }
+
+  .base {
+    color: var(--niebla);
+    font-size: 0.9375rem;
+  }
+
+  .badges ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.9rem;
+  }
+
+  .badges a {
+    display: flex;
+    flex-direction: column;
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--senal);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .badges a:hover {
+    background: rgb(255 91 31 / 0.12);
+  }
+
+  .badge-name {
+    font-family: var(--display);
+    font-size: var(--t1);
+    font-weight: 750;
+    font-stretch: 82%;
+    line-height: 1.1;
+  }
+
+  .badge-meta {
+    color: var(--niebla);
+    font-size: var(--t-1);
+  }
+
+  /* ---------- Cursos ---------- */
+  .courses-title {
+    margin-top: clamp(2.5rem, 6cqi, 3.5rem);
+    font-size: var(--t2);
+    font-stretch: 85%;
+  }
+
+  .list {
+    margin-top: 1.25rem;
+    border-top: 1px solid var(--linea);
+  }
+
+  .list li {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: baseline;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--linea);
+  }
+
+  time,
+  .no-date {
+    color: var(--niebla);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Área de toque mínima de 24 px */
+  .course a {
+    display: inline-block;
+    padding-block: 2px;
+  }
+
+  .course {
+    font-family: var(--display);
+    font-size: var(--t1);
+    font-weight: 700;
+    font-stretch: 85%;
+    line-height: 1.15;
+  }
+
+  .issuer {
+    color: var(--niebla);
+  }
+
+  @container (max-width: 52rem) {
+    .now-head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  @container (max-width: 36rem) {
+    .list li {
+      grid-template-columns: 3.5rem minmax(0, 1fr);
+      row-gap: 0.25rem;
+    }
+
+    .issuer {
+      grid-column: 2;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .now-head :global(.now-mascot) {
+      animation: none;
+    }
+  }
+</style>

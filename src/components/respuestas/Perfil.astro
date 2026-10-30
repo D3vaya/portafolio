@@ -1,0 +1,116 @@
+---
+import { basics, languages, work } from "@cv"
+import { formatMonth } from "@/lib/time"
+
+const spoken = languages.map((l) => `${l.language === "Spanish" ? "Español" : l.language === "English" ? "Inglés" : l.language} (${l.fluency.toLowerCase()})`)
+const current = work.filter((job) => !job.endDate)
+---
+
+<div class="resp about">
+  <figure class="portrait">
+    <picture>
+      <source srcset="/perfil2.webp" type="image/webp" />
+      <img src={basics.image} alt={`Retrato de ${basics.name}`} width="800" height="800" loading="lazy" decoding="async" />
+    </picture>
+  </figure>
+  <div class="body">
+    <p class="summary">{basics.summary}</p>
+    {
+      current.map((job) => (
+        <p class="now">
+          <span>Hoy</span>
+          {job.position} en {job.url ? <a href={job.url}>{job.name}</a> : job.name}, desde {formatMonth(job.startDate)}.
+        </p>
+      ))
+    }
+    <dl class="facts">
+      <div>
+        <dt>Base</dt>
+        <dd>{basics.location.city}, {basics.location.region}</dd>
+      </div>
+      <div>
+        <dt>Idiomas</dt>
+        <dd>{spoken.join(", ")}</dd>
+      </div>
+    </dl>
+  </div>
+</div>
+
+<style>
+  .about {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    gap: clamp(1.5rem, 5cqi, 4rem);
+    align-items: start;
+  }
+
+  .portrait {
+    background: var(--fondo);
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-bottom: 6px solid var(--senal);
+  }
+
+  .portrait picture {
+    display: contents;
+  }
+
+  .portrait img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.15) brightness(1.05);
+    mix-blend-mode: luminosity;
+  }
+
+  .summary {
+    max-width: 36em;
+    font-size: var(--t1);
+    line-height: 1.45;
+  }
+
+  .now {
+    margin-top: 1.5rem;
+    max-width: 36em;
+    font-size: var(--t0);
+  }
+
+  .now span {
+    display: block;
+    color: var(--senal-texto);
+    font-weight: 600;
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--linea);
+  }
+
+  .facts dt {
+    color: var(--niebla);
+    font-size: var(--t-1);
+  }
+
+  .facts dd {
+    margin-top: 0.25rem;
+  }
+
+  @container (max-width: 52rem) {
+    .about {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .portrait {
+      max-width: 13rem;
+    }
+
+    .facts {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

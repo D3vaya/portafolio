@@ -1,0 +1,946 @@
+---
+import { work, education } from "@cv"
+import { assignRows, duration, formatMonth, toYear, careerYears } from "@/lib/time"
+
+const studyLabel: Record<string, string> = {
+  Bachelor: "Carrera",
+  Technical: "Técnico",
+}
+
+const jobs = assignRows(
+  work.map((job, i) => ({ ...job, id: `job-${i}`, from: toYear(job.startDate), to: toYear(job.endDate) })),
+)
+const studies = assignRows(
+  education.map((edu) => ({ ...edu, from: toYear(edu.startDate), to: toYear(edu.endDate) })),
+)
+
+const from = Math.floor(Math.min(...jobs.map((j) => j.from), ...studies.map((s) => s.from)))
+const to = Math.ceil(toYear(null) + 0.2)
+const span = to - from
+const years = Array.from({ length: span }, (_, i) => from + i)
+
+const pos = (a: number, b: number) => `--s: ${(a - from) / span}; --l: ${(b - a) / span}`
+const nowPos = (toYear(null) - from) / span
+
+const workRows = Math.max(...jobs.map((j) => j.row)) + 1
+const studyRows = Math.max(...studies.map((s) => s.row)) + 1
+const selected = jobs.reduce((a, b) => (b.from > a.from ? b : a))
+const byStart = [...jobs].sort((a, b) => a.from - b.from)
+const shortName = (name: string) => name.replace(/^\[nbit\].*/, "nbit")
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+const totalYears = careerYears(work)
+---
+
+<div class="resp trace-section">
+  <p class="intro">
+    {totalYears} años de trabajo. Cada barra es un rol y su largo, lo que duró. Elige una para ver el detalle.
+  </p>
+
+  <ul class="companies" aria-label="Empresas, de la más reciente a la más antigua">
+    {
+      [...jobs].sort((a, b) => b.from - a.from).map((job) => (
+        <li>
+          <button
+            type="button"
+            class="company"
+            data-company={job.id}
+            aria-pressed={job === selected ? "true" : "false"}
+          >
+            <span class="logo company-logo">
+              {job.image ? <img src={job.image} alt="" width="64" height="64" loading="lazy" /> : initials(job.name)}
+            </span>
+            <span class="company-text">
+              <span class="company-name">{shortName(job.name)}</span>
+              <span class="company-years">
+                {job.startDate.slice(0, 4)} a {job.endDate ? job.endDate.slice(0, 4) : "hoy"}
+              </span>
+            </span>
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="trace" style={`--now: ${nowPos}; --years: ${span}`}>
+    <div class="axis" aria-hidden="true">
+      {years.map((y) => <span style={`--s: ${(y - from) / span}`}>{y}</span>)}
+    </div>
+
+    <div class="track" style={`--rows: ${workRows}`}>
+      <p class="track-label">Trabajo</p>
+      <div class="lane" role="tablist" aria-label="Roles por fecha" aria-orientation="horizontal">
+        {
+          byStart.map((job) => (
+            <button
+              class:list={["bar", { "is-running": !job.endDate }]}
+              style={`${pos(job.from, job.to)}; --row: ${job.row}`}
+              role="tab"
+              id={`tab-${job.id}`}
+              aria-controls={job.id}
+              aria-selected={job === selected ? "true" : "false"}
+              tabindex={job === selected ? 0 : -1}
+            >
+              <span class="logo bar-logo">
+                {job.image ? <img src={job.image} alt="" width="32" height="32" loading="lazy" /> : initials(job.name)}
+              </span>
+              <span class="bar-text">
+                <span class="bar-name">{shortName(job.name)}</span>
+                <span class="bar-role">{job.position}</span>
+              </span>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="track track-study" style={`--rows: ${studyRows}`}>
+      <p class="track-label">Estudios</p>
+      <ul class="lane">
+        {
+          studies.map((s) => (
+            <li class="bar bar-study" style={`${pos(s.from, s.to)}; --row: ${s.row}`}>
+              <span class="bar-text">
+                <span class="bar-name">{s.institution}</span>
+                <span class="bar-role">
+                  {studyLabel[s.studyType] ?? s.studyType}, {s.area}
+                </span>
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="now" aria-hidden="true"><span></span></div>
+  </div>
+
+  <div class="details">
+    {
+      jobs.map((job) => (
+        <div class="job" id={job.id} role="tabpanel" tabindex="0" aria-labelledby={`tab-${job.id}`} hidden={job !== selected}>
+          <div class="job-head">
+          <span class="logo job-logo">
+            {job.image ? <img src={job.image} alt={`Logo de ${shortName(job.name)}`} width="96" height="96" loading="lazy" /> : initials(job.name)}
+          </span>
+          <div>
+          <p class="job-when">
+            <time datetime={job.startDate}>{formatMonth(job.startDate)}</time> a{" "}
+            {job.endDate ? <time datetime={job.endDate}>{formatMonth(job.endDate)}</time> : "hoy"}
+            <span class="job-duration">{duration(job.startDate, job.endDate)}</span>
+          </p>
+          <h4>{job.position}</h4>
+          <p class="job-where">
+            {job.url ? <a href={job.url}>{job.name}</a> : job.name}
+            <span>{job.industry}</span>
+          </p>
+          </div>
+          </div>
+          <div class="job-facts">
+            <div>
+              <h5>Lo más relevante</h5>
+              <ul class="job-list">
+                {job.highlights.map((h) => (
+                  <li>{h}</li>
+                ))}
+              </ul>
+            </div>
+            {job.stack.length > 0 && (
+              <div>
+                <h5>Con qué</h5>
+                <ul class="job-stack">
+                  {job.stack.map((s) => (
+                    <li>{s}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <!-- En móvil la traza se vuelve una línea de tiempo en acordeón: el detalle se abre donde se toca -->
+  <ol class="timeline" aria-label="Trayectoria, de lo más reciente a lo más antiguo">
+    {
+      [...jobs].sort((a, b) => b.from - a.from).map((job) => (
+        <li>
+          <details class="tl" open={job === selected}>
+            <summary>
+              <span class="logo tl-logo">
+                {job.image ? <img src={job.image} alt="" width="48" height="48" loading="lazy" /> : initials(job.name)}
+              </span>
+              <span class="tl-text">
+                <span class="tl-name">{shortName(job.name)}</span>
+                <span class="tl-role">{job.position}</span>
+                <span class="tl-years">
+                  {`${job.startDate.slice(0, 4)} a ${job.endDate ? job.endDate.slice(0, 4) : "hoy"}, ${duration(job.startDate, job.endDate)}`}
+                </span>
+              </span>
+              <span class="tl-track" aria-hidden="true">
+                <span class:list={["tl-bar", { "is-running": !job.endDate }]} style={pos(job.from, job.to)} />
+              </span>
+            </summary>
+            <div class="tl-body">
+              <ul class="job-list">
+                {job.highlights.map((h) => (
+                  <li>{h}</li>
+                ))}
+              </ul>
+              {job.stack.length > 0 && (
+                <ul class="job-stack">
+                  {job.stack.map((s) => (
+                    <li>{s}</li>
+                  ))}
+                </ul>
+              )}
+              {job.url && <a class="tl-link" href={job.url}>Visitar {shortName(job.name)}</a>}
+            </div>
+          </details>
+        </li>
+      ))
+    }
+  </ol>
+
+  <div class="tl-studies">
+    <h4>Estudios</h4>
+    <ul>
+      {
+        [...studies].sort((a, b) => b.from - a.from).map((s) => (
+          <li>
+            <span class="tl-study-name">{s.area}</span>
+            <span class="tl-years">{`${s.institution}, ${s.startDate.slice(0, 4)} a ${s.endDate.slice(0, 4)}`}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</div>
+
+<script>
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>(".trace [role=tab]")]
+  const compact = matchMedia("(max-width: 52rem)")
+
+  const companies = [...document.querySelectorAll<HTMLButtonElement>("[data-company]")]
+
+  const select = (tab: HTMLButtonElement, focus = false) => {
+    for (const c of companies) {
+      c.setAttribute("aria-pressed", String(c.dataset.company === tab.getAttribute("aria-controls")))
+    }
+    for (const t of tabs) {
+      const on = t === tab
+      t.setAttribute("aria-selected", String(on))
+      t.tabIndex = on ? 0 : -1
+      document.getElementById(t.getAttribute("aria-controls")!)!.hidden = !on
+    }
+    if (focus) tab.focus()
+  }
+
+  // La tira de logos elige el mismo rol que su barra en la traza
+  for (const c of companies) {
+    c.addEventListener("click", () => {
+      const tab = tabs.find((t) => t.getAttribute("aria-controls") === c.dataset.company)!
+      select(tab)
+      document.getElementById(c.dataset.company!)!.scrollIntoView({ block: "nearest", behavior: "smooth" })
+    })
+  }
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener("click", () => {
+      select(tab)
+      if (compact.matches) {
+        document.getElementById(tab.getAttribute("aria-controls")!)!.scrollIntoView({ block: "nearest" })
+      }
+    })
+    tab.addEventListener("keydown", (e) => {
+      const next = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key]
+      if (e.key === "Home") select(tabs[0], true)
+      else if (e.key === "End") select(tabs[tabs.length - 1], true)
+      else if (next) select(tabs[(i + next + tabs.length) % tabs.length], true)
+      else return
+      e.preventDefault()
+    })
+  })
+</script>
+
+<style>
+  .intro {
+    max-width: 38em;
+    color: var(--niebla);
+  }
+
+  h4,
+  h5 {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  /* ---------- Tira de empresas ---------- */
+  .companies {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.6rem;
+    margin-top: clamp(2rem, 5cqi, 3rem);
+  }
+
+  .company {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid var(--linea);
+    border-radius: 12px;
+    background: var(--hondo);
+    color: var(--papel);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      border-color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .company:hover {
+    border-color: var(--papel);
+    transform: translateY(-2px);
+  }
+
+  .company[aria-pressed="true"] {
+    border-color: var(--senal);
+    box-shadow: inset 0 0 0 1px var(--senal);
+  }
+
+  .company-logo {
+    width: 3.25rem;
+    height: 3.25rem;
+    padding: 4px;
+    border-radius: 10px;
+    font-size: 1rem;
+  }
+
+  .company-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .company-name {
+    font-family: var(--display);
+    font-weight: 750;
+    font-stretch: 82%;
+    line-height: 1.1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .company-years {
+    color: var(--niebla);
+    font-size: var(--t-1);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @container (max-width: 52rem) {
+    .companies {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* ---------- Traza: tiempo en horizontal ---------- */
+  .trace {
+    --label: 6.5rem;
+    --row-h: 3.25rem;
+    position: relative;
+    display: grid;
+    margin-top: 1rem;
+    background: var(--hondo);
+    padding-right: 1rem;
+  }
+
+  .axis,
+  .lane,
+  .now {
+    margin-left: var(--label);
+  }
+
+  .axis {
+    position: relative;
+    height: 2rem;
+    border-bottom: 1px solid var(--linea);
+  }
+
+  .axis span {
+    position: absolute;
+    left: calc(var(--s) * 100%);
+    top: 0;
+    height: calc(100% + 100vh);
+    padding: 0.4rem 0 0 0.35rem;
+    border-left: 1px solid var(--linea);
+    font-size: var(--t-1);
+    font-variant-numeric: tabular-nums;
+    color: var(--niebla);
+    pointer-events: none;
+  }
+
+  .trace {
+    overflow: hidden;
+  }
+
+  .track {
+    position: relative;
+    display: grid;
+    border-bottom: 1px solid var(--linea);
+  }
+
+  .track-label {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--label);
+    padding: 0.75rem 1rem;
+    font-family: var(--display);
+    font-stretch: 75%;
+    font-weight: 600;
+    background: var(--hondo);
+    border-right: 1px solid var(--linea);
+    z-index: 1;
+  }
+
+  .lane {
+    position: relative;
+    height: calc(var(--rows) * var(--row-h) + 1rem);
+  }
+
+  .bar {
+    position: absolute;
+    left: calc(var(--s) * 100%);
+    width: calc(var(--l) * 100%);
+    top: calc(0.5rem + var(--row) * var(--row-h));
+    height: calc(var(--row-h) - 0.35rem);
+    min-width: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 0.45rem;
+    overflow: hidden;
+    border: 0;
+    border-left: 2px solid var(--papel);
+    background: color-mix(in srgb, var(--papel) 12%, transparent);
+    color: var(--papel);
+    font: inherit;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .bar:hover {
+    background: color-mix(in srgb, var(--papel) 22%, transparent);
+  }
+
+  .bar[aria-selected="true"] {
+    background: var(--senal);
+    border-left-color: var(--sobre);
+    color: var(--sobre);
+  }
+
+  /* El rol actual sigue abierto: el borde derecho queda sin cerrar */
+  .bar.is-running {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent 0 6px,
+      color-mix(in srgb, var(--papel) 12%, transparent) 6px 12px
+    );
+  }
+
+  .bar.is-running[aria-selected="true"] {
+    background-image: repeating-linear-gradient(-45deg, var(--senal) 0 6px, #e04a12 6px 12px);
+  }
+
+  /* Logos de empresa sobre una ficha blanca para que convivan formatos distintos */
+  .logo {
+    display: grid;
+    place-items: center;
+    flex: none;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--linea);
+    border-radius: 6px;
+    font-family: var(--display);
+    font-weight: 800;
+    font-stretch: 80%;
+    color: var(--niebla);
+  }
+
+  .logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .bar-logo {
+    width: 2rem;
+    height: 2rem;
+    padding: 2px;
+    font-size: 0.75rem;
+  }
+
+  .bar-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .bar-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: var(--display);
+    font-weight: 700;
+    font-stretch: 78%;
+    font-size: 0.95rem;
+    line-height: 1.15;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bar-role {
+    font-size: var(--t-1);
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0.8;
+  }
+
+  .bar-study {
+    cursor: default;
+    background: transparent;
+    border: 1px solid var(--linea);
+    border-left: 2px solid var(--niebla);
+    color: var(--niebla);
+  }
+
+  .bar-study:hover {
+    background: transparent;
+  }
+
+  .now {
+    position: absolute;
+    inset: 0 0 0 0;
+    margin-right: 1rem;
+    pointer-events: none;
+  }
+
+  .now span {
+    position: absolute;
+    left: calc(var(--now) * 100%);
+    top: 0;
+    bottom: 0;
+    border-left: 2px solid var(--senal);
+    font-size: var(--t-1);
+    font-weight: 600;
+    color: var(--senal-texto);
+  }
+
+  /* Etiqueta a la izquierda de la línea para no salirse del borde */
+  .now span::before {
+    content: "Hoy";
+    position: absolute;
+    right: 100%;
+    bottom: 0;
+    padding: 0 0.4rem 0.4rem;
+  }
+
+  /* ---------- Detalle ---------- */
+  .details {
+    border: 1px solid var(--linea);
+    border-top: 0;
+    padding: clamp(1.25rem, 3cqi, 2.5rem);
+  }
+
+  .job-head {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 3cqi, 1.75rem);
+  }
+
+  .job-logo {
+    width: clamp(4.5rem, 9cqi, 6rem);
+    height: clamp(4.5rem, 9cqi, 6rem);
+    padding: 0.5rem;
+    border-radius: 14px;
+    font-size: var(--t2);
+  }
+
+  .job-when {
+    color: var(--niebla);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .job-duration {
+    margin-left: 0.75rem;
+    padding-left: 0.75rem;
+    border-left: 1px solid var(--linea);
+  }
+
+  .job h4 {
+    margin-top: 0.75rem;
+    font-size: var(--t3);
+    font-stretch: 85%;
+  }
+
+  .job-where {
+    margin-top: 0.5rem;
+    font-size: var(--t1);
+  }
+
+  .job-where span {
+    margin-left: 0.75rem;
+    color: var(--niebla);
+  }
+
+  .job-facts {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .job h5 {
+    font-family: var(--display);
+    font-stretch: 75%;
+    font-weight: 600;
+    font-size: var(--t0);
+    color: var(--niebla);
+    margin: 0 0 0.6rem;
+  }
+
+  .job-list li {
+    padding: 0.45rem 0;
+    border-top: 1px solid var(--linea);
+  }
+
+  .job-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .job-stack li {
+    padding: 0.2rem 0.6rem;
+    border: 1px solid var(--niebla);
+    font-size: 0.9375rem;
+  }
+
+  /* ---------- Pantallas angostas: el tiempo corre hacia abajo, lo reciente arriba ---------- */
+  @container (max-width: 52rem) {
+    .trace {
+      --col: 3rem;
+      --axis: 3.25rem;
+      grid-template-columns: var(--axis) auto auto 1fr;
+      height: calc(var(--years) * 5rem + 2.25rem);
+      padding: 2.25rem 0 0;
+    }
+
+    .axis,
+    .lane,
+    .now {
+      margin-left: 0;
+    }
+
+    .axis {
+      height: auto;
+      border-bottom: 0;
+      border-right: 1px solid var(--linea);
+    }
+
+    .axis span {
+      left: 0;
+      top: auto;
+      bottom: calc(var(--s) * 100%);
+      height: auto;
+      width: 100cqi;
+      padding: 0 0 0.25rem 0.35rem;
+      border-left: 0;
+      border-bottom: 1px solid var(--linea);
+    }
+
+    .track {
+      border-bottom: 0;
+      border-right: 1px solid var(--linea);
+    }
+
+    .track-label {
+      inset: -2.25rem 0 auto 0;
+      width: auto;
+      height: 2.25rem;
+      padding: 0.6rem 0.35rem;
+      border-right: 0;
+      border-bottom: 1px solid var(--linea);
+      font-size: var(--t-1);
+      text-align: center;
+    }
+
+    .lane {
+      height: auto;
+      width: calc(var(--rows) * var(--col) + 0.5rem);
+    }
+
+    .bar {
+      left: calc(0.25rem + var(--row) * var(--col));
+      width: calc(var(--col) - 0.3rem);
+      top: auto;
+      bottom: calc(var(--s) * 100%);
+      height: calc(var(--l) * 100%);
+      min-height: 0.6rem;
+      min-width: 0;
+      padding: 0.5rem 0;
+      justify-content: flex-start;
+      align-items: center;
+      flex-direction: row;
+      gap: 0.25rem;
+      border-left: 0;
+      /* Rotada 180°: el borde superior queda abajo, en la fecha de inicio */
+      border-top: 2px solid var(--papel);
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      transform-origin: center;
+    }
+
+    .bar[aria-selected="true"] {
+      border-top-color: var(--sobre);
+    }
+
+    .bar-study {
+      border: 1px solid var(--linea);
+      border-top: 2px solid var(--niebla);
+    }
+
+    .bar-role {
+      display: none;
+    }
+
+    /* La barra va rotada; el logo se endereza */
+    .bar-logo {
+      width: 2.2rem;
+      height: 2.2rem;
+      transform: rotate(180deg);
+    }
+
+    .now {
+      inset: 2.25rem 0 0 0;
+      margin: 0;
+    }
+
+    .now span {
+      left: 0;
+      right: 0;
+      top: auto;
+      bottom: calc(var(--now) * 100%);
+      border-left: 0;
+      border-bottom: 2px solid var(--senal);
+    }
+
+    .now span::before {
+      right: 0;
+      top: auto;
+      bottom: 0;
+      padding: 0 0.5rem 0.2rem;
+    }
+
+    .details {
+      border-top: 1px solid var(--linea);
+      margin-top: 1.5rem;
+      scroll-margin-top: 1rem;
+    }
+
+    .job {
+      scroll-margin-top: 1rem;
+    }
+
+    .job-facts {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  /* ---------- Línea de tiempo móvil ---------- */
+  .timeline,
+  .tl-studies {
+    display: none;
+  }
+
+  @container (max-width: 52rem) {
+    .companies,
+    .trace,
+    .details {
+      display: none;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 0.6rem;
+      margin-top: 2rem;
+    }
+
+    .tl {
+      border: 1px solid var(--linea);
+      border-radius: 14px;
+      background: var(--hondo);
+      overflow: hidden;
+    }
+
+    .tl[open] {
+      border-color: var(--senal);
+      box-shadow: inset 0 0 0 1px var(--senal);
+    }
+
+    .tl summary {
+      display: grid;
+      grid-template-columns: 3rem minmax(0, 1fr) 1.25rem;
+      gap: 0.4rem 0.85rem;
+      align-items: center;
+      padding: 0.85rem 0.9rem 0.8rem;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .tl summary::-webkit-details-marker {
+      display: none;
+    }
+
+    /* Indicador de abrir y cerrar */
+    .tl summary::after {
+      content: "";
+      grid-column: 3;
+      grid-row: 1;
+      width: 0.6rem;
+      height: 0.6rem;
+      justify-self: center;
+      border-right: 2px solid var(--niebla);
+      border-bottom: 2px solid var(--niebla);
+      transform: rotate(45deg) translateY(-2px);
+      transition: transform 0.2s ease;
+    }
+
+    .tl[open] summary::after {
+      transform: rotate(225deg) translateY(-2px);
+      border-color: var(--senal);
+    }
+
+    .tl-logo {
+      width: 3rem;
+      height: 3rem;
+      padding: 3px;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+
+    .tl-text {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .tl-name {
+      font-family: var(--display);
+      font-size: var(--t1);
+      font-weight: 800;
+      font-stretch: 80%;
+      line-height: 1.05;
+    }
+
+    .tl-role {
+      font-size: 0.9375rem;
+      line-height: 1.3;
+    }
+
+    .tl-years {
+      color: var(--niebla);
+      font-size: var(--t-1);
+    }
+
+    /* Mini traza: dónde cae el rol dentro de toda la carrera */
+    .tl-track {
+      grid-column: 1 / -1;
+      position: relative;
+      height: 6px;
+      margin-top: 0.35rem;
+      border-radius: 999px;
+      background: var(--linea);
+    }
+
+    .tl-bar {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: calc(var(--s) * 100%);
+      width: max(6px, calc(var(--l) * 100%));
+      border-radius: inherit;
+      background: var(--papel);
+    }
+
+    .tl[open] .tl-bar {
+      background: var(--senal);
+    }
+
+    .tl-bar.is-running {
+      background-image: repeating-linear-gradient(-45deg, transparent 0 3px, rgb(255 255 255 / 0.45) 3px 6px);
+    }
+
+    .tl-body {
+      padding: 0 0.9rem 1.1rem;
+    }
+
+    .tl-body .job-list {
+      padding-top: 0.4rem;
+      border-top: 1px solid var(--linea);
+    }
+
+    .tl-body .job-stack {
+      margin-top: 0.9rem;
+    }
+
+    .tl-link {
+      display: inline-block;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+
+    .tl-studies {
+      display: block;
+      margin-top: 2.5rem;
+    }
+
+    .tl-studies h4 {
+      font-size: var(--t2);
+      font-stretch: 85%;
+    }
+
+    .tl-studies ul {
+      margin-top: 0.75rem;
+    }
+
+    .tl-studies li {
+      display: flex;
+      flex-direction: column;
+      padding: 0.75rem 0;
+      border-top: 1px solid var(--linea);
+    }
+
+    .tl-study-name {
+      font-family: var(--display);
+      font-weight: 750;
+      font-stretch: 82%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tl summary::after {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,305 @@
+---
+import { skills, work } from "@cv"
+import { careerYears } from "@/lib/time"
+
+type Pillar = {
+  id: string
+  kicker: string
+  name: string
+  claim: string
+  lead: { name: string; proof: string }
+  toolbox?: { name: string; tools: string[] }[]
+  more?: string[]
+}
+
+// Las dos especialidades van primero, con evidencia de dónde las usé.
+const pillars: Pillar[] = [
+  {
+    id: "frontend",
+    kicker: `${careerYears(work)} años`,
+    name: "Frontend",
+    claim: "Interfaces rápidas para productos con mucho tráfico, desde la arquitectura hasta el detalle visual.",
+    lead: {
+      name: "Next.js",
+      proof: "Mi base para productos en producción. Lo usé en Juegalo.com y en ETpay, ambos sobre GCP.",
+    },
+    toolbox: [
+      {
+        name: "Frameworks",
+        tools: ["Next.js App Router", "React 19", "Server Components", "Server Actions", "Astro", "Remix", "Vue", "Nuxt", "Svelte", "Angular", "Gatsby"],
+      },
+      {
+        name: "UI y estilos",
+        tools: ["Tailwind CSS", "shadcn/ui", "Radix UI", "CSS Modules", "Framer Motion", "GSAP", "Storybook", "Figma"],
+      },
+      {
+        name: "Estado y datos",
+        tools: ["TanStack Query", "SWR", "Zustand", "Redux Toolkit", "React Hook Form", "Zod", "GraphQL", "tRPC"],
+      },
+      {
+        name: "Calidad",
+        tools: ["Vitest", "Jest", "Testing Library", "Playwright", "ESLint", "Biome", "Lighthouse CI"],
+      },
+      {
+        name: "Build y entrega",
+        tools: ["Vite", "Turbopack", "Turborepo", "pnpm", "Module Federation", "Vercel", "Cloud Run", "PWA"],
+      },
+    ],
+  },
+  {
+    id: "ia",
+    kicker: "Hoy",
+    name: "IA y agentes",
+    claim: "Harnesses para que un agente funcione fuera de una demo.",
+    lead: {
+      name: "Claude Code",
+      proof: "Mi entorno de trabajo diario, con skills, hooks, subagentes y memoria persistente configurados por mí.",
+    },
+    toolbox: [
+      { name: "Modelos y APIs", tools: ["LLMs", "API de Claude", "Vercel AI SDK", "Tool use", "Prompt caching", "Structured outputs"] },
+      { name: "Harness", tools: ["Claude Code", "Cursor", "Kiro", "Hooks", "Skills", "Subagentes", "Memoria persistente", "Permisos"] },
+      { name: "Ecosistema", tools: ["MCP", "Claude Agent SDK", "RAG", "Evals", "Trazas", "Orquestación multi-agente"] },
+      {
+        name: "Forma de trabajo",
+        tools: ["Desarrollo asistido por agentes", "Context engineering", "Prompt engineering", "Worktrees en paralelo"],
+      },
+    ],
+  },
+]
+
+const groups = [
+  { name: "Servidor", members: ["Node Js", "Express", "Cake PHP", "Java", "Go", "PHP", "Laravel", "Elixir", "Phoenix Framework"] },
+  { name: "Datos", members: ["PostgreSQL", "MySQL", "Firebase", "Supabase", "MongoDB", "Redis"] },
+  { name: "Nube y equipo", members: ["Git", "GitHub", "AWS Lambda", "AWS EC2", "AWS S3", "AWS ELB / ASG"] },
+]
+
+const known = new Set(skills.map((s) => s.name))
+const rest = groups.map((g) => ({ name: g.name, items: g.members.filter((m) => known.has(m)) }))
+---
+
+<div class="resp stack-section">
+  <p class="intro">Dos especialidades y las herramientas que manejo en cada una.</p>
+
+  <div class="pillars">
+    {
+      pillars.map((p) => (
+        <article class:list={["pillar", `is-${p.id}`]} aria-labelledby={`pillar-${p.id}`}>
+          <p class="kicker">{p.kicker}</p>
+          <h4 id={`pillar-${p.id}`}>{p.name}</h4>
+          <p class="claim">{p.claim}</p>
+
+          <div class="lead">
+            <p class="lead-name">{p.lead.name}</p>
+            <p class="lead-proof">{p.lead.proof}</p>
+          </div>
+
+          {p.toolbox && (
+            <dl class="toolbox">
+              {p.toolbox.map((box) => (
+                <div>
+                  <dt>{box.name}</dt>
+                  <dd>
+                    <ul class="more">
+                      {box.tools.map((t) => (
+                        <li>{t}</li>
+                      ))}
+                    </ul>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          {p.more && (
+            <ul class="more more-end" aria-label={`Más en ${p.name}`}>
+              {p.more.map((m) => (
+                <li>{m}</li>
+              ))}
+            </ul>
+          )}
+        </article>
+      ))
+    }
+  </div>
+
+  <h4 class="rest-title">Además</h4>
+  <dl class="rest">
+    {
+      rest.map((group) => (
+        <div>
+          <dt>{group.name}</dt>
+          <dd>{group.items.join(", ")}</dd>
+        </div>
+      ))
+    }
+  </dl>
+</div>
+
+<style>
+  .intro {
+    max-width: 38em;
+    color: var(--niebla);
+  }
+
+  h4 {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  /* ---------- Especialidades ---------- */
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1rem, 2cqi, 1.5rem);
+    margin-top: clamp(1.5rem, 4cqi, 2.25rem);
+  }
+
+  .pillar {
+    display: flex;
+    flex-direction: column;
+    padding: clamp(1.1rem, 4cqi, 2.75rem);
+    border-radius: 18px;
+    background: #fff;
+    border: 1px solid var(--linea);
+  }
+
+  /* IA va en grafito, como la banda del harness */
+  .pillar.is-ia {
+    --papel: #ecedef;
+    --niebla: #a3a7b1;
+    --linea: rgb(236 237 239 / 0.16);
+    --senal-texto: #ff7a45;
+    background: #15161a;
+    color: var(--papel);
+    border-color: #15161a;
+  }
+
+  .kicker {
+    color: var(--senal-texto);
+    font-weight: 600;
+  }
+
+  .is-ia .kicker {
+    color: var(--senal);
+  }
+
+  .pillar h4 {
+    margin-top: 0.25rem;
+    font-size: clamp(2.25rem, 9cqi, 5.5rem);
+    font-weight: 850;
+    font-stretch: 70%;
+    line-height: 0.9;
+  }
+
+  .claim {
+    max-width: 30em;
+    margin-top: 1rem;
+    font-size: var(--t1);
+    line-height: 1.35;
+  }
+
+  .lead {
+    margin-top: 2rem;
+    padding: 1.25rem 1.25rem 1.4rem;
+    border-radius: 12px;
+    background: var(--senal);
+    color: var(--sobre);
+  }
+
+  .lead-name {
+    font-family: var(--display);
+    font-size: clamp(1.75rem, 7cqi, 3.25rem);
+    font-weight: 850;
+    font-stretch: 85%;
+    line-height: 1;
+  }
+
+  .lead-proof {
+    margin-top: 0.6rem;
+    max-width: 34em;
+  }
+
+  .more {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .more-end {
+    margin-top: auto;
+    padding-top: 1.5rem;
+  }
+
+  .toolbox {
+    margin-top: 1.75rem;
+  }
+
+  .toolbox div + div {
+    margin-top: 1rem;
+  }
+
+  .toolbox dt {
+    margin-bottom: 0.45rem;
+    font-family: var(--display);
+    font-weight: 700;
+    font-stretch: 80%;
+    color: var(--senal-texto);
+  }
+
+  .toolbox dd {
+    margin: 0;
+  }
+
+  .more li {
+    padding: 0.25rem 0.7rem;
+    border: 1px solid var(--linea);
+    border-radius: 999px;
+    font-size: 0.875rem;
+  }
+
+  /* ---------- Todo lo demás ---------- */
+  .rest-title {
+    margin-top: clamp(2.5rem, 6cqi, 3.5rem);
+    font-size: var(--t2);
+    font-stretch: 85%;
+  }
+
+  .rest {
+    display: grid;
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+  }
+
+  .rest div {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, 1fr);
+    gap: 1rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--linea);
+  }
+
+  .rest dt {
+    font-family: var(--display);
+    font-weight: 700;
+    font-stretch: 80%;
+  }
+
+  .rest dd {
+    margin: 0;
+    color: var(--niebla);
+  }
+
+  @container (max-width: 64rem) {
+    .pillars {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @container (max-width: 36rem) {
+    .rest div {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.2rem;
+    }
+  }
+</style>

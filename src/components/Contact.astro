@@ -1,0 +1,107 @@
+---
+import { basics } from "@cv"
+
+const [user, domain] = basics.email.split("@")
+---
+
+<section class="contact" id="escribeme" aria-labelledby="contact-title">
+  <div class="wrap">
+    <h2 id="contact-title">¿Qué ponemos en producción?</h2>
+    <p class="intro">Escríbeme si estás construyendo agentes que tienen que funcionar con usuarios reales, o si tu producto necesita a alguien que lidere su desarrollo.</p>
+    <a class="mail" href={`mailto:${basics.email}`}>{user}<wbr />@{domain}</a>
+
+    <ul class="links">
+      {
+        basics.profiles.map((p) => (
+          <li>
+            <a href={p.url} rel="me">
+              {p.network}
+            </a>
+          </li>
+        ))
+      }
+      <li><a href="/cv-juan-carlos-ayala.pdf" download>Descargar CV en PDF</a></li>
+    </ul>
+  </div>
+
+  <footer class="wrap footer">
+    <p>
+      Hecho con Astro y CSS, con desarrollo asistido por agentes. El JavaScript propio de la página mide su carga, ajusta el nombre y anima los diagramas; además usa Vercel Analytics. Claude Code y su mascota son de Anthropic; aparecen como la herramienta que uso, no como afiliación.
+    </p>
+    <p>© {new Date().getFullYear()} {basics.name}</p>
+  </footer>
+</section>
+
+<style>
+  .contact {
+    background: var(--senal);
+    color: var(--sobre);
+    padding-top: clamp(4rem, 10vw, 8rem);
+  }
+
+  .contact :focus-visible {
+    outline-color: var(--sobre);
+  }
+
+  .contact ::selection {
+    background: var(--sobre);
+    color: var(--senal);
+  }
+
+  h2 {
+    font-size: var(--t4);
+    font-stretch: 78%;
+  }
+
+  .intro {
+    max-width: 34em;
+    margin-top: 1rem;
+    font-size: var(--t1);
+    line-height: 1.4;
+  }
+
+  .mail {
+    display: block;
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+    font-family: var(--display);
+    font-size: clamp(1.9rem, 6.6vw, 6rem);
+    font-weight: 800;
+    font-stretch: 70%;
+    line-height: 1;
+    text-decoration-thickness: 0.06em;
+    text-underline-offset: 0.12em;
+    overflow-wrap: anywhere;
+  }
+
+  .mail:hover {
+    text-decoration-color: var(--fondo);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+    margin-top: 2.5rem;
+    font-size: var(--t1);
+    font-weight: 600;
+  }
+
+  .links a:hover {
+    text-decoration-color: var(--fondo);
+  }
+
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem 3rem;
+    margin-top: clamp(4rem, 10vw, 7rem);
+    padding-block: 1.5rem 2rem;
+    border-top: 1px solid color-mix(in srgb, var(--sobre) 30%, transparent);
+    font-size: var(--t-1);
+  }
+
+  .footer p:first-child {
+    max-width: 44em;
+  }
+</style>
