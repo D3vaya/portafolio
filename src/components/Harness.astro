@@ -1,39 +1,40 @@
 ---
-import { basics } from "@cv"
-import { layers, services, steps } from "@/data/harness"
+import { CONTEXT_WINDOW, layers, steps } from "@/data/harness"
 
 const layerName = Object.fromEntries(layers.map((l) => [l.id, l.name]))
 const first = steps[0]
-const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness para mi equipo")}`
+const windowK = `${CONTEXT_WINDOW / 1000}k`
 ---
 
 <section class="harness" id="harness" aria-labelledby="harness-title">
   <div class="wrap head">
     <h2 id="harness-title">Harness engineering</h2>
     <p class="problem">
-      Tu equipo ya usa IA, pero los agentes se equivocan, gastan de más o entregan trabajo que alguien tiene que revisar
-      entero.
+      Todo lo que rodea al modelo para que un agente trabaje bien: contexto, herramientas, controles y pruebas. Así se ve
+      por dentro lo que hace Claude Code cuando le llega un prompt, en una simulación.
     </p>
-    <p class="intro">
-      Muchas veces no es el modelo: es lo que lo rodea. A eso se le llama harness, y es lo que diseño y dejo funcionando en tu
-      equipo.
-    </p>
-  </div>
-
-  <div class="wrap">
-    <h3 class="run-title">Así se ve un harness funcionando</h3>
-    <p class="run-note">Simulación ilustrativa con Claude Code. El esquema es parecido en otras herramientas.</p>
   </div>
 
   <div class="wrap run" data-run>
     <div class="board" data-board>
       <dl class="hud" aria-label="Contadores de la simulación">
-        <div><dt>Agentes activos</dt><dd data-hud="agents">1</dd></div>
-        <div><dt>Mensajes</dt><dd data-hud="messages">0</dd></div>
-        <div><dt>Herramientas</dt><dd data-hud="tools">0</dd></div>
+        <div><dt>Tokens en contexto</dt><dd data-hud="tokens">0</dd></div>
+        <div><dt>Desde caché</dt><dd data-hud="cached">0</dd></div>
+        <div><dt>Herramientas usadas</dt><dd data-hud="tools">0</dd></div>
         <div><dt>Bloqueos</dt><dd data-hud="blocked">0</dd></div>
       </dl>
       <div class="canvas" data-canvas aria-hidden="true"></div>
+      <div class="gauge" aria-hidden="true">
+        <p class="gauge-head">
+          <span class="gauge-title">Ventana de contexto <span class="gauge-tag">simulación</span></span>
+          <span class="gauge-total" data-gauge-total>0 de {windowK} tokens</span>
+        </p>
+        <div class="gauge-track">
+          <div class="gauge-bar" data-gauge-bar></div>
+          <span class="gauge-cache" data-gauge-cache><span>en caché</span></span>
+        </div>
+        <ul class="gauge-legend" data-gauge-legend></ul>
+      </div>
     </div>
 
     <div class="caption" aria-live="polite">
@@ -47,7 +48,7 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
 
     <div class="controls">
       <button class="toggle" type="button" data-toggle aria-pressed="false">Pausar</button>
-      <ol class="steps" aria-label="Pasos de la corrida">
+      <ol class="steps" aria-label="Pasos de la corrida" style={`--n: ${steps.length}`}>
         {
           steps.map((s, i) => (
             <li>
@@ -62,50 +63,10 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     </div>
   </div>
 
-  <div class="wrap">
-    <h3 class="help-title" id="como-ayudo">Cómo te puedo ayudar</h3>
-
-    <div class="services">
-      {
-        services.map((svc) => (
-          <article class="service" id={`servicio-${svc.id}`} aria-labelledby={`svc-${svc.id}`}>
-            <h4 id={`svc-${svc.id}`}>{svc.name}</h4>
-            <p class="service-when">{svc.when}</p>
-            <dl class="service-detail">
-              <div>
-                <dt>Qué te llevas</dt>
-                <dd>{svc.get}</dd>
-              </div>
-            </dl>
-            {svc.tools.length > 0 && (
-              <p class="service-tools">
-                <span>Con experiencia en</span> {svc.tools.join(", ")}
-              </p>
-            )}
-          </article>
-        ))
-      }
-    </div>
-
-    <div class="faq">
-      <h4>¿Y si mi equipo no usa Claude Code?</h4>
-      <p>
-        No hace falta: el harness que diseño va encima de la herramienta, no depende de ella. He configurado Claude Code,
-        Cursor y Kiro; si usan otra, parto por entender cómo la usan y te digo con franqueza qué se puede lograr.
-      </p>
-    </div>
-
-    <div class="cta">
-      <a class="cta-button" href={mailto}>Conversemos sobre tu caso</a>
-      <p>También si buscas a alguien que lo lidere dentro de tu equipo.</p>
-    </div>
-
-  </div>
-
 </section>
 
 <script>
-  import { layers, steps, type Step } from "@/data/harness"
+  import { CONTEXT_WINDOW, layers, steps, type Message, type Segment, type Step } from "@/data/harness"
 
   const layerName: Record<string, string> = Object.fromEntries(layers.map((l) => [l.id, l.name]))
 
@@ -113,43 +74,37 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches
   const compact = matchMedia("(max-width: 40rem)")
   const TRAVEL = 1150
-  const AGENTS = ["explorador", "implementador", "verificador"]
-  const TOOLS = ["github", "navegador"]
 
   // ---------- Diagrama: nodos y pistas, en horizontal y en vertical ----------
   type Pos = { x: number; y: number }
   type Mode = "wide" | "tall"
   const nodes: Record<string, { title: string; sub: string; wide: Pos; tall: Pos }> = {
-    tarea: { title: "Tarea", sub: "una persona pide", wide: { x: 110, y: 90 }, tall: { x: 75, y: 50 } },
-    modelo: { title: "Modelo", sub: "razona", wide: { x: 500, y: 70 }, tall: { x: 325, y: 50 } },
-    skills: { title: "Skills", sub: "contexto", wide: { x: 110, y: 340 }, tall: { x: 75, y: 185 } },
-    memoria: { title: "Memoria", sub: "entre sesiones", wide: { x: 110, y: 590 }, tall: { x: 325, y: 185 } },
-    core: { title: "Claude Code", sub: "harness y orquestador", wide: { x: 500, y: 370 }, tall: { x: 200, y: 360 } },
-    explorador: { title: "Explorador", sub: "subagente", wide: { x: 890, y: 120 }, tall: { x: 70, y: 555 } },
-    implementador: { title: "Implementador", sub: "subagente", wide: { x: 890, y: 320 }, tall: { x: 200, y: 555 } },
-    verificador: { title: "Verificador", sub: "subagente con pruebas", wide: { x: 890, y: 520 }, tall: { x: 330, y: 555 } },
-    github: { title: "GitHub", sub: "servidor MCP", wide: { x: 640, y: 640 }, tall: { x: 110, y: 705 } },
-    navegador: { title: "Navegador", sub: "servidor MCP", wide: { x: 890, y: 670 }, tall: { x: 330, y: 705 } },
+    usuario: { title: "Usuario", sub: "escribe el prompt", wide: { x: 130, y: 90 }, tall: { x: 80, y: 45 } },
+    modelo: { title: "Modelo", sub: "razona y propone", wide: { x: 500, y: 70 }, tall: { x: 320, y: 45 } },
+    memoria: { title: "Memoria", sub: "CLAUDE.md y notas", wide: { x: 130, y: 320 }, tall: { x: 80, y: 160 } },
+    cache: { title: "Caché de prompt", sub: "inicio repetido", wide: { x: 870, y: 320 }, tall: { x: 320, y: 160 } },
+    core: { title: "Claude Code", sub: "el harness", wide: { x: 500, y: 320 }, tall: { x: 200, y: 320 } },
+    skills: { title: "Skills", sub: "bajo demanda", wide: { x: 130, y: 550 }, tall: { x: 80, y: 530 } },
+    herramientas: { title: "Herramientas", sub: "lee, edita, ejecuta", wide: { x: 500, y: 600 }, tall: { x: 320, y: 530 } },
+    navegador: { title: "Navegador", sub: "servidor MCP", wide: { x: 870, y: 600 }, tall: { x: 320, y: 650 } },
   }
 
-  // h: horizontal, vertical, horizontal. v: vertical, horizontal, vertical.
-  // mid: fracción del recorrido donde la pista dobla.
-  type Route = { mode: "h" | "v"; mid: number }
-  const edges: { a: string; b: string; wide: Route; tall: Route; hook?: boolean }[] = [
-    { a: "tarea", b: "core", wide: { mode: "h", mid: 0.35 }, tall: { mode: "h", mid: 0.6 } },
-    { a: "skills", b: "core", wide: { mode: "h", mid: 0.5 }, tall: { mode: "v", mid: 0.74 } },
-    { a: "memoria", b: "core", wide: { mode: "h", mid: 0.55 }, tall: { mode: "v", mid: 0.74 } },
-    { a: "modelo", b: "core", wide: { mode: "v", mid: 0.5 }, tall: { mode: "h", mid: 0.6 } },
-    { a: "core", b: "explorador", wide: { mode: "h", mid: 0.6 }, tall: { mode: "v", mid: 0.5 } },
-    { a: "core", b: "implementador", wide: { mode: "h", mid: 0.5 }, tall: { mode: "v", mid: 0.5 } },
-    { a: "core", b: "verificador", wide: { mode: "h", mid: 0.4 }, tall: { mode: "v", mid: 0.5 } },
-    { a: "implementador", b: "github", wide: { mode: "h", mid: 0.5 }, tall: { mode: "v", mid: 0.5 }, hook: true },
-    { a: "verificador", b: "navegador", wide: { mode: "v", mid: 0.5 }, tall: { mode: "v", mid: 0.5 } },
+  // Cada pista va de centro a centro pasando por `via`, siempre en ángulo recto.
+  // Los tramos que caen dentro de un chip quedan tapados por él.
+  const edges: { a: string; b: string; wide: Pos[]; tall: Pos[]; hook?: boolean }[] = [
+    { a: "usuario", b: "core", wide: [{ x: 300, y: 90 }, { x: 300, y: 270 }, { x: 500, y: 270 }], tall: [{ x: 170, y: 45 }, { x: 170, y: 320 }] },
+    { a: "modelo", b: "core", wide: [], tall: [{ x: 230, y: 45 }, { x: 230, y: 320 }] },
+    { a: "memoria", b: "core", wide: [], tall: [{ x: 80, y: 320 }] },
+    { a: "skills", b: "core", wide: [{ x: 300, y: 550 }, { x: 300, y: 370 }, { x: 500, y: 370 }], tall: [{ x: 80, y: 320 }] },
+    { a: "cache", b: "core", wide: [], tall: [{ x: 320, y: 320 }] },
+    { a: "core", b: "herramientas", wide: [], tall: [{ x: 320, y: 320 }], hook: true },
+    { a: "herramientas", b: "navegador", wide: [], tall: [] },
   ]
 
+  // hook: dónde va la insignia y dónde se detiene lo bloqueado, como fracción de la pista
   const layout = {
-    wide: { w: 1000, h: 730, node: { w: 180, h: 70 }, core: { w: 230, h: 220 }, font: 19, packet: 17, bubble: 18 },
-    tall: { w: 400, h: 750, node: { w: 118, h: 58 }, core: { w: 170, h: 160 }, font: 14, packet: 14, bubble: 14 },
+    wide: { w: 1000, h: 660, node: { w: 180, h: 70 }, core: { w: 230, h: 220 }, font: 19, packet: 17, bubble: 18, hook: { at: 0.73, stop: 0.54 } },
+    tall: { w: 400, h: 685, node: { w: 118, h: 58 }, core: { w: 300, h: 140 }, font: 14, packet: 14, bubble: 14, hook: { at: 0.84, stop: 0.68 } },
   }
 
   const el = (tag: string, attrs: Record<string, string | number> = {}, parent?: Element) => {
@@ -159,14 +114,7 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     return node
   }
 
-  const routePath = (p: Pos, q: Pos, r: Route) => {
-    if (r.mode === "h") {
-      const mx = p.x + (q.x - p.x) * r.mid
-      return `M${p.x} ${p.y} H${mx} V${q.y} H${q.x}`
-    }
-    const my = p.y + (q.y - p.y) * r.mid
-    return `M${p.x} ${p.y} V${my} H${q.x} V${q.y}`
-  }
+  const routePath = (p: Pos, via: Pos[], q: Pos) => [p, ...via, q].map((v, i) => `${i ? "L" : "M"}${v.x} ${v.y}`).join(" ")
 
   // Mascota de Claude Code dibujada desde su arte de terminal:
   //  ▐▛███▜▌
@@ -196,6 +144,7 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
 
   type Built = {
     svg: SVGSVGElement
+    mode: Mode
     nodeEls: Record<string, Element>
     paths: Map<string, SVGPathElement>
     signals: Map<string, SVGPathElement>
@@ -223,7 +172,7 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     const pos = (id: string) => nodes[id][mode]
 
     edges.forEach((e, i) => {
-      const d = routePath(pos(e.a), pos(e.b), e[mode])
+      const d = routePath(pos(e.a), e[mode], pos(e.b))
       const key = `${e.a}>${e.b}`
       const trace = el("path", { d, class: "trace" }, tracesG) as SVGPathElement
       const len = trace.getTotalLength()
@@ -232,7 +181,7 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
       paths.set(key, trace)
       signals.set(key, el("path", { d, class: "trace-signal" }, tracesG) as SVGPathElement)
       if (e.hook) {
-        const mid = trace.getPointAtLength(len * 0.38)
+        const mid = trace.getPointAtLength(len * L.hook.at)
         const hook = el("g", { transform: `translate(${mid.x} ${mid.y})` }, tracesG)
         const body = el("g", { class: "hook" }, hook)
         el("rect", { x: -30, y: -13, width: 60, height: 26, rx: 13 }, body)
@@ -245,10 +194,9 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     Object.entries(nodes).forEach(([id, n], i) => {
       const p = pos(id)
       const isCore = id === "core"
-      const isAgent = AGENTS.includes(id)
       const size = isCore ? L.core : L.node
       const outer = el("g", { transform: `translate(${p.x} ${p.y})` }, nodesG)
-      const g = el("g", { class: `node${isCore ? " is-core" : ""}${isAgent ? " is-agent" : ""}` }, outer)
+      const g = el("g", { class: `node${isCore ? " is-core" : ""}` }, outer)
       g.style.setProperty("--d", `${300 + i * 70}ms`)
       el("rect", { class: "chip", x: -size.w / 2, y: -size.h / 2, width: size.w, height: size.h, rx: 8 }, g)
       for (const side of [-1, 1]) {
@@ -257,38 +205,136 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
           el("rect", { class: "pin", x: side > 0 ? size.w / 2 : -size.w / 2 - 6, y: y - 2, width: 6, height: 4 }, g)
         }
       }
-      if (isCore) {
+      if (isCore && mode === "wide") {
         const holder = el("g", { transform: `translate(${-size.w * 0.3} ${-size.h * 0.4})` }, g)
         mascot(holder, size.w * 0.6)
         el("text", { class: "node-title", y: size.h * 0.25, "text-anchor": "middle" }, g).textContent = n.title
         el("text", { class: "node-sub", y: size.h * 0.25 + L.font * 1.2, "text-anchor": "middle" }, g).textContent = n.sub
+      } else if (isCore) {
+        // En vertical el chip es ancho: la mascota a la izquierda y el globo dentro, a su derecha
+        const holder = el("g", { transform: `translate(${-size.w / 2 + 15} ${-size.h / 2 + 16})` }, g)
+        mascot(holder, 84)
+        const cx = -size.w / 2 + 57
+        el("text", { class: "node-title", x: cx, y: size.h * 0.2, "text-anchor": "middle" }, g).textContent = n.title
+        el("text", { class: "node-sub", x: cx, y: size.h * 0.2 + L.font * 1.2, "text-anchor": "middle" }, g).textContent = n.sub
       } else {
-        el("text", { class: "node-title", y: isAgent ? 4 : -2, "text-anchor": "middle" }, g).textContent = n.title
-        el("text", { class: "node-sub", y: (isAgent ? 6 : 0) + L.font * 1.05, "text-anchor": "middle" }, g).textContent = n.sub
-      }
-      // Los subagentes son copias pequeñas de la mascota que aparecen al delegar
-      if (isAgent) {
-        const mini = size.w * 0.26
-        const holder = el("g", { transform: `translate(${-mini / 2} ${-size.h / 2 - mini * 0.45})`, class: "mini" }, g)
-        mascot(holder, mini)
+        el("text", { class: "node-title", y: -2, "text-anchor": "middle" }, g).textContent = n.title
+        el("text", { class: "node-sub", y: L.font * 1.05, "text-anchor": "middle" }, g).textContent = n.sub
       }
       nodeEls[id] = g
     })
 
     // Globo de diálogo de la mascota
     const core = pos("core")
-    const bubbleG = el("g", { transform: `translate(${core.x + L.core.w * 0.12} ${core.y - L.core.h / 2 - L.bubble * 1.9})` }, svg)
-    const bubble = el("g", { class: "bubble" }, bubbleG)
-    const rect = el("rect", { x: 0, y: -L.bubble * 1.05, height: L.bubble * 2.1, rx: L.bubble * 1.05 }, bubble)
-    el("path", { class: "bubble-tail", d: `M${L.bubble * 0.8} ${L.bubble * 0.9} l${-L.bubble * 0.5} ${L.bubble * 0.9} l${L.bubble * 1.1} ${-L.bubble * 0.9}z` }, bubble)
-    const text = el("text", { x: L.bubble * 0.9, y: L.bubble * 0.36 }, bubble) as SVGTextElement
+    const b = L.bubble
+    const at = mode === "wide" ? { x: core.x + L.core.w * 0.12, y: core.y - L.core.h / 2 - b * 1.9 } : { x: core.x - 38, y: core.y - 14 }
+    const bubbleG = el("g", { transform: `translate(${at.x} ${at.y})` }, svg)
+    const bubble = el("g", { class: `bubble is-${mode}` }, bubbleG)
+    const rect = el("rect", { x: 0, y: -b * 1.05, height: b * 2.1, rx: b * 1.05 }, bubble)
+    const tail = mode === "wide" ? `M${b * 0.8} ${b * 0.9} l${-b * 0.5} ${b * 0.9} l${b * 1.1} ${-b * 0.9}z` : `M${b * 0.5} ${-b * 0.5} l${-b * 1.1} ${b * 0.5} l${b * 1.1} ${b * 0.5}z`
+    el("path", { class: "bubble-tail", d: tail }, bubble)
+    const text = el("text", { x: b * 0.9, y: b * 0.36 }, bubble) as SVGTextElement
 
-    return { svg, nodeEls, paths, signals, packets: el("g", {}, svg), bubble: { g: bubble, rect, text } }
+    return { svg, mode, nodeEls, paths, signals, packets: el("g", {}, svg), bubble: { g: bubble, rect, text } }
+  }
+
+  // ---------- Ventana de contexto ----------
+  // Se recalcula desde los datos: todo lo de los pasos previos más lo que ya ocurrió en el actual
+  const contextAt = (i: number, t: number) => {
+    const segs: Segment[] = []
+    let cached = false
+    steps.slice(0, i + 1).forEach((s, k) => {
+      const now = k < i ? Infinity : t
+      const c = s.context
+      if (!c) return
+      for (const a of c.add ?? []) {
+        if ((a.delay ?? 0) > now) continue
+        const found = segs.find((x) => x.id === a.id)
+        if (found) found.tokens += a.tokens
+        else segs.push({ ...a })
+      }
+      if (c.cache && c.cache.delay <= now) cached = true
+      if (c.compact && c.compact.delay <= now) {
+        segs.splice(0, segs.length, ...segs.filter((x) => x.fixed || x.keep))
+        segs.push({ id: "resumen", label: "Resumen", tokens: c.compact.tokens })
+      }
+    })
+    const total = segs.reduce((n, x) => n + x.tokens, 0)
+    const prefix = segs.filter((x) => x.fixed).reduce((n, x) => n + x.tokens, 0)
+    return { segs, cached, total, prefix }
+  }
+
+  const fmt = (n: number) => (n < 1000 ? String(n) : `${Math.round(n / 100) / 10}k`.replace(".", ","))
+
+  const gauge = {
+    bar: document.querySelector<HTMLElement>("[data-gauge-bar]")!,
+    cache: document.querySelector<HTMLElement>("[data-gauge-cache]")!,
+    legend: document.querySelector<HTMLElement>("[data-gauge-legend]")!,
+    total: document.querySelector<HTMLElement>("[data-gauge-total]")!,
+  }
+  const segEls = new Map<string, HTMLElement>()
+  let gaugeKey = ""
+
+  const renderContext = (ctx: ReturnType<typeof contextAt>) => {
+    hud.tokens.textContent = fmt(ctx.total)
+    hud.cached.textContent = fmt(ctx.cached ? ctx.prefix : 0)
+    const key = `${ctx.cached}|${ctx.segs.map((s) => `${s.id}:${s.tokens}`).join()}`
+    if (key === gaugeKey) return
+    gaugeKey = key
+    const pct = (n: number) => `${(n / CONTEXT_WINDOW) * 100}%`
+    const ids = new Set(ctx.segs.map((s) => s.id))
+    // Los tramos que salen se encogen antes de desaparecer
+    for (const [id, node] of segEls) {
+      if (ids.has(id)) continue
+      segEls.delete(id)
+      node.style.width = "0%"
+      setTimeout(() => node.remove(), reduceMotion ? 0 : 700)
+    }
+    for (const s of ctx.segs) {
+      let node = segEls.get(s.id)
+      if (!node) {
+        node = document.createElement("span")
+        node.className = "seg"
+        node.dataset.seg = s.id
+        node.style.width = "0%"
+        gauge.bar.appendChild(node)
+        segEls.set(s.id, node)
+        void node.offsetWidth
+      }
+      node.style.width = pct(s.tokens)
+      node.classList.toggle("is-cached", ctx.cached && Boolean(s.fixed))
+    }
+    gauge.cache.style.width = pct(ctx.prefix)
+    gauge.cache.classList.toggle("is-on", ctx.cached)
+    gauge.total.classList.toggle("is-full", ctx.total / CONTEXT_WINDOW >= 0.9)
+    gauge.total.textContent = `${fmt(ctx.total)} de ${fmt(CONTEXT_WINDOW)} tokens · ${Math.round((ctx.total / CONTEXT_WINDOW) * 100)} %`
+    gauge.legend.replaceChildren(
+      ...ctx.segs.map((s) => {
+        const li = document.createElement("li")
+        li.dataset.seg = s.id
+        li.classList.toggle("is-cached", ctx.cached && Boolean(s.fixed))
+        const sw = document.createElement("i")
+        const b = document.createElement("b")
+        b.textContent = fmt(s.tokens)
+        li.append(sw, `${s.label} `, b)
+        return li
+      }),
+    )
   }
 
   // ---------- Línea de tiempo ----------
-  const stepDuration = (s: Step) =>
-    Math.max(4400, ...s.messages.map((m) => (m.delay ?? 0) + TRAVEL + (m.blocked ? 2000 : 1400)))
+  const stepDuration = (s: Step) => {
+    const c = s.context
+    return Math.max(
+      4400,
+      ...s.messages.map((m) => (m.delay ?? 0) + TRAVEL + (m.blocked ? 2000 : 1400)),
+      ...(c?.add ?? []).map((a) => (a.delay ?? 0) + 1400),
+      c?.compact ? c.compact.delay + 2400 : 0,
+    )
+  }
+
+  // Una llamada a herramienta: lo que el harness manda a la terminal o a un servidor MCP
+  const isToolCall = (m: Message) => !m.blocked && (m.to === "navegador" || (m.to === "herramientas" && m.from === "core"))
 
   type Live = { packet: Element; label: SVGTextElement; path: SVGPathElement; signal: SVGPathElement; reverse: boolean; arrived: boolean; counted: boolean }
   let index = 0
@@ -298,30 +344,24 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
   let visible = false
   let booted = reduceMotion
   let live: Live[] = []
-  const counts = { agents: 1, messages: 0, tools: 0, blocked: 0 }
+  const counts = { tools: 0, blocked: 0 }
 
   const hud = Object.fromEntries(
     [...document.querySelectorAll<HTMLElement>("[data-hud]")].map((d) => [d.dataset.hud!, d]),
-  ) as Record<keyof typeof counts, HTMLElement>
+  ) as Record<"tokens" | "cached" | "tools" | "blocked", HTMLElement>
   const renderHud = () => {
-    for (const k of Object.keys(counts) as (keyof typeof counts)[]) hud[k].textContent = String(counts[k])
+    hud.tools.textContent = String(counts.tools)
+    hud.blocked.textContent = String(counts.blocked)
   }
-
-  const spawnedUpTo = (i: number) => new Set(steps.slice(0, i + 1).flatMap((s) => s.active.filter((a) => AGENTS.includes(a))))
 
   // Contadores acumulados de los pasos ya completos
   const countBefore = (i: number) => {
-    counts.messages = 0
     counts.tools = 0
     counts.blocked = 0
-    for (const s of steps.slice(0, i)) {
-      for (const m of s.messages) {
-        if (m.blocked) counts.blocked++
-        else counts.messages++
-        if (TOOLS.includes(m.to)) counts.tools++
-      }
+    for (const m of steps.slice(0, i).flatMap((s) => s.messages)) {
+      if (m.blocked) counts.blocked++
+      if (isToolCall(m)) counts.tools++
     }
-    counts.agents = 1 + spawnedUpTo(i).size
   }
 
   const findPath = (from: string, to: string) => {
@@ -336,7 +376,7 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
   }
 
   const makePacket = (text: string) => {
-    const big = !compact.matches
+    const big = built.mode === "wide"
     const g = el("g", { class: "packet" }, built.packets)
     const rect = el("rect", { rx: big ? 17 : 14, y: big ? -17 : -14, height: big ? 34 : 28 }, g)
     const label = el("text", { "text-anchor": "middle", y: big ? 6 : 5 }, g) as SVGTextElement
@@ -358,15 +398,14 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     index = (i + steps.length) % steps.length
     elapsed = 0
     const s = steps[index]
-    countBefore(index)
+    // Sin animación el paso se muestra ya completo
+    countBefore(reduceMotion ? index + 1 : index)
     renderHud()
     built.packets.replaceChildren()
     for (const signal of built.signals.values()) signal.classList.remove("is-on")
     live = s.messages.map((m) => ({ ...makePacket(m.label), ...findPath(m.from, m.to), arrived: false, counted: false }))
-    const spawned = spawnedUpTo(index)
     for (const [id, g] of Object.entries(built.nodeEls)) {
       g.classList.toggle("is-active", s.active.includes(id))
-      g.classList.toggle("is-spawned", spawned.has(id))
       g.classList.remove("is-pulse", "is-alarmed")
     }
     built.nodeEls.core.classList.toggle("is-thinking", s.layer === "modelo")
@@ -397,31 +436,31 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
 
   const draw = () => {
     const s = steps[index]
+    const stop = layout[built.mode].hook.stop
     let busy = false
     s.messages.forEach((m, k) => {
       const item = live[k]
-      // Con movimiento reducido cada mensaje queda quieto a mitad de camino
-      const raw = reduceMotion ? 0.5 : (elapsed - (m.delay ?? 0)) / TRAVEL
-      const t = Math.min(Math.max(raw, 0), m.blocked ? 0.5 : 1)
+      // Con movimiento reducido cada mensaje queda quieto a mitad de camino, y lo bloqueado, en el hook
+      const raw = reduceMotion ? (m.blocked ? stop : 0.5) : (elapsed - (m.delay ?? 0)) / TRAVEL
+      const t = Math.min(Math.max(raw, 0), m.blocked ? stop : 1)
       const len = item.path.getTotalLength()
       const at = item.path.getPointAtLength(len * (item.reverse ? 1 - t : t))
       const moving = raw >= 0 && raw <= 1
-      const blocked = Boolean(m.blocked) && raw >= 0.5
+      const blocked = Boolean(m.blocked) && raw >= stop
       item.packet.setAttribute("transform", `translate(${at.x} ${at.y})`)
       item.packet.classList.toggle("is-visible", reduceMotion || moving || blocked)
       if (blocked && !item.packet.classList.contains("is-blocked")) {
         item.packet.classList.add("is-blocked")
         item.label.textContent = "bloqueado por hook"
         sizeRect(item.packet.querySelector("rect")!, item.label, 26)
-        built.nodeEls.implementador.classList.add("is-alarmed")
+        built.nodeEls[m.from].classList.add("is-alarmed")
       }
       item.signal.classList.toggle("is-on", moving && !blocked)
       if (moving && (m.from === "core" || m.to === "core")) busy = true
-      if (!item.counted && (raw >= 1 || blocked)) {
+      if (!item.counted && !reduceMotion && (raw >= 1 || blocked)) {
         item.counted = true
         if (m.blocked) counts.blocked++
-        else counts.messages++
-        if (TOOLS.includes(m.to)) counts.tools++
+        if (isToolCall(m)) counts.tools++
         renderHud()
       }
       if (!item.arrived && raw >= 1 && !m.blocked) {
@@ -432,8 +471,7 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
         target.classList.add("is-pulse")
       }
     })
-    counts.agents = 1 + spawnedUpTo(index).size
-    hud.agents.textContent = String(counts.agents)
+    renderContext(contextAt(index, reduceMotion ? Infinity : elapsed))
     built.nodeEls.core.classList.toggle("is-busy", busy)
     if (!reduceMotion) built.bubble.text.textContent = sayFull.slice(0, Math.floor(elapsed / 38))
     stepButtons[index].style.setProperty("--p", String(Math.min(1, elapsed / stepDuration(s))))
@@ -529,6 +567,7 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
   })
 </script>
 
+
 <style>
   /* Banda oscura a todo el ancho: redefine los tokens dentro de la sección */
   .harness {
@@ -557,14 +596,6 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     font-stretch: 70%;
     line-height: 0.88;
     letter-spacing: -0.01em;
-  }
-
-  .intro {
-    max-width: 40em;
-    margin-top: 1.5rem;
-    font-size: var(--t1);
-    line-height: 1.45;
-    color: var(--niebla);
   }
 
   .run {
@@ -696,26 +727,6 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     transform: none;
   }
 
-  /* Subagentes en espera: solo un contorno punteado */
-  .is-booted .canvas :global(.node.is-agent:not(.is-spawned)) {
-    opacity: 0.3;
-    transform: scale(0.9);
-    transition-delay: 0s;
-  }
-
-  .canvas :global(.is-agent:not(.is-spawned) .chip) {
-    stroke-dasharray: 5 5;
-  }
-
-  .canvas :global(.mini) {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .canvas :global(.is-spawned .mini) {
-    opacity: 1;
-  }
-
   .canvas :global(.chip) {
     fill: #17181c;
     stroke: var(--linea);
@@ -769,7 +780,7 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     }
   }
 
-  .canvas :global(.is-alarmed .chip) {
+  .canvas :global(.node.is-alarmed .chip) {
     stroke: var(--alto);
     animation: alarm 0.6s ease 2;
   }
@@ -805,13 +816,11 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     animation-duration: 0.6s;
   }
 
-  .canvas :global(.is-core.is-busy .leg-a),
-  .canvas :global(.is-agent.is-active .leg-a) {
+  .canvas :global(.is-core.is-busy .leg-a) {
     animation: step 0.3s steps(2, jump-none) infinite alternate;
   }
 
-  .canvas :global(.is-core.is-busy .leg-b),
-  .canvas :global(.is-agent.is-active .leg-b) {
+  .canvas :global(.is-core.is-busy .leg-b) {
     animation: step 0.3s steps(2, jump-none) infinite alternate-reverse;
   }
 
@@ -856,6 +865,10 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     opacity: 0;
     transform-box: fill-box;
     transform-origin: left bottom;
+  }
+
+  .canvas :global(.bubble.is-tall) {
+    transform-origin: left center;
   }
 
   .is-booted .canvas :global(.bubble.is-in) {
@@ -929,6 +942,175 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     }
   }
 
+  /* ---------- Ventana de contexto ---------- */
+  .gauge {
+    margin-top: 0.5rem;
+    padding: 0.75rem 0.5rem 0.25rem;
+    border-top: 1px solid var(--linea);
+  }
+
+  .gauge-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    font-size: var(--t-1);
+    color: var(--niebla);
+  }
+
+  .gauge-title {
+    color: var(--papel);
+    font-family: var(--display);
+    font-weight: 700;
+    font-stretch: 85%;
+    font-size: 0.9375rem;
+  }
+
+  .gauge-tag {
+    margin-left: 0.4rem;
+    padding: 0.05rem 0.45rem;
+    border: 1px solid var(--linea);
+    border-radius: 999px;
+    font-family: var(--texto);
+    font-weight: 500;
+    font-size: 0.75rem;
+    color: var(--niebla);
+  }
+
+  .gauge-total {
+    font-variant-numeric: tabular-nums;
+    transition: color 0.3s ease;
+  }
+
+  .gauge-total.is-full {
+    color: #ff8a78;
+  }
+
+  .gauge-track {
+    position: relative;
+    margin-top: 0.5rem;
+    padding-bottom: 1.6rem;
+  }
+
+  .gauge-bar {
+    display: flex;
+    height: 16px;
+    border-radius: 4px;
+    background: rgb(236 237 239 / 0.06);
+    box-shadow: inset 0 0 0 1px var(--linea);
+    overflow: hidden;
+  }
+
+  /* Cada tramo tiene su color; la parte que sale de la caché va rayada */
+  .gauge :global([data-seg="sistema"]) {
+    --c: #ff5b1f;
+  }
+  .gauge :global([data-seg="defs"]) {
+    --c: #ff7a45;
+  }
+  .gauge :global([data-seg="memoria"]) {
+    --c: #ffa27a;
+  }
+  .gauge :global([data-seg="indice"]) {
+    --c: #ffc9ae;
+  }
+  .gauge :global([data-seg="prompt"]) {
+    --c: #ecedef;
+  }
+  .gauge :global([data-seg="skill"]) {
+    --c: #c4c8d0;
+  }
+  .gauge :global([data-seg="resultados"]) {
+    --c: #8b909b;
+  }
+  .gauge :global([data-seg="turnos"]) {
+    --c: #5d616b;
+  }
+  .gauge :global([data-seg="resumen"]) {
+    --c: #ecedef;
+  }
+
+  .gauge :global(.seg) {
+    flex: none;
+    min-width: 2px;
+    height: 100%;
+    background: var(--c);
+    box-shadow: inset -1px 0 0 var(--hondo);
+    transition: width 0.7s cubic-bezier(0.6, 0, 0.2, 1);
+  }
+
+  .gauge :global(.seg[style*="width: 0%"]) {
+    min-width: 0;
+  }
+
+  .gauge :global(.seg.is-cached),
+  .gauge :global(li.is-cached i) {
+    background-image: repeating-linear-gradient(135deg, rgb(10 11 13 / 0.55) 0 2px, transparent 2px 5px);
+  }
+
+  .gauge :global(.seg.is-cached) {
+    background-color: var(--c);
+  }
+
+  /* Corchete bajo el inicio que se reutiliza desde la caché */
+  .gauge-cache {
+    position: absolute;
+    left: 0;
+    top: 20px;
+    height: 6px;
+    border: 1.5px solid var(--senal);
+    border-top: 0;
+    opacity: 0;
+    transition:
+      opacity 0.4s ease,
+      width 0.7s cubic-bezier(0.6, 0, 0.2, 1);
+  }
+
+  .gauge-cache.is-on {
+    opacity: 1;
+  }
+
+  .gauge-cache span {
+    position: absolute;
+    top: 4px;
+    left: 0;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--senal-texto);
+  }
+
+  .gauge-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 1rem;
+    min-height: 2.6rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.8125rem;
+    color: var(--niebla);
+  }
+
+  .gauge-legend :global(li) {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .gauge-legend :global(i) {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 2px;
+    background-color: var(--c);
+  }
+
+  .gauge-legend :global(b) {
+    color: var(--papel);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
   /* ---------- Narración ---------- */
   .caption {
     max-width: 44rem;
@@ -985,7 +1167,7 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
   .steps {
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(9, minmax(0, 1fr));
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
     gap: 0.4rem;
   }
 
@@ -1030,164 +1212,15 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     color: var(--papel);
   }
 
-  /* ---------- Problema y título de la simulación ---------- */
+  /* ---------- Subtítulo ---------- */
   .problem {
-    max-width: 22em;
-    margin-top: clamp(1.5rem, 3vw, 2.25rem);
-    font-family: var(--display);
-    font-size: clamp(1.75rem, 3.6vw, 2.75rem);
-    font-weight: 800;
-    font-stretch: 82%;
-    line-height: 1.08;
-  }
-
-  .run-title {
-    margin-top: clamp(3rem, 7vw, 4.5rem);
-    font-size: var(--t2);
-    font-stretch: 85%;
-    color: var(--niebla);
-  }
-
-  .run {
-    margin-top: 1.25rem;
-  }
-
-  /* ---------- Cómo te puedo ayudar ---------- */
-  .help-title {
-    margin-top: clamp(4.5rem, 10vw, 7rem);
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
-    font-weight: 850;
-    font-stretch: 75%;
-    line-height: 0.95;
-  }
-
-  .services {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(0.75rem, 2vw, 1.25rem);
-    margin-top: clamp(2rem, 4vw, 2.75rem);
-  }
-
-  .service {
-    display: flex;
-    flex-direction: column;
-    padding: clamp(1.25rem, 2.5vw, 1.75rem);
-    border: 1px solid var(--linea);
-    border-top: 3px solid var(--senal);
-    border-radius: 14px;
-    background: var(--hondo);
-  }
-
-  .service h4 {
-    margin: 0;
-    font-family: var(--display);
-    font-size: var(--t2);
-    font-weight: 800;
-    font-stretch: 80%;
-    line-height: 1.05;
-  }
-
-  .service-when {
-    margin-top: 0.75rem;
-    color: var(--niebla);
-  }
-
-  .service-detail {
-    margin-top: 1.25rem;
-  }
-
-  .service-detail dt {
-    font-family: var(--display);
-    font-weight: 700;
-    font-stretch: 80%;
-    color: var(--senal-texto);
-  }
-
-  .service-detail dd {
-    margin: 0.25rem 0 0;
-  }
-
-  .run-note {
-    margin-top: 0.4rem;
-    color: var(--niebla);
-  }
-
-  .service-tools {
-    margin-top: 1.25rem;
-    font-size: 0.9375rem;
-  }
-
-  .service-tools span {
-    display: block;
-    font-family: var(--display);
-    font-weight: 700;
-    font-stretch: 80%;
-    color: var(--senal-texto);
-  }
-
-  .faq {
-    max-width: 46rem;
-    margin-top: clamp(2.5rem, 5vw, 3.5rem);
-    padding: clamp(1.25rem, 2.5vw, 1.75rem);
-    border: 1px solid var(--linea);
-    border-left: 3px solid var(--senal);
-    border-radius: 14px;
-  }
-
-  .faq h4 {
-    margin: 0;
-    font-family: var(--display);
-    font-size: var(--t2);
-    font-weight: 800;
-    font-stretch: 82%;
-    line-height: 1.1;
-  }
-
-  .faq p {
-    margin-top: 0.75rem;
-  }
-
-  .cta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 1rem 1.5rem;
-    margin-top: clamp(2.5rem, 5vw, 3.5rem);
-  }
-
-  .cta-button {
-    display: inline-block;
-    padding: 0.9rem 1.6rem;
-    border-radius: 999px;
-    background: var(--senal);
-    color: var(--sobre);
-    font-family: var(--display);
+    max-width: 36em;
+    margin-top: clamp(1.25rem, 2.5vw, 1.75rem);
     font-size: var(--t1);
-    font-weight: 800;
-    font-stretch: 85%;
-    text-decoration: none;
-    box-shadow: 0 0 30px rgb(255 91 31 / 0.35);
-    transition:
-      transform 0.2s ease,
-      box-shadow 0.2s ease;
-  }
-
-  .cta-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 40px rgb(255 91 31 / 0.55);
-  }
-
-  .cta p {
+    line-height: 1.4;
     color: var(--niebla);
   }
 
-  @media (max-width: 64rem) {
-    .services {
-      grid-template-columns: minmax(0, 1fr);
-    }
-  }
-
-  /* En pantallas anchas la narración acompaña al tablero */
   @media (min-width: 72rem) {
     .run {
       grid-template-columns: minmax(0, 8fr) minmax(0, 3.6fr);
@@ -1272,6 +1305,10 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
     .hud {
       gap: 0.25rem 1rem;
     }
+
+    .gauge-legend {
+      min-height: 4.4rem;
+    }
   }
 
   @media (max-width: 52rem) {
@@ -1289,9 +1326,14 @@ const mailto = `mailto:${basics.email}?subject=${encodeURIComponent("Harness par
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .canvas :global(*) {
+    .canvas :global(*),
+    .gauge :global(*) {
       animation: none !important;
       transition: none !important;
+    }
+
+    .is-booted .canvas :global(.bubble.is-in) {
+      opacity: 1;
     }
   }
 </style>
