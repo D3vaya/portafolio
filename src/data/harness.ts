@@ -230,11 +230,11 @@ export const buildPrompts = (n: Counts): Prompt[] => [
       {
         title: "Un hook filtra lo privado",
         say: "Eso no se publica",
-        text: "La respuesta sale por una herramienta de publicación. Antes, un hook PreToolUse revisa qué va a salir: bloquea el teléfono y la dirección, y deja pasar el correo y los perfiles.",
+        text: "La respuesta sale por una herramienta de publicación. Antes, un hook PreToolUse revisa qué va a salir en la web: bloquea el teléfono y la dirección, y deja pasar el correo y los perfiles. El teléfono queda solo en el CV en PDF.",
         layer: "control",
         active: ["core", "herramientas"],
         messages: [
-          { from: "core", to: "herramientas", label: "publica teléfono", blocked: "bloqueado: dato privado" },
+          { from: "core", to: "herramientas", label: "publica teléfono", blocked: "bloqueado: no va en la web" },
           { from: "core", to: "herramientas", label: "publica correo y redes", delay: 2200 },
         ],
       },
