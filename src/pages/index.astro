@@ -18,6 +18,7 @@ const nav = [
   { href: "#productos", label: "Productos" },
   { href: "#stack", label: "Stack" },
   { href: "#contacto", label: "Contacto" },
+  { href: "https://guias.jcayala.dev", label: "Guías", ext: true },
 ]
 ---
 
@@ -27,7 +28,7 @@ const nav = [
     <a class="home" href="/">jcayala.dev</a>
     <nav aria-label="Secciones">
       <ul>
-        {nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+        {nav.map((n) => <li class:list={[n.ext && "ext"]}><a href={n.href}>{n.label}</a></li>)}
       </ul>
     </nav>
   </header>
@@ -85,9 +86,20 @@ const nav = [
     top: 1rem;
   }
 
+  /* Guías es otro sitio: un separador lo distingue de las secciones de esta página */
+  .top .ext {
+    padding-left: 1.5rem;
+    border-left: 1px solid currentColor;
+  }
+
   @media (max-width: 36rem) {
-    .top nav {
+    /* En móvil solo queda el enlace a las guías */
+    .top li:not(.ext) {
       display: none;
+    }
+    .top .ext {
+      padding-left: 0;
+      border-left: 0;
     }
   }
 </style>
