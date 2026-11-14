@@ -1,8 +1,23 @@
 ---
+import ClaudeMark from "./ClaudeMark.astro";
+
 interface Props { note?: string }
 const { note } = Astro.props;
 ---
 <footer class="colophon">
-  <span>Guías escritas por <a href="https://www.jcayala.dev">Juan Carlos Ayala</a>.</span>
+  <span class="credit">
+    Guías escritas por <a href="https://www.jcayala.dev">Juan Carlos Ayala</a> con la ayuda de
+    <a class="claude" href="https://claude.com/claude-code" target="_blank" rel="noopener"><ClaudeMark size={15} />Claude Code</a>.
+  </span>
   {note && <span set:html={note} />}
 </footer>
+
+<style>
+  .credit .claude {
+    white-space: nowrap;
+  }
+  .credit .claude :global(.claude-mark) {
+    vertical-align: -2px;
+    margin-right: 5px;
+  }
+</style>
