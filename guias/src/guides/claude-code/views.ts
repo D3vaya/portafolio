@@ -6,7 +6,7 @@
 import content from "./content.html?raw";
 
 export const BASE = "/claude-code/";
-export const LEVELS = ["basico", "intermedio", "avanzado", "arquitecto"] as const;
+export const LEVELS = ["basico", "intermedio", "avanzado", "experto"] as const;
 export const REFERENCE = ["comandos", "hooks", "skills", "settings", "glosario", "novedades"] as const;
 export const VIEWS = ["inicio", ...LEVELS, ...REFERENCE] as const;
 export type ViewId = (typeof VIEWS)[number];
@@ -15,11 +15,11 @@ export const viewUrl = (v: string) => (v === "inicio" ? BASE : `${BASE}${v}/`);
 
 /** Nombre corto (navegación, migas) y título para buscadores (≤ 60 caracteres). */
 export const META: Record<ViewId, { label: string; title: string }> = {
-  inicio: { label: "Inicio", title: "Guía de Claude Code en español, de cero a arquitecto" },
+  inicio: { label: "Inicio", title: "Guía de Claude Code en español, de cero a experto" },
   basico: { label: "Básico", title: "Claude Code desde cero: instalación y primeros pasos" },
   intermedio: { label: "Intermedio", title: "Claude Code: permisos, CLAUDE.md, contexto y sesiones" },
   avanzado: { label: "Avanzado", title: "Claude Code avanzado: hooks, subagentes, skills y MCP" },
-  arquitecto: { label: "Arquitecto", title: "Claude Code en equipo: CI, SDK, plugins y gobernanza" },
+  experto: { label: "Experto", title: "Claude Code en equipo: CI, SDK, plugins y gobernanza" },
   comandos: { label: "Comandos", title: "Todos los comandos de Claude Code, con ejemplos" },
   hooks: { label: "Hooks", title: "Hooks de Claude Code: eventos, exit codes y recetas" },
   skills: { label: "Skills", title: "Skills de Claude Code: SKILL.md explicado con ejemplos" },

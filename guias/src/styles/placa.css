@@ -1,0 +1,341 @@
+/*
+  Identidad "Placa" (prototipo): las guías en la misma marca que jcayala.dev.
+
+  Gris perla, grafito y una señal naranja eléctrica. Titulares en Anybody, condensados y pesados;
+  lectura en Schibsted Grotesk. Lo interactivo (animaciones, simuladores, widgets) vive en placas
+  de grafito con grilla de puntos, como el harness del portafolio: se lee en claro y se
+  experimenta en la placa. Las pistas de circuito marcan el recorrido y el progreso.
+
+  Todo va bajo :root[data-identidad="placa"]; sin ese atributo, nada de esto aplica.
+*/
+
+/* ---------- tokens ---------- */
+:root[data-identidad="placa"] {
+  --display: "Anybody", "Schibsted Grotesk", system-ui, sans-serif;
+  --serif: "Schibsted Grotesk", system-ui, sans-serif; /* la lectura también es grotesca */
+  --sans: "Schibsted Grotesk", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --signal: #ff5b1f;
+  --fs: 18px;
+  --measure: 36em;
+}
+/* Perla (claro) */
+:root[data-identidad="placa"],
+:root[data-identidad="placa"][data-theme="papel"] {
+  --paper: #ecedef; --surface: #f8f8f9; --surface-2: #e2e3e7; --sunk: #e6e7ea; --sunk-2: #dddfe3;
+  --ink: #15161a; --ink-2: #474a52; --ink-3: #5e626d;
+  --rule: rgb(21 22 26 / .12); --rule-2: rgb(21 22 26 / .22);
+  --accent: #c2410c; --on-accent: #ffffff;
+  --mark: #ffd7c4; --mark-soft: #f8e4da;
+  --ok: #0f7a4a; --warn: #b45309; --bad: #d92d20;
+  --shadow: 0 1px 2px rgb(0 0 0 / .05), 0 14px 32px -18px rgb(0 0 0 / .28);
+}
+/* Arena (cálido, para leer con luz baja) */
+:root[data-identidad="placa"][data-theme="sepia"] {
+  --paper: #efe8dc; --surface: #f8f3ea; --surface-2: #e6ddcd; --sunk: #e9e1d3; --sunk-2: #e0d6c4;
+  --ink: #241d14; --ink-2: #554a3b; --ink-3: #7a6d5b;
+  --rule: rgb(36 29 20 / .13); --rule-2: rgb(36 29 20 / .24);
+  --accent: #b23a0a; --on-accent: #ffffff;
+  --mark: #f6cfb5; --mark-soft: #f2dfcd;
+}
+/* Grafito (oscuro) */
+:root[data-identidad="placa"][data-theme="noche"] {
+  --paper: #111216; --surface: #17181d; --surface-2: #1f2127; --sunk: #141519; --sunk-2: #1b1c21;
+  --ink: #ececee; --ink-2: #a8abb4; --ink-3: #757984;
+  --rule: rgb(255 255 255 / .09); --rule-2: rgb(255 255 255 / .16);
+  --accent: #ff7a45; --on-accent: #111216;
+  --mark: #5a2a12; --mark-soft: #26180f;
+  --ok: #5fd69a; --warn: #ffb35c; --bad: #ff6b5e;
+  --shadow: 0 1px 2px rgb(0 0 0 / .5), 0 16px 36px -18px rgb(0 0 0 / .8);
+}
+
+/* Las placas: lo interactivo siempre sobre grafito, en cualquier tema. */
+:root[data-identidad="placa"] :is(.escena, .wd) {
+  --paper: #111216; --surface: #17181d; --surface-2: #22242b; --sunk: #0d0e11; --sunk-2: #1a1b20; --card: #17181d; --card2: #22242b;
+  --ink: #ececee; --ink-2: #a8abb4; --ink-3: #7a7e89; --text: #ececee; --mute: #a8abb4; --dim: #7a7e89;
+  --rule: rgb(255 255 255 / .09); --rule-2: rgb(255 255 255 / .17); --line: rgb(255 255 255 / .09); --line2: rgb(255 255 255 / .17); --bg2: #1a1b20;
+  --accent: #ff6a33; --lv: #ff6a33; --b: #ff6a33; --i: #ff6a33; --a: #ff6a33; --x: #ff6a33; --clay: #ff6a33; --clay2: #ff6a33;
+  --on-accent: #111216; --mark: #5a2a12; --mark-soft: #2a1a10;
+  --ok: #5fd69a; --warn: #ffb35c; --bad: #ff6b5e; --code-ink: #ffb38f;
+  color: var(--ink);
+  background-color: #111216;
+  background-image: radial-gradient(rgb(255 255 255 / .07) 1px, transparent 1.2px);
+  background-size: 18px 18px;
+  border: 1px solid #23252c;
+  border-radius: 18px;
+  box-shadow: 0 1px 0 rgb(255 255 255 / .04) inset, 0 24px 48px -26px rgb(0 0 0 / .55), 0 0 0 1px rgb(0 0 0 / .2);
+}
+
+/* ---------- base ---------- */
+:root[data-identidad="placa"] body {
+  font: 400 var(--fs)/1.72 var(--sans);
+  letter-spacing: -0.003em;
+}
+:root[data-identidad="placa"] :is(h1, h2, h3, h4) { font-family: var(--display); letter-spacing: -0.01em; }
+
+/* ---------- barra superior y progreso ---------- */
+:root[data-identidad="placa"] .readerbar { background: color-mix(in srgb, var(--paper) 86%, transparent); }
+:root[data-identidad="placa"] .crumbs .here { font: 800 15px var(--display); font-stretch: 80%; letter-spacing: 0; }
+:root[data-identidad="placa"] .icon-btn .aa { font: 800 16px var(--display); font-stretch: 85%; }
+:root[data-identidad="placa"] .progressbar .track { height: 3px; }
+:root[data-identidad="placa"] .progressbar .track b {
+  background: var(--signal); position: relative;
+  box-shadow: 0 0 12px var(--signal);
+}
+:root[data-identidad="placa"] .progressbar .track b::after {
+  content: ""; position: absolute; right: -4px; top: 50%; width: 9px; height: 9px; margin-top: -4.5px;
+  border-radius: 50%; background: var(--signal); box-shadow: 0 0 0 3px color-mix(in srgb, var(--signal) 30%, transparent), 0 0 14px var(--signal);
+}
+
+/* ---------- lección ---------- */
+/* Etiqueta de lección: una píldora con punto de señal, como "Medido en vivo" del portafolio */
+:root[data-identidad="placa"] .lnum {
+  display: inline-flex; align-items: center; gap: 8px;
+  font: 500 13px/1 var(--sans); color: var(--ink-2); letter-spacing: 0;
+  padding: 7px 12px 7px 10px; border: 1px solid var(--rule-2); border-radius: 999px;
+}
+:root[data-identidad="placa"] .lnum::before {
+  content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--signal);
+  box-shadow: 0 0 10px var(--signal);
+}
+:root[data-identidad="placa"] article.lesson h2 {
+  font: 850 clamp(36px, 4.6vw, 56px)/0.98 var(--display); font-stretch: 78%;
+  letter-spacing: -0.012em; margin: 18px 0 28px; text-wrap: balance;
+}
+:root[data-identidad="placa"] article.lesson h3 {
+  font: 800 1.35em/1.15 var(--display); font-stretch: 85%; margin: 2.1em 0 .7em;
+}
+:root[data-identidad="placa"] article.lesson > h2 + p::first-letter {
+  font: 900 3.9em/.8 var(--display); font-stretch: 90%; color: var(--signal); margin: .06em .1em 0 0;
+}
+/* Separador: una pista de circuito con una vía al centro, en vez de ⁂ */
+:root[data-identidad="placa"] article.lesson + article.lesson::before {
+  content: ""; top: 0; left: 50%; right: auto; width: min(320px, 70%); height: 12px; transform: translateX(-50%);
+  background:
+    radial-gradient(circle, var(--paper) 2.5px, transparent 3px) center / 12px 12px no-repeat,
+    radial-gradient(circle, var(--signal) 5.5px, transparent 6px) center / 12px 12px no-repeat,
+    linear-gradient(var(--rule-2), var(--rule-2)) center / 100% 1.5px no-repeat;
+}
+:root[data-identidad="placa"] article.lesson ul.pts li::before { border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 2px var(--signal); width: 8px; height: 8px; top: .72em; }
+
+:root[data-identidad="placa"] .simple { background: var(--mark-soft); border-radius: 14px; border-left: 4px solid var(--signal); }
+:root[data-identidad="placa"] .simple b.h, :root[data-identidad="placa"] .tip b.h { font: 800 14px var(--display); font-stretch: 85%; letter-spacing: .01em; }
+:root[data-identidad="placa"] .tip { border-left-color: var(--signal); }
+:root[data-identidad="placa"] code { font-size: .82em; }
+:root[data-identidad="placa"] table.ref th { font: 700 12px var(--sans); }
+:root[data-identidad="placa"] .btn { font: 700 15px var(--sans); border-radius: 999px; }
+:root[data-identidad="placa"] .btn.pri, :root[data-identidad="placa"] .btn.lv { background: var(--signal); border-color: var(--signal); color: #fff; box-shadow: 0 8px 22px -10px var(--signal); }
+:root[data-identidad="placa"] .btn.pri:hover, :root[data-identidad="placa"] .btn.lv:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+:root[data-identidad="placa"] .done-btn.on { border-color: var(--signal); color: var(--accent); background: color-mix(in srgb, var(--signal) 10%, transparent); }
+
+/* ---------- placas: escena y widgets ---------- */
+:root[data-identidad="placa"] .wd { overflow: hidden; }
+:root[data-identidad="placa"] .wd .wh { border-bottom-color: rgb(255 255 255 / .08); background: rgb(255 255 255 / .02); }
+:root[data-identidad="placa"] .wd .wh .dot, :root[data-identidad="placa"] .esc-kind::before {
+  background: var(--signal); box-shadow: 0 0 10px var(--signal);
+}
+:root[data-identidad="placa"] .esc-kind {
+  display: inline-flex; align-items: center; gap: 7px; color: var(--ink-2); background: transparent;
+  border: 1px solid var(--rule-2); padding: 6px 10px; font-weight: 500; letter-spacing: 0;
+}
+:root[data-identidad="placa"] .esc-kind::before { content: ""; width: 7px; height: 7px; border-radius: 50%; }
+:root[data-identidad="placa"] .esc-title { font: 800 19px/1.2 var(--display); font-stretch: 85%; }
+:root[data-identidad="placa"] .esc-ct { font: 800 22px/1.15 var(--display); font-stretch: 82%; }
+:root[data-identidad="placa"] .esc-cx { font-family: var(--sans); font-size: 16px; }
+:root[data-identidad="placa"] .esc-caption { border-top-color: rgb(255 255 255 / .08); }
+:root[data-identidad="placa"] .esc-play { background: var(--signal); border-color: var(--signal); color: #fff; box-shadow: 0 0 22px -4px var(--signal); }
+:root[data-identidad="placa"] .esc-play:hover { background: #fff; border-color: #fff; color: #111216; }
+:root[data-identidad="placa"] .esc-btn:not(.esc-play) { border-color: rgb(255 255 255 / .14); color: var(--ink-2); }
+:root[data-identidad="placa"] .esc-dots .on i { background: var(--signal); box-shadow: 0 0 10px var(--signal); }
+/* en la placa, las pistas y bloques ganan brillo */
+:root[data-identidad="placa"] .cx-track { background: rgb(0 0 0 / .35); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .06); }
+:root[data-identidad="placa"] .cx-req .cx-b.is-read { box-shadow: 0 0 0 1px color-mix(in srgb, var(--ok) 70%, transparent), 0 0 22px -4px var(--ok); }
+:root[data-identidad="placa"] .cx-req .cx-b.is-write { background: var(--signal); box-shadow: 0 0 22px -4px var(--signal); }
+:root[data-identidad="placa"] .cx-req .cx-b.is-read span, :root[data-identidad="placa"] .cx-req .cx-b.is-write span { color: #111216; }
+:root[data-identidad="placa"] .cx-split .w, :root[data-identidad="placa"] .cx-legend .w { background: var(--signal); }
+:root[data-identidad="placa"] .cx.is-costly .cx-pct { color: var(--signal); }
+:root[data-identidad="placa"] .cx-pct { font: 900 46px/1 var(--display); font-stretch: 80%; }
+:root[data-identidad="placa"] .cx-lbl b { font: 800 15px var(--display); font-stretch: 85%; }
+:root[data-identidad="placa"] .cx-b span { font-family: var(--sans); }
+:root[data-identidad="placa"] .chip.on { background: var(--signal); border-color: var(--signal); color: #fff; }
+:root[data-identidad="placa"] .toggle button.on { background: var(--signal); color: #fff; }
+
+/* ---------- código ---------- */
+:root[data-identidad="placa"] .code { border-radius: 14px; border: 1px solid #23252c; }
+
+/* ---------- apertura de nivel: titular enorme a la izquierda, como el portafolio ---------- */
+:root[data-identidad="placa"] .lvhead { text-align: left; align-items: flex-start; max-width: calc(var(--wide) + 48px); padding-top: 72px; }
+:root[data-identidad="placa"] .lvhead::after { display: none; }
+:root[data-identidad="placa"] .lvhead .bigglyph {
+  font: 900 clamp(110px, 16vw, 220px)/.78 var(--display); font-stretch: 70%; letter-spacing: -0.03em;
+  color: var(--ink); margin: 0 0 8px;
+}
+:root[data-identidad="placa"] .lvhead .tag {
+  display: inline-flex; align-items: center; gap: 8px; font: 500 13px var(--sans); color: var(--ink-2);
+  padding: 7px 12px 7px 10px; border: 1px solid var(--rule-2); border-radius: 999px;
+}
+:root[data-identidad="placa"] .lvhead .tag::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 10px var(--signal); }
+:root[data-identidad="placa"] .lvhead h1 { font: 900 clamp(54px, 8.4vw, 118px)/.86 var(--display); font-stretch: 72%; letter-spacing: -0.015em; margin: 22px 0 22px; max-width: 12ch; }
+:root[data-identidad="placa"] .lvhead p { font: 400 clamp(18px, 1.8vw, 21px)/1.55 var(--sans); font-style: normal; max-width: 36em; }
+:root[data-identidad="placa"] .lvhead { border-bottom: 1px solid var(--rule); padding-bottom: 48px; margin-bottom: 40px; }
+
+/* ---------- portada de la guía ---------- */
+:root[data-identidad="placa"] .hero { text-align: left; align-items: flex-start; max-width: calc(var(--wide) + 48px); padding-top: 72px; }
+:root[data-identidad="placa"] .hero > div:first-child { align-items: flex-start; }
+:root[data-identidad="placa"] .hero h1 { font: 900 clamp(48px, 7.4vw, 108px)/.88 var(--display); font-stretch: 72%; letter-spacing: -0.015em; max-width: 13ch; }
+:root[data-identidad="placa"] .hero p.lead { font: 400 clamp(18px, 1.8vw, 21px)/1.55 var(--sans); font-style: normal; max-width: 36em; }
+:root[data-identidad="placa"] .hero .cta { justify-content: flex-start; }
+:root[data-identidad="placa"] .eyebrow { order: 0; margin: 0 0 22px; display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px 7px 10px; border: 1px solid var(--rule-2); border-radius: 999px; font: 500 13px var(--sans); }
+:root[data-identidad="placa"] .eyebrow::before { content: ""; display: block; width: 8px; height: 8px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 10px var(--signal); }
+:root[data-identidad="placa"] .figcap { font: 500 14px var(--sans); font-style: normal; }
+:root[data-identidad="placa"] .sec h2.big { font: 900 clamp(34px, 4.4vw, 56px)/.95 var(--display); font-stretch: 75%; }
+:root[data-identidad="placa"] .lvcard .glyph { font: 900 64px/.85 var(--display); font-stretch: 75%; color: var(--signal); }
+:root[data-identidad="placa"] .lvcard h3 { font: 800 28px/1.05 var(--display); font-stretch: 80%; }
+:root[data-identidad="placa"] .refcard b, :root[data-identidad="placa"] .next h3 { font-family: var(--display); font-weight: 800; font-stretch: 82%; }
+
+/* ---------- índice lateral: pista con nodos ---------- */
+:root[data-identidad="placa"] aside.toc .lbl { font: 800 15px var(--display); font-stretch: 85%; color: var(--ink); }
+:root[data-identidad="placa"] aside.toc button { font: 500 15px/1.35 var(--sans); position: relative; }
+:root[data-identidad="placa"] aside.toc button .ck { position: relative; z-index: 1; background: var(--surface); border: 2px solid var(--rule-2); width: 20px; height: 20px; font: 600 10px var(--sans); }
+:root[data-identidad="placa"] aside.toc button + button::before {
+  content: ""; position: absolute; left: 19px; top: -12px; height: 24px; width: 2px; background: var(--rule-2);
+}
+:root[data-identidad="placa"] aside.toc button.done .ck { background: var(--signal); border-color: var(--signal); color: #fff; box-shadow: 0 0 10px var(--signal); }
+:root[data-identidad="placa"] aside.toc button.done + button::before { background: var(--signal); }
+:root[data-identidad="placa"] aside.toc button.act { box-shadow: none; background: color-mix(in srgb, var(--signal) 9%, transparent); }
+
+/* ---------- biblioteca ---------- */
+:root[data-identidad="placa"] main .titlepage h1, :root[data-identidad="placa"] main .hero-copy h1 {
+  font: 900 clamp(84px, 13vw, 190px)/.82 var(--display); font-stretch: 70%; letter-spacing: -0.02em;
+}
+:root[data-identidad="placa"] main .subtitle { font: 400 clamp(19px, 2vw, 23px)/1.5 var(--sans); font-style: normal; }
+:root[data-identidad="placa"] main .sec-head h2 { font: 900 clamp(34px, 4vw, 52px)/.95 var(--display); font-stretch: 75%; }
+:root[data-identidad="placa"] main .book-info h3, :root[data-identidad="placa"] main .how-item h3 { font-family: var(--display); font-weight: 800; font-stretch: 82%; }
+:root[data-identidad="placa"] main .excerpt p { font: 500 clamp(24px, 2.8vw, 34px)/1.3 var(--sans); font-style: normal; letter-spacing: -0.01em; }
+:root[data-identidad="placa"] .excerpt blockquote::before { color: var(--signal); font-family: var(--display); }
+:root[data-identidad="placa"] .cx-cache .cx-b.cx-b { background: rgb(95 214 154 / .16); box-shadow: inset 0 0 0 1.5px rgb(95 214 154 / .55), 0 0 18px -8px rgb(95 214 154 / .7); }
+:root[data-identidad="placa"] .cx-cache .cx-b.cx-b span { color: #8fe6b8; }
+:root[data-identidad="placa"] .cx-cache .cx-b.cx-b.is-expired { background: transparent; box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / .18); opacity: .6; }
+:root[data-identidad="placa"] .cx-cache .cx-b.cx-b.is-expired span { color: #7a7e89; }
+:root[data-identidad="placa"] .cx-b.k-sys, :root[data-identidad="placa"] .cx-b.k-proj, :root[data-identidad="placa"] .cx-b.k-user, :root[data-identidad="placa"] .cx-b.k-claude { background: rgb(255 255 255 / .1); }
+:root[data-identidad="placa"] .cx-b.k-sys span, :root[data-identidad="placa"] .cx-b.k-proj span, :root[data-identidad="placa"] .cx-b.k-user span, :root[data-identidad="placa"] .cx-b.k-claude span { color: #d7d9de; }
+
+:root[data-identidad="placa"] .cx-req .cx-b.cx-b.is-read { background: var(--ok); }
+:root[data-identidad="placa"] .cx-req .cx-b.cx-b.is-write { background: var(--signal); }
+:root[data-identidad="placa"] .cx-req .cx-b.cx-b.is-read span, :root[data-identidad="placa"] .cx-req .cx-b.cx-b.is-write span { color: #111216; }
+
+/* muestras del menú Aa */
+:root[data-identidad="placa"] .themes [data-set-theme="papel"] i { background: #ecedef; color: #15161a; font-family: var(--display); font-weight: 800; }
+:root[data-identidad="placa"] .themes [data-set-theme="sepia"] i { background: #efe8dc; color: #241d14; font-family: var(--display); font-weight: 800; }
+:root[data-identidad="placa"] .themes [data-set-theme="noche"] i { background: #111216; color: #ececee; font-family: var(--display); font-weight: 800; border-color: #2a2c33; }
+:root[data-identidad="placa"] .themes button[aria-pressed="true"] { border-color: var(--signal); box-shadow: inset 0 0 0 1px var(--signal); }
+:root[data-identidad="placa"] .sizes .steps span.on { background: var(--signal); }
+
+/* ============ Correcciones de la auditoría de UX ============ */
+
+/* Grafito: las placas suben un escalón para no fundirse con el fondo */
+:root[data-identidad="placa"][data-theme="noche"] :is(.escena, .wd, .startbox) {
+  background-color: #1a1c22; border-color: #2e313a;
+  background-image: radial-gradient(rgb(255 255 255 / .09) 1px, transparent 1.2px);
+}
+:root[data-identidad="placa"][data-theme="noche"] :is(.gboard, .route, .how-fig) { background-color: #1a1c22 !important; border-color: #2e313a !important; }
+
+/* Colores con significado dentro de las placas: error rojo-magenta, herramientas lila */
+:root[data-identidad="placa"] :is(.escena, .wd, .startbox) { --bad: #ff4d6d; --i: #9aa8ff; --t-tool: #9aa8ff; }
+:root[data-identidad="placa"] .t-tool { color: #9aa8ff; }
+:root[data-identidad="placa"] .t-bad { color: #ff4d6d; }
+
+/* Código en línea dentro de las placas */
+:root[data-identidad="placa"] :is(.wd, .escena, .startbox) code { background: rgb(255 255 255 / .07); color: #ffb08f; }
+
+/* El recomendador "¿Por dónde empiezo?" también es interactivo: va en placa */
+:root[data-identidad="placa"] .startbox {
+  --paper: #111216; --surface: #17181d; --surface-2: #22242b; --ink: #ececee; --ink-2: #a8abb4; --ink-3: #7a7e89;
+  --text: #ececee; --mute: #a8abb4; --dim: #7a7e89; --rule: rgb(255 255 255 / .09); --rule-2: rgb(255 255 255 / .17);
+  --line: rgb(255 255 255 / .09); --line2: rgb(255 255 255 / .17); --bg2: #1a1b20;
+  color: var(--ink); background-color: #111216;
+  background-image: radial-gradient(rgb(255 255 255 / .07) 1px, transparent 1.2px); background-size: 18px 18px;
+  border: 1px solid #23252c; border-radius: 18px; box-shadow: 0 24px 48px -26px rgb(0 0 0 / .55);
+}
+:root[data-identidad="placa"] .startbox .dtq { font: 800 20px var(--display); font-stretch: 85%; color: var(--ink); }
+
+/* Respuesta correcta y errónea en "¿Qué mecanismo usarías?" y quizzes */
+:root[data-identidad="placa"] .wd .chip.right { background: #5fd69a; border-color: #5fd69a; color: #0b0c0f; }
+:root[data-identidad="placa"] .wd .chip.wrong { background: rgb(255 77 109 / .14); border-color: #ff4d6d; color: #ff8aa0; }
+:root[data-identidad="placa"] .quiz .opt.no { border-color: #ff4d6d; background: rgb(255 77 109 / .1); }
+:root[data-identidad="placa"] .quiz .opt.ok { border-color: #5fd69a; background: rgb(95 214 154 / .12); }
+
+/* Tarjetas: solo el título va en bloque; las negritas del texto siguen en línea */
+:root[data-identidad="placa"] .mini b { display: inline; font: inherit; font-weight: 700; color: var(--ink); }
+:root[data-identidad="placa"] .mini > b:first-of-type { display: block; font: 800 17px/1.2 var(--display); font-stretch: 85%; margin-bottom: 4px; }
+:root[data-identidad="placa"] .mini .ico { display: none; }
+
+/* Dos columnas que no se aplastan (constructor de CLAUDE.md y otros) */
+.grid2 > * { min-width: 0; }
+.grid2 pre, .out pre { overflow: auto; }
+
+/* Sin letra capitular: era un recurso de libro y se rompía con párrafos cortos o con código */
+:root[data-identidad="placa"] article.lesson > h2 + p::first-letter { float: none; font: inherit; color: inherit; margin: 0; }
+
+/* Separadores "·" que quedaban huérfanos al inicio de línea */
+:root[data-identidad="placa"] .lvcard li { white-space: nowrap; }
+
+/* Portada de la guía: titular más contenido para que los botones entren en el primer pantallazo */
+:root[data-identidad="placa"] .hero h1 { font-size: clamp(44px, 6vw, 84px); max-width: 16ch; }
+
+/* Números de nivel visibles en móvil y aviso de que la subnavegación tiene más */
+.guide-head .lvnav .num { display: none; font: 800 13px var(--display); font-stretch: 85%; }
+@media (max-width: 980px) {
+  .guide-head .lvnav .num { display: inline; }
+  .guide-head .refnav .in { -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+}
+
+/* Simuladores: cifras en mono para que la coma no rompa el ritmo */
+:root[data-identidad="placa"] :is(.pc-n, #pcTotals) { font-family: var(--mono); font-size: 12px; font-variant-numeric: normal; }
+
+/* Precedencia de settings: "no definido" no debe parecer elegido */
+:root[data-identidad="placa"] .prl .toggle button.on[data-v=""], :root[data-identidad="placa"] .prl .toggle button.on:first-child:not([data-v]) { background: rgb(255 255 255 / .14); color: #ececee; }
+
+/* Teclado: la tecla elegida no cambia de altura */
+:root[data-identidad="placa"] .key.on { transform: none; border-bottom-width: 4px; box-shadow: inset 0 0 0 2px var(--signal); }
+
+/* Simulador de ciclo de vida de hooks: estado actual vs. ya ocurrido y bloqueo bien visible */
+:root[data-identidad="placa"] .hkev { opacity: .5; }
+:root[data-identidad="placa"] .hkev .ev { color: #ececee; }
+:root[data-identidad="placa"] .hkev.on { opacity: 1; border-color: rgb(255 255 255 / .2); }
+:root[data-identidad="placa"] .hkev.on:last-of-type, :root[data-identidad="placa"] .hkev.is-cur { border-color: var(--signal); box-shadow: 0 0 18px -8px var(--signal); }
+:root[data-identidad="placa"] .hkev.blk { border-color: #ff4d6d; background: rgb(255 77 109 / .12); }
+:root[data-identidad="placa"] .hkev.blk .ev { color: #ff4d6d; }
+
+/* Animación de caché: escritura en ámbar (el naranja es de la interfaz), leyenda y rótulos */
+:root[data-identidad="placa"] .cx-req .cx-b.cx-b.is-write { background: #ffb35c; box-shadow: 0 0 22px -6px #ffb35c; }
+:root[data-identidad="placa"] .cx-split .w, :root[data-identidad="placa"] .cx-legend .w { background: #ffb35c; }
+:root[data-identidad="placa"] .cx.is-costly .cx-pct { color: #ffb35c; }
+:root[data-identidad="placa"] .cx-b.k-claude, :root[data-identidad="placa"] .cx-keys .k-claude { background-image: repeating-linear-gradient(135deg, rgb(255 255 255 / .16) 0 3px, transparent 3px 7px); }
+:root[data-identidad="placa"] .cx-b.k-user, :root[data-identidad="placa"] .cx-keys .k-user { background-color: rgb(255 255 255 / .2); }
+.cx-keys { display: flex; flex-wrap: wrap; gap: 6px 16px; font: 500 12px var(--sans); color: #a8abb4; }
+.cx-keys i { display: inline-block; width: 16px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: rgb(255 255 255 / .1); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .18); }
+.cx-ct { font: 600 12px var(--sans); color: #a8abb4; margin-bottom: 2px; }
+.cx-tag { position: absolute; inset: 0; display: grid; place-items: center; z-index: 3; opacity: 0; pointer-events: none; font: 800 18px var(--display); font-stretch: 85%; color: #ececee; letter-spacing: .01em; }
+.cx-b.is-changed { box-shadow: 0 0 0 2px #fff, 0 0 22px -4px #fff !important; }
+.cx-x { background: #b3123a; color: #fff; box-shadow: 0 0 0 3px #fff, 0 0 18px -2px #ff4d6d; margin-top: -40px; }
+@media (max-width: 760px) { .cx-keys { grid-column: auto; } }
+.cx-rows > .cx-keys { padding-left: 108px; }
+@media (max-width: 760px) { .cx-rows > .cx-keys { padding-left: 0; } }
+
+/* Ciclo de modos: tercer estado para "revisado por el clasificador" */
+.pill.p-cls { background: rgb(154 168 255 / .16); color: #b8c2ff; }
+/* Páginas de referencia en la misma grilla que las lecciones */
+:root[data-identidad="placa"] .refbody { max-width: calc(var(--wide) + 48px); }
+/* Catálogo de comandos en móvil: categorías en una fila deslizable */
+@media (max-width: 760px) {
+  :root[data-identidad="placa"] .cmdw .chips, :root[data-identidad="placa"] #cmdCats, :root[data-identidad="placa"] #cmdIntent { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+  :root[data-identidad="placa"] .cmdw .chips .chip { flex: none; }
+}
+/* Fan-out: cajas en reposo legibles */
+:root[data-identidad="placa"] #fanSvg g[id^="sub"] { opacity: .65; }
+/* hk3: JSON resaltado en bloque con la paleta */
+:root[data-identidad="placa"] .jsonmap { color: #a8abb4; }
+:root[data-identidad="placa"] .jsonmap .jl.on { opacity: 1; background: rgb(255 91 31 / .12) !important; box-shadow: inset 2px 0 0 var(--signal); color: #ececee; }
+/* Comandos que no deben partirse por un guion */
+:root[data-identidad="placa"] .vsc code { white-space: nowrap; }

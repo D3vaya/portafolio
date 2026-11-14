@@ -19,7 +19,7 @@ const abs = (path: string) => new URL(path, site).href;
 const author = { "@type": "Person", name: "Juan Carlos Ayala Higuera", url: "https://www.jcayala.dev/" };
 const course = {
   "@type": "Course",
-  name: "Claude Code, de cero a arquitecto",
+  name: "Claude Code, de cero a experto",
   description: views[0].description,
   url: abs(BASE),
   inLanguage: "es",
@@ -62,7 +62,7 @@ const ccData = `window.__CC=${JSON.stringify({ lessons: LESSONS, widgets: WIDGET
   title={view.title}
   description={view.description}
   image="/og-claude-code.png"
-  imageAlt="Guía de Claude Code en español, de cero a arquitecto."
+  imageAlt="Guía de Claude Code en español, de cero a experto."
   ogType={view.id === "inicio" ? "website" : "article"}
   jsonLd={jsonLd}
   accent={guide.accent}
@@ -90,6 +90,7 @@ const ccData = `window.__CC=${JSON.stringify({ lessons: LESSONS, widgets: WIDGET
                 <circle class="bgc" cx="10" cy="10" r="7" />
                 <circle class="fg" cx="10" cy="10" r="7" stroke="var(--accent)" stroke-dasharray="44" stroke-dashoffset="44" />
               </svg>
+              <span class="num">{LEVELS.indexOf(id) + 1}</span>
               <span class="lbl">{META[id].label}</span>
             </a>
           ))
@@ -114,6 +115,9 @@ const ccData = `window.__CC=${JSON.stringify({ lessons: LESSONS, widgets: WIDGET
     <div class="row"><span class="where"></span><span class="left"></span></div>
   </div>
 
+  <script>
+    import "../../guides/claude-code/anim/index";
+  </script>
   <script is:inline set:html={ccData} />
   <script is:inline src={appUrl}></script>
 
@@ -121,7 +125,7 @@ const ccData = `window.__CC=${JSON.stringify({ lessons: LESSONS, widgets: WIDGET
     (function () {
       var body = document.body;
       var tocBtn = document.querySelector("[data-toc-toggle]");
-      var LEVELS = { basico: "Básico", intermedio: "Intermedio", avanzado: "Avanzado", arquitecto: "Arquitecto" };
+      var LEVELS = { basico: "Básico", intermedio: "Intermedio", avanzado: "Avanzado", experto: "Experto" };
 
       function activeView() { return document.querySelector(".view.on"); }
       function activeToc() { var v = activeView(); return v && v.querySelector("aside.toc"); }

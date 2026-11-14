@@ -9,13 +9,16 @@ const byId=id=>document.getElementById(id)||GHOST;
 const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const on=(el,ev,fn)=>{if(el)el.addEventListener(ev,fn);};
+const stem=s=>{s=s.trim();return s.length>5?s.replace(/(aciones|ación|acion|ciones|ción|cion|ando|endo|ar|er|ir)$/,""):s;};
 
 /* ---------- storage ---------- */
 const KEY="ccacad-v2";
 let state={done:{},quiz:{},gov:{}};
 try{const s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(s));}catch(e){}
+// El nivel 4 se llamaba "arquitecto": conserva el quiz aprobado con el nombre nuevo
+if(state.quiz&&state.quiz.arquitecto){state.quiz.experto=true;delete state.quiz.arquitecto;}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
-function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("on"),2200);}
+function toast(m){const t=$("#toast");t.textContent=String(m).trim();t.classList.add("on");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("on"),2200);}
 
 /* ---------- highlight ---------- */
 function hl(code){
@@ -45,14 +48,14 @@ document.addEventListener("click",e=>{
 function selectText(el){try{const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}}
 
 /* ---------- routing ---------- */
-const LEVELS=["basico","intermedio","avanzado","arquitecto"];
+const LEVELS=["basico","intermedio","avanzado","experto"];
 const EXTRA=["comandos","hooks","skills","settings","glosario","novedades"];
 const VIEWS=["inicio",...LEVELS,...EXTRA];
 const BASE="/claude-code/";
 const viewUrl=v=>v==="inicio"?BASE:BASE+v+"/";
 const CUR=(document.querySelector(".view")||{id:"v-inicio"}).id.slice(2);
 function route(){
-  const h=decodeURIComponent(location.hash.slice(1));
+  let h=decodeURIComponent(location.hash.slice(1));if(h==="arquitecto")h="experto";
   // Enlaces antiguos (/claude-code/#hooks) llevan a la URL propia de cada vista.
   if(VIEWS.includes(h)&&h!==CUR){location.replace(viewUrl(h));return;}
   $$(".view").forEach(v=>v.classList.add("on"));
@@ -162,12 +165,13 @@ function loopTick(){
   requestAnimationFrame(loopTick);
 }
 requestAnimationFrame(loopTick);
-on($("#loopToggle"),"click",function(){loopOn=!loopOn;this.textContent=loopOn?" pausar":" reanudar";});
+on($("#loopToggle"),"click",function(){loopOn=!loopOn;this.textContent=loopOn?"pausar":"reanudar";});
 
 /* ---------- SIM TERMINAL ---------- */
 const simOut=$("#simOut");
-const SIMMODES=[["⏵⏵ auto mode on","auto"],[" manual mode on","manual"],["⏵⏵ accept edits on","edits"],[" plan mode on","plan"]];let simM=0;
-function setSimMode(){$("#simMode").textContent=SIMMODES[simM][0]+" (shift+tab para cambiar)";}
+const SIMMODES=[["⏵⏵ auto mode on","auto"],["manual mode on","manual"],["⏵⏵ accept edits on","edits"],["⏸ plan mode on","plan"]];let simM=0;
+function setSimMode(){$("#simMode").textContent=SIMMODES[simM][0]+" · Shift+Tab o toca aquí para cambiar";}
+on($("#simMode"),"click",()=>{simM=(simM+1)%SIMMODES.length;setSimMode();});
 function sp(html){simOut.insertAdjacentHTML("beforeend","<div>"+html+"</div>");simOut.scrollTop=simOut.scrollHeight;}
 const SIMC={
  "/help":()=>sp('<span class="t-v">Comandos (extracto):</span>\n  /init       crea CLAUDE.md analizando el proyecto\n  /clear      conversación nueva con contexto vacío\n  /compact    resume para liberar contexto\n  /context    uso de contexto como grilla\n  /model      cambia de modelo   /effort  nivel de esfuerzo\n  /resume     retoma una sesión  /rename  nombra la sesión\n  /rewind     vuelve a un checkpoint\n  /plan       entra a plan mode\n  /btw        pregunta al margen\n  /permissions /memory /mcp /hooks /usage /doctor\n<span class="t-dim">Escribe / para ver comandos y skills; Tab autocompleta.</span>'),
@@ -262,8 +266,8 @@ function renderPL(){
   const d=PL[plI][plV?"s":"v"];
   $("#plPrompt").textContent="> "+d[0];$("#plRes").textContent=d[2];
   const [a,b,c,dd]=d[1];
-  const set=(id,val,good)=>{const el=$("#"+id);el.style.width=val+"%";el.style.background=good?"var(--ok)":(val>50?"var(--bad)":"var(--warn)");$("#"+id+"t").textContent=val+"%";};
-  set("m1",a,a>70);set("m2",b,b<40);set("m3",c,c<30);set("m4",dd,dd>70);
+  const set=(id,val)=>{const el=$("#"+id);el.style.width=val+"%";el.style.background=val>=70?"var(--ok)":val>=40?"var(--warn)":"var(--bad)";$("#"+id+"t").textContent=val+"%";};
+  set("m1",a);set("m2",100-b);set("m3",100-c);set("m4",dd);
 }
 $("#plScen").innerHTML=PL.map((p,i)=>'<button class="chip" data-i="'+i+'">'+p.n+'</button>').join("");
 on($("#plScen"),"click",e=>{const b=e.target.closest(".chip");if(b){plI=+b.dataset.i;renderPL();}});
@@ -273,14 +277,14 @@ renderPL();
 /* ---------- PERMISSION MODES ---------- */
 const PM=[
  {st:"⏵⏵ auto mode on",cfg:"auto",d:"Modo de inicio por defecto en terminal y VS Code (v2.1.283+). Un clasificador revisa las acciones en segundo plano y bloquea las riesgosas en vez de preguntarte. Lecturas y ediciones en el directorio de trabajo se aprueban sin clasificador.",r:[["Leer y buscar","ok"],["Editar en el directorio de trabajo","ok"],["Comandos de shell","ok*"],["Red, push, deploy","ok*"],["Reglas ask explícitas","ask"]]},
- {st:" manual mode on",cfg:"default (alias manual)",d:"Solo lee sin preguntar (más un set de comandos de solo lectura como ls o git status). Pide aprobación para ediciones y comandos. Modo de inicio de claude -p y el Agent SDK.",r:[["Leer y buscar","ok"],["Editar en el directorio de trabajo","ask"],["Comandos de shell","ask"],["Red, push, deploy","ask"],["Reglas ask explícitas","ask"]]},
+ {st:"manual mode on",cfg:"default (alias manual)",d:"Solo lee sin preguntar (más un set de comandos de solo lectura como ls o git status). Pide aprobación para ediciones y comandos. Modo de inicio de claude -p y el Agent SDK.",r:[["Leer y buscar","ok"],["Editar en el directorio de trabajo","ask"],["Comandos de shell","ask"],["Red, push, deploy","ask"],["Reglas ask explícitas","ask"]]},
  {st:"⏵⏵ accept edits on",cfg:"acceptEdits",d:"Edita archivos y corre comandos comunes de sistema de archivos (mkdir, touch, mv, cp, rm, sed) dentro de tus directorios de trabajo. Otros comandos siguen preguntando.",r:[["Leer y buscar","ok"],["Editar en el directorio de trabajo","ok"],["Comandos de shell","ask"],["Red, push, deploy","ask"],["Reglas ask explícitas","ask"]]},
- {st:" plan mode on",cfg:"plan",d:"Lee, explora y propone un plan sin editar tu código. Si auto está disponible, el clasificador revisa los comandos durante la planificación.",r:[["Leer y buscar","ok"],["Editar en el directorio de trabajo","no"],["Comandos de shell","ok*"],["Red, push, deploy","no"],["Reglas ask explícitas","ask"]]},
+ {st:"⏸ plan mode on",cfg:"plan",d:"Lee, explora y propone un plan sin editar tu código. Si auto está disponible, el clasificador revisa los comandos durante la planificación.",r:[["Leer y buscar","ok"],["Editar en el directorio de trabajo","no"],["Comandos de shell","ok*"],["Red, push, deploy","no"],["Reglas ask explícitas","ask"]]},
  {st:"⏵⏵ bypass permissions on",cfg:"bypassPermissions",d:"Solo aparece en el ciclo si lanzaste con --allow-dangerously-skip-permissions o similar. Todo sin preguntar, incluso rutas protegidas. Úsalo solo en contenedores o VMs aislados. Las reglas deny siguen aplicando.",r:[["Leer y buscar","ok"],["Editar en el directorio de trabajo","ok"],["Comandos de shell","ok"],["Red, push, deploy","ok"],["Reglas ask explícitas","ask"]]}
 ];
 let pmI=0;
 function renderPM(){const m=PM[pmI];$("#permSt").textContent=m.st;$("#permCfg").textContent='config: "'+m.cfg+'"';$("#permDesc").textContent=m.d;
-  $("#permTb").innerHTML=m.r.map(([a,s])=>{const map={ok:['p-ok','sin preguntar'],'ok*':['p-ok','revisado por el clasificador'],ask:['p-ask','pregunta'],no:['p-no','bloqueado']}[s];return '<tr><td>'+a+'</td><td><span class="pill '+map[0]+'">'+map[1]+'</span></td></tr>';}).join("");}
+  $("#permTb").innerHTML=m.r.map(([a,s])=>{const map={ok:['p-ok','sin preguntar'],'ok*':['p-cls','revisado por el clasificador'],ask:['p-ask','pregunta'],no:['p-no','bloqueado']}[s];return '<tr><td>'+a+'</td><td><span class="pill '+map[0]+'">'+map[1]+'</span></td></tr>';}).join("");}
 function cyclePM(){pmI=(pmI+1)%PM.length;renderPM();}
 on($("#permBtn"),"click",cyclePM);
 on($("#permW"),"keydown",e=>{if(e.key==="Tab"&&e.shiftKey){e.preventDefault();cyclePM();}});
@@ -312,13 +316,13 @@ function rtEval(){
   for(const type of ["deny","ask"]){
     for(let i=0;i<RT.length;i++){if(RT[i][0]!==type)continue;
       const sub=subs.find(s=>ruleMatches(RT[i][1],s));
-      if(sub){verdict=type;hits.add(i);why='La regla <b>'+esc(RT[i][1])+'</b> calza con <code>'+esc(sub)+'</code>.'+(subs.length>1?' En un comando compuesto, un '+type+' aplica si calza con cualquier subcomando.':'');break;}
+      if(sub){verdict=type;hits.add(i);why='La regla <b>'+esc(RT[i][1])+'</b> coincide con <code>'+esc(sub)+'</code>.'+(subs.length>1?' En un comando compuesto, un '+type+' aplica si coincide con cualquier subcomando.':'');break;}
     }
     if(verdict)break;
   }
   if(!verdict){
     const cover=subs.map(s=>{const i=RT.findIndex(r=>r[0]==="allow"&&ruleMatches(r[1],s));return i;});
-    if(subs.length&&cover.every(i=>i>=0)){verdict="allow";cover.forEach(i=>hits.add(i));why=subs.length>1?'Cada subcomando calza con alguna regla allow.':'La regla <b>'+esc(RT[cover[0]][1])+'</b> lo autoriza.';}
+    if(subs.length&&cover.every(i=>i>=0)){verdict="allow";cover.forEach(i=>hits.add(i));why=subs.length>1?'Cada subcomando coincide con alguna regla allow.':'La regla <b>'+esc(RT[cover[0]][1])+'</b> lo autoriza.';}
     else{verdict="none";const miss=subs.filter((s,j)=>cover[j]<0);why='Ninguna regla cubre '+(miss.length?'<code>'+esc(miss.join("</code>, <code>"))+'</code>':'el comando')+'. Decide el modo: en Manual pregunta; en auto lo revisa el clasificador; en dontAsk se deniega.';}
   }
   $$("#rtRules .rt-row").forEach(r=>r.classList.toggle("hit",hits.has(+r.dataset.i)));
@@ -355,12 +359,13 @@ renderCM();
 function makeFlow(cont,steps,renderDet){
   cont.innerHTML=steps.map((s,i)=>'<div class="fstep" data-i="'+i+'"><div class="fi">'+s.i+'</div><b>'+s.t+'</b><small>'+s.s+'</small></div>').join("");
   let run=0;
-  function show(i){cont.querySelectorAll(".fstep").forEach((f,j)=>{f.classList.toggle("on",j===i);f.classList.toggle("past",j<i);});renderDet(steps[i],i);}
+  function show(i){cont.querySelectorAll(".fstep").forEach((f,j)=>{f.classList.toggle("on",j===i);f.classList.toggle("past",j<i);});renderDet(steps[i],i);
+    const f=cont.querySelector(".fstep.on");if(f&&cont.scrollWidth>cont.clientWidth)cont.scrollTo({left:f.offsetLeft-cont.clientWidth/2+f.clientWidth/2,behavior:"smooth"});}
   on(cont,"click",e=>{const f=e.target.closest(".fstep");if(f){run++;show(+f.dataset.i);}});
-  return async function play(){const my=++run;for(let i=0;i<steps.length;i++){if(my!==run)return;show(i);await sleep(steps[i].ms||2000);}};
+  return async function play(){const my=++run;for(let i=0;i<steps.length;i++){if(my!==run)return;show(i);await sleep(steps[i].ms||5200);}};
 }
 const PF=[
- {i:"",t:"Explorar",s:"plan mode",d:"<b>Shift+Tab hasta  plan mode on</b> (o <code>claude --permission-mode plan</code>).<br><code>lee /src/auth y entiende cómo manejamos sesiones y login. Revisa también cómo gestionamos variables de entorno para secretos.</code>"},
+ {i:"",t:"Explorar",s:"plan mode",d:"<b>Shift+Tab hasta ⏸ plan mode on</b> (o <code>claude --permission-mode plan</code>).<br><code>lee /src/auth y entiende cómo manejamos sesiones y login. Revisa también cómo gestionamos variables de entorno para secretos.</code>"},
  {i:"",t:"Planificar",s:"plan detallado",d:"<code>quiero agregar Google OAuth. ¿Qué archivos cambian? ¿Cuál es el flujo de sesión? Crea un plan.</code><br>Presiona <kbd class=\"k\">Ctrl</kbd>+<kbd class=\"k\">G</kbd> para editar el plan en tu editor antes de seguir."},
  {i:"",t:"Aprobar",s:"tú decides",d:"Elige <b>Yes, and use auto mode</b>, <b>Yes, manually approve edits</b> o <b>No, keep planning</b>. Aprobar le pone título a la sesión."},
  {i:"",t:"Implementar",s:"contra el plan",d:"<code>implementa el flujo OAuth de tu plan. Escribe tests para el callback, corre la suite y arregla los fallos.</code><br>Interrumpe con <kbd class=\"k\">Esc</kbd> si se desvía."},
@@ -391,16 +396,17 @@ renderCP();$("#cpMsg").textContent="Haz clic en un checkpoint anterior para volv
 
 /* ---------- CONTEXT ---------- */
 const MAXC=200000;
-const CTXC={base:["Sistema, entorno, MCP, skills","var(--ink-3)"],md:["CLAUDE.md + memoria","var(--ok)"],files:["Archivos leídos","var(--accent)"],conv:["Conversación y salidas","var(--c4)"],sum:["Resumen","var(--c5)"]};
+const CTXC={base:["Sistema, entorno, MCP, skills","var(--ink-3)"],md:["CLAUDE.md + memoria","var(--ok)"],files:["Archivos leídos","#9aa8ff"],conv:["Conversación y salidas","#ffb35c"],sum:["Resumen","#ececee"]};
 let ctx;function ctxReset(){ctx={base:4200+280+120+450,md:320+1800+680,files:0,conv:45,sum:0};}ctxReset();
-const fmt=n=>n>=1000?(n/1000).toFixed(1).replace(".0","")+"k":String(n);
+const fmt=n=>n>=1000?(n/1000).toFixed(1).replace(".0","").replace(".",",")+"k":n+" tokens";
 function renderCtx(msg){
   const tot=Object.values(ctx).reduce((a,b)=>a+b,0);
   $("#ctxBar").innerHTML=Object.keys(CTXC).map(k=>'<b style="width:'+(ctx[k]/MAXC*100)+'%;background:'+CTXC[k][1]+'"></b>').join("");
   $("#ctxLeg").innerHTML=Object.keys(CTXC).filter(k=>ctx[k]>0).map(k=>'<span><i style="background:'+CTXC[k][1]+'"></i>'+CTXC[k][0]+' '+fmt(ctx[k])+'</span>').join("");
   const p=Math.min(100,Math.round(tot/MAXC*100));$("#ctxPct").innerHTML='<span style="color:'+(p>85?"var(--bad)":p>65?"var(--warn)":"var(--ok)")+'">'+fmt(tot)+' / 200k · '+p+'%</span>';
   if(msg)$("#ctxMsg").innerHTML=msg;
-  if(p>=95)$("#ctxMsg").innerHTML='<span style="color:var(--bad)">Casi lleno.</span> Claude Code compactaría automáticamente: primero limpia salidas viejas, luego resume. Mejor <code>/compact</code> con foco o <code>/clear</code>.';
+  if(p>=95&&!renderCtx.auto){renderCtx.auto=1;$("#ctxMsg").innerHTML='<span style="color:var(--bad)">Casi lleno:</span> Claude Code compacta solo. Primero limpia salidas viejas y luego resume…';
+    setTimeout(()=>{const s=Math.min(18000,Math.round((ctx.conv+ctx.files)*0.12))+ctx.sum;ctx.conv=0;ctx.files=0;ctx.sum=s;renderCtx.auto=0;renderCtx('<span style="color:var(--ok)">Auto-compactación:</span> la conversación quedó en un resumen. Las instrucciones tempranas pueden perderse: por eso conviene <code>/compact</code> con foco antes de llegar aquí.');},1600);}
 }
 function addC(k,n){const free=MAXC-Object.values(ctx).reduce((a,b)=>a+b,0);ctx[k]+=Math.max(0,Math.min(n,free));}
 $$("[data-ctx]").forEach(b=>on(b,"click",()=>{
@@ -414,6 +420,58 @@ $$("[data-ctx]").forEach(b=>on(b,"click",()=>{
   if(a==="clear"){ctxReset();msg='<span style="color:var(--ok)">/clear:</span> conversación nueva. Lo de inicio vuelve a cargarse; la sesión anterior queda en <code>/resume</code>.';}
   renderCtx(msg);}));
 renderCtx("Así parte una sesión: unos 7.800 tokens antes de tu primer prompt. Agrega lecturas y observa.");
+
+/* ---------- PROMPT CACHING SIM ---------- */
+(function(){
+const wd=document.getElementById("pcWd");if(!wd)return;
+// Precios de Sonnet 5.5 en US$ por token (API, noviembre 2026)
+const P={in:2e-6,read:0.1e-6,w5:2.5e-6,w1:4e-6,out:10e-6};
+const SYS=5200,PROJ=2800,MSG=2500,OUT=900;
+let plan="sub",conv=0,cached=0,reqs=[];
+const fmt=n=>n>=1000?(n/1000).toFixed(n>=10000?0:1).replace(".",",")+"k":String(n);
+const usd=n=>"US$"+n.toFixed(n<0.01?4:3).replace(".",",");
+function request(label,extra,out){
+  const prefix=SYS+PROJ+conv, prompt=prefix+extra;
+  const read=Math.min(cached,prefix), write=prompt-read;
+  const wPrice=plan==="sub"?P.w1:P.w5;
+  const cost=read*P.read+write*wPrice+out*P.out, nocache=prompt*P.in+out*P.out;
+  reqs.push({label,read,write,out,cost,nocache});
+  cached=prompt;
+  return {read,write};
+}
+function msg(t){$("#pcMsg").innerHTML=t;}
+function render(){
+  const max=Math.max(1,...reqs.map(r=>r.read+r.write+r.out));
+  $("#pcReqs").innerHTML=reqs.length?reqs.map((r,i)=>{
+    const w=v=>(v/max*100).toFixed(2)+"%";
+    return '<div class="pc-row"><span class="pc-l">'+(i+1)+'. '+esc(r.label)+'</span><span class="pc-bar"><i style="width:'+w(r.read)+';background:var(--ok)"></i><i style="width:'+w(r.write)+';background:var(--warn)"></i><i style="width:'+w(r.out)+';background:var(--accent)"></i></span><span class="pc-n">'+fmt(r.read)+' leído · '+fmt(r.write)+' escrito · '+usd(r.cost)+'</span></div>';
+  }).join(""):'<p class="pn" style="margin:0">Envía un mensaje para empezar la sesión.</p>';
+  const tc=reqs.reduce((a,r)=>a+r.cost,0), tn=reqs.reduce((a,r)=>a+r.nocache,0);
+  $("#pcTotals").innerHTML=reqs.length?'con caché <b>'+usd(tc)+'</b> · sin caché <b>'+usd(tn)+'</b>':"";
+  const el=$("#pcReqs");el.scrollTop=el.scrollHeight;
+}
+const ttl=()=>plan==="sub"?"1 hora":"5 minutos";
+const A={
+  send(){const r=request("Mensaje",MSG,OUT);conv+=MSG+OUT;
+    msg(r.read?'Se leyeron <b>'+fmt(r.read)+'</b> tokens del caché (al 5% del precio) y solo se escribieron <b>'+fmt(r.write)+'</b> nuevos. Así se ve una sesión sana.':(reqs.length>1?'<b>Caché vacío:</b> se volvieron a escribir <b>'+fmt(r.write)+'</b> tokens a precio completo. Esto es lo que cuesta romper el caché, y crece con la conversación.':'Primera petición: se escriben <b>'+fmt(r.write)+'</b> tokens en el caché. Desde el siguiente mensaje se leen a una fracción del precio.'));},
+  wait10(){if(plan==="api"){cached=0;msg('Pasaron más de 5 minutos: con API key <b>el caché expiró</b>. El próximo mensaje vuelve a procesar toda la conversación.');}
+    else msg('Con suscripción el caché dura 1 hora: <b>sigue activo</b>. El próximo mensaje lo lee y reinicia el reloj.');},
+  wait90(){cached=0;msg('Pasaron 90 minutos: el caché expiró con cualquier plan. Si vas a seguir con otra tarea, <code>/clear</code> no cuesta nada; si sigues en esta, el próximo mensaje relee todo.');},
+  model(){cached=0;msg('<b>Caché perdido.</b> Cada modelo tiene su propio caché: la primera respuesta del modelo nuevo relee toda la conversación a precio completo. Claude Code te pide confirmar si el caché aún estaba activo.');},
+  fast(){cached=0;msg('<b>Caché perdido.</b> Fast mode usa un caché separado: activarlo o desactivarlo obliga a releer todo.');},
+  claudemd(){msg('No pasa nada con el caché: los cambios a CLAUDE.md se aplican recién tras <code>/clear</code>, <code>/compact</code> o al reiniciar.');},
+  style(){msg('El output style se agrega como un mensaje al final: <b>el caché se mantiene</b>.');},
+  mcp(){msg('Con tool search, activo por defecto en los modelos compatibles, las herramientas nuevas se cargan bajo demanda: <b>el caché se mantiene</b>. Sin tool search, agregar herramientas lo rompería.');},
+  compact(){if(!conv){msg('No hay conversación que compactar.');return;}
+    const before=SYS+PROJ+conv,r=request("/compact",300,2500);conv=2500;cached=SYS;
+    msg('<code>/compact</code> es una petición grande: leyó '+fmt(before)+' tokens para resumirlos'+(r.read?' (casi todo desde el caché, por eso salió barata)':' <b>sin caché, a precio completo</b>: compactar después de una pausa larga cuesta más')+'. La conversación queda en un resumen de 2,5k; el contexto del proyecto se vuelve a cargar.');},
+  clear(){conv=0;cached=Math.min(cached,SYS);msg('<code>/clear</code> no cuesta nada: la conversación queda vacía y el próximo mensaje es pequeño.');},
+  reset(){conv=0;cached=0;reqs=[];msg('');}
+};
+on($("#pcPlan"),"click",e=>{const b=e.target.closest("[data-p]");if(!b)return;plan=b.dataset.p;$$("#pcPlan button").forEach(x=>x.classList.toggle("on",x===b));A.reset();render();msg('Con '+(plan==="sub"?'suscripción':'API key')+' el caché de la conversación principal dura <b>'+ttl()+'</b>.');});
+on($("#pcActions"),"click",e=>{const b=e.target.closest("[data-a]");if(!b)return;A[b.dataset.a]();render();});
+render();
+})();
 
 /* ---------- HOOKS SIM ---------- */
 const hkTog={block:true,fmt:true,ctx:false,stop:false};
@@ -606,7 +664,8 @@ const TREE=[
  ["agent-memory/",2,["Memoria de subagentes","Lo que aprenden los subagentes con memory: project. Versionable."]],
  [".github/workflows/claude.yml",1,["CI con Claude","claude-code-action@v1: responde a @claude y puede revisar PRs automáticamente."]]
 ];
-$("#tree").innerHTML=TREE.map((t,i)=>{const pre="  ".repeat(t[1])+(t[1]?"└ ":"");const ic=t[0].endsWith("/")?" ":" ";return '<button data-i="'+i+'"'+(t[2]?"":' disabled style="opacity:.7;cursor:default"')+'>'+esc(pre)+ic+esc(t[0])+'</button>';}).join("");
+const lastSib=i=>{for(let k=i+1;k<TREE.length;k++){if(TREE[k][1]<TREE[i][1])return true;if(TREE[k][1]===TREE[i][1])return false;}return true;};
+$("#tree").innerHTML=TREE.map((t,i)=>{const pre="  ".repeat(Math.max(0,t[1]-1))+(t[1]?(lastSib(i)?"└─ ":"├─ "):"");const ic=t[0].endsWith("/")?"▸ ":"";return '<button data-i="'+i+'"'+(t[2]?"":' disabled style="opacity:.7;cursor:default"')+'>'+esc(pre)+ic+esc(t[0])+'</button>';}).join("");
 on($("#tree"),"click",e=>{const b=e.target.closest("button");if(!b||b.disabled)return;$$("#tree button").forEach(x=>x.classList.toggle("on",x===b));const d=TREE[+b.dataset.i][2];$("#tdesc").innerHTML="<h4>"+esc(TREE[+b.dataset.i][0])+"</h4><b>"+esc(d[0])+"</b><p style='color:var(--mute);margin:8px 0 0'>"+esc(d[1])+"</p>";});
 
 /* ---------- PARALLEL DECISION ---------- */
@@ -694,6 +753,9 @@ const QZ={
   ["¿Cuáles son las tres fases del loop agéntico?",["Planificar, codificar, desplegar","Reunir contexto, actuar, verificar","Leer, escribir, commitear","Preguntar, responder, resumir"],1,"Las fases se mezclan y se repiten hasta cumplir el objetivo; tú puedes interrumpir en cualquier momento."]
  ],
  intermedio:[
+  ["Trabajas con Sonnet en un refactor largo y quieres que Opus revise solo las decisiones importantes. ¿Qué usas?",["/model opus","/advisor opus","Un hook PreToolUse","/effort max"],1,"El advisor deja que Sonnet haga la rutina y consulta a Opus antes de elegir un enfoque, ante errores repetidos y antes de terminar. /model opus haría todo con Opus."],
+  ["Llevas una hora en una sesión larga con Opus y cambias a Sonnet para ahorrar. ¿Qué pasa con el siguiente mensaje?",["Cuesta menos de inmediato","Relee toda la conversación sin caché, porque cada modelo tiene su propio caché","Nada: el caché es compartido entre modelos","Se borra el historial"],1,"Los cachés son por modelo. Elige el modelo al empezar o usa un subagente con un modelo más barato para tareas simples."],
+  ["Con API key, te fuiste a almorzar 40 minutos con una conversación de 150k tokens y vas a empezar otra tarea. ¿Qué conviene?",["Seguir escribiendo en la misma sesión","/compact","/clear","Cambiar de modelo"],2,"El caché de 5 minutos ya expiró: seguir o compactar relee los 150k a precio completo. /clear no cuesta nada y la nueva tarea no necesita ese contexto."],
   ["Quieres que Claude nunca lea .env, en ningún modo. ¿Qué usas?",["Una línea en CLAUDE.md","Una regla deny: Read(./.env)","Plan mode","Una regla ask"],1,"deny bloquea en todos los modos, incluido bypassPermissions. CLAUDE.md es solo un pedido."],
   ["¿En qué orden se evalúan las reglas de permisos?",["allow → ask → deny","De la más específica a la más general","deny → ask → allow","Según el archivo donde están"],2,"Gana la primera coincidencia en ese orden; la especificidad no cambia el orden."],
   ["¿Con qué modo parte por defecto una sesión interactiva de terminal en versiones recientes?",["Manual","Plan","Auto","Accept edits"],2,"Desde la v2.1.283 el modo de inicio en terminal y VS Code es auto; claude -p parte en Manual."],
@@ -707,7 +769,7 @@ const QZ={
   ["¿Dónde se guarda un servidor MCP agregado con --scope project?",["~/.claude.json","CLAUDE.md","Un .mcp.json en la raíz del repo","settings.local.json"],2,".mcp.json se versiona y lo comparte el equipo, con aprobación al primer uso."],
   ["¿Qué NO cubre el sandbox de Bash?",["Comandos de shell que corre Claude","Procesos hijos de esos comandos","Las herramientas Read y Edit","Conexiones de red de comandos sandboxeados"],2,"Read, Edit, Write y WebFetch se rigen por las reglas de permiso; el sandbox envuelve solo los comandos de shell."]
  ],
- arquitecto:[
+ experto:[
   ["Para un valor escalar como model, ¿qué capa de settings gana si está definida?",["Usuario","Proyecto compartido","Managed settings","Local del proyecto"],2,"Managed tiene la máxima prioridad; nada en tus archivos ni --settings lo sobrescribe."],
   ["Un procedimiento de 12 pasos que se usa ocasionalmente debería ser…",["Parte de CLAUDE.md","Una skill","Un hook Stop","Un servidor MCP"],1,"Las skills cargan su contenido solo al usarse; no gastan contexto en cada sesión."],
   ["En CI sin humanos, ¿qué modo evita que la corrida se quede esperando un permiso?",["default","plan","dontAsk con herramientas preaprobadas","acceptEdits"],2,"dontAsk deniega todo lo que pediría aprobación en vez de esperar."],
@@ -720,7 +782,7 @@ const CMD_CATS={ses:"Sesión y conversación",ctx:"Contexto y memoria",mod:"Mode
 /* n=nombre a=argumentos c=categoría d=qué hace o=opciones e=ejemplos t=tipo(s skill, w workflow, x eliminado) al=alias tip=consejo */
 const CMDS=[
 {n:"/add-dir",a:"<ruta>",c:"ctx",d:"Agrega un directorio de trabajo extra para que Claude pueda leer y editar archivos ahí durante la sesión. Da acceso a archivos, pero la mayoría de la configuración .claude/ de ese directorio no se descubre.",o:[["<ruta>","Directorio a agregar. Escribe parte de la ruta y presiona Tab para autocompletar."]],e:["/add-dir ../libs/shared","/add-dir ~/proyectos/api"],tip:"Para que sea permanente usa permissions.additionalDirectories en settings. Al agregarlo corren tus hooks DirectoryAdded."},
-{n:"/advisor",a:"[modelo|off]",c:"mod",d:"Activa o desactiva la herramienta advisor: un segundo modelo al que Claude consulta en momentos clave de la tarea.",o:[["fable | opus | sonnet","Alias del modelo asesor (fable requiere acceso a Fable)."],["<id de modelo>","ID completo de un modelo."],["off","Desactiva el advisor."]],e:["/advisor opus","/advisor off"]},
+{n:"/advisor",a:"[modelo|off]",c:"mod",d:"Activa o desactiva el advisor (experimental): un segundo modelo, igual o más capaz, al que Claude consulta antes de elegir un enfoque, ante errores repetidos y antes de terminar. Cada consulta relee toda la conversación; no rompe el caché del modelo principal.",o:[["fable | opus | sonnet","Alias del modelo asesor (fable requiere acceso a Fable)."],["<id de modelo>","ID completo de un modelo."],["off","Desactiva el advisor."]],e:["/advisor opus","/advisor off"]},
 {n:"/agents",c:"par",d:"Muestra un recordatorio: pídele a Claude que cree o gestione subagentes, o edita .claude/agents/ o ~/.claude/agents/ directamente. (Hasta v2.1.197 abría un asistente interactivo.)",o:[],e:["/agents","crea un subagente 'revisor' de solo lectura que use sonnet"]},
 {n:"/artifact-capabilities",c:"art",t:"s",d:"Carga la referencia de capacidades de runtime que puede usar un artefacto publicado, como llamar a tus conectores.",o:[],e:["/artifact-capabilities"]},
 {n:"/artifact-diagramming",c:"art",t:"s",d:"Carga guía de diagramación para artefactos: cuándo conviene un diagrama, qué dibujar y cómo escribir SVG legible en tema claro y oscuro.",o:[],e:["/artifact-diagramming"]},
@@ -998,7 +1060,10 @@ try{(function(){if(!document.getElementById("v-comandos"))return; // módulo de 
     let r=CMDS.map((c,i)=>i);
     if(intent)r=INT[intent].map(n=>CMDS.findIndex(c=>c.n===n)).filter(i=>i>=0);
     if(cat!=="all")r=r.filter(i=>CMDS[i].c===cat);
-    if(q){const sc=i=>{const c=CMDS[i],n=norm(c.n.slice(1));if(n.startsWith(q))return 0;if(n.includes(q)||(c.al&&norm(c.al).includes(q)))return 1;if(norm(c.d+" "+(c.a||"")+" "+CMD_CATS[c.c]).includes(q))return 2;return 9;};r=r.filter(i=>sc(i)<9).sort((a,b)=>sc(a)-sc(b));}
+    if(q){const SYN={deshacer:"rewind",volver:"rewind",borrar:"clear",limpiar:"clear",revisar:"review",revision:"review",compactar:"compact",resumir:"compact",costo:"usage",gasto:"usage",tokens:"usage",permisos:"permissions",memoria:"memory",modelo:"model",reanudar:"resume",retomar:"resume"};
+      const qs=[q,stem(q),SYN[q]].filter(Boolean);
+      const sc=i=>{const c=CMDS[i],n=norm(c.n.slice(1)),d=norm(c.d+" "+(c.a||"")+" "+CMD_CATS[c.c]);let b=9;for(const t of qs){if(n.startsWith(t))b=Math.min(b,0);else if(n.includes(t)||(c.al&&norm(c.al).includes(t)))b=Math.min(b,1);else if(d.includes(t))b=Math.min(b,2);}return b;};
+      r=r.filter(i=>sc(i)<9).sort((a,b)=>sc(a)-sc(b));}
     return r;}
   let cur=[];
   function renderList(selFirst){cur=filtered();
@@ -1433,14 +1498,14 @@ try{(function(){if(!document.getElementById("v-settings"))return; // módulo de 
 
 /* =================== GLOSARIO =================== */
 const GLOSS=[
-["Agent SDK","Biblioteca (Python/TypeScript) para construir tus propios agentes con el mismo motor de Claude Code.","arquitecto"],
-["Agent team","Varias sesiones de Claude que colaboran con un líder y se mandan mensajes.","arquitecto"],
-["Agent view","Panel (claude agents) para ver y despachar sesiones en segundo plano.","arquitecto"],
+["Agent SDK","Biblioteca (Python/TypeScript) para construir tus propios agentes con el mismo motor de Claude Code.","experto"],
+["Agent team","Varias sesiones de Claude que colaboran con un líder y se mandan mensajes.","experto"],
+["Agent view","Panel (claude agents) para ver y despachar sesiones en segundo plano.","experto"],
 ["acceptEdits","Modo de permiso que aprueba ediciones de archivos sin preguntar, pero sigue preguntando por comandos.","intermedio"],
 ["additionalContext","Campo de salida de un hook que inyecta texto en el contexto de Claude.","hooks"],
 ["Auto mode","Modo por defecto en la terminal: un clasificador aprueba acciones seguras y bloquea las riesgosas.","intermedio"],
 ["Auto memory","Notas que Claude escribe solo en MEMORY.md por proyecto para recordar entre sesiones.","intermedio"],
-["Background agent","Sesión que sigue trabajando sin terminal: /background, --bg o claude agents.","arquitecto"],
+["Background agent","Sesión que sigue trabajando sin terminal: /background, --bg o claude agents.","experto"],
 ["Bare mode","claude --bare: arranque mínimo sin hooks, skills, MCP ni CLAUDE.md, para scripts.","avanzado"],
 ["bypassPermissions","Modo que no pide ningún permiso. Solo en contenedores o VMs aisladas.","intermedio"],
 ["Checkpoint","Punto de restauración automático antes de cada edición; se usa con /rewind.","intermedio"],
@@ -1453,7 +1518,7 @@ const GLOSS=[
 ["Exit code 2","En un hook de comando: bloquear la acción; stderr explica por qué.","hooks"],
 ["Fast mode","Salida más rápida a mayor costo en modelos que lo soportan (/fast).","intermedio"],
 ["Frontmatter","Bloque YAML entre --- al inicio de un SKILL.md o un agente, con su configuración.","skills"],
-["Goal","/goal: condición que Claude persigue turno tras turno hasta cumplirla.","arquitecto"],
+["Goal","/goal: condición que Claude persigue turno tras turno hasta cumplirla.","experto"],
 ["Headless","Uso no interactivo con claude -p, para scripts y CI.","avanzado"],
 ["Hook","Comando o handler que se ejecuta automáticamente en un evento del ciclo de vida.","hooks"],
 ["Managed settings","Settings que impone la organización y nadie puede sobreescribir.","settings"],
@@ -1462,34 +1527,39 @@ const GLOSS=[
 ["Modo plan","Claude investiga y propone un plan sin editar nada hasta que apruebes.","basico"],
 ["Output style","Cambia rol, tono y formato de Claude: Explanatory, Learning, Concise…","intermedio"],
 ["Permission mode","Cuánta autonomía tiene Claude: Manual, acceptEdits, plan, auto, dontAsk, bypass.","intermedio"],
-["Plugin","Paquete que distribuye skills, agentes, hooks y servidores MCP juntos.","arquitecto"],
-["Marketplace","Catálogo de plugins (un repo git) que se agrega con /plugin marketplace add.","arquitecto"],
+["Plugin","Paquete que distribuye skills, agentes, hooks y servidores MCP juntos.","experto"],
+["Marketplace","Catálogo de plugins (un repo git) que se agrega con /plugin marketplace add.","experto"],
 ["PreToolUse","Evento de hook antes de ejecutar una herramienta; puede bloquearla incluso en bypass.","hooks"],
-["Prompt caching","Reutilizar el prefijo de la conversación entre requests para bajar costo y latencia.","avanzado"],
+["Advisor","Modelo igual o más capaz que el principal al que Claude consulta en momentos clave; lee toda la conversación y devuelve un consejo. Se activa con /advisor.","intermedio"],
+["Prompt caching","Guardar el comienzo idéntico de cada petición para que en los mensajes siguientes se cobre a una fracción del precio. Cambiar de modelo, activar fast mode o una pausa más larga que su duración lo rompen.","intermedio"],
+["Token","Trozo de texto (una palabra corta, parte de una palabra o un símbolo) con que se mide y se cobra todo lo que entra y sale del modelo. La salida cuesta 5 veces la entrada.","intermedio"],
+["TTL del caché","Cuánto dura el caché sin uso: 1 hora con suscripción y 5 minutos con API key. Cada lectura reinicia el reloj.","intermedio"],
 ["Regla (allow/ask/deny)","Permiso fino con sintaxis Herramienta(especificador). Orden: deny, ask, allow.","intermedio"],
-["Remote Control","Controlar una sesión local desde claude.ai o la app del teléfono.","arquitecto"],
+["Remote Control","Controlar una sesión local desde claude.ai o la app del teléfono.","experto"],
 ["Sandbox","Aislamiento de sistema de archivos y red para los comandos Bash (Seatbelt o bubblewrap).","avanzado"],
 ["Scope","A quién aplica un archivo de settings o servidor MCP: usuario, proyecto, local, managed.","settings"],
 ["Settings precedence","Orden en que gana una clave: managed > línea de comandos > local > proyecto > usuario.","settings"],
 ["Skill","Carpeta con SKILL.md que Claude carga cuando la necesita o que invocas con /nombre.","skills"],
 ["Slash command","Lo que escribes con / al inicio: controla la sesión o invoca una skill.","comandos"],
 ["Subagente","Instancia de Claude con su propio contexto que hace una tarea y devuelve un resumen.","avanzado"],
-["Teleport","Traer una sesión de la nube a tu terminal (--teleport, /teleport).","arquitecto"],
+["Teleport","Traer una sesión de la nube a tu terminal (--teleport, /teleport).","experto"],
 ["Tool search","Carga diferida de herramientas MCP: solo se cargan las definiciones que hacen falta.","avanzado"],
 ["Turno","Un ciclo de tu mensaje más todo lo que Claude hace hasta responder.","basico"],
 ["ultrathink","Palabra en el prompt que pide máximo razonamiento para ese turno.","intermedio"],
-["Worktree","Checkout aislado de git para que varias sesiones trabajen sin pisarse (claude -w).","arquitecto"],
+["Worktree","Checkout aislado de git para que varias sesiones trabajen sin pisarse (claude -w).","avanzado"],
+["Harness","Todo lo que rodea al modelo para que trabaje como agente: herramientas, permisos, memoria, hooks y manejo del contexto. Claude Code es un harness.","basico"],
+["Fan-out / fan-in","Repartir una tarea entre varios agentes en paralelo (fan-out) y juntar y verificar sus resultados (fan-in).","experto"],
 ["$ARGUMENTS","Placeholder de una skill que se reemplaza por lo que escribes tras el comando.","skills"],
 ["!`comando`","En una skill: ejecuta el comando antes y pega su salida (contexto dinámico).","skills"]
 ].sort((a,b)=>a[0].replace(/[^A-Za-z]/g,"").localeCompare(b[0].replace(/[^A-Za-z]/g,""),"es"));
 try{(function(){if(!document.getElementById("v-glosario"))return; // módulo de la vista glosario
   if(!$("#v-glosario"))return;
-  const LBL={basico:"Básico",intermedio:"Intermedio",avanzado:"Avanzado",arquitecto:"Arquitecto",hooks:"Hooks",skills:"Skills",settings:"Settings",comandos:"Comandos"};
+  const LBL={basico:"Básico",intermedio:"Intermedio",avanzado:"Avanzado",experto:"Experto",hooks:"Hooks",skills:"Skills",settings:"Settings",comandos:"Comandos"};
   let L="";const first=t=>t.replace(/[^A-Za-z]/g,"")[0].toUpperCase();
   const AZ=[...new Set(GLOSS.map(g=>first(g[0])))];
   $("#glAZ").innerHTML='<button class="chip on" data-l="">Todo</button>'+AZ.map(a=>'<button class="chip" data-l="'+a+'">'+a+'</button>').join("");
   on($("#glAZ"),"click",e=>{const b=e.target.closest(".chip");if(!b)return;L=b.dataset.l;$$("#glAZ .chip").forEach(x=>x.classList.toggle("on",x===b));gl();});
-  function gl(){const q=$("#glQ").value.toLowerCase();$("#glList").innerHTML=GLOSS.filter(g=>(!L||first(g[0])===L)&&(!q||(g[0]+" "+g[1]).toLowerCase().includes(q))).map(g=>'<div class="glc"><b>'+esc(g[0])+'</b><p>'+esc(g[1])+'</p><a href="#'+g[2]+'">'+LBL[g[2]]+' →</a></div>').join("")||'<p class="pn">Sin resultados.</p>';}
+  function gl(){const q=stem($("#glQ").value.toLowerCase());$("#glList").innerHTML=GLOSS.filter(g=>(!L||first(g[0])===L)&&(!q||(g[0]+" "+g[1]).toLowerCase().includes(q))).map(g=>'<div class="glc"><b>'+esc(g[0])+'</b><p>'+esc(g[1])+'</p><a href="#'+g[2]+'">'+LBL[g[2]]+' →</a></div>').join("")||'<p class="pn">Sin resultados.</p>';}
   on($("#glQ"),"input",gl);gl();
 })();}catch(e){console.warn("[guía]",e);}
 
@@ -1517,6 +1587,12 @@ try{(function(){if(!document.getElementById("v-novedades"))return; // módulo de
   const C=[...new Set(NEWS.map(n=>n[1]))];let f="all";
   $("#nvF").innerHTML='<button class="chip on" data-c="all">Todo</button>'+C.map(c=>'<button class="chip" data-c="'+c+'">'+c+'</button>').join("");
   on($("#nvF"),"click",e=>{const b=e.target.closest(".chip");if(!b)return;f=b.dataset.c;$$("#nvF .chip").forEach(x=>x.classList.toggle("on",x===b));nv();});
+  const MES={ene:0,feb:1,mar:2,abr:3,may:4,jun:5,jul:6,ago:7,sep:8,oct:9,nov:10,dic:11};
+  const verOf=n=>{const m=(n[0]+" "+n[2]).match(/v2\.1\.(\d+)/g);return m?Math.max(...m.map(x=>+x.split(".")[2])):0;};
+  const dateOf=n=>{const m=n[0].match(/(\d+) (\w{3})\w* (\d{4})/);return m?new Date(+m[3],MES[m[2]]??0,+m[1]).getTime():0;};
+  const now=Date.now();
+  NEWS.sort((x,y)=>{const fx=dateOf(x)>now,fy=dateOf(y)>now;if(fx!==fy)return fx?-1:1;return (verOf(y)-verOf(x))||(dateOf(y)-dateOf(x));});
+  NEWS.forEach(n=>{if(dateOf(n)>now&&!/^Próximamente/.test(n[0]))n[0]="Próximamente · "+n[0];});
   function nv(){$("#nvList").innerHTML=NEWS.filter(n=>f==="all"||n[1]===f).map(n=>'<div class="nvi"><div class="nvd">'+esc(n[0])+'</div><div class="nvb"><div><span class="badge">'+esc(n[1])+'</span>'+(n[4]?'<span class="badge exp">comunidad</span>':'')+'</div><h3>'+esc(n[2])+'</h3><p>'+esc(n[3])+'</p></div></div>').join("");}
   nv();
 })();}catch(e){console.warn("[guía]",e);}
@@ -1527,7 +1603,7 @@ try{(function(){if(!document.getElementById("v-inicio"))return; // módulo de la
   const Q=[["¿Ya usaste Claude Code?",[["Nunca",0],["Algunas veces",1],["A diario",2]]],["¿Qué quieres lograr ahora?",[["Aprender lo básico",0],["Trabajar más rápido y con menos prompts",1],["Automatizar y conectar herramientas",2],["Estandarizarlo en mi equipo",3]]]];
   const ans=[];
   function r(){const k=ans.length;if(k<Q.length){box.innerHTML='<p class="dtq">'+Q[k][0]+'</p><div class="chips">'+Q[k][1].map(o=>'<button class="chip" data-v="'+o[1]+'">'+o[0]+'</button>').join("")+'</div>';return;}
-    const s=Math.max(ans[0],ans[1]);const R=[["basico","Básico","Instalación, el loop agéntico, modo plan y tus primeros prompts que funcionan.","--b"],["intermedio","Intermedio","Permisos, CLAUDE.md, contexto y sesiones. Después mira la sección Comandos.","--i"],["avanzado","Avanzado","Hooks, skills, subagentes y MCP. Complementa con las referencias a fondo.","--a"],["arquitecto","Arquitecto","Plugins, managed settings, CI y trabajo en paralelo. Y Settings a fondo.","--x"]][s];
+    const s=Math.max(ans[0],ans[1]);const R=[["basico","Básico","Instalación, el loop agéntico, modo plan y tus primeros prompts que funcionan.","--b"],["intermedio","Intermedio","Permisos, CLAUDE.md, contexto y sesiones. Después mira la sección Comandos.","--i"],["avanzado","Avanzado","Hooks, skills, subagentes y MCP. Complementa con las referencias a fondo.","--a"],["experto","Experto","Plugins, managed settings, CI y trabajo en paralelo. Y Settings a fondo.","--x"]][s];
     box.innerHTML='<p class="dtq">Te recomendamos empezar por <b style="color:var('+R[3]+')">'+R[1]+'</b></p><p class="pn">'+R[2]+'</p><div class="cta" style="margin-top:12px"><a class="btn pri" href="#'+R[0]+'">Ir a '+R[1]+' →</a><button class="btn" data-again>Volver a preguntar</button></div>';}
   on(box,"click",e=>{if(e.target.closest("[data-again]")){ans.length=0;r();return;}const b=e.target.closest("[data-v]");if(b){ans.push(+b.dataset.v);r();}});r();
 })();}catch(e){console.warn("[guía]",e);}
@@ -1562,7 +1638,7 @@ $$("[data-quiz]").forEach(w=>{
   function upd(){const n=Object.keys(ans).length,ok=Object.values(ans).filter(Boolean).length;
     if(state.quiz[l])sc.innerHTML='<span style="color:var(--ok)">✓ Quiz aprobado</span> <button class="btn sm" style="margin-left:10px" data-retry>reintentar</button>';
     else if(n===qs.length){sc.innerHTML=ok===qs.length?'<span style="color:var(--ok)">✓ '+ok+'/'+qs.length+' ¡Aprobado!</span>':'<span style="color:var(--warn)">'+ok+'/'+qs.length+'</span> Revisa las explicaciones y <button class="btn sm" data-retry>reintenta</button>';
-      if(ok===qs.length){state.quiz[l]=true;save();renderProgress();toast(LEVELS.includes(l)?" Nivel aprobado":" Quiz aprobado");}}
+      if(ok===qs.length){state.quiz[l]=true;save();renderProgress();toast(LEVELS.includes(l)?"✓ Nivel aprobado":"✓ Quiz aprobado");}}
     else sc.textContent=n+"/"+qs.length+" respondidas";}
   on(box,"click",e=>{
     if(e.target.closest("[data-retry]")){Object.keys(ans).forEach(k=>delete ans[k]);delete state.quiz[l];save();renderProgress();box.querySelectorAll(".q").forEach(q=>{q.classList.remove("ans");q.querySelectorAll(".opt").forEach(o=>o.classList.remove("ok","no"));});upd();return;}

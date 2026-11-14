@@ -337,3 +337,47 @@ table.ref td:first-child { color: var(--ink); font-weight: 500; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* ---------- Escena: animación explicativa paso a paso (compartida) ---------- */
+.escena {
+  max-width: var(--wide); margin: 2em 0; padding: 20px 22px 16px;
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 18px; box-shadow: var(--shadow);
+  font-family: var(--sans); outline: none;
+}
+.escena:focus-visible { box-shadow: 0 0 0 2px var(--accent), var(--shadow); }
+.esc-head { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.esc-kind { font: 600 11px/1 var(--sans); letter-spacing: .04em; color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); padding: 5px 9px; border-radius: 999px; }
+.esc-title { font: 600 17px/1.3 var(--serif); color: var(--ink); }
+.esc-stage { position: relative; }
+.esc-caption { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--rule); min-height: 118px; }
+.esc-step { display: block; font: 500 12px var(--sans); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.esc-ct { display: block; font: 600 20px/1.3 var(--serif); color: var(--ink); margin: 4px 0 6px; }
+.esc-cx { margin: 0; font: 400 16px/1.6 var(--serif); color: var(--ink-2); max-width: 46em; }
+.esc-ctrl { display: flex; align-items: center; gap: 6px; margin-top: 14px; }
+.esc-btn { width: 36px; height: 36px; flex: none; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--rule); background: transparent; color: var(--ink-2); padding: 0; }
+.esc-btn:hover { background: var(--surface-2); color: var(--ink); }
+.esc-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.esc-play { width: 42px; height: 42px; background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.esc-play:hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.esc-play svg { fill: currentColor; stroke: currentColor; }
+.esc-play .i-pause { display: none; fill: none; stroke-width: 2.4; }
+.is-playing .esc-play .i-play { display: none; }
+.is-playing .esc-play .i-pause { display: block; }
+.esc-dots { flex: 1; display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; }
+.esc-dots button { width: 22px; height: 22px; padding: 0; border: 0; background: none; display: grid; place-items: center; }
+.esc-dots i { display: block; width: 7px; height: 7px; border-radius: 999px; background: var(--rule-2); transition: width .3s var(--ease), background-color .3s; }
+.esc-dots .past i { background: color-mix(in srgb, var(--accent) 45%, var(--rule-2)); }
+.esc-dots .on i { width: 20px; background: var(--accent); }
+@media (max-width: 760px) {
+  .escena { padding: 16px 14px 12px; border-radius: 14px; }
+  .esc-caption { min-height: 150px; }
+  .esc-ct { font-size: 18px; }
+  .esc-cx { font-size: 15px; }
+  .esc-ctrl { gap: 4px; }
+  .esc-btn { width: 32px; height: 32px; }
+  .esc-play { width: 38px; height: 38px; }
+  .esc-dots { gap: 0; flex-wrap: nowrap; }
+  .esc-dots button { width: 13px; }
+  .esc-dots i { width: 6px; height: 6px; }
+  .esc-dots .on i { width: 14px; }
+}

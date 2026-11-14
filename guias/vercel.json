@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    {
+      "source": "/claude-code/arquitecto",
+      "destination": "/claude-code/experto/",
+      "permanent": true
+    },
+    {
+      "source": "/claude-code/arquitecto/",
+      "destination": "/claude-code/experto/",
+      "permanent": true
+    }
+  ]
+}
