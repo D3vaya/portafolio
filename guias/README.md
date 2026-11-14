@@ -39,6 +39,19 @@ La guía de Claude Code viene de un artifact de claude.ai: `content.html` y `app
 `legacy.css` son sus estilos originales remapeados a los tokens (en la capa `legacy`, así el sistema compartido
 siempre gana) y `guide.css` son los ajustes propios.
 
+Cada vista de la guía tiene su propia URL (`/claude-code/`, `/claude-code/basico/`, … `/claude-code/novedades/`),
+generada por `src/pages/claude-code/[...view].astro` a partir de `views.ts`, que corta `content.html` por vista y
+define el título de cada página. `app.js` es uno solo para todas las vistas: los widgets de vistas que no están en la
+página reciben un objeto vacío (`GHOST`) y los módulos de las secciones de referencia salen antes si su vista no está.
+Los enlaces antiguos (`/claude-code/#hooks`) redirigen a la URL nueva.
+
+## SEO
+
+- `public/robots.txt` y `src/pages/sitemap.xml.ts` (el sitemap se genera al compilar con todas las vistas).
+- Cada página tiene título y descripción propios, imagen para compartir (`public/og*.png`, 1200×630) y datos
+  estructurados: `WebSite` + `ItemList` en la biblioteca, `Course` en el inicio de la guía y `TechArticle` +
+  `BreadcrumbList` en cada vista.
+
 ## Despliegue en Vercel
 
 1. En Vercel, crea un proyecto nuevo desde el repo `D3vaya/portafolio`.

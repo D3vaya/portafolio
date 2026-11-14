@@ -1,6 +1,11 @@
 (function(){
 "use strict";
-const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+/* Cada vista vive en su propia URL: los widgets de otras vistas no están en la página.
+   GHOST es un objeto vacío que acepta cualquier lectura, escritura o llamada sin efecto,
+   así el código de esos widgets corre sin romper nada. */
+const GHOST=new Proxy(function(){},{get(t,p){if(p===Symbol.toPrimitive)return()=>"";if(p===Symbol.iterator)return function*(){};if(typeof p==="symbol"||p==="then")return undefined;if(p==="length")return 0;return GHOST;},set(){return true;},apply(){return GHOST;},has(){return false;}});
+const $=s=>document.querySelector(s)||GHOST, $$=s=>Array.from(document.querySelectorAll(s));
+const byId=id=>document.getElementById(id)||GHOST;
 const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const on=(el,ev,fn)=>{if(el)el.addEventListener(ev,fn);};
@@ -31,7 +36,7 @@ $$("pre[data-hl]").forEach(p=>setCode(p,p.textContent));
 /* ---------- copy ---------- */
 document.addEventListener("click",e=>{
   const b=e.target.closest(".copy");if(!b)return;
-  const pre=b.dataset.copy?document.getElementById(b.dataset.copy):b.closest(".code,.out").querySelector("pre");
+  const pre=b.dataset.copy?byId(b.dataset.copy):b.closest(".code,.out").querySelector("pre");
   const txt=pre.dataset.raw||pre.textContent;
   const ok=()=>{b.textContent="✓ copiado";setTimeout(()=>b.textContent="copiar",1400);};
   const fail=()=>{selectText(pre);toast("Selecciona y copia con Ctrl+C");};
@@ -42,30 +47,40 @@ function selectText(el){try{const r=document.createRange();r.selectNodeContents(
 /* ---------- routing ---------- */
 const LEVELS=["basico","intermedio","avanzado","arquitecto"];
 const EXTRA=["comandos","hooks","skills","settings","glosario","novedades"];
+const VIEWS=["inicio",...LEVELS,...EXTRA];
+const BASE="/claude-code/";
+const viewUrl=v=>v==="inicio"?BASE:BASE+v+"/";
+const CUR=(document.querySelector(".view")||{id:"v-inicio"}).id.slice(2);
 function route(){
-  let h=(location.hash||"#inicio").slice(1);
-  if(!["inicio",...LEVELS,...EXTRA].includes(h))h="inicio";
-  $$(".view").forEach(v=>v.classList.toggle("on",v.id==="v-"+h));
-  $$("#lvnav a,#refnav a").forEach(a=>a.classList.toggle("on",a.dataset.l===h));
-  window.scrollTo(0,0);
-  if(h==="inicio")startHero();else heroRun++;
+  const h=decodeURIComponent(location.hash.slice(1));
+  // Enlaces antiguos (/claude-code/#hooks) llevan a la URL propia de cada vista.
+  if(VIEWS.includes(h)&&h!==CUR){location.replace(viewUrl(h));return;}
+  $$(".view").forEach(v=>v.classList.add("on"));
+  $$("#lvnav a,#refnav a").forEach(a=>a.classList.toggle("on",a.dataset.l===CUR));
+  if(CUR==="inicio")startHero();
   setTimeout(observeReveal,50);
+  if(h&&!VIEWS.includes(h)){const t=document.getElementById(h);if(t)setTimeout(()=>t.scrollIntoView(),0);}
 }
 window.addEventListener("hashchange",route);
+// Enlaces "#basico" generados por los widgets: van a la URL de la vista.
+document.addEventListener("click",e=>{const a=e.target.closest('a[href^="#"]');if(!a)return;const h=a.getAttribute("href").slice(1);if(VIEWS.includes(h)&&h!==CUR){e.preventDefault();location.href=viewUrl(h);}});
 
 /* ---------- TOC + progress ---------- */
 const lessonsBy={};
 LEVELS.forEach(l=>{
-  const view=$("#v-"+l), arts=Array.from(view.querySelectorAll("article.lesson"));
+  const view=document.querySelector("#v-"+l);
+  // Niveles que no están en esta página: sus lecciones vienen de la lista generada al compilar.
+  if(!view){lessonsBy[l]=(window.__CC&&window.__CC.lessons[l])||[];return;}
+  const arts=Array.from(view.querySelectorAll("article.lesson"));
   lessonsBy[l]=arts.map(a=>a.id);
   const toc=view.querySelector("aside.toc");
   toc.innerHTML='<div class="lbl">Lecciones</div>'+arts.map((a,i)=>'<button data-go="'+a.id+'"><span class="ck">'+(a.id.endsWith("q")?"?":(i+1))+'</span><span>'+esc(a.dataset.t)+'</span></button>').join("")+'<div class="lvprog">Progreso del nivel <span data-lvp="'+l+'" style="float:right"></span><div class="track"><b data-lvb="'+l+'"></b></div></div>';
 });
 document.addEventListener("click",e=>{
-  const g=e.target.closest("[data-go]");if(g){document.getElementById(g.dataset.go).scrollIntoView({behavior:"smooth"});}
+  const g=e.target.closest("[data-go]");if(g){byId(g.dataset.go).scrollIntoView({behavior:"smooth"});}
   const d=e.target.closest("[data-done]");if(d){const id=d.dataset.done;state.done[id]=!state.done[id];save();renderProgress();if(state.done[id])toast("✓ Lección completada");}
 });
-function lvPct(l){const ids=lessonsBy[l];let n=0;ids.forEach(id=>{if(id.endsWith("q")?state.quiz[l]:state.done[id])n++;});return Math.round(n/ids.length*100);}
+function lvPct(l){const ids=lessonsBy[l];if(!ids.length)return 0;let n=0;ids.forEach(id=>{if(id.endsWith("q")?state.quiz[l]:state.done[id])n++;});return Math.round(n/ids.length*100);}
 function renderProgress(){
   $$("[data-done]").forEach(b=>{const v=!!state.done[b.dataset.done];b.classList.toggle("on",v);b.textContent=v?"✓ Completada":"○ Marcar como completada";});
   LEVELS.forEach(l=>{
@@ -135,7 +150,7 @@ const PH=[
 ];
 let loopA=-Math.PI/2, loopOn=true, lastPh=-1;
 function loopTick(){
-  if(loopOn && $("#v-basico").classList.contains("on")){
+  if(loopOn && document.querySelector("#v-basico.on")){
     loopA+=0.012;
     const dot=$("#loopDot");dot.setAttribute("cx",170+110*Math.cos(loopA));dot.setAttribute("cy",165+110*Math.sin(loopA));
     const a=((loopA+Math.PI/2)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
@@ -628,24 +643,24 @@ function drawFan(){
   h+='<g id="pkts"></g><text x="380" y="356" text-anchor="middle" font-size="11" style="fill:var(--dim)" id="fanFoot">cada agente tiene su propia ventana de contexto</text>';
   fanSvg.innerHTML=h;
 }
-function packet(i,back){return new Promise(res=>{const p=document.getElementById("pd"+i),L=p.getTotalLength(),c=document.createElementNS("http://www.w3.org/2000/svg","circle");c.setAttribute("r",back?5:6);c.setAttribute("fill",back?"var(--ok)":"var(--lv)");$("#pkts").appendChild(c);const t0=performance.now(),D=900;
+function packet(i,back){return new Promise(res=>{const p=byId("pd"+i),L=p.getTotalLength(),c=document.createElementNS("http://www.w3.org/2000/svg","circle");c.setAttribute("r",back?5:6);c.setAttribute("fill",back?"var(--ok)":"var(--lv)");$("#pkts").appendChild(c);const t0=performance.now(),D=900;
   (function f(t){const k=Math.min((t-t0)/D,1),pt=p.getPointAtLength(back?L*(1-k):L*k);c.setAttribute("cx",pt.x);c.setAttribute("cy",pt.y);if(k<1)requestAnimationFrame(f);else{c.remove();res();}})(t0);});}
 let fanRun=0;
 async function playFan(){const my=++fanRun;drawFan();const msg=$("#fanMsg");
   msg.innerHTML="<b>1. Fan-out:</b> el script divide la auditoría en 4 tareas independientes y lanza un agente por cada una con <code>parallel()</code>.";
-  await Promise.all(SUBS.map((s,i)=>sleep(i*150).then(()=>packet(i,false)).then(()=>{document.getElementById("sub"+i).setAttribute("opacity","1");document.getElementById("st"+i).textContent="trabajando…";})));
+  await Promise.all(SUBS.map((s,i)=>sleep(i*150).then(()=>packet(i,false)).then(()=>{byId("sub"+i).setAttribute("opacity","1");byId("st"+i).textContent="trabajando…";})));
   if(my!==fanRun)return;
   msg.innerHTML="<b>2. Trabajo aislado:</b> cada agente lee decenas de archivos en su contexto. Los resultados intermedios viven en variables del script.";
   const tgt=[105,92,118,80];const t0=performance.now();
-  await new Promise(r=>{(function f(t){const k=Math.min((t-t0)/2200,1);SUBS.forEach((s,i)=>document.getElementById("sc"+i).setAttribute("width",tgt[i]*k));if(k<1&&my===fanRun)requestAnimationFrame(f);else r();})(t0);});
+  await new Promise(r=>{(function f(t){const k=Math.min((t-t0)/2200,1);SUBS.forEach((s,i)=>byId("sc"+i).setAttribute("width",tgt[i]*k));if(k<1&&my===fanRun)requestAnimationFrame(f);else r();})(t0);});
   if(my!==fanRun)return;
-  SUBS.forEach((s,i)=>document.getElementById("st"+i).textContent=["3 hallazgos","1 crítico","2 hallazgos","cobertura 64%"][i]);
+  SUBS.forEach((s,i)=>byId("st"+i).textContent=["3 hallazgos","1 crítico","2 hallazgos","cobertura 64%"][i]);
   msg.innerHTML="<b>3. Verificación cruzada:</b> agentes independientes intentan refutar cada hallazgo; los que no sobreviven se descartan.";
   await sleep(1500);if(my!==fanRun)return;
-  document.getElementById("st0").textContent="2 confirmados";document.getElementById("st2").textContent="1 confirmado";
+  byId("st0").textContent="2 confirmados";byId("st2").textContent="1 confirmado";
   await Promise.all(SUBS.map((s,i)=>sleep(i*200).then(()=>packet(i,true))));
   if(my!==fanRun)return;
-  document.getElementById("orcCtx").setAttribute("width",34);
+  byId("orcCtx").setAttribute("width",34);
   msg.innerHTML='<b style="color:var(--ok)">4. Resultado:</b> a tu conversación llega un solo informe priorizado: <span style="color:var(--bad)">1 crítico</span> (webhook sin verificación de firma), 3 medios y un plan de tests. Tu contexto casi no creció.';
 }
 drawFan();on($("#fanPlay"),"click",playFan);
@@ -960,7 +975,7 @@ function tabs(tabsEl,items,onSel){tabsEl.innerHTML=items.map((t,i)=>'<button dat
 });
 
 /* =================== COMANDOS =================== */
-(function(){
+try{(function(){if(!document.getElementById("v-comandos"))return; // módulo de la vista comandos
   if(!$("#v-comandos"))return;
   /* anatomía */
   const AN=[["Comando","El nombre después de /. Puede ser un comando integrado o una skill. El menú filtra mientras escribes."],["Argumento posicional","Muchos comandos aceptan opciones sin guiones: aquí el nivel de esfuerzo de la revisión."],["Flag","Opciones con -- cambian el comportamiento: --fix hace que Claude aplique los hallazgos."],["Objetivo","Un número de PR, una rama o una ruta. Si lo omites, /code-review revisa tu diff actual."]];
@@ -1055,7 +1070,7 @@ function tabs(tabsEl,items,onSel){tabsEl.innerHTML=items.map((t,i)=>'<button dat
   $("#drill").innerHTML=DR.map((d,i)=>'<div class="q" data-d="'+i+'"><p>'+(i+1)+'. '+esc(d[0])+'</p>'+d[1].map((o,j)=>'<button class="opt" data-o="'+j+'"><code>'+esc(o)+'</code></button>').join("")+'<div class="why">'+esc(d[3])+'</div></div>').join("")+'<div class="qscore" id="drSc"></div>';
   const dra={};
   on($("#drill"),"click",e=>{const o=e.target.closest(".opt");if(!o)return;const q=o.closest(".q"),i=+q.dataset.d;if(dra[i]!==undefined)return;const j=+o.dataset.o;dra[i]=j===DR[i][2];q.classList.add("ans");o.classList.add(dra[i]?"ok":"no");if(!dra[i])q.querySelectorAll(".opt")[DR[i][2]].classList.add("ok");const n=Object.keys(dra).length,ok=Object.values(dra).filter(Boolean).length;$("#drSc").textContent=n===DR.length?ok+"/"+DR.length+(ok===DR.length?" · ¡perfecto!":" · revisa las explicaciones"):n+"/"+DR.length+" respondidas";});
-})();
+})();}catch(e){console.warn("[guía]",e);}
 
 /* =================== HOOKS =================== */
 const HK_EV=[
@@ -1093,7 +1108,7 @@ const HK_EV=[
  ["Elicitation","MCP","Cuando un servidor MCP pide datos al usuario.","nombre del servidor","Sí: declina sin diálogo","—","action accept/decline/cancel, content","Responder automáticamente formularios MCP."],
  ["ElicitationResult","MCP","Tras responder una elicitation, antes de enviarla.","nombre del servidor","Sí: se vuelve decline","—","action, content","Validar lo que se envía al servidor."]
 ];
-(function(){
+try{(function(){if(!document.getElementById("v-hooks"))return; // módulo de la vista hooks
   if(!$("#v-hooks"))return;
   const byName=n=>HK_EV.find(e=>e[0]===n);
   function evCard(e){return '<div class="cdh"><span class="cn big">'+e[0]+'</span> <span class="badge">'+e[1]+'</span></div><p class="cdd">'+esc(e[2])+'</p><table class="ref opt"><tbody>'+
@@ -1194,10 +1209,10 @@ const HK_EV=[
   $("#dgChips").innerHTML=DG.map((d,i)=>'<button class="chip" data-i="'+i+'">'+esc(d[0])+'</button>').join("");
   on($("#dgChips"),"click",e=>{const b=e.target.closest(".chip");if(!b)return;$$("#dgChips .chip").forEach(x=>x.classList.toggle("on",x===b));$("#dgOut").textContent=DG[+b.dataset.i][1];});
   $("#dgOut").textContent="Elige un síntoma.";
-})();
+})();}catch(e){console.warn("[guía]",e);}
 
 /* =================== SKILLS =================== */
-(function(){
+try{(function(){if(!document.getElementById("v-skills"))return; // módulo de la vista skills
   if(!$("#v-skills"))return;
   /* carga progresiva */
   const PDS=[[0,"Tú: \"genera las notas de la versión 2.4\". Claude solo ve el listado: 23 skills, nombre + descripción."],[0,"La descripción de release-notes dice \"Úsala cuando pidan notas de versión o changelog\": coincide."],[1,"Claude invoca la skill: el cuerpo de SKILL.md entra al contexto (y los !`comandos` ya traen el git log real)."],[2,"El SKILL.md dice \"para el formato, lee templates/notas.md\": Claude lo lee recién ahora."],[2,"Corre scripts/contributors.sh: el script se ejecuta, solo su salida entra al contexto."]];
@@ -1279,7 +1294,7 @@ const HK_EV=[
   $("#wuChips").innerHTML=WU.map((w,i)=>'<button class="chip" data-i="'+i+'">'+esc(w[0])+'</button>').join("");
   on($("#wuChips"),"click",e=>{const b=e.target.closest(".chip");if(!b)return;$$("#wuChips .chip").forEach(x=>x.classList.toggle("on",x===b));const w=WU[+b.dataset.i];$("#wuOut").innerHTML="<b>→ "+esc(w[1])+"</b><br>"+esc(w[2]);});
   $("#wuOut").textContent="Elige una situación.";
-})();
+})();}catch(e){console.warn("[guía]",e);}
 
 /* =================== SETTINGS =================== */
 const SET_KEYS=[
@@ -1360,7 +1375,7 @@ const SET_KEYS=[
 ["claudeMd","Organización","Managed","Instrucciones CLAUDE.md para toda la organización.","\"claudeMd\": \"Nunca subas secretos…\""],
 ["disableSideloadFlags","Organización","Managed","Rechaza flags que cargan plugins, agentes o MCP por CLI.","\"disableSideloadFlags\": true"]
 ];
-(function(){
+try{(function(){if(!document.getElementById("v-settings"))return; // módulo de la vista settings
   if(!$("#v-settings"))return;
   /* mapa de alcance */
   const SF=[["user","~/.claude/settings.json"],["proj","acme-app/.claude/settings.json"],["local","acme-app/.claude/settings.local.json"],["man","Managed settings"]];
@@ -1414,7 +1429,7 @@ const SET_KEYS=[
   const DT={s:["¿El archivo aparece en /status → Setting sources?",[["No","nf"],["Sí","y1"]]],nf:["¿El JSON es válido? (sin comentarios, sin comas finales)",[["No estoy seguro","fix"],["Sí","loc"]]],fix:["→ Corre claude doctor: te dice qué archivo y qué entrada falló. Un Settings Error descarta el archivo entero; un Warning solo la entrada.",[]],loc:["→ Revisa la ruta: el settings del proyecto se lee desde el directorio donde arrancaste (o la raíz del repo para el local). Si arrancaste en una subcarpeta, arranca en la raíz.",[]],y1:["¿La clave la define también un nivel más alto (managed, --settings, local sobre proyecto)?",[["Sí o no sé","hi"],["No","y2"]]],hi:["→ Gana el nivel más alto. Si es managed, nada lo sobreescribe: habla con tu admin. Si es el settings del equipo, pon tu valor en settings.local.json.",[]],y2:["¿Es una clave de permisos, env o marketplace en el archivo commiteado?",[["Sí","tr"],["No","y3"]]],tr:["→ allow, additionalDirectories, env y extraKnownMarketplaces del repo esperan a que confíes en la carpeta. deny y ask aplican de inmediato. Si allow sigue preguntando, revisa si hay un ask en otro archivo: ask gana sobre allow.",[]],y3:["¿Es model, effortLevel o defaultMode?",[["Sí","st"],["No","y4"]]],st:["→ model y effort se leen al iniciar: usa /model o /effort, o reinicia. defaultMode auto o bypassPermissions no aplica desde proyecto/local: ponlo en ~/.claude/settings.json.",[]],y4:["→ Revisa el Scope de la clave en la referencia: claves 'Usuario o managed' se ignoran en el repo. También puede haber una variable de entorno que gane (ANTHROPIC_MODEL sobre model). Último recurso: claude --safe-mode para descartar personalizaciones.",[]]};
   function dt(k){const n=DT[k];$("#dtBox").innerHTML='<p class="dtq">'+esc(n[0])+'</p><div class="chips">'+n[1].map(o=>'<button class="chip" data-g="'+o[1]+'">'+esc(o[0])+'</button>').join("")+'</div>';}
   on($("#dtBox"),"click",e=>{const b=e.target.closest("[data-g]");if(b)dt(b.dataset.g);});on($("#dtReset"),"click",()=>dt("s"));dt("s");
-})();
+})();}catch(e){console.warn("[guía]",e);}
 
 /* =================== GLOSARIO =================== */
 const GLOSS=[
@@ -1467,7 +1482,7 @@ const GLOSS=[
 ["$ARGUMENTS","Placeholder de una skill que se reemplaza por lo que escribes tras el comando.","skills"],
 ["!`comando`","En una skill: ejecuta el comando antes y pega su salida (contexto dinámico).","skills"]
 ].sort((a,b)=>a[0].replace(/[^A-Za-z]/g,"").localeCompare(b[0].replace(/[^A-Za-z]/g,""),"es"));
-(function(){
+try{(function(){if(!document.getElementById("v-glosario"))return; // módulo de la vista glosario
   if(!$("#v-glosario"))return;
   const LBL={basico:"Básico",intermedio:"Intermedio",avanzado:"Avanzado",arquitecto:"Arquitecto",hooks:"Hooks",skills:"Skills",settings:"Settings",comandos:"Comandos"};
   let L="";const first=t=>t.replace(/[^A-Za-z]/g,"")[0].toUpperCase();
@@ -1476,7 +1491,7 @@ const GLOSS=[
   on($("#glAZ"),"click",e=>{const b=e.target.closest(".chip");if(!b)return;L=b.dataset.l;$$("#glAZ .chip").forEach(x=>x.classList.toggle("on",x===b));gl();});
   function gl(){const q=$("#glQ").value.toLowerCase();$("#glList").innerHTML=GLOSS.filter(g=>(!L||first(g[0])===L)&&(!q||(g[0]+" "+g[1]).toLowerCase().includes(q))).map(g=>'<div class="glc"><b>'+esc(g[0])+'</b><p>'+esc(g[1])+'</p><a href="#'+g[2]+'">'+LBL[g[2]]+' →</a></div>').join("")||'<p class="pn">Sin resultados.</p>';}
   on($("#glQ"),"input",gl);gl();
-})();
+})();}catch(e){console.warn("[guía]",e);}
 
 /* =================== NOVEDADES =================== */
 const NEWS=[
@@ -1497,17 +1512,17 @@ const NEWS=[
 ["v2.1.283 · v2.1.285","CLI","claude --desktop y /doctor prompt-audit","Abre la app de escritorio en el directorio (v2.1.285) y audita tus CLAUDE.md, reglas y skills (v2.1.283).",0],
 ["v2.1.284","Modelos","/effort ultracode on|off","Activa o desactiva ultracode conservando el nivel actual (v2.1.284).",0]
 ];
-(function(){
+try{(function(){if(!document.getElementById("v-novedades"))return; // módulo de la vista novedades
   if(!$("#v-novedades"))return;
   const C=[...new Set(NEWS.map(n=>n[1]))];let f="all";
   $("#nvF").innerHTML='<button class="chip on" data-c="all">Todo</button>'+C.map(c=>'<button class="chip" data-c="'+c+'">'+c+'</button>').join("");
   on($("#nvF"),"click",e=>{const b=e.target.closest(".chip");if(!b)return;f=b.dataset.c;$$("#nvF .chip").forEach(x=>x.classList.toggle("on",x===b));nv();});
   function nv(){$("#nvList").innerHTML=NEWS.filter(n=>f==="all"||n[1]===f).map(n=>'<div class="nvi"><div class="nvd">'+esc(n[0])+'</div><div class="nvb"><div><span class="badge">'+esc(n[1])+'</span>'+(n[4]?'<span class="badge exp">comunidad</span>':'')+'</div><h3>'+esc(n[2])+'</h3><p>'+esc(n[3])+'</p></div></div>').join("");}
   nv();
-})();
+})();}catch(e){console.warn("[guía]",e);}
 
 /* =================== INICIO: ¿por dónde empiezo? =================== */
-(function(){
+try{(function(){if(!document.getElementById("v-inicio"))return; // módulo de la vista inicio
   const box=$("#startPick");if(!box)return;
   const Q=[["¿Ya usaste Claude Code?",[["Nunca",0],["Algunas veces",1],["A diario",2]]],["¿Qué quieres lograr ahora?",[["Aprender lo básico",0],["Trabajar más rápido y con menos prompts",1],["Automatizar y conectar herramientas",2],["Estandarizarlo en mi equipo",3]]]];
   const ans=[];
@@ -1515,7 +1530,7 @@ const NEWS=[
     const s=Math.max(ans[0],ans[1]);const R=[["basico","Básico","Instalación, el loop agéntico, modo plan y tus primeros prompts que funcionan.","--b"],["intermedio","Intermedio","Permisos, CLAUDE.md, contexto y sesiones. Después mira la sección Comandos.","--i"],["avanzado","Avanzado","Hooks, skills, subagentes y MCP. Complementa con las referencias a fondo.","--a"],["arquitecto","Arquitecto","Plugins, managed settings, CI y trabajo en paralelo. Y Settings a fondo.","--x"]][s];
     box.innerHTML='<p class="dtq">Te recomendamos empezar por <b style="color:var('+R[3]+')">'+R[1]+'</b></p><p class="pn">'+R[2]+'</p><div class="cta" style="margin-top:12px"><a class="btn pri" href="#'+R[0]+'">Ir a '+R[1]+' →</a><button class="btn" data-again>Volver a preguntar</button></div>';}
   on(box,"click",e=>{if(e.target.closest("[data-again]")){ans.length=0;r();return;}const b=e.target.closest("[data-v]");if(b){ans.push(+b.dataset.v);r();}});r();
-})();
+})();}catch(e){console.warn("[guía]",e);}
 
 /* =================== QUIZZES de referencia =================== */
 QZ.hooks=[
@@ -1557,8 +1572,8 @@ $$("[data-quiz]").forEach(w=>{
 });
 
 /* ---------- counts ---------- */
-const nLessons=$$("article.lesson").filter(a=>!a.id.endsWith("q")).length;
-const nWidgets=$$(".wd").length;
+const nLessons=window.__CC?Object.values(window.__CC.lessons).flat().filter(id=>!id.endsWith("q")).length:$$("article.lesson").filter(a=>!a.id.endsWith("q")).length;
+const nWidgets=window.__CC?window.__CC.widgets:$$(".wd").length;
 const nQuiz=Object.values(QZ).reduce((a,b)=>a+b.length,0);
 $$('[data-count="lessons"]').forEach(e=>e.textContent=nLessons);
 $$('[data-count="widgets"]').forEach(e=>e.textContent=nWidgets);

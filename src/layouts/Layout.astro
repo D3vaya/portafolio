@@ -2,7 +2,7 @@
 // Fuentes recortadas con scripts/subset-fonts.sh: solo los caracteres y rangos que usa el sitio
 import anybodyUrl from "@/assets/fonts/anybody.woff2?url"
 import schibstedUrl from "@/assets/fonts/schibsted.woff2?url"
-import { basics } from "@cv"
+import { basics, work } from "@cv"
 
 interface Props {
   title: string
@@ -10,8 +10,34 @@ interface Props {
 }
 
 const { title, description } = Astro.props
-const siteUrl = "https://www.jcayala.dev"
-const ogImage = `${siteUrl}${basics.image}`
+const siteUrl = "https://www.jcayala.dev/"
+// Imagen para compartir en 1200×630 (la foto de perfil es cuadrada y se recorta mal)
+const ogImage = `${siteUrl}og.png`
+
+// Datos estructurados: quién es y qué sitio es, para buscadores y asistentes de IA
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": `${siteUrl}#persona`,
+    name: basics.name,
+    url: siteUrl,
+    image: `${siteUrl}${basics.image.replace(/^\//, "")}`,
+    jobTitle: "AI Harness Engineer",
+    description,
+    worksFor: work[0] ? { "@type": "Organization", name: work[0].name, url: work[0].url } : undefined,
+    sameAs: [...basics.profiles.map((p) => p.url), "https://guias.jcayala.dev/"],
+    knowsAbout: ["Agentes de IA", "Claude Code", "Ingeniería de software", "TypeScript", "React", "Node.js"],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "jcayala.dev",
+    url: siteUrl,
+    inLanguage: "es",
+    author: { "@id": `${siteUrl}#persona` },
+  },
+]
 ---
 
 <!doctype html>
@@ -40,14 +66,20 @@ const ogImage = `${siteUrl}${basics.image}`
     />
 
     <meta property="og:url" content={siteUrl} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content="jcayala.dev" />
+    <meta property="og:locale" content="es_LA" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${basics.name}, AI harness engineer`} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
     {/* Cloudflare Web Analytics: gratis y sin cookies */}
     <script is:inline type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "079399afbe5c4785902cc48c11b28ecf"}'></script>
   </head>

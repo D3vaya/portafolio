@@ -6,12 +6,37 @@ import GuideCover from "../components/GuideCover.astro";
 import { guides } from "../data/guides";
 
 const featured = guides.find((g) => g.status === "publicada")!;
+const site = Astro.site!;
+const author = { "@type": "Person", name: "Juan Carlos Ayala Higuera", url: "https://www.jcayala.dev/" };
+const live = guides.filter((g) => g.status === "publicada");
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Guías · Juan Carlos Ayala",
+    url: site.href,
+    inLanguage: "es",
+    author,
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Guías publicadas",
+    itemListElement: live.map((g, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: new URL(`/${g.slug}/`, site).href,
+      name: g.title,
+    })),
+  },
+];
 const tracked = guides.filter((g) => g.progress).map((g) => ({ slug: g.slug, title: g.title, ...g.progress! }));
 ---
 
 <Base
-  title="Guías · Juan Carlos Ayala"
-  description="Guías en español para aprender herramientas de desarrollo a fondo: Claude Code, Git y más."
+  title="Guías de desarrollo en español: Claude Code, Git y más"
+  description="Guías gratuitas en español para aprender herramientas de desarrollo desde cero: Claude Code, Git y más. Se leen como un libro y se practican en el navegador."
+  jsonLd={jsonLd}
 >
   <header class="readerbar">
     <div class="row">
@@ -142,7 +167,7 @@ const tracked = guides.filter((g) => g.progress).map((g) => ({ slug: g.slug, tit
           En un chat tú eres el puente: copias contexto, pegas respuestas y corres comandos. Con un agente, él recorre
           ese puente. Tu trabajo pasa a ser dirigir y verificar.
         </p>
-        <footer>De <a href={`/${featured.slug}/#basico`}>{featured.title}</a>, lección 1.1</footer>
+        <footer>De <a href={`/${featured.slug}/basico/`}>{featured.title}</a>, lección 1.1</footer>
       </blockquote>
     </section>
   </main>

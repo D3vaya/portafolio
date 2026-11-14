@@ -3,31 +3,68 @@ import "../../guides/claude-code/legacy.css";
 import Base from "../../layouts/Base.astro";
 import ReaderMenu from "../../components/ReaderMenu.astro";
 import "../../guides/claude-code/guide.css";
-import content from "../../guides/claude-code/content.html?raw";
-import app from "../../guides/claude-code/app.js?raw";
+import appUrl from "../../guides/claude-code/app.js?url";
+import { views, LEVELS, REFERENCE, META, LESSONS, WIDGETS, FOOTER, BASE, viewUrl, type View } from "../../guides/claude-code/views";
 import { findGuide } from "../../data/guides";
 
-const guide = findGuide("claude-code");
+export function getStaticPaths() {
+  return views.map((v) => ({ params: { view: v.id === "inicio" ? undefined : v.id }, props: { view: v } }));
+}
 
-const levels = [
-  ["basico", "Básico"],
-  ["intermedio", "Intermedio"],
-  ["avanzado", "Avanzado"],
-  ["arquitecto", "Arquitecto"],
+const { view } = Astro.props as { view: View };
+const guide = findGuide("claude-code");
+const site = Astro.site!;
+const abs = (path: string) => new URL(path, site).href;
+
+const author = { "@type": "Person", name: "Juan Carlos Ayala Higuera", url: "https://www.jcayala.dev/" };
+const course = {
+  "@type": "Course",
+  name: "Claude Code, de cero a arquitecto",
+  description: views[0].description,
+  url: abs(BASE),
+  inLanguage: "es",
+  isAccessibleForFree: true,
+  educationalLevel: "Principiante a avanzado",
+  provider: author,
+  author,
+};
+const crumbs = [
+  { name: "Guías", url: abs("/") },
+  { name: "Claude Code", url: abs(BASE) },
+  ...(view.id === "inicio" ? [] : [{ name: view.label, url: abs(view.url) }]),
 ];
-const reference = [
-  ["comandos", "Comandos"],
-  ["hooks", "Hooks"],
-  ["skills", "Skills"],
-  ["settings", "Settings"],
-  ["glosario", "Glosario"],
-  ["novedades", "Novedades"],
+const jsonLd = [
+  view.id === "inicio"
+    ? { "@context": "https://schema.org", ...course, image: abs("/og-claude-code.png") }
+    : {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        headline: view.title,
+        description: view.description,
+        url: abs(view.url),
+        inLanguage: "es",
+        image: abs("/og-claude-code.png"),
+        dateModified: "2026-11-14",
+        author,
+        isPartOf: { "@type": "Course", name: course.name, url: course.url },
+      },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: crumbs.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c.name, item: c.url })),
+  },
 ];
+// Datos que el JS necesita de las vistas que no están en esta página
+const ccData = `window.__CC=${JSON.stringify({ lessons: LESSONS, widgets: WIDGETS })};`;
 ---
 
 <Base
-  title="Claude Code, de cero a arquitecto · Guías"
-  description="Guía en español de Claude Code: instalación, permisos, memoria, hooks, skills, subagentes, MCP, CI y gobernanza, con simuladores interactivos."
+  title={view.title}
+  description={view.description}
+  image="/og-claude-code.png"
+  imageAlt="Guía de Claude Code en español, de cero a arquitecto."
+  ogType={view.id === "inicio" ? "website" : "article"}
+  jsonLd={jsonLd}
   accent={guide.accent}
 >
   <header class="readerbar guide-head">
@@ -37,17 +74,23 @@ const reference = [
         <span class="lbl">Contenido</span>
       </button>
       <nav class="crumbs" aria-label="Ruta">
-        <a href="/">Guías</a><span class="sep">/</span><a class="here" href="#inicio">Claude Code</a>
+        <a href="/">Guías</a><span class="sep">/</span>{
+          view.id === "inicio" ? (
+            <a class="here" href={BASE} aria-current="page">Claude Code</a>
+          ) : (
+            <><a href={BASE}>Claude Code</a><span class="sep">/</span><span class="here">{view.label}</span></>
+          )
+        }
       </nav>
       <nav class="lvnav" id="lvnav" aria-label="Niveles">
         {
-          levels.map(([id, label], i) => (
-            <a href={`#${id}`} data-l={id} title={label}>
+          LEVELS.map((id) => (
+            <a href={viewUrl(id)} data-l={id} title={META[id].label} class:list={[id === view.id && "on"]} aria-current={id === view.id ? "page" : undefined}>
               <svg class="ring" viewBox="0 0 20 20" aria-hidden="true">
                 <circle class="bgc" cx="10" cy="10" r="7" />
                 <circle class="fg" cx="10" cy="10" r="7" stroke="var(--accent)" stroke-dasharray="44" stroke-dashoffset="44" />
               </svg>
-              <span class="lbl">{label}</span>
+              <span class="lbl">{META[id].label}</span>
             </a>
           ))
         }
@@ -57,21 +100,22 @@ const reference = [
     <div class="refnav">
       <div class="in" id="refnav">
         <span class="lb">Referencia</span>
-        {reference.map(([id, label]) => <a href={`#${id}`} data-l={id}>{label}</a>)}
+        {REFERENCE.map((id) => <a href={viewUrl(id)} data-l={id} class:list={[id === view.id && "on"]} aria-current={id === view.id ? "page" : undefined}>{META[id].label}</a>)}
       </div>
     </div>
   </header>
 
   <div class="drawer-backdrop" data-toc-close></div>
 
-  <div class="wrap" set:html={content} />
+  <div class="wrap" set:html={view.html + FOOTER + '<div class="toast" id="toast" role="status"></div>'} />
 
   <div class="progressbar is-off" aria-hidden="true">
     <div class="track"><b></b></div>
     <div class="row"><span class="where"></span><span class="left"></span></div>
   </div>
 
-  <script is:inline set:html={app} />
+  <script is:inline set:html={ccData} />
+  <script is:inline src={appUrl}></script>
 
   <script is:inline>
     (function () {
