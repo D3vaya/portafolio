@@ -1,0 +1,174 @@
+/* Ajustes de la guía de Claude Code sobre el sistema "Lector". */
+
+/* ---------- barra: niveles y referencia ---------- */
+.guide-head .toc-btn { margin-left: -8px; }
+.guide-head .toc-btn[hidden] { display: none; }
+.guide-head .lvnav { display: flex; gap: 2px; margin-left: 10px; overflow-x: auto; scrollbar-width: none; }
+.guide-head .lvnav a {
+  display: flex; align-items: center; gap: 7px; height: 32px; padding: 0 10px; border-radius: 8px;
+  color: var(--ink-3); text-decoration: none; font: 500 14px var(--sans); white-space: nowrap; border: 0;
+}
+.guide-head .lvnav a:hover { color: var(--ink); background: var(--surface-2); }
+.guide-head .lvnav a.on { color: var(--ink); background: var(--surface-2); }
+.guide-head .ring { width: 15px; height: 15px; }
+.guide-head .ring circle { fill: none; stroke-width: 2.6; }
+.guide-head .ring .bgc { stroke: var(--rule-2); }
+.guide-head .ring .fg { stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset .6s; }
+
+.guide-head .refnav { border-top: 0; background: none; }
+.guide-head .refnav .in { max-width: 1200px; margin: 0 auto; padding: 0 24px 6px; display: flex; gap: 2px; align-items: center; overflow-x: auto; scrollbar-width: none; }
+.guide-head .refnav .lb { font: 500 12.5px var(--sans); color: var(--ink-3); margin-right: 6px; white-space: nowrap; }
+.guide-head .refnav a {
+  font: 500 13px var(--sans); color: var(--ink-3); text-decoration: none; padding: 4px 9px; white-space: nowrap;
+  border: 0; border-radius: 999px; background: none;
+}
+.guide-head .refnav a:hover { color: var(--ink); background: var(--surface-2); }
+.guide-head .refnav a.on { color: var(--paper); background: var(--ink); }
+
+/* ---------- portada de la guía: una portadilla de libro ---------- */
+.hero { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 920px; margin: 0 auto; padding: 88px 24px 40px; gap: 0; }
+.hero > div:first-child { display: flex; flex-direction: column; align-items: center; }
+.eyebrow { order: 3; font: 500 13.5px var(--sans); color: var(--ink-3); margin-top: 26px; display: block; }
+.eyebrow::before { content: none; }
+.hero h1 { order: 1; font: 600 clamp(38px, 5.4vw, 66px)/1.04 var(--serif); letter-spacing: -.028em; margin: 0 0 24px; max-width: 15em; }
+.hero h1 em { font-style: normal; color: inherit; background: none; }
+.hero p.lead { order: 2; font: italic 400 clamp(18px, 2vw, 21px)/1.6 var(--serif); color: var(--ink-2); max-width: 33em; margin: 0; }
+.hero .cta { order: 2; margin-top: 30px; justify-content: center; }
+.hero > .term { width: 100%; margin-top: 64px; text-align: left; }
+.figcap { font: italic 400 15px/1.5 var(--serif); color: var(--ink-3); margin: 14px 0 0; }
+
+.term { border-radius: 14px; border: 0; background: #1c1c1f; box-shadow: var(--shadow); }
+.term .bar { background: #232327; border-bottom: 1px solid #313136; }
+.term .bar i { width: 10px; height: 10px; background: #3d3d44 !important; }
+.term .bar span { font: 500 12px var(--mono); }
+.term .body { font: 13.5px/1.75 var(--mono); padding: 18px 20px; }
+.t-p { color: var(--accent); }
+.t-v { color: #e9e7e2; font-style: italic; }
+.cursor { background: var(--accent); }
+
+.sec { max-width: 920px; padding: 56px 24px; }
+.sec h2.big { font: 600 clamp(28px, 3.2vw, 36px)/1.15 var(--serif); letter-spacing: -.015em; }
+.sec p.sub { color: var(--ink-2); font-size: 1em; max-width: 34em; }
+
+/* "Tu ruta" como el índice de un libro */
+.lvgrid { display: block; border-top: 1px solid var(--rule); }
+.lvcard {
+  display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; grid-template-areas: "g n p" "g h p" "g d p" "g l p";
+  column-gap: 20px; align-items: baseline;
+  background: none; border: 0; border-bottom: 1px solid var(--rule); border-radius: 0;
+  padding: 26px 0; min-height: 0; color: var(--ink);
+}
+.lvcard::before { content: none; }
+.lvcard:hover { transform: none; }
+.lvcard:hover h3 { color: var(--accent); }
+.lvcard .glyph { grid-area: g; font: 600 46px/1 var(--serif); color: var(--accent); opacity: 1; align-self: start; }
+.lvcard .n { grid-area: n; margin: 0 !important; font: 500 13px var(--sans); color: var(--ink-3); }
+.lvcard h3 { grid-area: h; font: 600 25px/1.2 var(--serif); margin: 4px 0 6px; transition: color .2s; }
+.lvcard p { grid-area: d; color: var(--ink-2); font-size: .9em; margin: 0 0 8px; }
+.lvcard ul { grid-area: l; display: flex; flex-wrap: wrap; gap: 4px 0; font: 400 13.5px/1.5 var(--sans); color: var(--ink-3); margin: 0; }
+.lvcard li { padding: 0; }
+.lvcard li::before { content: none; }
+.lvcard li + li::before { content: "·"; padding: 0 8px; color: var(--rule-2); display: inline; }
+.lvcard .pg { grid-area: p; align-self: center; width: 120px; margin: 0; font: 500 12px var(--sans); color: var(--ink-3); }
+.lvcard .pg .track, aside.toc .lvprog .track { height: 3px; border-radius: 3px; background: var(--rule); }
+.lvcard .pg .track b, aside.toc .lvprog .track b { background: var(--accent); border-radius: 3px; }
+
+.cert { border: 1px solid var(--rule); border-radius: 14px; background: var(--mark-soft); text-align: center; }
+.cert h3 { color: var(--ink); font: 600 26px var(--serif); }
+
+.startbox { border: 1px solid var(--rule); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); max-width: none; }
+
+/* Apéndices de referencia */
+.refcards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; border: 0; }
+.refcard { background: var(--surface); border: 1px solid var(--rule); border-radius: 14px; padding: 20px 22px; transition: border-color .2s, box-shadow .2s; }
+.refcard:hover { transform: none; border-color: var(--rule-2); box-shadow: var(--shadow); }
+.refcard .gl { display: none; }
+.refcard b { font: 600 21px var(--serif); margin: 0 0 4px; }
+.refcard span { color: var(--ink-2); font-size: 15px; }
+
+.stats { display: none; }
+
+/* ---------- apertura de cada nivel: como el inicio de un capítulo ---------- */
+.lvhead { max-width: 920px; padding: 88px 24px 40px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.lvhead .bigglyph {
+  position: static; order: -1; opacity: 1;
+  font: 400 clamp(64px, 9vw, 104px)/1 var(--serif); color: var(--accent); letter-spacing: -.02em; margin-bottom: 18px;
+}
+.lvhead .tag { font: 500 13.5px var(--sans); color: var(--ink-3); }
+.lvhead h1 { font: 600 clamp(40px, 6vw, 68px)/1.02 var(--serif); letter-spacing: -.03em; margin: 10px 0 20px; }
+.lvhead p { font: italic 400 clamp(18px, 2vw, 21px)/1.6 var(--serif); color: var(--ink-2); max-width: 33em; margin: 0; }
+.lvhead::after { content: "⁂"; display: block; margin-top: 40px; font: 400 20px/1 var(--serif); color: var(--ink-3); }
+
+/* Cuerpo del nivel: una columna de lectura centrada; los widgets salen de la columna. */
+.lvbody { display: block; max-width: none; padding: 0 24px 120px; }
+.lvbody > main { max-width: var(--measure); margin: 0 auto; }
+article.lesson > :not(p, h2, h3, ul, ol, .lnum, .tip, .done-btn, button) {
+  --bleed: min(var(--wide), calc(100vw - 48px));
+  width: var(--bleed); max-width: none;
+  margin-left: calc((100% - var(--bleed)) / 2);
+  margin-right: 0;
+}
+.refbody { max-width: 1152px; padding: 0 24px 120px; }
+
+/* El índice de lecciones vive en un panel lateral, como el "Ir a" de un e-reader. */
+aside.toc {
+  position: fixed; top: 0; bottom: 0; left: 0; z-index: 90; display: block !important; align-self: stretch;
+  width: min(360px, 88vw); max-height: none; padding: 22px 16px 24px;
+  background: var(--surface); border-right: 1px solid var(--rule); box-shadow: var(--shadow);
+  overflow: auto; transform: translateX(-102%); visibility: hidden;
+  transition: transform .3s var(--ease), visibility 0s linear .3s;
+}
+.toc-open .view.on aside.toc { transform: none; visibility: visible; transition: transform .3s var(--ease); }
+aside.toc .lbl { font: 600 13px var(--sans); color: var(--ink-3); margin: 0 0 10px 10px; }
+aside.toc button { font: 400 15.5px/1.35 var(--serif); color: var(--ink-2); border-radius: 10px; padding: 9px 10px; gap: 12px; }
+aside.toc button:hover, aside.toc button.act { background: var(--surface-2); color: var(--ink); }
+aside.toc button.act { box-shadow: inset 2px 0 0 var(--accent); }
+aside.toc button .ck { border-radius: 50%; width: 22px; height: 22px; font: 500 11px var(--sans); border: 1px solid var(--rule-2); color: var(--ink-3); flex: none; }
+aside.toc button.done .ck { background: var(--ok); border-color: var(--ok); color: var(--surface); }
+aside.toc .lvprog { font: 500 13px var(--sans); border-radius: 12px; border: 1px solid var(--rule); margin: 18px 10px 0; }
+
+.next { border: 1px solid var(--rule); border-radius: 14px; background: var(--surface); padding: 22px 24px; box-shadow: var(--shadow); }
+.next h3 { font: 600 22px var(--serif); }
+
+/* Tarjetas internas */
+.mini { border-radius: 12px; background: var(--surface); border-color: var(--rule); color: var(--ink-2); font-size: .82em; }
+.mini b { font: 600 1.1em var(--serif); color: var(--ink); }
+.mini .ico:empty, .fstep .fi:empty { display: none; }
+.pfx { border-radius: 8px; background: var(--ink); color: var(--paper); }
+.deeplink { border-radius: 14px; background: var(--surface); border-color: var(--rule); box-shadow: var(--shadow); }
+.deeplink span { border-radius: 999px; letter-spacing: 0; font-family: var(--sans); }
+.deeplink b { font: 600 18px var(--serif); }
+
+.glc { border-radius: 12px; background: var(--surface); }
+.glc b { font: 600 17px var(--serif); }
+.nvb h3 { font: 600 20px var(--serif); }
+
+.ci .cn, .clirow code.cn { color: var(--accent); }
+.cmddet, .evdet { top: 120px; border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); }
+.cn.big { color: var(--ink); }
+.cprompt { background: var(--surface); border-radius: 12px; }
+.cprompt .gt { color: var(--accent); }
+
+.loopsvg .node circle { fill: var(--surface); stroke: var(--rule-2); }
+.loopsvg .node.hot circle { fill: var(--mark-soft); stroke: var(--accent); }
+.phase .ph-t { font: 600 22px var(--serif); color: var(--ink); }
+.phase .log { background: var(--sunk); border-radius: 10px; }
+
+footer { font: 400 14px var(--sans); color: var(--ink-3); border-top: 1px solid var(--rule); max-width: 1104px; margin: 0 auto; text-align: center; padding: 32px 0 72px; }
+
+@media (max-width: 980px) {
+  .guide-head .lvnav .lbl { display: none; }
+  .guide-head .lvnav a { padding: 0 8px; }
+  .refcards { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 760px) {
+  footer { margin: 0 16px; }
+  .hero, .sec, .lvhead { padding-left: 18px; padding-right: 18px; }
+  .lvbody, .refbody { padding-left: 18px; padding-right: 18px; }
+  .guide-head .refnav .in { padding: 0 14px 6px; }
+  .guide-head .crumbs a:first-child, .guide-head .crumbs .sep { display: none; }
+  .lvcard { grid-template-columns: 48px minmax(0, 1fr); grid-template-areas: "g n" "g h" "g d" "g l" "g p"; }
+  .lvcard .glyph { font-size: 32px; }
+  .lvcard .pg { width: auto; margin-top: 12px; }
+  article.lesson > :not(p, h2, h3, ul, ol, .lnum, .tip, .done-btn, button) { --bleed: calc(100vw - 36px); }
+}

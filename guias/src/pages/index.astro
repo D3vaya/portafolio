@@ -1,0 +1,632 @@
+---
+import Base from "../layouts/Base.astro";
+import ReaderMenu from "../components/ReaderMenu.astro";
+import Colophon from "../components/Colophon.astro";
+import GuideCover from "../components/GuideCover.astro";
+import { guides } from "../data/guides";
+
+const featured = guides.find((g) => g.status === "publicada")!;
+const tracked = guides.filter((g) => g.progress).map((g) => ({ slug: g.slug, title: g.title, ...g.progress! }));
+---
+
+<Base
+  title="Guías · Juan Carlos Ayala"
+  description="Guías en español para aprender herramientas de desarrollo a fondo: Claude Code, Git y más."
+>
+  <header class="readerbar">
+    <div class="row">
+      <nav class="crumbs" aria-label="Ruta">
+        <a href="https://www.jcayala.dev">jcayala.dev</a><span class="sep">/</span><span class="here">Guías</span>
+      </nav>
+      <div class="bar-actions"><ReaderMenu /></div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ================= hero: portadilla + un lector con una página real ================= -->
+    <section class="hero">
+      <div class="hero-copy">
+        <h1>Guías</h1>
+        <p class="subtitle">
+          Herramientas de desarrollo explicadas desde cero, en español. Se leen como un libro y se practican
+          en el navegador.
+        </p>
+        <div class="cta">
+          <a class="btn pri" href={`/${featured.slug}/`}>Leer {featured.title}</a>
+          <a class="btn" href="#biblioteca">Ver la biblioteca</a>
+        </div>
+      </div>
+
+      <div class="scene" aria-hidden="true">
+        <div class="scene-book"><GuideCover guide={featured} /></div>
+        <div class="device">
+          <div class="screen">
+            <div class="s-top"><span>Claude Code</span><span>Básico</span></div>
+            <div class="s-page">
+              <span class="s-lnum">Lección 1.3</span>
+              <span class="s-h">El loop agéntico y las herramientas</span>
+              <p>
+                <span class="s-cap">C</span>uando le das una tarea, Claude trabaja en tres fases que se mezclan:
+                <b>reunir contexto</b>, <b>actuar</b> y <b>verificar</b>. Se repiten hasta cumplir el objetivo.
+              </p>
+              <p>Una pregunta puede necesitar solo contexto; un bug recorre las tres fases varias veces. Tú también eres parte del loop.</p>
+              <div class="s-term"><i>●</i> Bash(pnpm test registro)<br />&nbsp;&nbsp;⎿ 8 tests pasan</div>
+            </div>
+            <div class="s-foot">
+              <span class="s-track"><b></b></span>
+              <span class="s-meta"><span>1.3 El loop agéntico</span><span>6 min · 23 %</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= seguir leyendo (solo si hay progreso guardado) ================= -->
+    <section class="resume" hidden data-resume={JSON.stringify(tracked)}>
+      <span class="resume-label">Seguir leyendo</span>
+      <a class="resume-card" href="#">
+        <span class="resume-title"></span>
+        <span class="resume-track"><b></b></span>
+        <span class="resume-pct"></span>
+      </a>
+    </section>
+
+    <!-- ================= biblioteca ================= -->
+    <section class="library" id="biblioteca" aria-labelledby="lib-h">
+      <div class="sec-head">
+        <h2 id="lib-h">Biblioteca</h2>
+        <p>Una guía por herramienta, de lo básico a lo que necesitas para usarla en equipo.</p>
+      </div>
+      <ul class="shelf">
+        {
+          guides.map((g) => {
+            const live = g.status === "publicada";
+            const Tag = live ? "a" : "div";
+            return (
+              <li>
+                <Tag class:list={["book", !live && "is-soon"]} href={live ? `/${g.slug}/` : undefined}>
+                  <GuideCover guide={g} />
+                </Tag>
+                <div class="book-info">
+                  <h3>{live ? <a href={`/${g.slug}/`}>{g.title}</a> : g.title}</h3>
+                  <span class="book-meta">{live ? g.facts.join(" · ") : "En preparación"}</span>
+                  <p>{g.summary}</p>
+                </div>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </section>
+
+    <!-- ================= cómo son las guías ================= -->
+    <section class="how" aria-labelledby="how-h">
+      <div class="sec-head">
+        <h2 id="how-h">Cómo son las guías</h2>
+      </div>
+      <div class="how-grid">
+        <div class="how-item">
+          <div class="how-fig fig-themes" aria-hidden="true">
+            <span style="--p:#f7f7f4;--i:#1d1d1b">Aa<small>Papel</small></span>
+            <span style="--p:#f3ead8;--i:#3b2f22">Aa<small>Sepia</small></span>
+            <span style="--p:#161616;--i:#e2ddd3">Aa<small>Noche</small></span>
+          </div>
+          <h3>Se leen como un libro</h3>
+          <p>Una columna de lectura cómoda, tipografía de libro y tres temas: Papel, Sepia y Noche. Ajusta el tamaño del texto desde el menú Aa.</p>
+        </div>
+        <div class="how-item">
+          <div class="how-fig fig-term" aria-hidden="true">
+            <span class="ln"><i>&gt;</i> /permissions</span>
+            <span class="ln dim">  Modo actual: auto</span>
+            <span class="ln"><i>&gt;</i> !git status<b class="cur"></b></span>
+          </div>
+          <h3>Se practican en el navegador</h3>
+          <p>Simuladores de terminal, generadores de configuración y quizzes con explicación, sin instalar nada.</p>
+        </div>
+        <div class="how-item">
+          <div class="how-fig fig-prog" aria-hidden="true">
+            {["Básico", "Intermedio", "Avanzado", "Arquitecto"].map((l, i) => (
+              <span class="lv"><small>{l}</small><span class="bar"><b style={`width:${[100, 64, 20, 0][i]}%`}></b></span></span>
+            ))}
+          </div>
+          <h3>Guardan tu avance</h3>
+          <p>Marca lecciones como completadas y retoma donde quedaste. Todo queda en tu navegador, sin cuentas.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= un fragmento ================= -->
+    <section class="excerpt">
+      <blockquote>
+        <p>
+          En un chat tú eres el puente: copias contexto, pegas respuestas y corres comandos. Con un agente, él recorre
+          ese puente. Tu trabajo pasa a ser dirigir y verificar.
+        </p>
+        <footer>De <a href={`/${featured.slug}/#basico`}>{featured.title}</a>, lección 1.1</footer>
+      </blockquote>
+    </section>
+  </main>
+
+  <Colophon note="Sin cuentas ni registros. Tu progreso se guarda en tu navegador." />
+
+  <script is:inline>
+    (function () {
+      var box = document.querySelector("[data-resume]");
+      if (!box) return;
+      var best = null;
+      JSON.parse(box.dataset.resume).forEach(function (g) {
+        var s; try { s = JSON.parse(localStorage.getItem(g.key) || "null"); } catch (e) {}
+        if (!s) return;
+        var n = Object.keys(s.done || {}).filter(function (k) { return s.done[k]; }).length + Object.keys(s.quiz || {}).filter(function (k) { return s.quiz[k]; }).length;
+        var pct = Math.min(100, Math.round((n / g.total) * 100));
+        if (pct > 0 && pct < 100 && (!best || pct > best.pct)) best = { slug: g.slug, title: g.title, pct: pct };
+      });
+      if (!best) return;
+      box.querySelector(".resume-card").href = "/" + best.slug + "/";
+      box.querySelector(".resume-title").textContent = best.title;
+      box.querySelector(".resume-track b").style.width = best.pct + "%";
+      box.querySelector(".resume-pct").textContent = best.pct + " % leído";
+      box.hidden = false;
+    })();
+  </script>
+</Base>
+
+<style>
+  main > section {
+    max-width: 1104px;
+    margin: 0 auto;
+  }
+
+  /* ---------- hero ---------- */
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 56px;
+    align-items: center;
+    padding: 72px 0 96px;
+  }
+  .hero h1 {
+    font: 600 clamp(72px, 10vw, 136px)/0.88 var(--serif);
+    letter-spacing: -0.04em;
+  }
+  .subtitle {
+    font: italic 400 clamp(19px, 2vw, 23px)/1.5 var(--serif);
+    color: var(--ink-2);
+    max-width: 24em;
+    margin: 28px 0 32px;
+  }
+  .cta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .byline {
+    font: 500 14px var(--sans);
+    color: var(--ink-3);
+    margin: 28px 0 0;
+  }
+
+  /* escena: libro detrás, lector delante */
+  .scene {
+    position: relative;
+    height: clamp(440px, 46vw, 560px);
+  }
+  .scene-book {
+    position: absolute;
+    width: 52%;
+    left: 0;
+    top: 4%;
+    transform: rotate(-5deg);
+  }
+  .device {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 64%;
+    aspect-ratio: 3 / 4.15;
+    border-radius: 26px;
+    padding: 4.5% 4.5% 7%;
+    background: linear-gradient(160deg, #3a3a3e, #1f1f22 60%);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.08),
+      0 2px 2px rgb(0 0 0 / 0.15),
+      0 36px 60px -28px rgb(0 0 0 / 0.6);
+    container-type: inline-size;
+  }
+  .screen {
+    height: 100%;
+    border-radius: 6px;
+    background: #f3ead8;
+    color: #3b2f22;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.2);
+  }
+  .s-top {
+    display: flex;
+    justify-content: space-between;
+    padding: 5cqw 7cqw 0;
+    font: 500 3.2cqw var(--sans);
+    color: #8a7a64;
+  }
+  .s-page {
+    flex: 1;
+    padding: 6cqw 7cqw 0;
+    font: 400 4.1cqw/1.6 var(--serif);
+    overflow: hidden;
+  }
+  .s-lnum {
+    display: block;
+    font: 500 3.2cqw var(--sans);
+    color: #3a55a0;
+  }
+  .s-h {
+    display: block;
+    font: 600 7cqw/1.12 var(--serif);
+    letter-spacing: -0.01em;
+    margin: 2.4cqw 0 4cqw;
+  }
+  .s-page p {
+    margin: 0 0 3cqw;
+    hyphens: auto;
+  }
+  .s-cap {
+    float: left;
+    font: 600 12.5cqw/0.82 var(--serif);
+    color: #3a55a0;
+    margin: 1cqw 1.5cqw 0 0;
+  }
+  .s-term {
+    font: 3.3cqw/1.6 var(--mono);
+    background: #1c1c1f;
+    color: #e9e7e2;
+    border-radius: 2cqw;
+    padding: 3cqw 4cqw;
+  }
+  .s-term i {
+    font-style: normal;
+    color: #94abf5;
+  }
+  .s-foot {
+    padding: 3cqw 7cqw 4cqw;
+  }
+  .s-track {
+    display: block;
+    height: 2px;
+    background: #e0d3b8;
+  }
+  .s-track b {
+    display: block;
+    width: 23%;
+    height: 100%;
+    background: #3a55a0;
+  }
+  .s-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2.4cqw;
+    font: 500 3cqw var(--sans);
+    color: #8a7a64;
+  }
+
+  /* ---------- seguir leyendo ---------- */
+  .resume {
+    margin-top: -40px !important;
+    padding-bottom: 72px;
+  }
+  .resume-label {
+    display: block;
+    font: 600 13px var(--sans);
+    color: var(--ink-3);
+    margin-bottom: 10px;
+  }
+  .resume-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 20px;
+    align-items: center;
+    padding: 18px 22px;
+    border-radius: 14px;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .resume-title {
+    font: 600 20px var(--serif);
+  }
+  .resume-track {
+    height: 4px;
+    border-radius: 4px;
+    background: var(--rule);
+    overflow: hidden;
+  }
+  .resume-track b {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+  }
+  .resume-pct {
+    font: 500 14px var(--sans);
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- encabezados de sección ---------- */
+  .sec-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px 24px;
+    flex-wrap: wrap;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 40px;
+  }
+  .sec-head h2 {
+    font: 600 34px/1.1 var(--serif);
+    letter-spacing: -0.02em;
+  }
+  .sec-head p {
+    margin: 0;
+    font-size: 16px;
+    color: var(--ink-2);
+  }
+
+  /* ---------- biblioteca sobre un estante ---------- */
+  .library {
+    padding-bottom: 104px;
+  }
+  .shelf {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 56px;
+  }
+  .shelf > li {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 28px;
+    align-items: end;
+    position: relative;
+    padding-bottom: 22px;
+  }
+  /* la tabla del estante bajo cada libro */
+  .shelf > li::after {
+    content: "";
+    position: absolute;
+    left: -14px;
+    width: 232px;
+    bottom: 10px;
+    height: 12px;
+    border-radius: 2px;
+    background: linear-gradient(var(--surface-2), color-mix(in srgb, var(--surface-2) 70%, #000 10%));
+    box-shadow: 0 10px 18px -10px rgb(0 0 0 / 0.35);
+  }
+  .book {
+    display: block;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.35s var(--ease);
+  }
+  a.book:hover {
+    transform: translateY(-8px) rotate(-1deg);
+  }
+  .book-info {
+    padding-bottom: 20px;
+  }
+  .book-info h3 {
+    font: 600 26px/1.15 var(--serif);
+  }
+  .book-info h3 a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .book-info h3 a:hover {
+    color: var(--accent);
+  }
+  .book-meta {
+    display: block;
+    font: 500 13px/1.5 var(--sans);
+    color: var(--ink-3);
+    margin: 6px 0 10px;
+  }
+  .book-info p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    margin: 0;
+  }
+  .is-soon + .book-info h3 {
+    color: var(--ink-2);
+  }
+
+  /* ---------- cómo son ---------- */
+  .how {
+    padding-bottom: 104px;
+  }
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 40px;
+  }
+  .how-item h3 {
+    font: 600 21px/1.25 var(--serif);
+    margin: 22px 0 8px;
+  }
+  .how-item p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    margin: 0;
+  }
+  .how-fig {
+    height: 150px;
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow);
+    padding: 20px;
+  }
+  .fig-themes {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+  }
+  .fig-themes > span {
+    width: 74px;
+    height: 100px;
+    border-radius: 8px;
+    background: var(--p);
+    color: var(--i);
+    border: 1px solid rgb(0 0 0 / 0.12);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font: 600 26px var(--serif);
+  }
+  .fig-themes small {
+    font: 500 11px var(--sans);
+    opacity: 0.75;
+  }
+  .fig-term {
+    background: #1c1c1f;
+    border-color: #313136;
+    color: #e9e7e2;
+    font: 13.5px/1.9 var(--mono);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    white-space: pre;
+  }
+  .fig-term i {
+    font-style: normal;
+    color: var(--accent-dark);
+  }
+  .fig-term .dim {
+    color: #85827b;
+  }
+  .fig-term .cur {
+    display: inline-block;
+    width: 8px;
+    height: 15px;
+    margin-left: 4px;
+    vertical-align: -2px;
+    background: var(--accent-dark);
+    animation: blink 1.1s steps(1) infinite;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+  .fig-prog {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+  }
+  .fig-prog .lv {
+    display: grid;
+    grid-template-columns: 82px 1fr;
+    gap: 12px;
+    align-items: center;
+  }
+  .fig-prog small {
+    font: 500 12.5px var(--sans);
+    color: var(--ink-2);
+  }
+  .fig-prog .bar {
+    height: 5px;
+    border-radius: 5px;
+    background: var(--rule);
+    overflow: hidden;
+  }
+  .fig-prog .bar b {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+  }
+
+  /* ---------- fragmento ---------- */
+  .excerpt {
+    padding: 8px 0 112px;
+  }
+  .excerpt blockquote {
+    margin: 0 auto;
+    max-width: 30em;
+    text-align: center;
+  }
+  .excerpt blockquote::before {
+    content: "“";
+    display: block;
+    font: 400 96px/0.6 var(--serif);
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+  .excerpt p {
+    font: italic 400 clamp(22px, 2.6vw, 30px)/1.45 var(--serif);
+    margin: 0;
+  }
+  .excerpt footer {
+    font: 500 14px var(--sans);
+    color: var(--ink-3);
+    margin-top: 22px;
+  }
+
+  @media (max-width: 1180px) {
+    main > section {
+      margin: 0 28px;
+    }
+  }
+  @media (max-width: 960px) {
+    .hero {
+      grid-template-columns: minmax(0, 1fr);
+      padding: 48px 0 72px;
+    }
+    .scene {
+      height: 460px;
+      max-width: 480px;
+    }
+    .shelf,
+    .how-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 760px) {
+    main > section {
+      margin: 0 18px;
+    }
+    .scene {
+      height: 380px;
+    }
+    .shelf > li {
+      grid-template-columns: 120px minmax(0, 1fr);
+      gap: 18px;
+    }
+    .shelf > li::after {
+      width: 146px;
+      left: -13px;
+    }
+    .book-info p {
+      display: none;
+    }
+    .book-info h3 {
+      font-size: 21px;
+    }
+    .resume-card {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .resume-track {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+</style>
