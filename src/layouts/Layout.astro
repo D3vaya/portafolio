@@ -48,6 +48,8 @@ const ogImage = `${siteUrl}${basics.image}`
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    {/* Cloudflare Web Analytics: gratis y sin cookies */}
+    <script is:inline type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "079399afbe5c4785902cc48c11b28ecf"}'></script>
   </head>
   <body>
     <slot />
