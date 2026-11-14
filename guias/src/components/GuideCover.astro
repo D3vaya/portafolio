@@ -1,0 +1,146 @@
+---
+import type { Guide } from "../data/guides";
+
+interface Props {
+  guide: Guide;
+  size?: "lg" | "sm";
+}
+const { guide, size = "lg" } = Astro.props;
+const soon = guide.status !== "publicada";
+const cc = guide.slug === "claude-code";
+---
+
+<!--
+  Portada tipo editorial técnica: tela de color, un grabado de líneas finas que cuenta de qué
+  trata el libro, título en serif y el lomo insinuado con un pliegue. Se ve igual en cualquier tema.
+-->
+<div class:list={["cover", `cover-${size}`, soon && "cover-soon"]} style={`--bg:${guide.cover.bg};--ink:${guide.cover.ink}`}>
+  <svg class="cover-art" viewBox="0 0 200 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    {
+      cc ? (
+        <g fill="none" stroke="currentColor">
+          {/* el loop agéntico: órbitas concéntricas con sus tres fases */}
+          {[22, 34, 46, 58, 70, 82, 94].map((r, i) => (
+            <circle cx="150" cy="70" r={r} stroke-width={i === 3 ? 1.1 : 0.45} opacity={i === 3 ? 0.9 : 0.42} />
+          ))}
+          <circle cx="150" cy="12" r="4.5" fill="currentColor" stroke="none" />
+          <circle cx="200" cy="99" r="4.5" fill="currentColor" stroke="none" />
+          <circle cx="100" cy="99" r="4.5" fill="currentColor" stroke="none" />
+        </g>
+      ) : (
+        <g fill="none" stroke="currentColor">
+          {/* grafo de commits: una rama que se separa y vuelve, y otra que sigue abierta */}
+          <path d="M150 -10V128" stroke-width="1.2" />
+          <path d="M150 26c0 14 34 10 34 28v34c0 16-34 12-34 28" stroke-width="0.8" opacity="0.7" />
+          <path d="M150 62c0 12-38 10-38 26v26" stroke-width="0.8" opacity="0.7" />
+          {[[150, 8], [150, 26], [184, 58], [184, 86], [150, 116], [112, 96], [112, 116]].map(([x, y]) => (
+            <circle cx={x} cy={y} r="4" fill="currentColor" stroke="none" />
+          ))}
+          {[18, 28].map((r) => (
+            <circle cx="150" cy="116" r={r} stroke-width="0.4" opacity="0.3" />
+          ))}
+        </g>
+      )
+    }
+  </svg>
+  <div class="cover-main">
+    <span class="cover-title">{guide.title}</span>
+    <span class="cover-rule"></span>
+    <span class="cover-sub">{guide.tagline}</span>
+  </div>
+  <span class="cover-author">Juan Carlos Ayala</span>
+  {soon && <span class="cover-flag">Próximamente</span>}
+</div>
+
+<style>
+  .cover {
+    position: relative;
+    aspect-ratio: 2 / 3;
+    border-radius: 3px 8px 8px 3px;
+    color: var(--ink);
+    background:
+      linear-gradient(90deg, rgb(0 0 0 / 0.3) 0, rgb(255 255 255 / 0.12) 2.2%, rgb(0 0 0 / 0.14) 4%, transparent 7%),
+      radial-gradient(120% 80% at 80% 0%, rgb(255 255 255 / 0.08), transparent 60%),
+      var(--bg);
+    box-shadow:
+      0 1px 1px rgb(0 0 0 / 0.12),
+      0 22px 40px -20px rgb(0 0 0 / 0.6),
+      inset 0 0 0 1px rgb(255 255 255 / 0.06);
+    overflow: hidden;
+    container-type: inline-size;
+  }
+  .cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.16;
+    mix-blend-mode: overlay;
+    background-image: repeating-linear-gradient(0deg, rgb(255 255 255 / 0.2) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, rgb(0 0 0 / 0.2) 0 1px, transparent 1px 3px);
+    pointer-events: none;
+  }
+  .cover-art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .cover-main {
+    position: absolute;
+    left: 12cqw;
+    right: 10cqw;
+    top: 47%;
+    display: flex;
+    flex-direction: column;
+    gap: 4.5cqw;
+  }
+  .cover-title {
+    font: 600 15cqw/0.98 var(--serif);
+    letter-spacing: -0.02em;
+  }
+  .cover-rule {
+    width: 16cqw;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.6;
+  }
+  .cover-sub {
+    font: italic 400 5.4cqw/1.35 var(--serif);
+    opacity: 0.9;
+    max-width: 22ch;
+  }
+  .cover-author {
+    position: absolute;
+    left: 12cqw;
+    bottom: 8cqw;
+    font: 500 4.4cqw/1 var(--sans);
+    letter-spacing: 0.04em;
+    opacity: 0.75;
+  }
+  .cover-sm .cover-sub,
+  .cover-sm .cover-author {
+    display: none;
+  }
+  .cover-sm .cover-main {
+    top: 52%;
+  }
+  .cover-sm .cover-title {
+    font-size: 17cqw;
+  }
+  .cover-soon {
+    filter: saturate(0.65);
+  }
+  .cover-flag {
+    position: absolute;
+    right: 8cqw;
+    bottom: 6.5cqw;
+    font: 500 4.2cqw/1 var(--sans);
+    padding: 1.8cqw 3.2cqw;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    opacity: 0.85;
+  }
+  .cover-sm .cover-flag {
+    display: none;
+  }
+</style>

@@ -1,0 +1,106 @@
+---
+import "../styles/guias.css";
+
+interface Props {
+  title: string;
+  description: string;
+  accent?: { light: string; sepia: string; dark: string };
+}
+
+const {
+  title,
+  description,
+  accent = { light: "#2953c6", sepia: "#3a55a0", dark: "#94abf5" },
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const accentCss = `:root{--accent-light:${accent.light};--accent-sepia:${accent.sepia};--accent-dark:${accent.dark}}`;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap"
+    />
+    <style is:inline set:html={accentCss}></style>
+    <!-- Aplica tema y tamaño de lectura antes de pintar, para que no parpadee. -->
+    <script is:inline>
+      (function () {
+        var r = document.documentElement, s = {};
+        try { s = JSON.parse(localStorage.getItem("guias-lector") || "{}"); } catch (e) {}
+        r.dataset.theme = s.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "noche" : "papel");
+        if (s.size) r.style.setProperty("--fs", s.size + "px");
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+    <script is:inline>
+      (function () {
+        var r = document.documentElement;
+        var SIZES = [16, 17.5, 19, 20.5, 22];
+        function load() { try { return JSON.parse(localStorage.getItem("guias-lector") || "{}"); } catch (e) { return {}; } }
+        function store(p) { var s = Object.assign(load(), p); try { localStorage.setItem("guias-lector", JSON.stringify(s)); } catch (e) {} }
+        function currentSize() { return parseFloat(getComputedStyle(r).getPropertyValue("--fs")) || 19; }
+        function paint() {
+          document.querySelectorAll("[data-set-theme]").forEach(function (b) {
+            b.setAttribute("aria-pressed", String(b.dataset.setTheme === r.dataset.theme));
+          });
+          var i = SIZES.indexOf(currentSize());
+          document.querySelectorAll(".sizes .steps span").forEach(function (d, k) { d.classList.toggle("on", k === i); });
+        }
+        function closeMenu(focus) {
+          var pop = document.querySelector(".reader-pop.open"); if (!pop) return;
+          pop.classList.remove("open");
+          var b = document.querySelector("[data-reader-toggle]");
+          if (b) { b.setAttribute("aria-expanded", "false"); if (focus) b.focus(); }
+        }
+        document.addEventListener("click", function (e) {
+          var t = e.target.closest("[data-set-theme]");
+          if (t) { r.dataset.theme = t.dataset.setTheme; store({ theme: t.dataset.setTheme }); paint(); return; }
+          var z = e.target.closest("[data-size]");
+          if (z) {
+            var i = SIZES.indexOf(currentSize()); if (i < 0) i = 2;
+            i = Math.max(0, Math.min(SIZES.length - 1, i + Number(z.dataset.size)));
+            r.style.setProperty("--fs", SIZES[i] + "px"); store({ size: SIZES[i] }); paint(); return;
+          }
+          var m = e.target.closest("[data-reader-toggle]");
+          var pop = document.querySelector(".reader-pop");
+          if (m && pop) {
+            var open = !pop.classList.contains("open");
+            pop.classList.toggle("open", open); m.setAttribute("aria-expanded", String(open));
+            return;
+          }
+          if (!e.target.closest(".reader-pop")) closeMenu(false);
+        });
+        document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeMenu(true); });
+        paint();
+
+        // La barra superior se esconde al bajar leyendo y vuelve al subir.
+        var bar = document.querySelector(".readerbar"), last = scrollY;
+        if (bar) {
+          addEventListener("scroll", function () {
+            var y = scrollY;
+            bar.classList.toggle("is-scrolled", y > 8);
+            if (!document.querySelector(".reader-pop.open")) bar.classList.toggle("is-hidden", y > last && y > 240);
+            last = y;
+          }, { passive: true });
+        }
+      })();
+    </script>
+  </body>
+</html>

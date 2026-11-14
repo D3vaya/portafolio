@@ -1,0 +1,22 @@
+---
+/* Menú "Aa" del lector: tema de lectura y tamaño de letra. La lógica vive en Base.astro. */
+---
+<div class="reader-menu">
+  <button class="icon-btn" type="button" data-reader-toggle aria-expanded="false" aria-haspopup="true" aria-label="Ajustes de lectura">
+    <span class="aa">Aa</span>
+  </button>
+  <div class="reader-pop" role="dialog" aria-label="Ajustes de lectura">
+    <h4>Tema</h4>
+    <div class="themes">
+      <button type="button" data-set-theme="papel"><i>Aa</i>Papel</button>
+      <button type="button" data-set-theme="sepia"><i>Aa</i>Sepia</button>
+      <button type="button" data-set-theme="noche"><i>Aa</i>Noche</button>
+    </div>
+    <h4>Tamaño del texto</h4>
+    <div class="sizes">
+      <button type="button" class="sm" data-size="-1" aria-label="Texto más pequeño">A</button>
+      <div class="steps" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      <button type="button" class="lg" data-size="1" aria-label="Texto más grande">A</button>
+    </div>
+  </div>
+</div>

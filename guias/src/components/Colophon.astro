@@ -1,0 +1,8 @@
+---
+interface Props { note?: string }
+const { note } = Astro.props;
+---
+<footer class="colophon">
+  <span>Guías escritas por <a href="https://www.jcayala.dev">Juan Carlos Ayala</a>.</span>
+  {note && <span set:html={note} />}
+</footer>
