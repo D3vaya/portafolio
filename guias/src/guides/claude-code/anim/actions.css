@@ -1,0 +1,88 @@
+/* ---------- Animación: GitHub Actions y Code Review ---------- */
+.ga { display: grid; grid-template-columns: minmax(0, 1fr); }
+.ga-main { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+
+/* PR */
+.ga-pr { border-radius: 14px; background: #1b1d23; border: 1.5px solid rgb(255 255 255 / .12); padding: 14px; display: grid; gap: 12px; grid-template-rows: auto 1fr auto; min-height: 540px; opacity: 0; }
+.ga-tl { align-content: start; }
+.ga-pr.on { opacity: 1; }
+.ga-prh { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ga-prh b { font: 800 21px/1.1 var(--display); font-stretch: 82%; color: #ececee; }
+.ga-prh b span { color: #7a7e89; font-weight: 600; }
+.ga-open { font: 600 12px var(--sans); color: #111216; background: #5fd69a; padding: 3px 9px; border-radius: 999px; }
+.ga-tl { display: grid; gap: 10px; }
+.ga-ev { display: flex; align-items: center; gap: 8px; font: 500 13px var(--sans); color: #a8abb4; }
+.ga-ev code { font: 600 12px var(--mono); color: #c9cffc; }
+.ga-ev em { font-style: normal; font-weight: 600; color: #8fe6b8; margin-left: 6px; }
+.ga-ev-commit { opacity: 0; padding: 7px 10px; border-radius: 10px; border: 1px solid transparent; }
+.ga-ev-commit.on { opacity: 1; border-color: rgb(154 168 255 / .35); background: rgb(154 168 255 / .07); color: #ececee; }
+.ga-av {
+  flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%;
+  font: 700 12px var(--sans); font-style: normal; color: #111216;
+}
+.ga-av.h { background: var(--signal, #ff5b1f); font-size: 10.5px; }
+.ga-av.c { background: #9aa8ff; }
+.ga-file { border-radius: 10px; border: 1px solid rgb(255 255 255 / .1); overflow: hidden; }
+.ga-fn { font: 600 12px var(--mono); color: #a8abb4; padding: 7px 10px; background: rgb(255 255 255 / .04); border-bottom: 1px solid rgb(255 255 255 / .08); }
+.ga-diff { margin: 0; padding: 6px 0; font: 500 12.5px/1.6 var(--mono); color: #a8abb4; background: transparent; }
+.ga-diff span { display: block; padding: 0 10px; white-space: pre; }
+.ga-hl { color: #8fe6b8; background: rgb(95 214 154 / .08); transition: box-shadow .4s, background .4s; }
+.ga-hl.on { background: rgb(255 179 92 / .14); box-shadow: inset 3px 0 0 #ffb35c; color: #ffd9ad; }
+.ga-th { display: grid; gap: 8px; padding: 0 10px; }
+.ga-th:has(.on) { padding: 4px 10px 10px; }
+.ga-c { display: none; gap: 8px; align-items: start; }
+.ga-c.on { display: flex; }
+.ga-c > div { flex: 1; min-width: 0; padding: 7px 10px; border-radius: 10px; background: rgb(255 255 255 / .04); border: 1px solid rgb(255 255 255 / .1); }
+.ga-c b { display: block; font: 600 12px/1.3 var(--sans); color: #a8abb4; }
+.ga-c p { margin: 2px 0 0; font: 400 13.5px/1.45 var(--sans); color: #ececee; }
+.ga-c code { font: 500 12.5px var(--mono); color: #ffd9ad; }
+.ga-c-claude > div, .ga-c-ans > div { border-color: rgb(154 168 255 / .35); }
+.ga-c-you > div { border-color: rgb(255 91 31 / .4); }
+.ga-at { font: 600 13px var(--mono); color: #ffb08a; background: rgb(255 91 31 / .14); padding: 0 4px; border-radius: 4px; }
+.ga-mergebar { display: flex; align-items: center; gap: 10px; padding-top: 10px; border-top: 1px solid rgb(255 255 255 / .08); opacity: .35; transition: opacity .4s; }
+.ga-mergebar.on { opacity: 1; }
+.ga-merge {
+  font: 700 13px var(--sans); color: #a8abb4; background: rgb(255 255 255 / .06); border: 1px solid rgb(255 255 255 / .14);
+  padding: 8px 14px; border-radius: 8px; cursor: default; transition: background .4s, color .4s, box-shadow .4s;
+}
+.ga-mergebar.on .ga-merge { background: #5fd69a; color: #111216; border-color: #5fd69a; box-shadow: 0 0 22px -6px #5fd69a; }
+.ga-who { font: 600 12px var(--sans); color: #7a7e89; }
+.ga-mergebar.on .ga-who { color: #ffb08a; }
+
+/* runner */
+.ga-side { display: grid; gap: 14px; }
+.ga-run {
+  border-radius: 12px; padding: 12px; background: #0d0e11; border: 1.5px solid rgb(255 255 255 / .1); display: grid; gap: 6px;
+  min-height: 210px; align-content: start; transition: border-color .4s, box-shadow .4s, opacity .4s; opacity: .45;
+}
+.ga-run.on { opacity: 1; border-color: #9aa8ff; box-shadow: 0 0 24px -10px #9aa8ff; }
+.ga-run.on.is-done { border-color: rgb(95 214 154 / .6); box-shadow: none; }
+.ga-run:not(.on) > * { visibility: hidden; }
+.ga-run:not(.on)::before { content: "Sin workflow en curso"; font: 500 12.5px var(--sans); color: #7a7e89; }
+.ga-ev-chip { display: inline-block; font: 600 12px var(--mono); color: #111216; background: #9aa8ff; padding: 3px 8px; border-radius: 6px; }
+.ga-rf { font: 600 12px var(--mono); color: #ececee; word-break: break-all; }
+.ga-mode { font: 600 12px var(--sans); color: #ffb08a; }
+.ga-log { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 3px; }
+.ga-log li { font: 500 12px/1.45 var(--mono); color: #a8abb4; overflow-wrap: anywhere; }
+.ga-prog { height: 4px; border-radius: 999px; background: rgb(255 255 255 / .08); overflow: hidden; margin-top: 4px; }
+.ga-prog i { display: block; width: 0; height: 100%; background: #9aa8ff; }
+.ga-run.is-done .ga-prog i { background: #5fd69a; }
+
+/* checks */
+.ga-checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.ga-checks li { display: flex; align-items: center; gap: 9px; font: 500 13.5px var(--sans); color: #7a7e89; transition: color .3s; }
+.ga-ck { flex: none; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid rgb(255 255 255 / .25); display: grid; place-items: center; font-style: normal; }
+.ga-checks li.ok { color: #ececee; }
+.ga-checks li.ok .ga-ck { background: #5fd69a; border-color: #5fd69a; }
+.ga-checks li.ok .ga-ck::after { content: ""; width: 8px; height: 4px; border: solid #111216; border-width: 0 0 2px 2px; transform: translateY(-1px) rotate(-45deg); }
+.ga-checks li.now.ok .ga-ck { box-shadow: 0 0 14px -2px #5fd69a; }
+
+@media (max-width: 760px) {
+  .ga-main { grid-template-columns: minmax(0, 1fr); }
+  .ga-pr { padding: 12px; min-height: 0; }
+  .ga-prh b { font-size: 18px; }
+  .ga-run { min-height: 0; }
+  .ga-run:not(.on) { display: none; }
+  .ga-checks { grid-template-columns: 1fr 1fr; gap: 6px 10px; }
+  .ga-checks li { font-size: 12.5px; }
+}

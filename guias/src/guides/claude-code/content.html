@@ -6,7 +6,7 @@
       <p class="lead">Claude Code es un agente que trabaja dentro de tu proyecto: lee el código, ejecuta comandos, edita archivos y verifica su trabajo. Este curso cubre la documentación oficial completa, con simuladores, flujos animados y generadores de configuración listos para copiar a tu repo.</p>
       <div class="cta">
         <a class="btn pri" href="#basico">Empezar a leer</a>
-        <a class="btn" href="#arquitecto">Saltar a Arquitecto</a>
+        <a class="btn" href="#experto">Saltar a Experto</a>
       </div>
     </div>
     <div class="term">
@@ -38,14 +38,14 @@
         <ul><li>Hooks y salida JSON</li><li>Subagentes y skills</li><li>MCP y sandbox</li><li>Worktrees y revisión de código</li></ul>
         <div class="pg"><div class="track"><b data-pg="avanzado"></b></div><span data-pgt="avanzado">0%</span></div>
       </a>
-      <a class="lvcard" href="#arquitecto" style="--c:var(--x)">
-        <div class="glyph">04</div><div class="n" style="margin-top:14px">Nivel Arquitecto</div>
+      <a class="lvcard" href="#experto" style="--c:var(--x)">
+        <div class="glyph">04</div><div class="n" style="margin-top:14px">Nivel Experto</div>
         <h3>Diseñar el harness</h3><p>Orquestación, autonomía, CI, SDK, nube, plugins y gobernanza.</p>
         <ul><li>Mecanismos y costo de contexto</li><li>Workflows, teams, /goal</li><li>Headless, Actions, SDK, nube</li><li>Plugins, seguridad y costos</li></ul>
-        <div class="pg"><div class="track"><b data-pg="arquitecto"></b></div><span data-pgt="arquitecto">0%</span></div>
+        <div class="pg"><div class="track"><b data-pg="experto"></b></div><span data-pgt="experto">0%</span></div>
       </a>
     </div>
-    <div class="cert" id="cert"><div style="font-size:46px"></div><h3>Nivel Arquitecto desbloqueado</h3><p style="color:var(--mute)">Completaste todas las lecciones y los 4 quizzes. Ya puedes diseñar el harness de Claude Code para tu equipo.</p></div>
+    <div class="cert" id="cert"><div style="font-size:46px"></div><h3>Guía completada</h3><p style="color:var(--mute)">Completaste todas las lecciones y los 4 quizzes. Ya puedes diseñar el harness de Claude Code para tu equipo.</p></div>
   </div>
 
 
@@ -95,9 +95,9 @@
     </tbody>
   </table>
   <div class="cols3">
-    <div class="mini"><span class="ico">⌨</span><b>Terminal (CLI)</b>La superficie más completa. Todo el curso usa esta como base.</div>
-    <div class="mini"><span class="ico"></span><b>IDE y escritorio</b>Extensiones de VS Code y JetBrains, más la app de escritorio.</div>
-    <div class="mini"><span class="ico"></span><b>Web, Slack y CI</b>claude.ai/code, la app móvil, Slack, GitHub Actions y GitLab.</div>
+    <div class="mini"><b>Terminal (CLI)</b>La superficie más completa. Todo el curso usa esta como base.</div>
+    <div class="mini"><b>IDE y escritorio</b>Extensiones de VS Code y JetBrains, más la app de escritorio.</div>
+    <div class="mini"><b>Web, Slack y CI</b>claude.ai/code, la app móvil, Slack, GitHub Actions y GitLab.</div>
   </div>
   <div class="tip"><b class="h">La idea clave</b>En un chat tú eres el puente: copias contexto, pegas respuestas y corres comandos. Con un agente, él recorre ese puente: busca contexto, edita, corre los tests y lee los errores por su cuenta. Tu trabajo pasa a ser dirigir y verificar.</div>
   <button class="done-btn" data-done="b1">○ Marcar como completada</button>
@@ -128,22 +128,7 @@ claude doctor             # diagnóstico de instalación y settings, sin abrir s
 <article class="lesson" id="b3" data-t="El loop agéntico y las herramientas">
   <div class="lnum">Lección 1.3</div><h2>El loop agéntico y las herramientas</h2>
   <p>Cuando le das una tarea, Claude trabaja en tres fases que se mezclan: <b>reunir contexto</b>, <b>actuar</b> y <b>verificar</b>. Se repiten hasta cumplir el objetivo. Una pregunta puede necesitar solo contexto; un bug recorre las tres fases varias veces. Tú también eres parte del loop: puedes interrumpir en cualquier momento.</p>
-  <div class="wd">
-    <div class="wh"><span class="dot"></span><span class="tt">Animación · loop agéntico</span><div class="act"><button class="btn sm" id="loopToggle"> pausar</button></div></div>
-    <div class="wb loopwrap">
-      <svg class="loopsvg" viewBox="0 0 340 320" id="loopSvg">
-        <circle cx="170" cy="165" r="110" fill="none" stroke="var(--line2)" stroke-width="2" stroke-dasharray="4 6"/>
-        <circle cx="170" cy="165" r="44" fill="var(--surface-2)" stroke="var(--line2)"/>
-        <text x="170" y="160" text-anchor="middle" font-size="12" style="fill:var(--mute)">tu</text>
-        <text x="170" y="178" text-anchor="middle" font-size="15" font-weight="700">prompt</text>
-        <g class="node" data-i="0"><circle cx="170" cy="55" r="38"/><text x="170" y="51" text-anchor="middle" font-size="22"></text><text x="170" y="72" text-anchor="middle" font-size="10.5" font-weight="700">CONTEXTO</text></g>
-        <g class="node" data-i="1"><circle cx="265" cy="220" r="38"/><text x="265" y="216" text-anchor="middle" font-size="22"></text><text x="265" y="237" text-anchor="middle" font-size="10.5" font-weight="700">ACTUAR</text></g>
-        <g class="node" data-i="2"><circle cx="75" cy="220" r="38"/><text x="75" y="216" text-anchor="middle" font-size="22">✓</text><text x="75" y="237" text-anchor="middle" font-size="10.5" font-weight="700">VERIFICAR</text></g>
-        <circle id="loopDot" r="7" fill="var(--lv)"/>
-      </svg>
-      <div class="phase"><div class="ph-t" id="phT">Reunir contexto</div><div style="color:var(--mute);margin-bottom:10px;font-family:var(--body);font-size:14px" id="phD"></div><div class="log" id="phLog"></div></div>
-    </div>
-  </div>
+  <div data-escena="loop" tabindex="0"></div>
   <h3>Las cinco categorías de herramientas</h3>
   <table class="ref">
     <thead><tr><th>Categoría</th><th>Qué puede hacer Claude</th></tr></thead>
@@ -187,7 +172,7 @@ claude doctor             # diagnóstico de instalación y settings, sin abrir s
       <tr><td><code>claude -n auth-refactor</code></td><td>Sesión con nombre, para retomarla después con <code>claude -r auth-refactor</code></td></tr>
       <tr><td><code>claude -c</code></td><td>Continúa la conversación más reciente en este directorio</td></tr>
       <tr><td><code>claude -r</code></td><td>Abre el selector de sesiones anteriores</td></tr>
-      <tr><td><code>claude -p "explica esta función"</code></td><td>Una consulta sin interfaz y termina (modo headless, nivel Arquitecto)</td></tr>
+      <tr><td><code>claude -p "explica esta función"</code></td><td>Una consulta sin interfaz y termina (modo headless, nivel Experto)</td></tr>
       <tr><td><code>cat logs.txt | claude -p "explica"</code></td><td>Procesa contenido recibido por pipe</td></tr>
     </tbody>
   </table>
@@ -224,7 +209,7 @@ claude doctor             # diagnóstico de instalación y settings, sin abrir s
   <div class="lnum">Lección 1.6</div><h2>Atajos de teclado esenciales</h2>
   <p>Haz clic en cada tecla para ver qué hace y cuándo usarla. En macOS, los atajos con Option requieren configurar Option como Meta en tu terminal.</p>
   <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Teclado interactivo</span></div>
-    <div class="wb"><div class="keys" id="keys"></div><div class="keyout" id="keyOut"><span style="color:var(--dim)">← elige una tecla</span></div></div>
+    <div class="wb"><div class="keys" id="keys"></div><div class="keyout" id="keyOut"><span style="color:var(--dim)">↑ elige una tecla</span></div></div>
   </div>
   <div class="tip"><b class="h">Saltos de línea</b>Para escribir varias líneas en el input, <code>/terminal-setup</code> instala <kbd class="k">Shift</kbd>+<kbd class="k">Enter</kbd> en VS Code, Cursor, Alacritty y Zed. Puedes personalizar todos los atajos con <code>/keybindings</code>.</div>
   <a class="deeplink" href="#comandos" style="--c:var(--clay)"><span>A fondo</span><b>Todos los atajos</b><em>Atajos de teclado agrupados, flags y subcomandos de la CLI.</em><i>→</i></a>
@@ -234,6 +219,7 @@ claude doctor             # diagnóstico de instalación y settings, sin abrir s
 <article class="lesson" id="b7" data-t="Interrumpir y redirigir">
   <div class="lnum">Lección 1.7</div><h2>Interrumpir y redirigir</h2>
   <p>No necesitas prompts perfectos. Claude Code es conversacional: empiezas con lo que quieres y vas corrigiendo. Lo importante es corregir temprano.</p>
+  <div data-escena="interrumpir" tabindex="0"></div>
   <table class="ref">
     <thead><tr><th>Quieres…</th><th>Haz esto</th></tr></thead>
     <tbody>
@@ -260,8 +246,8 @@ claude doctor             # diagnóstico de instalación y settings, sin abrir s
         <div><label>Prompt</label><div class="pbox" id="plPrompt"></div><label>Qué hace el agente</label><div class="pbox" id="plRes" style="font-family:var(--body);font-size:14px"></div></div>
         <div><label>Resultado esperado</label>
           <div class="meter"><div class="ml"><span>Precisión del cambio</span><span id="m1t"></span></div><div class="mt"><b id="m1"></b></div></div>
-          <div class="meter"><div class="ml"><span>Iteraciones necesarias</span><span id="m2t"></span></div><div class="mt"><b id="m2"></b></div></div>
-          <div class="meter"><div class="ml"><span>Riesgo de tocar lo que no debe</span><span id="m3t"></span></div><div class="mt"><b id="m3"></b></div></div>
+          <div class="meter"><div class="ml"><span>Acierto a la primera</span><span id="m2t"></span></div><div class="mt"><b id="m2"></b></div></div>
+          <div class="meter"><div class="ml"><span>Cambios seguros (no toca lo que no debe)</span><span id="m3t"></span></div><div class="mt"><b id="m3"></b></div></div>
           <div class="meter"><div class="ml"><span>Puede verificar solo</span><span id="m4t"></span></div><div class="mt"><b id="m4"></b></div></div>
           <p style="font-size:12px;color:var(--dim);font-family:var(--mono)">valores ilustrativos</p>
         </div>
@@ -286,7 +272,7 @@ claude doctor             # diagnóstico de instalación y settings, sin abrir s
   <h3>Cuatro niveles de exigencia</h3>
   <ul class="pts">
     <li><b>En un prompt:</b> pide que corra el chequeo e itere en el mismo mensaje.</li>
-    <li><b>En toda la sesión:</b> fíjalo como condición con <code>/goal</code>; un evaluador revisa después de cada turno (nivel Arquitecto).</li>
+    <li><b>En toda la sesión:</b> fíjalo como condición con <code>/goal</code>; un evaluador revisa después de cada turno (nivel Experto).</li>
     <li><b>Como compuerta determinista:</b> un hook <code>Stop</code> que corre tu chequeo y no deja terminar el turno hasta que pase (nivel Avanzado).</li>
     <li><b>Con segunda opinión:</b> un subagente revisor con contexto limpio intenta refutar el resultado, así quien hizo el trabajo no se califica a sí mismo.</li>
   </ul>
@@ -373,6 +359,7 @@ ayúdame a resolver los conflictos de merge</pre></div>
 <article class="lesson" id="i2" data-t="Reglas allow / ask / deny">
   <div class="lnum">Lección 2.2</div><h2>Reglas allow / ask / deny</h2>
   <p>Encima del modo defines reglas finas con la sintaxis <code>Herramienta(especificador)</code>. Se evalúan en orden fijo: <b>deny, luego ask, luego allow</b>. Gana la primera coincidencia en ese orden; la especificidad no cambia el orden. <code>deny</code> bloquea en todos los modos, incluido bypass.</p>
+  <div data-escena="permisos" tabindex="0"></div>
   <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Probador de reglas Bash</span><span style="margin-left:auto;font-size:11px;color:var(--dim)">simplificado según la documentación</span></div>
     <div class="wb grid2">
       <div>
@@ -384,7 +371,7 @@ ayúdame a resolver los conflictos de merge</pre></div>
         <div class="chips" id="rtEx" style="margin-top:8px"></div>
       </div>
       <div><label>Resultado</label><div class="verdict" id="rtOut"></div>
-        <p style="font-size:12.5px;color:var(--mute);margin-top:10px">Un <code>*</code> calza con cualquier texto, espacios incluidos. Un <code>␣*</code> final también calza con el comando pelado (<code>Bash(ls *)</code> calza con <code>ls</code>, no con <code>lsof</code>). En comandos compuestos con <code>&amp;&amp;</code>, <code>||</code>, <code>;</code> o <code>|</code>, cada subcomando debe calzar con un allow; un deny o ask aplica si calza con cualquiera.</p>
+        <p style="font-size:12.5px;color:var(--mute);margin-top:10px">Un <code>*</code> coincide con cualquier texto, espacios incluidos. Un <code>␣*</code> final también coincide con el comando pelado (<code>Bash(ls *)</code> coincide con <code>ls</code>, no con <code>lsof</code>). En comandos compuestos con <code>&amp;&amp;</code>, <code>||</code>, <code>;</code> o <code>|</code>, cada subcomando debe coincidir con un allow; un deny o ask aplica si coincide con cualquiera.</p>
       </div>
     </div>
   </div>
@@ -410,7 +397,7 @@ ayúdame a resolver los conflictos de merge</pre></div>
     "deny":  ["Read(./.env)", "Read(./.env.*)", "Read(./secrets/**)"]
   }
 }</pre></div>
-  <div class="tip warn"><b class="h">Límite de las reglas Bash</b>Una regla calza con el texto del comando tal como Claude lo escribe. <code>Bash(curl *)</code> no detiene <code>/usr/bin/curl …</code> ni <code>sh -c 'curl …'</code>. Para una barrera que no dependa del texto, usa el sandbox (Avanzado) o un hook <code>PreToolUse</code>.</div>
+  <div class="tip warn"><b class="h">Límite de las reglas Bash</b>Una regla coincide con el texto del comando tal como Claude lo escribe. <code>Bash(curl *)</code> no detiene <code>/usr/bin/curl …</code> ni <code>sh -c 'curl …'</code>. Para una barrera que no dependa del texto, usa el sandbox (Avanzado) o un hook <code>PreToolUse</code>.</div>
   <p><code>/permissions</code> abre un diálogo para ver reglas por scope, agregarlas o quitarlas. La skill incluida <code>/fewer-permission-prompts</code> revisa tus transcripts y propone una allowlist priorizada de comandos de solo lectura.</p>
   <a class="deeplink" href="#settings" style="--c:var(--st)"><span>A fondo</span><b>Settings a fondo</b><em>Dónde vive cada regla y cuál gana cuando chocan.</em><i>→</i></a>
   <button class="done-btn" data-done="i2">○ Marcar como completada</button>
@@ -462,6 +449,7 @@ Usar la service role key en código de cliente</textarea>
 <article class="lesson" id="i4" data-t="Jerarquía de memoria, imports y rules">
   <div class="lnum">Lección 2.4</div><h2>Jerarquía de memoria, imports y rules</h2>
   <p>CLAUDE.md puede vivir en varios lugares. Todos se <b>concatenan</b> en el contexto (no se sobrescriben), de lo más amplio a lo más específico.</p>
+  <div data-escena="memoria" tabindex="0"></div>
   <table class="ref">
     <thead><tr><th>Alcance</th><th>Ubicación</th><th>Compartido con</th></tr></thead>
     <tbody>
@@ -478,7 +466,7 @@ Usar la service role key en código de cliente</textarea>
     <li><b>Monorepos:</b> <code>claudeMdExcludes</code> en settings omite CLAUDE.md de otros equipos por ruta o glob.</li>
   </ul>
   <h3>Rules con alcance por ruta</h3>
-  <p>Archivos en <code>.claude/rules/</code> (descubiertos recursivamente) modularizan instrucciones. Sin <code>paths</code> se cargan siempre; con <code>paths</code> solo cuando Claude lee o edita archivos que calzan, lo que ahorra contexto.</p>
+  <p>Archivos en <code>.claude/rules/</code> (descubiertos recursivamente) modularizan instrucciones. Sin <code>paths</code> se cargan siempre; con <code>paths</code> solo cuando Claude lee o edita archivos que coinciden, lo que ahorra contexto.</p>
   <div class="code"><div class="ch"><span>.claude/rules/api.md</span><button class="copy">copiar</button></div><pre data-hl>---
 paths:
   - "src/app/api/**/*.ts"
@@ -517,7 +505,7 @@ paths:
 <article class="lesson" id="i6" data-t="Plan mode: explorar, planificar, implementar">
   <div class="lnum">Lección 2.6</div><h2>Plan mode: explorar, planificar, implementar</h2>
   <p>Saltar directo a codificar puede producir código que resuelve el problema equivocado. En plan mode Claude lee, explora y escribe un plan, pero las ediciones quedan bloqueadas hasta que apruebes. Entra con <kbd class="k">Shift</kbd>+<kbd class="k">Tab</kbd>, con <code>/plan arregla el bug de auth</code> o con <code>claude --permission-mode plan</code>.</p>
-  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Flujo recomendado</span><div class="act"><button class="btn sm" id="pfPlay"> reproducir</button></div></div>
+  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Flujo recomendado</span><div class="act"><button class="btn sm" id="pfPlay">reproducir</button></div></div>
     <div class="wb"><div class="flow" id="pfFlow"></div><div class="fdetail" id="pfDet">Pulsa reproducir o haz clic en una etapa.</div></div>
   </div>
   <h3>Al aprobar el plan</h3>
@@ -581,11 +569,157 @@ profundiza en lo difícil que quizás no he considerado. Sigue hasta cubrir todo
   <button class="done-btn" data-done="i7">○ Marcar como completada</button>
 </article>
 
+<article class="lesson" id="i7a" data-t="Tokens y prompt caching">
+  <div class="lnum">Lección 2.8</div><h2>Tokens y prompt caching</h2>
+  <p>Claude no lee palabras: lee <b>tokens</b>, trozos de texto que pueden ser una palabra corta, parte de una palabra larga o un símbolo. Todo se mide en tokens: lo que entra (tu prompt, los archivos, la conversación) y lo que sale (la respuesta y el razonamiento). Y todo se cobra en tokens, o se descuenta de los límites de tu plan.</p>
+  <p>Hay un detalle que cambia cómo conviene trabajar: el modelo no recuerda nada entre un mensaje y otro. <b>En cada turno, Claude Code vuelve a enviar la conversación completa</b>: instrucciones de sistema, herramientas, CLAUDE.md, cada archivo leído y cada respuesta anterior. Una sesión de 100k tokens envía esos 100k tokens otra vez con cada mensaje nuevo.</p>
+  <div class="simple"><b class="h">En simple</b>
+    <p>Sin caché, cada mensaje pagaría de nuevo toda la conversación. El <b>prompt caching</b> guarda el comienzo de lo que ya enviaste; mientras ese comienzo siga idéntico y el caché no haya expirado, se cobra a una fracción del precio. Claude Code lo usa solo, sin configurar nada. Tu trabajo es <b>no romperlo sin darte cuenta</b>.</p>
+  </div>
+
+  <h3>Cuánto cuesta cada tipo de token</h3>
+  <p>Precio de API por millón de tokens, noviembre de 2026. Con suscripción no pagas por token, pero las mismas proporciones definen cuánto de tu límite consume cada cosa.</p>
+  <table class="ref">
+    <thead><tr><th>Modelo</th><th>Entrada</th><th>Salida</th><th>Leído de caché</th><th>Escrito en caché (5 min / 1 h)</th></tr></thead>
+    <tbody>
+      <tr><td>Opus 5.5</td><td>US$4</td><td>US$20</td><td>US$0,20</td><td>US$5 / US$8</td></tr>
+      <tr><td>Sonnet 5.5</td><td>US$2</td><td>US$10</td><td>US$0,10</td><td>US$2,50 / US$4</td></tr>
+      <tr><td>Haiku 5.5</td><td>US$0,10</td><td>US$0,50</td><td>US$0,01</td><td>US$0,125 / US$0,20</td></tr>
+    </tbody>
+  </table>
+  <ul class="pts">
+    <li><b>La salida cuesta 5 veces la entrada.</b> El razonamiento (thinking) se cobra como salida, aunque no lo veas. Por eso el effort importa tanto como el modelo.</li>
+    <li><b>Leer del caché cuesta un 5% del precio de entrada</b> en Opus 5.5 y Sonnet 5.5 (un 10% en la mayoría de los demás modelos).</li>
+    <li><b>Escribir en el caché cuesta un poco más que la entrada normal</b>: 1,25 veces con duración de 5 minutos, 2 veces con duración de 1 hora. Se paga una vez y se recupera con la siguiente lectura.</li>
+  </ul>
+
+  <h3>Cómo funciona: un prefijo idéntico</h3>
+  <p>El caché compara el comienzo exacto de cada petición con lo que ya guardó. Si un solo byte cambia en una posición, todo lo que viene después se vuelve a procesar a precio completo. Claude Code ordena lo que envía de lo más estable a lo más cambiante:</p>
+  <table class="ref">
+    <thead><tr><th>Capa</th><th>Qué contiene</th><th>Cuándo cambia</th></tr></thead>
+    <tbody>
+      <tr><td>1. Sistema</td><td>Instrucciones base y definiciones de herramientas</td><td>Si cambia el conjunto de herramientas</td></tr>
+      <tr><td>2. Proyecto</td><td>CLAUDE.md, auto memory y reglas</td><td>Al iniciar, tras <code>/clear</code> o <code>/compact</code></td></tr>
+      <tr><td>3. Conversación</td><td>Tus mensajes, las respuestas y los resultados de herramientas</td><td>Crece en cada turno</td></tr>
+    </tbody>
+  </table>
+  <p>Cada turno solo agrega al final, así que en una sesión sana casi todo se lee del caché y solo se escribe lo nuevo. Cada lectura además reinicia el reloj del caché.</p>
+  <div data-escena="cache" tabindex="0"></div>
+  <p>Ahora pruébalo tú: el simulador te deja combinar acciones y ver el costo de cada petición.</p>
+
+  <div class="wd" id="pcWd"><div class="wh"><span class="dot"></span><span class="tt">Simulador de caché</span><span style="margin-left:auto" id="pcTotals"></span></div>
+    <div class="wb">
+      <div class="toggle" id="pcPlan"><button data-p="sub" class="on">Suscripción (caché de 1 h)</button><button data-p="api">API key (caché de 5 min)</button></div>
+      <div class="chips" style="margin-top:14px" id="pcActions">
+        <button class="chip" data-a="send">Enviar un mensaje</button>
+        <button class="chip" data-a="wait10">Pausa de 10 min</button>
+        <button class="chip" data-a="wait90">Pausa de 90 min</button>
+        <button class="chip" data-a="model">Cambiar de modelo</button>
+        <button class="chip" data-a="fast">Activar fast mode</button>
+        <button class="chip" data-a="claudemd">Editar CLAUDE.md</button>
+        <button class="chip" data-a="style">Cambiar output style</button>
+        <button class="chip" data-a="mcp">Conectar un servidor MCP</button>
+        <button class="chip" data-a="compact">/compact</button>
+        <button class="chip" data-a="clear">/clear</button>
+        <button class="chip" data-a="reset">Reiniciar</button>
+      </div>
+      <div class="pc-reqs" id="pcReqs"></div>
+      <div class="ctxlegend"><span><i style="background:var(--ok)"></i>leído de caché (barato)</span><span><i style="background:var(--warn)"></i>escrito en caché</span><span><i style="background:var(--accent)"></i>salida</span></div>
+      <p class="pn" style="margin:10px 0 0;font-size:13px">Montos con precios de API de Sonnet 5.5. Escribir en el caché cuesta más que la entrada normal (el doble con la duración de 1 hora), así que la primera petición, y cada vez que el caché se rompe, sale más cara que sin caché. Se recupera desde la siguiente lectura: en una sesión de varios mensajes, el caché ahorra la mayor parte del costo.</p>
+      <div class="fdetail" id="pcMsg" style="margin-top:12px;min-height:56px"></div>
+    </div>
+  </div>
+
+  <h3>Qué rompe el caché y qué no</h3>
+  <table class="ref">
+    <thead><tr><th>Lo rompe: la siguiente respuesta relee todo a precio completo</th><th>No lo rompe</th></tr></thead>
+    <tbody>
+      <tr><td>Cambiar de modelo con <code>/model</code>: cada modelo tiene su propio caché</td><td>Editar archivos del repositorio</td></tr>
+      <tr><td>Activar o desactivar fast mode</td><td>Editar CLAUDE.md: el cambio se aplica recién tras <code>/clear</code>, <code>/compact</code> o reiniciar</td></tr>
+      <tr><td>Cambiar el effort, en la mayoría de los modelos (no en Opus 5.5, Sonnet 5.5, Haiku 5.5 ni Fable 5.1+ con API key o suscripción)</td><td>Cambiar el modo de permisos (salvo <code>opusplan</code>, que cambia de modelo)</td></tr>
+      <tr><td>Agregar o quitar herramientas cuando no hay tool search. Con tool search, que viene activo por defecto en los modelos compatibles, conectar un MCP no lo rompe</td><td>Cambiar el output style</td></tr>
+      <tr><td>Denegar una herramienta completa con una regla sin ámbito (<code>Bash</code>, <code>WebFetch</code>, <code>mcp__*</code>). Una regla con ámbito como <code>Bash(rm *)</code> no lo rompe</td><td>Usar skills, comandos y <code>/recap</code></td></tr>
+      <tr><td><code>/compact</code> y la auto-compactación: reemplazan la conversación por un resumen</td><td><code>/rewind</code>: vuelve a un punto que ya está en caché</td></tr>
+      <tr><td>Una pausa más larga que la duración del caché</td><td>Lanzar un subagente (tiene su propio caché)</td></tr>
+      <tr><td>Actualizar Claude Code: cambia el system prompt</td><td></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Cuánto dura el caché</h3>
+  <ul class="pts">
+    <li><b>Con suscripción</b> (Pro, Max, Team, Enterprise) dentro del uso incluido: la conversación principal usa caché de <b>1 hora</b>.</li>
+    <li><b>Con API key</b>, un proveedor cloud o créditos de uso extra: <b>5 minutos</b>.</li>
+    <li>Subagentes, workflows, compactación y otras peticiones de apoyo: 5 minutos.</li>
+    <li>Puedes elegirlo con <code>promptCacheTtl</code> en settings o <code>CLAUDE_CODE_PROMPT_CACHE_TTL</code> (valores <code>5m</code> o <code>1h</code>; desde la v2.1.242). Con API key, <code>1h</code> conviene si sueles hacer pausas de 5 a 60 minutos: la escritura cuesta el doble, pero evitas releer todo.</li>
+  </ul>
+
+  <h3>Cómo saber si está funcionando</h3>
+  <ul class="pts">
+    <li><code>/usage</code> muestra el costo de la sesión con el desglose de entrada, salida, lectura y escritura de caché. Desde la v2.1.251 incluye una línea <b>Prompt cache (main)</b> con aciertos, fallos y si el caché sigue activo.</li>
+    <li>La <b>statusline</b> recibe el objeto <code>prompt_cache</code> (<code>warm</code>, <code>ttl</code>, <code>hit_ratio</code>, <code>misses</code>): puedes mostrar el caché en la barra inferior todo el tiempo.</li>
+    <li>Si ves que cada respuesta escribe casi toda la conversación en caché, algo lo está rompiendo en cada turno.</li>
+  </ul>
+
+  <div class="tip warn"><b class="h">Errores que cuestan caro</b>
+    <b>Cambiar de modelo a mitad de una sesión larga "para ahorrar".</b> La primera respuesta en el modelo nuevo relee toda la conversación sin caché. Elige el modelo al empezar; para tareas baratas, usa un subagente con <code>model: haiku</code>.<br><br>
+    <b>Volver tras una pausa larga a una conversación enorme.</b> Si el caché expiró, el siguiente mensaje procesa todo a precio completo. Si vas a seguir con otra tarea, <code>/clear</code> no cuesta nada.<br><br>
+    <b>Compactar después de la pausa.</b> <code>/compact</code> lee la conversación que resume: con caché activo cuesta una fracción, con el caché expirado cuesta la conversación completa. Compacta antes de irte, en una pausa natural.<br><br>
+    <b>Dejar <code>DISABLE_PROMPT_CACHING=1</code> activado</b> después de depurar. Desactiva el caché en todos los modelos.
+  </div>
+  <button class="done-btn" data-done="i7a">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="i7b" data-t="Hábitos que ahorran tokens">
+  <div class="lnum">Lección 2.9</div><h2>Hábitos que ahorran tokens</h2>
+  <p>El gasto innecesario casi nunca viene de un prompt caro. Viene de hábitos: conversaciones que se arrastran entre tareas, salidas de comandos gigantes, capturas a resolución completa, instrucciones que se cargan en cada mensaje aunque no se usen. Esta es la lista de la documentación oficial, ordenada por dónde se va el consumo.</p>
+
+  <table class="ref">
+    <thead><tr><th>Qué consume</th><th>Cómo bajarlo</th></tr></thead>
+    <tbody>
+      <tr><td>Una conversación larga que ya no sirve</td><td><code>/clear</code> al cambiar de tarea. Si quieres volver después, nómbrala con <code>/rename</code> y retómala con <code>/resume</code>. Todo lo que queda en el contexto se reenvía en cada mensaje.</td></tr>
+      <tr><td>Salida y razonamiento</td><td>Sonnet para la mayoría de las tareas; Opus para arquitectura y razonamiento de varios pasos. Baja el effort con <code>/effort</code> en tareas simples: el razonamiento se cobra como salida.</td></tr>
+      <tr><td>Salidas de comandos enormes</td><td>Filtra antes de que lleguen a Claude: un hook PreToolUse puede dejar solo las últimas 100 líneas de <code>npm test</code>. O delega tests, logs y búsquedas a un subagente: el ruido queda en su contexto y vuelve solo el resumen.</td></tr>
+      <tr><td>Un CLAUDE.md largo</td><td>Se envía completo en cada mensaje. Mantenlo bajo 200 líneas y mueve los procedimientos largos a skills, que cargan solo cuando se usan.</td></tr>
+      <tr><td>Servidores MCP</td><td>Sus herramientas se cargan bajo demanda por defecto. Aun así, prefiere las CLI cuando existen (<code>gh</code>, <code>aws</code>, <code>gcloud</code>) y desactiva con <code>/mcp</code> los servidores que no usas.</td></tr>
+      <tr><td>Buscar a ciegas en el código</td><td>Un plugin de code intelligence para lenguajes tipados deja navegar por símbolos en vez de hacer grep y leer archivo por archivo.</td></tr>
+      <tr><td>Imágenes y PDF</td><td>Una imagen cuesta (ancho ÷ 28) × (alto ÷ 28) tokens, redondeando hacia arriba: una captura de 1000×1000 son unos 1.300 tokens. Recorta la captura a lo relevante. Un PDF cuesta entre 1.500 y 3.000 tokens de texto por página, más la imagen de cada página.</td></tr>
+      <tr><td>Subagentes y agent teams</td><td>Cada subagente hace sus propias peticiones, que cuentan en los mismos límites que tu sesión. Los agent teams gastan bastante más que una sesión sola (un teammate en plan mode, unas 7 veces más). Úsalos para investigación, revisión o features nuevas; usa Sonnet en los teammates y ciérralos al terminar.</td></tr>
+      <tr><td>Prompts vagos</td><td>"Agrega validación al login en auth.ts" gasta mucho menos que "mejora el código", porque Claude no tiene que explorar para adivinar qué quieres. Planifica con plan mode antes de implementar y corrige temprano con Esc.</td></tr>
+      <tr><td>Procesos de fondo</td><td>Las sugerencias de prompt y la compactación en inactividad (<code>idleCompaction</code>) consumen poco, pero se pueden desactivar.</td></tr>
+    </tbody>
+  </table>
+
+  <h3><code>/clear</code> o <code>/compact</code></h3>
+  <div class="cols3">
+    <div class="mini"><b><code>/clear</code></b>No cuesta nada. Úsalo al cambiar de tarea: empiezas con un contexto limpio y pequeño.</div>
+    <div class="mini"><b><code>/compact</code></b>Es una petición grande: lee toda la conversación para resumirla. Úsalo cuando necesitas seguir en la misma tarea y la conversación ya está larga, mejor con caché activo.</div>
+    <div class="mini"><b><code>/rewind</code></b>Para descartar un camino que no funcionó. Vuelve a un punto que ya está en caché, sin resumir nada.</div>
+  </div>
+
+  <h3>Suscripción o API key</h3>
+  <ul class="pts">
+    <li><b>Con suscripción</b> no pagas por token: tu uso se descuenta de una ventana de 5 horas y de una semanal, compartidas con claude.ai. <code>/usage</code> muestra ambas barras y cuándo se reinician. Al llegar al tope verás <i>You've hit your session limit</i> o <i>You've hit your weekly limit</i>.</li>
+    <li><b>Con API key</b> pagas cada token según la tabla de la lección anterior. <code>/usage</code> estima el costo a precio de lista.</li>
+    <li>En ambos casos, los hábitos de esta lección rinden lo mismo: menos tokens enviados significa más trabajo antes del límite o una factura menor.</li>
+  </ul>
+
+  <h3>Mira el consumo mientras trabajas</h3>
+  <p>La statusline recibe en JSON el costo y el contexto de la sesión. Con este script siempre ves cuánto llevas gastado y qué tan lleno está el contexto:</p>
+  <div class="code"><div class="ch"><span>~/.claude/statusline.sh</span><button class="copy">copiar</button></div><pre data-hl>#!/bin/bash
+# Claude Code envía el estado de la sesión por stdin, en JSON
+jq -r '"\(.model.display_name) · $\(.cost.total_cost_usd * 100 | round / 100) · contexto \(.context_window.used_percentage)%"'</pre></div>
+  <div class="code"><div class="ch"><span>~/.claude/settings.json</span><button class="copy">copiar</button></div><pre data-hl>{
+  "statusLine": { "type": "command", "command": "~/.claude/statusline.sh" }
+}</pre></div>
+  <p>El mismo JSON trae <code>prompt_cache.hit_ratio</code> y, en suscripciones, <code>rate_limits.five_hour.used_percentage</code> y <code>rate_limits.seven_day.used_percentage</code>, por si quieres agregarlos.</p>
+  <button class="done-btn" data-done="i7b">○ Marcar como completada</button>
+</article>
+
 <article class="lesson" id="i8" data-t="Checkpoints y rewind">
-  <div class="lnum">Lección 2.8</div><h2>Checkpoints y rewind</h2>
+  <div class="lnum">Lección 2.10</div><h2>Checkpoints y rewind</h2>
   <p>Cada prompt que envías e inicia un turno crea un checkpoint del código. Abre el menú con <kbd class="k">Esc</kbd> <kbd class="k">Esc</kbd> (con el input vacío) o <code>/rewind</code> (alias <code>/undo</code>, <code>/checkpoint</code>). Haz clic en un checkpoint anterior:</p>
   <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Línea de tiempo de checkpoints</span><div class="act"><button class="btn sm" id="cpReset">reiniciar</button></div></div>
-    <div class="wb"><div class="cps" id="cps"></div><div class="grid2"><div><label>Archivos</label><div class="files" id="cpFiles"></div></div><div><label>Qué pasó</label><div class="fdetail" id="cpMsg" style="min-height:120px"></div></div></div></div>
+    <div class="wb"><div class="cps" id="cps"></div><div class="grid2"><div><label>Archivos</label><div class="files" id="cpFiles"></div><p class="pn" style="margin:8px 0 0;font-size:13px">+ archivo nuevo · ~ archivo modificado</p></div><div><label>Qué pasó</label><div class="fdetail" id="cpMsg" style="min-height:120px"></div></div></div></div>
   </div>
   <table class="ref">
     <thead><tr><th>Opción del menú</th><th>Efecto</th></tr></thead>
@@ -607,8 +741,9 @@ profundiza en lo difícil que quizás no he considerado. Sigue hasta cubrir todo
 </article>
 
 <article class="lesson" id="i9" data-t="Sesiones: nombrar, retomar, bifurcar">
-  <div class="lnum">Lección 2.9</div><h2>Sesiones: nombrar, retomar, bifurcar</h2>
+  <div class="lnum">Lección 2.11</div><h2>Sesiones: nombrar, retomar, bifurcar</h2>
   <p>Cada conversación es una sesión ligada a tu directorio y guardada localmente como JSONL en <code>~/.claude/projects/</code> (retención de 30 días por defecto, configurable con <code>cleanupPeriodDays</code>). Trata las sesiones como ramas: cada línea de trabajo con su propio contexto persistente.</p>
+  <div data-escena="sesiones" tabindex="0"></div>
   <table class="ref">
     <thead><tr><th>Quieres</th><th>Cómo</th></tr></thead>
     <tbody>
@@ -628,7 +763,8 @@ profundiza en lo difícil que quizás no he considerado. Sigue hasta cubrir todo
 </article>
 
 <article class="lesson" id="i10" data-t="Modelos, effort y thinking">
-  <div class="lnum">Lección 2.10</div><h2>Modelos, effort y thinking</h2>
+  <div class="lnum">Lección 2.12</div><h2>Modelos, effort y thinking</h2>
+  <div data-escena="effort" tabindex="0"></div>
   <table class="ref">
     <thead><tr><th>Alias</th><th>Para qué</th></tr></thead>
     <tbody>
@@ -648,14 +784,73 @@ profundiza en lo difícil que quizás no he considerado. Sigue hasta cubrir todo
     <li><b>Effort:</b> <code>low</code>, <code>medium</code>, <code>high</code>, <code>xhigh</code>, <code>max</code>, vía <code>/effort</code> o <code>--effort</code>. El default es <code>medium</code> en los modelos 5.5 y en Fable 5.2, y <code>high</code> en la mayoría de los demás. Escribir <code>ultrathink</code> en un prompt pide razonamiento más profundo solo para ese turno.</li>
     <li><b>Thinking:</b> <kbd class="k">Option</kbd>/<kbd class="k">Alt</kbd>+<kbd class="k">T</kbd> lo alterna. En Opus 5.5, Sonnet 5.5, Haiku 5.5 y Fable siempre está activo. Los tokens de thinking se facturan como salida.</li>
     <li><b>Fast mode:</b> <code>/fast</code> o <kbd class="k">Option</kbd>/<kbd class="k">Alt</kbd>+<kbd class="k">O</kbd> para respuestas más rápidas.</li>
-    <li><b>Advisor:</b> <code>/advisor opus</code> consulta a un segundo modelo en momentos clave de la tarea.</li>
+    <li><b>Advisor:</b> <code>/advisor opus</code> consulta a un segundo modelo en momentos clave de la tarea (lección siguiente).</li>
   </ul>
-  <div class="tip"><b class="h">Costo</b>Sonnet resuelve la mayoría de las tareas de código y cuesta menos que Opus. Reserva Opus para arquitectura y razonamiento de varios pasos, y usa <code>model: haiku</code> en subagentes de tareas simples.</div>
+  <div class="tip"><b class="h">Costo</b>Sonnet resuelve la mayoría de las tareas de código y cuesta menos que Opus. Reserva Opus para arquitectura y razonamiento de varios pasos, y usa <code>model: haiku</code> en subagentes de tareas simples. Elige el modelo al empezar: cambiarlo a mitad de una sesión larga relee toda la conversación sin caché (lección 2.8).</div>
   <button class="done-btn" data-done="i10">○ Marcar como completada</button>
 </article>
 
+<article class="lesson" id="i10a" data-t="Advisor: un segundo modelo que revisa">
+  <div class="lnum">Lección 2.13</div><h2>Advisor: un segundo modelo que revisa</h2>
+  <p>El advisor es una función experimental que combina dos modelos en la misma sesión. El <b>principal</b> hace todo el trabajo: lee archivos, edita y corre comandos. El <b>advisor</b>, un modelo igual o más capaz, no toca nada: el principal lo consulta en los momentos en que un mal paso sale caro, y recibe un consejo antes de continuar.</p>
+  <div class="simple"><b class="h">En simple</b>
+    <p>Es como trabajar con un colega senior al lado. Haces la mayor parte solo y le preguntas antes de elegir un enfoque, cuando un error se repite y antes de entregar. Pagas al senior solo esos minutos, pero cada vez tiene que leer todo lo que hiciste.</p>
+  </div>
+  <div data-escena="advisor" tabindex="0"></div>
+
+  <h3>Cómo activarlo</h3>
+  <table class="ref">
+    <thead><tr><th>Forma</th><th>Qué hace</th></tr></thead>
+    <tbody>
+      <tr><td><code>/advisor</code></td><td>Abre un selector de modelos.</td></tr>
+      <tr><td><code>/advisor opus</code></td><td>Lo activa con Opus y lo guarda en tus ajustes (<code>advisorModel</code>).</td></tr>
+      <tr><td><code>/advisor off</code></td><td>Lo desactiva.</td></tr>
+      <tr><td><code>claude --advisor opus</code></td><td>Solo para esa sesión; tiene prioridad sobre lo guardado.</td></tr>
+      <tr><td><code>"advisorModel": "opus"</code></td><td>En settings, para dejarlo fijo.</td></tr>
+      <tr><td><code>CLAUDE_CODE_DISABLE_ADVISOR_TOOL=1</code></td><td>Lo apaga por completo: <code>/advisor</code> deja de existir.</td></tr>
+    </tbody>
+  </table>
+  <p>Acepta los alias <code>fable</code>, <code>opus</code> y <code>sonnet</code>, o un ID completo como <code>claude-opus-5-5</code>. Al iniciar verás <i>Advisor Tool (experimental) is on and may use more tokens</i>.</p>
+
+  <h3>Quién decide y qué viaja</h3>
+  <ul class="pts">
+    <li><b>Decide el principal</b>, como con cualquier herramienta: suele consultar antes de elegir un enfoque, ante un error que se repite y antes de dar la tarea por terminada. No hay un ajuste para forzar consultas; si quieres una, pídelo en el prompt: "consulta al advisor antes de seguir".</li>
+    <li><b>Ida:</b> el advisor recibe la conversación completa, con cada llamada a herramientas y su resultado.</li>
+    <li><b>Vuelta:</b> solo un consejo en texto. El advisor no ejecuta herramientas.</li>
+    <li>En la terminal aparece <code>Advising</code> y luego <code>Reviewed</code>; <kbd class="k">Ctrl</kbd>+<kbd class="k">O</kbd> muestra el consejo. Si la evidencia del principal contradice el consejo, te lo dice.</li>
+  </ul>
+
+  <h3>Qué modelos se pueden combinar</h3>
+  <p>El advisor tiene que ser igual o más capaz que el principal. Si eliges uno menos capaz, <code>/advisor</code> avisa <i>Advisor is less capable than the current main model</i> y no se usa. Las combinaciones más comunes:</p>
+  <table class="ref">
+    <thead><tr><th>Principal</th><th>Advisor</th><th>Para qué</th></tr></thead>
+    <tbody>
+      <tr><td>Sonnet</td><td>Opus</td><td>El equilibrio típico: rapidez para la rutina y Opus para las decisiones.</td></tr>
+      <tr><td>Haiku</td><td>Opus</td><td>Tareas largas y mecánicas que igual necesitan un buen plan.</td></tr>
+      <tr><td>Opus</td><td>Opus</td><td>Una segunda opinión independiente sobre el propio trabajo.</td></tr>
+      <tr><td>Fable</td><td>Fable</td><td>Las tareas más difíciles (Fable 5.2 solo acepta Fable 5.2 como advisor).</td></tr>
+    </tbody>
+  </table>
+  <p>Los subagentes heredan el advisor configurado, con la misma comprobación según su propio modelo.</p>
+
+  <h3>Advisor, <code>/model</code>, <code>opusplan</code> o subagente</h3>
+  <table class="ref">
+    <thead><tr><th>Opción</th><th>Cómo reparte el trabajo</th><th>Conviene cuando</th></tr></thead>
+    <tbody>
+      <tr><td><code>/model opus</code></td><td>Opus hace todo</td><td>Cada paso necesita el modelo más fuerte</td></tr>
+      <tr><td><code>opusplan</code></td><td>Opus planifica en plan mode y Sonnet ejecuta</td><td>Hay una fase clara de planificación antes de implementar</td></tr>
+      <tr><td>Advisor</td><td>Sonnet trabaja y Opus revisa en momentos clave</td><td>Tareas largas de varios pasos donde la calidad del plan decide el resultado</td></tr>
+      <tr><td>Subagente</td><td>Otro modelo resuelve una parte aparte, con su propio contexto</td><td>Una subtarea autocontenida y ruidosa (tests, búsquedas)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip warn"><b class="h">Lo que cuesta</b>Cada consulta relee toda la conversación, sin caché entre consultas, a la tarifa del advisor; con suscripción, cuenta en tus límites. Por eso no conviene en tareas cortas: ahí cambia el modelo con <code>/model</code>. A favor: activar o desactivar <code>/advisor</code> a mitad de sesión <b>no rompe el caché</b> del modelo principal, a diferencia de cambiar de modelo.</div>
+  <div class="tip"><b class="h">Disponibilidad</b>Es experimental y su comportamiento puede cambiar. Funciona con la API de Anthropic, Claude Platform on AWS y Claude en Google Cloud gestionado por Anthropic, en planes de suscripción y API; no en Amazon Bedrock, Agent Platform de Google Cloud ni Microsoft Foundry.</div>
+  <button class="done-btn" data-done="i10a">○ Marcar como completada</button>
+</article>
+
 <article class="lesson" id="i11" data-t="Estilos de salida">
-  <div class="lnum">Lección 2.11</div><h2>Estilos de salida</h2>
+  <div class="lnum">Lección 2.14</div><h2>Estilos de salida</h2>
   <p>Un output style fija el rol, tono y formato de todas las respuestas de la sesión. CLAUDE.md dice qué debe <i>saber</i> Claude; el estilo, cómo <i>responde</i>. Cambia con <code>/output-style concise</code> o desde <code>/config</code>.</p>
   <table class="ref">
     <thead><tr><th>Estilo</th><th>Qué cambia</th><th>Úsalo cuando</th></tr></thead>
@@ -680,7 +875,7 @@ Mermaid de la estructura y luego explica en prosa. Máximo 15 nodos.</pre></div>
 </article>
 
 <article class="lesson" id="i12" data-t="Patrones de falla y cómo evitarlos">
-  <div class="lnum">Lección 2.12</div><h2>Patrones de falla y cómo evitarlos</h2>
+  <div class="lnum">Lección 2.15</div><h2>Patrones de falla y cómo evitarlos</h2>
   <p>Los cinco errores más comunes según la guía de buenas prácticas. Haz clic en cada uno para ver el arreglo.</p>
   <div class="fails" id="fails"></div>
   <div class="tip" style="margin-top:20px"><b class="h">Desarrolla intuición</b>Estas reglas son puntos de partida. A veces conviene dejar que el contexto se acumule porque estás metido en un problema complejo; a veces un prompt vago es justo lo que necesitas. Cuando Claude rinde muy bien, fíjate qué hiciste: la estructura del prompt, el contexto, el modo.</div>
@@ -705,9 +900,9 @@ Mermaid de la estructura y luego explica en prosa. Máximo 15 nodos.</pre></div>
 <article class="lesson" id="a1" data-t="Hooks: el ciclo de vida">
   <div class="lnum">Lección 3.1</div><h2>Hooks: el ciclo de vida</h2>
   <p>Un hook ejecuta tu script, un request HTTP, una herramienta MCP, un prompt o un subagente cuando Claude Code llega a un evento del ciclo de vida. La diferencia clave: <b>una instrucción en CLAUDE.md es un pedido; un hook es una garantía</b>. Siempre se dispara en su evento y no cuesta contexto salvo que devuelva texto.</p>
-  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Simulador de ciclo de vida</span><div class="act"><button class="btn sm" id="hkPlay"> simular sesión</button></div></div>
+  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Simulador de ciclo de vida</span><div class="act"><button class="btn sm" id="hkPlay">simular sesión</button></div></div>
     <div class="wb">
-      <div class="chips" style="margin-bottom:14px"><button class="chip on" id="hkBlock"> PreToolUse: bloquear rm</button><button class="chip on" id="hkFmt"> PostToolUse: prettier</button><button class="chip" id="hkCtx"> SessionStart(compact): reinyectar contexto</button><button class="chip" id="hkStop"> Stop: exigir tests</button></div>
+      <div class="chips" style="margin-bottom:14px"><button class="chip on" id="hkBlock">PreToolUse: bloquear rm</button><button class="chip on" id="hkFmt">PostToolUse: prettier</button><button class="chip" id="hkCtx">SessionStart(compact): reinyectar contexto</button><button class="chip" id="hkStop">Stop: exigir tests</button></div>
       <div class="hktl" id="hkTl"></div>
     </div>
   </div>
@@ -812,6 +1007,7 @@ exit 0                                      # 0 = sin objeción</pre></div>
 <article class="lesson" id="a4" data-t="Subagentes: cómo funcionan">
   <div class="lnum">Lección 3.4</div><h2>Subagentes: cómo funcionan</h2>
   <p>Un subagente es un trabajador con <b>su propia ventana de contexto</b>, su propio system prompt y su propio set de herramientas. Puede leer decenas de archivos; a tu conversación solo vuelve un resumen. Como el contexto es tu recurso más escaso, esto es lo que los hace valiosos.</p>
+  <div data-escena="subagentes" tabindex="0"></div>
   <h3>Qué carga al iniciar (no-fork)</h3>
   <ul class="pts">
     <li>Su propio system prompt (no el de Claude Code) más detalles del entorno.</li>
@@ -1012,9 +1208,9 @@ Usa el subagente code-reviewer para encontrar problemas de rendimiento y luego e
   </ul>
   <h3>MCP vs CLI vs skills</h3>
   <div class="cols3">
-    <div class="mini"><span class="ico">⌨</span><b>CLI primero</b>Herramientas como <code>gh</code>, <code>aws</code>, <code>gcloud</code> o <code>sentry-cli</code> son lo más eficiente en contexto: no agregan listado de herramientas.</div>
-    <div class="mini"><span class="ico"></span><b>MCP</b>Cuando no hay CLI, o necesitas autenticación gestionada por el servidor y herramientas hechas para ese sistema.</div>
-    <div class="mini"><span class="ico"></span><b>Skill + MCP</b>MCP da la conexión; una skill enseña a usarla bien (tu schema, tus patrones de consulta).</div>
+    <div class="mini"><b>CLI primero</b>Herramientas como <code>gh</code>, <code>aws</code>, <code>gcloud</code> o <code>sentry-cli</code> son lo más eficiente en contexto: no agregan listado de herramientas.</div>
+    <div class="mini"><b>MCP</b>Cuando no hay CLI, o necesitas autenticación gestionada por el servidor y herramientas hechas para ese sistema.</div>
+    <div class="mini"><b>Skill + MCP</b>MCP da la conexión; una skill enseña a usarla bien (tu schema, tus patrones de consulta).</div>
   </div>
   <div class="tip warn"><b class="h">Seguridad</b>Verifica que confías en cada servidor antes de conectarlo. Los que traen contenido externo te exponen a prompt injection. Para bases de datos, usa un usuario de solo lectura. Las variables con nombre de credencial (como <code>ANTHROPIC_API_KEY</code>) se leen vacías en URLs y headers remotos, para que un <code>.mcp.json</code> ajeno no las exfiltre.</div>
   <button class="done-btn" data-done="a9">○ Marcar como completada</button>
@@ -1023,6 +1219,7 @@ Usa el subagente code-reviewer para encontrar problemas de rendimiento y luego e
 <article class="lesson" id="a10" data-t="Sandbox de Bash">
   <div class="lnum">Lección 3.10</div><h2>Sandbox de Bash</h2>
   <p>El sandbox es una barrera que el sistema operativo aplica a los comandos de shell que corre Claude y a los procesos que estos lanzan. Tú defines qué archivos y dominios pueden alcanzar. Como la barrera la impone el SO, Claude Code puede correr comandos sandboxeados sin pedirte aprobación uno por uno. Está apagado por defecto: actívalo con <code>/sandbox</code>.</p>
+  <div data-escena="sandbox" tabindex="0"></div>
   <table class="ref">
     <thead><tr><th>Acceso</th><th>Por defecto</th><th>Se cambia con</th></tr></thead>
     <tbody>
@@ -1053,6 +1250,7 @@ Usa el subagente code-reviewer para encontrar problemas de rendimiento y luego e
 <article class="lesson" id="a11" data-t="Worktrees y sesiones paralelas">
   <div class="lnum">Lección 3.11</div><h2>Worktrees y sesiones paralelas</h2>
   <p>Un git worktree es un directorio de trabajo separado, con su propia rama, que comparte historial y remoto con tu checkout principal. Con cada sesión en su worktree, las ediciones de una nunca tocan los archivos de otra.</p>
+  <div data-escena="worktrees" tabindex="0"></div>
   <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl># crea .claude/worktrees/feature-auth en la rama worktree-feature-auth
 claude --worktree feature-auth
 
@@ -1091,21 +1289,21 @@ claude --worktree "#1234"</pre></div>
     </tbody>
   </table>
   <div class="tip"><b class="h">Revisión adversarial</b>Mientras más trabaja Claude sin supervisión, más importa un chequeo independiente. Un subagente revisor ve solo el diff y los criterios, no el razonamiento que produjo el cambio. Dile que reporte solo brechas que afecten correctitud o requisitos: un revisor al que le pides encontrar problemas casi siempre encuentra algunos, y perseguirlos todos lleva a sobreingeniería.</div>
-  <p>Para revisión automática de cada PR sin mantener un workflow existe <b>Code Review</b>, un servicio gestionado que un Owner activa para la organización (nivel Arquitecto).</p>
+  <p>Para revisión automática de cada PR sin mantener un workflow existe <b>Code Review</b>, un servicio gestionado que un Owner activa para la organización (nivel Experto).</p>
   <button class="done-btn" data-done="a12">○ Marcar como completada</button>
 </article>
 
 <article class="lesson" id="aq" data-t="Quiz · Avanzado">
   <div class="lnum">Quiz final</div><h2>Quiz · Nivel Avanzado</h2>
   <div class="wd quiz" data-quiz="avanzado"><div class="wh"><span class="dot"></span><span class="tt">Responde todas correctamente para aprobar</span></div><div class="wb"></div></div>
-  <div class="next"><div><h3>Siguiente: Arquitecto</h3><p>Orquestación, autonomía, CI, SDK, nube, plugins y gobernanza.</p></div><a class="btn lv" href="#arquitecto" style="--lv:var(--x)">Continuar</a></div>
+  <div class="next"><div><h3>Siguiente: Experto</h3><p>Orquestación, autonomía, CI, SDK, nube, plugins y gobernanza.</p></div><a class="btn lv" href="#experto" style="--lv:var(--x)">Continuar</a></div>
 </article>
 
     </main>
   </div>
 </section>
-<section class="view" id="v-arquitecto" style="--lv:var(--x)">
-  <div class="lvhead"><div class="bigglyph">04</div><div class="tag">Nivel 04 · Arquitecto</div><h1>Diseñar el harness</h1><p>Ya no se trata de usar Claude Code, sino de diseñar el sistema alrededor del modelo: qué mecanismo usar para cada necesidad, cuánto contexto cuesta, cómo paralelizar, cómo correr sin humanos y cómo gobernarlo en un equipo.</p></div>
+<section class="view" id="v-experto" style="--lv:var(--x)">
+  <div class="lvhead"><div class="bigglyph">04</div><div class="tag">Nivel 04 · Experto</div><h1>Diseñar el harness</h1><p>Ya no se trata de usar Claude Code, sino de diseñar el sistema alrededor del modelo: qué mecanismo usar para cada necesidad, cuánto contexto cuesta, cómo paralelizar, cómo correr sin humanos y cómo gobernarlo en un equipo.</p></div>
   <div class="lvbody">
     <aside class="toc"></aside>
     <main>
@@ -1136,6 +1334,7 @@ claude --worktree "#1234"</pre></div>
 <article class="lesson" id="x2" data-t="Costo de contexto por mecanismo">
   <div class="lnum">Lección 4.2</div><h2>Costo de contexto por mecanismo</h2>
   <p>Cada extensión consume contexto de forma distinta. Demasiado llena la ventana y además mete ruido: las skills dejan de activarse bien o Claude pierde de vista tus convenciones.</p>
+  <div data-escena="mecanismos" tabindex="0"></div>
   <table class="ref">
     <thead><tr><th>Mecanismo</th><th>Cuándo carga</th><th>Qué carga</th><th>Costo</th></tr></thead>
     <tbody>
@@ -1149,6 +1348,7 @@ claude --worktree "#1234"</pre></div>
     </tbody>
   </table>
   <h3>Cómo se combinan entre niveles</h3>
+  <p>Ojo: cada mecanismo tiene su propio orden. No es un error: lo que se <b>suma</b> (CLAUDE.md, hooks) no necesita ganador, y lo que se <b>sobrescribe por nombre</b> (skills, subagentes, MCP) resuelve el choque con su propia regla. No lo compares con la precedencia de settings de la lección siguiente.</p>
   <ul class="pts">
     <li><b>CLAUDE.md se suma:</b> todos los niveles aportan a la vez. Si chocan, Claude decide cómo reconciliarlos.</li>
     <li><b>Skills y subagentes se sobrescriben por nombre:</b> skills managed &gt; usuario &gt; proyecto; subagentes managed &gt; flag CLI &gt; proyecto &gt; usuario &gt; plugin. Los de plugins llevan prefijo para no chocar.</li>
@@ -1223,7 +1423,7 @@ claude --worktree "#1234"</pre></div>
 <article class="lesson" id="x6" data-t="Dynamic workflows">
   <div class="lnum">Lección 4.6</div><h2>Dynamic workflows</h2>
   <p>Un workflow dinámico es un script JavaScript que Claude escribe y un runtime ejecuta en segundo plano mientras tu sesión sigue libre. La diferencia con los subagentes es <b>quién tiene el plan</b>: con subagentes, Claude decide turno a turno; en un workflow, el script tiene el loop, las ramas y los resultados intermedios, así tu contexto solo recibe la respuesta final.</p>
-  <div class="wd fan"><div class="wh"><span class="dot"></span><span class="tt">Fan-out / fan-in con verificación</span><div class="act"><button class="btn sm" id="fanPlay"> orquestar</button></div></div>
+  <div class="wd fan"><div class="wh"><span class="dot"></span><span class="tt">Fan-out / fan-in con verificación</span><span class="pn" style="margin:0 0 0 10px;font-size:12px">barra de cada caja = contexto usado</span><div class="act"><button class="btn sm" id="fanPlay">orquestar</button></div></div>
     <div class="wb"><svg viewBox="0 0 760 380" id="fanSvg"></svg><div class="fdetail" id="fanMsg" style="margin-top:8px">Tarea: "audita la seguridad del módulo de pagos antes del release".</div></div>
   </div>
   <h3>Cómo lanzar uno</h3>
@@ -1256,6 +1456,7 @@ return audits.filter(Boolean)</pre></div>
 <article class="lesson" id="x7" data-t="Agent teams">
   <div class="lnum">Lección 4.7</div><h2>Agent teams <span class="badge exp">experimental</span></h2>
   <p>Varias instancias de Claude Code trabajando como equipo: una sesión es el <b>líder</b> (coordina, asigna, sintetiza) y los compañeros trabajan cada uno con su contexto, se escriben directamente y comparten una lista de tareas. Están desactivados por defecto.</p>
+  <div data-escena="teams" tabindex="0"></div>
   <div class="code"><div class="ch"><span>settings.json</span><button class="copy">copiar</button></div><pre data-hl>{ "env": { "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1" } }</pre></div>
   <div class="code"><div class="ch"><span>prompt</span><button class="copy">copiar</button></div><pre>Los usuarios reportan que la app se desconecta tras un mensaje. Lanza 5 compañeros
 que investiguen hipótesis distintas. Que se escriban entre ellos para intentar refutar
@@ -1325,9 +1526,7 @@ con el consenso que surja.</pre></div>
 <article class="lesson" id="x9" data-t="Headless y scripts">
   <div class="lnum">Lección 4.9</div><h2>Headless y scripts</h2>
   <p>Con <code>-p</code> Claude Code corre sin interfaz: recibe un prompt, trabaja y devuelve el resultado. Es la puerta para pipelines, pre-commit hooks y fan-outs. Sale con código 0 si tuvo éxito.</p>
-  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Pipeline de revisión de PR</span><div class="act"><button class="btn sm" id="ciPlay"> ejecutar</button></div></div>
-    <div class="wb"><div class="flow" id="ciFlow"></div><div class="fdetail" id="ciDet" style="font-family:var(--mono);font-size:12.5px;white-space:pre-wrap">Pulsa ejecutar.</div></div>
-  </div>
+  
   <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl># modo bare: no carga hooks, skills, MCP, CLAUDE.md ni auto memory (recomendado en CI)
 claude --bare -p "resume README.md" --allowedTools "Read"
 
@@ -1367,6 +1566,7 @@ done</pre></div>
 <article class="lesson" id="x10" data-t="GitHub Actions y Code Review">
   <div class="lnum">Lección 4.10</div><h2>GitHub Actions y Code Review</h2>
   <p>La acción <code>anthropics/claude-code-action@v1</code> corre Claude Code dentro de tus workflows. Sin <code>prompt</code> trabaja en <b>modo interactivo</b>: responde a <code>@claude</code> en issues y PRs. Con <code>prompt</code> trabaja en <b>modo automatización</b> ante cualquier evento, incluido cron.</p>
+  <div data-escena="actions" tabindex="0"></div>
   <ul class="pts">
     <li><b>Setup rápido:</b> <code>/install-github-app</code> dentro de Claude Code instala la app, guarda el secreto y abre el PR con el workflow.</li>
     <li><b>Secretos:</b> <code>ANTHROPIC_API_KEY</code> (Claude Console) o <code>CLAUDE_CODE_OAUTH_TOKEN</code> generado con <code>claude setup-token</code> para usar tu suscripción.</li>
@@ -1506,6 +1706,8 @@ claude plugin install harness-ecommerce@mi-org
     <li>Instala plugins de <b>code intelligence</b> para tu lenguaje: navegación por símbolos y errores de tipos tras cada edición.</li>
     <li>Las organizaciones controlan qué marketplaces se permiten (<code>strictKnownMarketplaces</code>, <code>blockedMarketplaces</code>) y pueden exigir plugins.</li>
   </ul>
+  <div class="tip"><b class="h">Comunidad: Claude Code Templates</b><a href="https://aitmpl.com" target="_blank" rel="noopener">aitmpl.com</a> es un proyecto del chileno Daniel Ávila con un catálogo de más de 1.900 componentes listos para usar: agentes, comandos, skills, hooks, configuraciones de servidores MCP y settings. Puedes explorarlo en el navegador o instalar un componente con un comando:<div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>npx claude-code-templates@latest                 # navegador interactivo
+npx claude-code-templates@latest --agent development-team/frontend-developer</pre></div>Como con cualquier plugin de terceros, revisa qué instala antes de usarlo en un repo de trabajo.</div>
   <button class="done-btn" data-done="x13">○ Marcar como completada</button>
 </article>
 
@@ -1534,14 +1736,30 @@ claude plugin install harness-ecommerce@mi-org
   </ul>
   <h3>Costos de referencia</h3>
   <p>En despliegues empresariales, el promedio es cerca de <b>US$13 por desarrollador por día activo</b> y <b>US$150–250 al mes</b>; el 90% de los usuarios queda bajo US$30 por día activo. <code>/usage</code> muestra el costo de la sesión, las barras del plan y recomendaciones (en planes de suscripción, la tecla <kbd class="k">f</kbd> aplica las que puede). Los procesos de fondo cuestan típicamente menos de US$0,04 por sesión. Los agent teams en plan mode usan cerca de 7 veces más tokens que una sesión estándar.</p>
+  <h3>Topes de gasto</h3>
+  <table class="ref">
+    <thead><tr><th>Dónde</th><th>Cómo se limita</th></tr></thead>
+    <tbody>
+      <tr><td>Scripts y CI (<code>claude -p</code>)</td><td><code>--max-budget-usd 5</code> detiene la corrida al llegar a ese gasto estimado, contando subagentes; puede pasarse un poco, así que deja margen. <code>--max-turns 20</code> limita los turnos. Sin flags, una corrida headless no tiene tope.</td></tr>
+      <tr><td>Claude for Teams y Enterprise</td><td>Límites de gasto por organización, grupo o miembro en la consola de administración, cuando el uso extra está activado. Cada puesto además tiene su ventana de 5 horas y su ventana semanal.</td></tr>
+      <tr><td>Claude Console (API)</td><td>Límites de gasto por workspace. Claude Code crea solo un workspace "Claude Code" para separar su consumo.</td></tr>
+      <tr><td>Bedrock, Vertex y Foundry</td><td>Los controles de costo del proveedor cloud.</td></tr>
+    </tbody>
+  </table>
+  <h3>Medir el consumo del equipo</h3>
+  <ul class="pts">
+    <li>Con OpenTelemetry, la métrica <code>claude_code.token.usage</code> separa los tokens por tipo: <code>input</code>, <code>output</code>, <code>cacheRead</code> y <code>cacheCreation</code>. Una proporción baja de <code>cacheRead</code> delata sesiones que rompen el caché (lección 2.8).</li>
+    <li><code>claude_code.cost.usage</code> da el costo en US$, y el evento <code>api_request</code> trae los tokens de caché de cada petición.</li>
+    <li>Los costos que muestra Claude Code son estimaciones a precio de lista; si tu organización tiene precios negociados, configúralos con <code>modelPricing</code>.</li>
+  </ul>
   <h3>Checklist de gobernanza</h3>
   <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Marca lo que ya tienes</span><span style="margin-left:auto" id="govScore"></span></div><div class="wb" id="gov"></div></div>
   <button class="done-btn" data-done="x14">○ Marcar como completada</button>
 </article>
 
-<article class="lesson" id="xq" data-t="Quiz · Arquitecto">
-  <div class="lnum">Quiz final</div><h2>Quiz · Nivel Arquitecto</h2>
-  <div class="wd quiz" data-quiz="arquitecto"><div class="wh"><span class="dot"></span><span class="tt">Responde todas correctamente para aprobar</span></div><div class="wb"></div></div>
+<article class="lesson" id="xq" data-t="Quiz · Experto">
+  <div class="lnum">Quiz final</div><h2>Quiz · Nivel Experto</h2>
+  <div class="wd quiz" data-quiz="experto"><div class="wh"><span class="dot"></span><span class="tt">Responde todas correctamente para aprobar</span></div><div class="wb"></div></div>
   <div class="next"><div><h3>Documentación oficial</h3><p>Claude Code se actualiza cada semana. Verifica flags e inputs exactos antes de producción.</p></div><a class="btn lv" href="https://code.claude.com/docs/en/overview">Documentación</a></div>
 </article>
 
@@ -1651,12 +1869,12 @@ claude plugin install harness-ecommerce@mi-org
   </div>
   <h3>Qué puedes hacer con hooks</h3>
   <div class="cols3">
-    <div class="mini"><span class="ico"></span><b>Bloquear</b>Impedir comandos peligrosos o ediciones a <code>.env</code>, incluso en modo bypass.</div>
-    <div class="mini"><span class="ico"></span><b>Automatizar</b>Formatear, correr linters o tests después de cada cambio.</div>
-    <div class="mini"><span class="ico"></span><b>Inyectar contexto</b>Agregar la rama actual, el sprint o recordatorios al prompt o tras compactar.</div>
-    <div class="mini"><span class="ico"></span><b>Notificar</b>Aviso de escritorio o Slack cuando Claude espera tu respuesta.</div>
-    <div class="mini"><span class="ico"></span><b>Aprobar</b>Responder automáticamente prompts de permiso que siempre aceptas.</div>
-    <div class="mini"><span class="ico"></span><b>Auditar</b>Registrar cada comando o cambio de configuración para cumplimiento.</div>
+    <div class="mini"><b>Bloquear</b>Impedir comandos peligrosos o ediciones a <code>.env</code>, incluso en modo bypass.</div>
+    <div class="mini"><b>Automatizar</b>Formatear, correr linters o tests después de cada cambio.</div>
+    <div class="mini"><b>Inyectar contexto</b>Agregar la rama actual, el sprint o recordatorios al prompt o tras compactar.</div>
+    <div class="mini"><b>Notificar</b>Aviso de escritorio o Slack cuando Claude espera tu respuesta.</div>
+    <div class="mini"><b>Aprobar</b>Responder automáticamente prompts de permiso que siempre aceptas.</div>
+    <div class="mini"><b>Auditar</b>Registrar cada comando o cambio de configuración para cumplimiento.</div>
   </div>
   <div class="tip"><b class="h">Cinco tipos de handler</b>Un hook puede ser un comando de shell (<code>command</code>, el más común), un POST a una URL (<code>http</code>), una llamada a una herramienta MCP (<code>mcp_tool</code>), una evaluación de un LLM (<code>prompt</code>) o un subagente con herramientas (<code>agent</code>, experimental).</div>
 </article>
@@ -1664,7 +1882,7 @@ claude plugin install harness-ecommerce@mi-org
 <article class="lesson" id="hk2" data-t="El ciclo de vida">
   <div class="lnum">HOOKS · 2</div><h2>El ciclo de vida, animado</h2>
   <p>Los eventos se disparan en un orden predecible. Reproduce una sesión típica y mira cuándo se enciende cada uno. Toca cualquier evento para ver qué puede hacer ahí.</p>
-  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Una sesión, evento por evento</span><div class="act"><button class="btn sm" id="lcPlay"> Reproducir</button></div></div>
+  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Una sesión, evento por evento</span><div class="act"><button class="btn sm" id="lcPlay">Reproducir</button></div></div>
     <div class="wb">
       <div class="lc" id="lc"></div>
       <div class="lcnar" id="lcNar">Presiona reproducir.</div>
@@ -1910,7 +2128,7 @@ echo $?    # 2 = bloquearía · 0 = sin objeción</pre></div>
   <div class="simple"><b class="h">En simple</b>Una skill es una <b>receta en una tarjeta</b>. En la cocina hay un fichero con cientos de recetas, pero el chef solo ve los títulos. Cuando alguien pide "lasaña", saca esa tarjeta y la lee entera. Claude hace lo mismo: ve el nombre y la descripción de todas tus skills, y solo carga el contenido completo de la que necesita.</div>
   <p>Técnicamente es una carpeta con un archivo <code>SKILL.md</code>: frontmatter YAML que dice <b>cuándo</b> usarla y un cuerpo en Markdown que dice <b>cómo</b>. Claude la carga sola cuando la descripción coincide con lo que pides, o la ejecutas tú con <code>/nombre-de-la-skill</code>.</p>
   <h3>Carga progresiva: por qué no gastan contexto</h3>
-  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Tres capas de carga</span><div class="act"><button class="btn sm" id="pdPlay"> Simular un pedido</button></div></div>
+  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Tres capas de carga</span><span class="pn" style="margin:0 0 0 10px;font-size:12px">barra = contexto que ocupa</span><div class="act"><button class="btn sm" id="pdPlay">Simular un pedido</button></div></div>
     <div class="wb">
       <div class="pd" id="pd">
         <div class="pdl" data-l="0"><div class="pdh"><b>1 · Listado</b><span>siempre en contexto</span></div><p>Nombre + descripción de cada skill (máx. 1.536 caracteres por skill). Así Claude sabe qué existe.</p><div class="pdbar"><i style="width:8%"></i></div></div>
@@ -2003,7 +2221,7 @@ Scripts en: ${CLAUDE_SKILL_DIR}/scripts</textarea>
 <article class="lesson" id="sk7" data-t="Contexto dinámico con !`cmd`">
   <div class="lnum">SKILLS · 7</div><h2>Contexto dinámico: <code>!`comando`</code></h2>
   <p>Una línea <code>!`comando`</code> se ejecuta <b>antes</b> de que Claude vea la skill, y su salida reemplaza la línea. Claude recibe datos reales y frescos, no una instrucción de ir a buscarlos.</p>
-  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Preprocesamiento</span><div class="act"><button class="btn sm" id="dynPlay"> Ejecutar</button></div></div>
+  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Preprocesamiento</span><div class="act"><button class="btn sm" id="dynPlay">Ejecutar</button></div></div>
     <div class="wb"><div class="dyn" id="dyn">
       <div class="dync"><div class="dynh">SKILL.md en disco</div><pre id="dynA"></pre></div>
       <div class="dynarrow" id="dynArr">⟶</div>
@@ -2058,7 +2276,7 @@ Investiga $ARGUMENTS a fondo:
     <li>Al compactar, Claude Code vuelve a adjuntar la invocación más reciente de cada skill, con sus primeros <b>5.000 tokens</b>. Todas comparten un presupuesto de <b>25.000 tokens</b>, llenado desde la más reciente: si invocaste muchas, las más antiguas pueden quedar fuera.</li>
     <li><code>allowed-tools</code> y <code>disallowed-tools</code> se limpian cuando envías tu siguiente mensaje.</li>
   </ul>
-  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Presupuesto tras compactar</span></div>
+  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Presupuesto tras compactar</span><span class="pn" style="margin:0 0 0 10px;font-size:12px">naranja = se re-adjunta · gris = se corta</span></div>
     <div class="wb">
       <label>Skills invocadas (tamaño en tokens, de la más antigua a la más reciente)</label>
       <input id="cbSk" value="3000, 12000, 8000, 6000, 9000, 4000">
@@ -2140,7 +2358,7 @@ Investiga $ARGUMENTS a fondo:
   <ul class="pts">
     <li>Para que una skill sea portable, usa solo los campos estándar y pon la lógica en el cuerpo y en scripts.</li>
     <li>Los campos propios de Claude Code (<code>context</code>, <code>hooks</code>, <code>paths</code>, <code>model</code>…) se ignoran o fallan fuera de él.</li>
-    <li>Distribuye skills a tu equipo commiteándolas en el repo o empaquetándolas en un <a href="#arquitecto">plugin</a> con un marketplace.</li>
+    <li>Distribuye skills a tu equipo commiteándolas en el repo o empaquetándolas en un <a href="#experto">plugin</a> con un marketplace.</li>
   </ul>
 </article>
 
@@ -2164,9 +2382,9 @@ Investiga $ARGUMENTS a fondo:
   <div class="lnum">SETTINGS · 1</div><h2>Settings, en simple</h2>
   <div class="simple"><b class="h">En simple</b>Piensa en capas de reglas, como en una casa: las reglas del edificio (organización) mandan sobre las de la familia (equipo), que mandan sobre tus preferencias (usuario). Y para una sola noche, puedes hacer una excepción (línea de comandos). Claude Code lee varias capas y, si dos dicen cosas distintas, gana la más alta.</div>
   <div class="cols3">
-    <div class="mini"><span class="ico"></span><b>settings.json</b>Comportamiento de Claude Code: modelo, permisos, hooks, sandbox, interfaz. Lo aplica el programa.</div>
-    <div class="mini"><span class="ico"></span><b>CLAUDE.md</b>Instrucciones para el modelo: convenciones, comandos de build. Es contexto, no configuración.</div>
-    <div class="mini"><span class="ico"></span><b>Variables de entorno</b>Algunas tienen pareja en settings (<code>ANTHROPIC_MODEL</code> ↔ <code>model</code>); quién gana se decide por cada par.</div>
+    <div class="mini"><b>settings.json</b>Comportamiento de Claude Code: modelo, permisos, hooks, sandbox, interfaz. Lo aplica el programa.</div>
+    <div class="mini"><b>CLAUDE.md</b>Instrucciones para el modelo: convenciones, comandos de build. Es contexto, no configuración.</div>
+    <div class="mini"><b>Variables de entorno</b>Algunas tienen pareja en settings (<code>ANTHROPIC_MODEL</code> ↔ <code>model</code>); quién gana se decide por cada par.</div>
   </div>
   <p>Los archivos son JSON estricto: un comentario <code>//</code> o una coma final es error de sintaxis. Agrega <code>"$schema": "https://json.schemastore.org/claude-code-settings.json"</code> y tu editor te dará autocompletado y validación.</p>
 </article>
@@ -2288,7 +2506,7 @@ Investiga $ARGUMENTS a fondo:
 </section>
 
 <section class="view" id="v-glosario" style="--lv:var(--g)">
-  <div class="lvhead"><div class="bigglyph">Aa</div><div class="tag">Referencia · Glosario</div><h1>Glosario</h1><p>Los términos que aparecen en la documentación y en la comunidad, explicados en una o dos frases y enlazados a la lección donde se ven a fondo.</p></div>
+  <div class="lvhead"><div class="bigglyph">A–Z</div><div class="tag">Referencia · Glosario</div><h1>Glosario</h1><p>Los términos que aparecen en la documentación y en la comunidad, explicados en una o dos frases y enlazados a la lección donde se ven a fondo.</p></div>
   <div class="refbody">
     <div class="cprompt" style="max-width:520px"><span class="gt">?</span><input id="glQ" placeholder="buscar término…" autocomplete="off"></div>
     <div class="chips" id="glAZ" style="margin:14px 0"></div>

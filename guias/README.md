@@ -9,20 +9,28 @@ pnpm dev        # http://localhost:4322
 pnpm build
 ```
 
-## Sistema de diseño: "Lector"
+## Sistema de diseño: "Placa"
 
-Leer una guía se siente como leer un libro en un e-reader. Todo vive en `src/styles/guias.css`.
+Las guías comparten la marca de jcayala.dev. Los estilos viven en `src/styles/guias.css` (base y componentes) y
+`src/styles/placa.css` (identidad, siempre activa con `data-identidad="placa"` en `<html>`).
 
-- **Temas de lectura** (menú Aa): Papel, Sepia y Noche, más cinco tamaños de texto. Se guardan en el navegador.
-  Si el lector no eligió, se usa Papel o Noche según el sistema.
-- **Tipografía**: Literata para leer y para los títulos, Geist para la interfaz y Geist Mono para el código.
-- **Columna de lectura** centrada (~66 caracteres). Widgets, tablas y código pueden salir de la columna hasta 880 px.
-- **Capítulos**: cada lección abre con letra capitular y las separa un `⁂`.
-- **Barra superior** que se esconde al leer, **panel de contenido** lateral y **barra de progreso** inferior
-  con la lección actual, los minutos restantes y el porcentaje del nivel.
-- **Color**: cada guía tiene un acento (`accent.light`, `accent.sepia`, `accent.dark`) para enlaces y progreso,
-  y una portada propia (`cover.bg`, `cover.ink`) en `src/data/guides.ts`.
-- El código y las terminales usan una superficie de grafito en los tres temas.
+- **Color**: gris perla, grafito y una señal naranja eléctrica (`--signal: #ff5b1f`), reservada para la interfaz y lo
+  activo. Dentro de las animaciones y widgets cada color tiene un significado fijo: verde = permitido o leído,
+  ámbar = costo, escritura o advertencia, rojo-magenta = error o bloqueado, lila = herramientas u otro agente.
+- **Tipografía**: Anybody (titulares, condensada y pesada), Schibsted Grotesk (lectura e interfaz) y JetBrains Mono (código).
+- **Placas**: todo lo interactivo (animaciones, simuladores, widgets) va sobre grafito con grilla de puntos, en los tres
+  temas. Se lee en claro y se experimenta en la placa.
+- **Temas de lectura** (menú Aa): Perla, Arena y Grafito, más cinco tamaños de texto. Las claves internas siguen siendo
+  `papel`, `sepia` y `noche` para no perder la preferencia guardada.
+- **Pistas de circuito**: separadores entre lecciones, índice lateral con nodos que se iluminan y barra de progreso
+  como una señal.
+
+## Animaciones (escenas)
+
+`src/scripts/escena.ts` es el marco común: título, controles (anterior, reproducir, siguiente, repetir), puntos de
+progreso, avance automático al entrar en pantalla y respeto por "reducir movimiento". Cada animación es un archivo en
+`src/guides/<guía>/anim/<nombre>.ts` (con su `<nombre>.css`) que exporta una `Escena` con `steps` y `go(i, instant)`.
+Para usarla en una lección basta con `<div data-escena="<nombre>"></div>`: `anim/index.ts` la carga bajo demanda.
 
 Componentes que puede usar cualquier guía (clases): `article.lesson`, `.lnum`, `.simple`, `.tip` / `.tip.warn`,
 `.code` + `.ch` + `pre`, `table.ref`, `.btn` / `.btn.pri`, `.wd` (widget), `.chip`, `.quiz`, `.done-btn`, `kbd.k`.

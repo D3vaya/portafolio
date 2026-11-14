@@ -14,6 +14,8 @@ export type Guide = {
   accent: { light: string; sepia: string; dark: string };
   /** Portada: fondo y color del título. */
   cover: { bg: string; ink: string };
+  /** Color de la señal en su placa de la biblioteca. */
+  signal: string;
 };
 
 export const guides: Guide[] = [
@@ -23,12 +25,13 @@ export const guides: Guide[] = [
     tagline: "De tu primer prompt al harness de tu equipo",
     summary:
       "Del primer prompt a diseñar el harness de tu equipo: permisos, memoria, hooks, skills, subagentes, CI y gobernanza. Con simuladores y generadores de configuración.",
-    facts: ["4 niveles", "49 lecciones", "4 quizzes", "6 secciones de referencia"],
-    progress: { key: "ccacad-v2", total: 53 },
+    facts: ["4 niveles", "52 lecciones", "4 quizzes", "6 secciones de referencia"],
+    progress: { key: "ccacad-v2", total: 56 },
     updated: "noviembre de 2026",
     status: "publicada",
     accent: { light: "#2953c6", sepia: "#3a55a0", dark: "#94abf5" },
     cover: { bg: "#1d2b4f", ink: "#e9c46a" },
+    signal: "#ff5b1f",
   },
   {
     slug: "git",
@@ -41,6 +44,7 @@ export const guides: Guide[] = [
     status: "en preparación",
     accent: { light: "#b4462b", sepia: "#9c3d1f", dark: "#f0937a" },
     cover: { bg: "#5f2216", ink: "#f3d9c4" },
+    signal: "#3ddc97",
   },
 ];
 
