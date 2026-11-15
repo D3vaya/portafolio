@@ -53,6 +53,11 @@ define el título de cada página. `app.js` es uno solo para todas las vistas: l
 página reciben un objeto vacío (`GHOST`) y los módulos de las secciones de referencia salen antes si su vista no está.
 Los enlaces antiguos (`/claude-code/#hooks`) redirigen a la URL nueva.
 
+La guía de Git (`/git/`, `/git/basico/` … `/git/glosario/`) usa la misma estructura con código propio en
+`src/guides/git/`: `content.html` (lecciones y vistas), `views.ts`, `app.js` (progreso, quizzes y widgets),
+`anim/` (escenas sobre el kit de grafos `_kit.ts`), `lab.ts` (el laboratorio: un repositorio simulado donde se escriben
+comandos de Git y el grafo cambia en vivo) y `hero.ts` (el grafo animado de la portada). Ver DESIGN.md §6.1 y §6.2.
+
 ## SEO
 
 - `public/robots.txt` y `src/pages/sitemap.xml.ts` (el sitemap se genera al compilar con todas las vistas).

@@ -1370,9 +1370,12 @@ claude --worktree "#1234"</pre></div>
 
 <article class="lesson" id="x3" data-t="Jerarquía de settings">
   <div class="lnum">Lección 4.3</div><h2>Jerarquía de settings</h2>
-  <p>Para un valor como <code>model</code>, gana la capa más alta que lo define. Las listas (como <code>permissions.allow</code>) se <b>combinan</b> entre capas, y un deny en cualquier capa gana. Activa capas y mira cuál manda:</p>
-  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Precedencia de settings · clic para definir "model"</span></div>
-    <div class="wb"><div class="stack" id="stack"></div><div class="fdetail" id="stackMsg" style="margin-top:12px"></div></div>
+  <p>Para un valor como <code>model</code>, gana la capa más alta que lo define. Las listas (como <code>permissions.allow</code>) se <b>combinan</b> entre capas, y un deny en cualquier capa gana. Define <code>model</code> en cada nivel y mira cuál manda:</p>
+  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Simulador de precedencia</span><div class="act"><button class="btn sm" id="stackReset">reiniciar</button></div></div>
+    <div class="wb">
+      <div class="prstack" id="stack"></div>
+      <div class="ex-out" id="stackMsg" style="margin-top:14px"></div>
+    </div>
   </div>
   <ul class="pts">
     <li><b>Managed</b> llega por settings gestionados desde la consola de claude.ai, MDM o un <code>managed-settings.json</code>. Nada lo sobrescribe. Un <code>model</code> gestionado es un default; los candados reales son <code>availableModels</code> y <code>deniedModels</code>.</li>
@@ -1423,8 +1426,8 @@ claude --worktree "#1234"</pre></div>
 <article class="lesson" id="x6" data-t="Dynamic workflows">
   <div class="lnum">Lección 4.6</div><h2>Dynamic workflows</h2>
   <p>Un workflow dinámico es un script JavaScript que Claude escribe y un runtime ejecuta en segundo plano mientras tu sesión sigue libre. La diferencia con los subagentes es <b>quién tiene el plan</b>: con subagentes, Claude decide turno a turno; en un workflow, el script tiene el loop, las ramas y los resultados intermedios, así tu contexto solo recibe la respuesta final.</p>
-  <div class="wd fan"><div class="wh"><span class="dot"></span><span class="tt">Fan-out / fan-in con verificación</span><span class="pn" style="margin:0 0 0 10px;font-size:12px">barra de cada caja = contexto usado</span><div class="act"><button class="btn sm" id="fanPlay">orquestar</button></div></div>
-    <div class="wb"><svg viewBox="0 0 760 380" id="fanSvg"></svg><div class="fdetail" id="fanMsg" style="margin-top:8px">Tarea: "audita la seguridad del módulo de pagos antes del release".</div></div>
+  <div class="wd fan"><div class="wh"><span class="dot"></span><span class="tt">Fan-out / fan-in con verificación</span><div class="act"><button class="btn sm" id="fanPlay">orquestar</button></div></div>
+    <div class="wb"><svg viewBox="0 0 760 380" id="fanSvg"></svg><div class="fdetail" id="fanMsg" style="margin-top:8px">Tarea: "audita la seguridad del módulo de pagos antes del release". Toca <b>orquestar</b> para ver cómo el script reparte el trabajo, junta los resultados y los verifica antes de entregártelos. La barra de cada caja es el contexto que usa.</div></div>
   </div>
   <h3>Cómo lanzar uno</h3>
   <ul class="pts">
@@ -1882,10 +1885,15 @@ npx claude-code-templates@latest --agent development-team/frontend-developer</pr
 <article class="lesson" id="hk2" data-t="El ciclo de vida">
   <div class="lnum">HOOKS · 2</div><h2>El ciclo de vida, animado</h2>
   <p>Los eventos se disparan en un orden predecible. Reproduce una sesión típica y mira cuándo se enciende cada uno. Toca cualquier evento para ver qué puede hacer ahí.</p>
-  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Una sesión, evento por evento</span><div class="act"><button class="btn sm" id="lcPlay">Reproducir</button></div></div>
+  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Una sesión, evento por evento</span></div>
     <div class="wb">
       <div class="lc" id="lc"></div>
-      <div class="lcnar" id="lcNar">Presiona reproducir.</div>
+      <div class="lcctl" role="group" aria-label="Controles de la sesión">
+        <button type="button" class="btn sm" id="lcPrev" aria-label="Evento anterior">‹ Anterior</button>
+        <button type="button" class="btn sm pri" id="lcPlay" aria-pressed="false">Reproducir</button>
+        <button type="button" class="btn sm" id="lcNext" aria-label="Evento siguiente">Siguiente ›</button>
+      </div>
+      <div class="lcnar" id="lcNar" aria-live="polite">Presiona <b>Reproducir</b> o avanza evento por evento con <b>Siguiente</b>.</div>
     </div>
   </div>
   <div class="tip"><b class="h">Clave</b><code>PreToolUse</code> corre <b>antes</b> de cualquier chequeo de modo de permiso, en todos los modos. Si devuelve deny, bloquea incluso con <code>--dangerously-skip-permissions</code>. Al revés no: un hook que devuelve allow no salta las reglas deny de settings.</div>
@@ -2276,12 +2284,25 @@ Investiga $ARGUMENTS a fondo:
     <li>Al compactar, Claude Code vuelve a adjuntar la invocación más reciente de cada skill, con sus primeros <b>5.000 tokens</b>. Todas comparten un presupuesto de <b>25.000 tokens</b>, llenado desde la más reciente: si invocaste muchas, las más antiguas pueden quedar fuera.</li>
     <li><code>allowed-tools</code> y <code>disallowed-tools</code> se limpian cuando envías tu siguiente mensaje.</li>
   </ul>
-  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Presupuesto tras compactar</span><span class="pn" style="margin:0 0 0 10px;font-size:12px">naranja = se re-adjunta · gris = se corta</span></div>
+  <div class="wd"><div class="wh"><span class="dot"></span><span class="tt">Presupuesto tras compactar</span></div>
     <div class="wb">
-      <label>Skills invocadas (tamaño en tokens, de la más antigua a la más reciente)</label>
-      <input id="cbSk" value="3000, 12000, 8000, 6000, 9000, 4000">
+      <form class="cbf" id="skBudForm" novalidate>
+        <label for="cbSk">Tamaño en tokens de cada skill invocada, de la más antigua a la más reciente</label>
+        <div class="cbrow">
+          <input id="cbSk" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" enterkeyhint="done" placeholder="Ej.: 3000, 12000, 8000" aria-describedby="cbHelp cbErr" value="3000, 12000, 8000, 6000, 9000, 4000">
+          <button type="submit" class="btn sm pri">Calcular</button>
+        </div>
+        <p class="cbhelp" id="cbHelp">Números separados por comas o espacios. Presiona Enter para calcular, o prueba un ejemplo:</p>
+        <div class="chips" id="cbPre">
+          <button type="button" class="chip" data-v="3000, 12000, 8000, 6000, 9000, 4000">6 skills (ejemplo)</button>
+          <button type="button" class="chip" data-v="4000, 9000, 7000, 12000, 6000, 8000, 5000">7 skills, se pasa</button>
+          <button type="button" class="chip" data-v="1500, 2000, 800">3 skills chicas</button>
+        </div>
+        <p class="cberr" id="cbErr" role="alert" hidden></p>
+      </form>
+      <div class="cbleg" aria-hidden="true"><span><i class="k"></i>se re-adjunta</span><span><i class="f"></i>se corta</span></div>
       <div class="budget" id="cbBar"></div>
-      <p class="pn" id="cbTxt"></p>
+      <p class="pn" id="cbTxt" aria-live="polite"></p>
     </div>
   </div>
 </article>

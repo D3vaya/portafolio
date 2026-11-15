@@ -1,0 +1,1017 @@
+<section class="view" id="v-inicio">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">Guía interactiva · 4 niveles · <span data-count="lessons">42</span> lecciones · Git 2.56, noviembre 2026</div>
+      <h1>Entiende <em>Git</em> de verdad, y deja de tenerle miedo.</h1>
+      <p class="lead">Git parece complicado porque casi nadie explica qué pasa por dentro. Aquí lo ves: cada concepto tiene una animación que muestra cómo se mueven los commits, las ramas y HEAD, y un laboratorio donde escribes comandos reales y ves el resultado al instante.</p>
+      <div class="cta">
+        <a class="btn pri" href="#basico">Empezar desde cero</a>
+        <a class="btn" href="#laboratorio">Abrir el laboratorio</a>
+      </div>
+    </div>
+    <div class="git-hero" id="gitHero" aria-hidden="true"></div>
+    <p class="figcap">Figura 1. Una rama nace, avanza y vuelve a main. Todo Git es esto: commits que apuntan a su padre y nombres que apuntan a commits.</p>
+  </div>
+
+  <div class="sec">
+    <h2 class="big">Tu ruta</h2>
+    <p class="sub">Cada nivel construye sobre el anterior. Marca las lecciones como completadas y aprueba el quiz de cada nivel. Tu progreso se guarda solo en este navegador.</p>
+    <div class="lvgrid">
+      <a class="lvcard" href="#basico" style="--c:var(--b)">
+        <div class="glyph">01</div><div class="n" style="margin-top:14px">Nivel Básico</div>
+        <h3>Lo que Git guarda</h3><p>Commits, las tres áreas, el historial y cómo deshacer lo simple.</p>
+        <ul><li>Instalar y configurar</li><li>Directorio, staging y repositorio</li><li>Qué hay dentro de un commit</li><li>.gitignore y buenos mensajes</li></ul>
+        <div class="pg"><div class="track"><b data-pg="basico"></b></div><span data-pgt="basico">0%</span></div>
+      </a>
+      <a class="lvcard" href="#intermedio" style="--c:var(--i)">
+        <div class="glyph">02</div><div class="n" style="margin-top:14px">Nivel Intermedio</div>
+        <h3>Ramas y equipo</h3><p>Ramas, fusiones, conflictos, remotos y pull requests.</p>
+        <ul><li>Ramas y HEAD</li><li>Fast-forward y merge de tres vías</li><li>Conflictos sin pánico</li><li>fetch, pull, push y PRs</li></ul>
+        <div class="pg"><div class="track"><b data-pg="intermedio"></b></div><span data-pgt="intermedio">0%</span></div>
+      </a>
+      <a class="lvcard" href="#avanzado" style="--c:var(--a)">
+        <div class="glyph">03</div><div class="n" style="margin-top:14px">Nivel Avanzado</div>
+        <h3>Reescribir y rescatar</h3><p>Rebase, reset, revert, reflog y cómo recuperar casi cualquier cosa.</p>
+        <ul><li>Rebase e interactivo</li><li>Cherry-pick, reset y revert</li><li>Reflog y HEAD separado</li><li>Force push seguro y bisect</li></ul>
+        <div class="pg"><div class="track"><b data-pg="avanzado"></b></div><span data-pgt="avanzado">0%</span></div>
+      </a>
+      <a class="lvcard" href="#experto" style="--c:var(--x)">
+        <div class="glyph">04</div><div class="n" style="margin-top:14px">Nivel Experto</div>
+        <h3>Git por dentro</h3><p>La carpeta .git, objetos, packfiles, hooks, monorepos y estrategias.</p>
+        <ul><li>.git y cadenas de hashes</li><li>Worktrees y hooks</li><li>Repos gigantes y submódulos</li><li>Estrategias y Git 3.0</li></ul>
+        <div class="pg"><div class="track"><b data-pg="experto"></b></div><span data-pgt="experto">0%</span></div>
+      </a>
+    </div>
+    <div class="cert" id="cert"><h3>Guía completada</h3><p style="color:var(--mute)">Completaste todas las lecciones y los 4 quizzes. Ya sabes qué hace Git por dentro, y cómo salir de cualquier lío.</p></div>
+  </div>
+
+  <div class="sec">
+    <h2 class="big">Cómo está hecha</h2>
+    <p class="sub">Git es abstracto: no ves los commits ni las ramas, solo comandos y texto. Por eso cada idea difícil tiene tres piezas.</p>
+    <div class="cols3">
+      <div class="mini"><b>Animaciones paso a paso</b><span data-count="escenas">34</span> escenas que muestran qué se mueve con cada comando. Puedes pausar, retroceder y saltar a cualquier paso.</div>
+      <div class="mini"><b>Un laboratorio real</b>Una terminal donde escribes <code>git commit</code>, <code>git rebase</code> o <code>git reset</code> y el grafo cambia en vivo, con desafíos que se validan solos.</div>
+      <div class="mini"><b>Basada en la documentación</b>Cada comando y cada dato se revisaron contra la documentación oficial de Git 2.56 y el libro Pro Git, incluido lo que trae Git 3.0.</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2 class="big">Referencia para el día a día</h2>
+    <p class="sub">Para cuando ya sabes qué quieres hacer y solo necesitas el comando, o cuando algo salió mal.</p>
+    <div class="refcards">
+      <a class="refcard" href="#laboratorio" style="--c:var(--clay)"><div class="gl">$</div><b>Laboratorio</b><span>Practica cualquier comando y mira el grafo. Seis desafíos con pista y solución.</span></a>
+      <a class="refcard" href="#comandos" style="--c:var(--i)"><div class="gl">git</div><b>Comandos</b><span><span data-count="cmds">40</span> comandos con sus opciones útiles y ejemplos, con buscador.</span></a>
+      <a class="refcard" href="#rescate" style="--c:var(--a)"><div class="gl">↺</div><b>Rescate</b><span><span data-count="rescate">18</span> situaciones de «me equivoqué» con la solución exacta y su riesgo.</span></a>
+      <a class="refcard" href="#glosario" style="--c:var(--x)"><div class="gl">Aa</div><b>Glosario</b><span><span data-count="glos">47</span> términos explicados en una frase.</span></a>
+    </div>
+  </div>
+</section>
+<section class="view" id="v-basico" style="--lv:var(--b)">
+  <div class="lvhead"><div class="bigglyph">01</div><div class="tag">Nivel 01 · Básico</div><h1>Lo que Git guarda</h1><p>Instala Git, haz tus primeros commits y entiende qué guarda de verdad: fotos completas del proyecto, enlazadas una con otra. Con esa idea, todo lo demás tiene sentido.</p></div>
+  <div class="lvbody">
+    <aside class="toc"></aside>
+    <main>
+
+<article class="lesson" id="b1" data-t="¿Qué problema resuelve Git?">
+  <div class="lnum">Lección 1.1</div><h2>¿Qué problema resuelve Git?</h2>
+  <p>Si alguna vez tuviste <code>informe_final.docx</code>, <code>informe_final_v2.docx</code> e <code>informe_final_DEFINITIVO.docx</code>, ya conoces el problema: guardar versiones a mano es desordenado, no dice qué cambió entre una y otra, y no sirve cuando dos personas trabajan en lo mismo.</p>
+  <p>Git es un <b>sistema de control de versiones</b>: guarda la historia de tu proyecto como una serie de fotos, cada una con quién la tomó, cuándo y por qué. Puedes volver a cualquier foto, comparar dos, y trabajar en paralelo con otras personas sin pisarse.</p>
+  <div data-escena="instantaneas" tabindex="0"></div>
+  <div class="simple"><b class="h">En simple</b><p>Git es una máquina del tiempo para una carpeta. Cada vez que guardas un punto (un <b>commit</b>), puedes volver a él cuando quieras, y ver exactamente qué cambió desde el anterior.</p></div>
+  <h3>Git no es GitHub</h3>
+  <p>Git es un programa que corre en tu computador y funciona sin internet. GitHub, GitLab y Bitbucket son servicios donde <b>subes una copia</b> de tu repositorio para compartirla, revisar cambios con tu equipo y automatizar pruebas. Puedes usar Git toda la vida sin GitHub; al revés, no.</p>
+  <div class="cols3">
+    <div class="mini"><b>Distribuido</b>Cada copia del repositorio tiene la historia completa. Si el servidor desaparece, cualquier clon sirve para recuperarlo.</div>
+    <div class="mini"><b>Rápido</b>Casi todo ocurre en tu disco: ver el historial, cambiar de rama o comparar versiones tarda milisegundos.</div>
+    <div class="mini"><b>Seguro</b>Cada versión se identifica por un hash de su contenido: si algo se corrompe o se altera, Git lo nota.</div>
+  </div>
+  <button class="done-btn" data-done="b1">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="b2" data-t="Instalar y configurar Git">
+  <div class="lnum">Lección 1.2</div><h2>Instalar y configurar Git</h2>
+  <p>Comprueba primero si ya lo tienes: abre una terminal y escribe <code>git --version</code>. Si responde algo como <code>git version 2.56.0</code>, sáltate la instalación.</p>
+  <table class="ref">
+    <thead><tr><th>Sistema</th><th>Cómo instalarlo</th></tr></thead>
+    <tbody>
+      <tr><td>macOS</td><td><code>xcode-select --install</code> (viene con las herramientas de Apple) o <code>brew install git</code> para tener la última versión</td></tr>
+      <tr><td>Windows</td><td>Git for Windows desde <a href="https://git-scm.com/downloads">git-scm.com</a> o <code>winget install --id Git.Git -e</code>. Incluye Git Bash, una terminal donde funcionan todos los comandos de esta guía</td></tr>
+      <tr><td>Linux</td><td><code>sudo apt install git</code> (Debian, Ubuntu) o <code>sudo dnf install git</code> (Fedora)</td></tr>
+    </tbody>
+  </table>
+  <p>Antes del primer commit, Git necesita saber quién eres: tu nombre y correo quedan grabados en cada commit. Arma tu configuración aquí y cópiala a la terminal.</p>
+  <div class="wd" id="cfgW">
+    <div class="wh"><span class="dot"></span><span class="tt">Tu configuración inicial</span></div>
+    <div class="wb cfg-form">
+      <label>Nombre<input id="cfgName" type="text" placeholder="Ana Pérez" autocomplete="name"></label>
+      <label>Correo (el mismo de GitHub)<input id="cfgMail" type="email" placeholder="ana@ejemplo.com" autocomplete="email"></label>
+      <label>Editor<select id="cfgEd"><option value="code --wait">VS Code</option><option value="nano">nano</option><option value="vim">Vim</option><option value="cursor --wait">Cursor</option><option value="zed --wait">Zed</option></select></label>
+      <label>Al hacer pull con historias distintas<select id="cfgPull"><option value="rebase">Rebase (historia lineal)</option><option value="merge">Merge (commit de merge)</option><option value="ff">Solo fast-forward (falla si divergen)</option></select></label>
+      <label class="cfg-chk"><input id="cfgPlus" type="checkbox" checked> Incluir extras recomendados</label>
+    </div>
+    <div class="wb" style="padding:0"><div class="code" style="margin:0;border:none;border-radius:0"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre id="cfgOut"></pre></div></div>
+  </div>
+  <p>La opción <code>--global</code> guarda la configuración en <code>~/.gitconfig</code> y vale para todos tus repositorios. Sin <code>--global</code> se guarda en el repo actual (<code>.git/config</code>) y gana sobre la global: útil para usar el correo del trabajo solo en los proyectos del trabajo.</p>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git config --list --show-origin     # toda tu configuración y de qué archivo viene
+git config user.email               # el valor que usará este repo</pre></div>
+  <div class="tip"><b class="h">Dos detalles que ahorran problemas</b>Usa en <code>user.email</code> el mismo correo de tu cuenta de GitHub o GitLab, para que tus commits aparezcan a tu nombre. Y con <code>init.defaultBranch main</code> tus repos nuevos empiezan en <code>main</code>, que es lo que esperan GitHub y la mayoría de los equipos (y lo que Git 3.0 hará por defecto).</div>
+  <button class="done-btn" data-done="b2">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="b3" data-t="Tu primer repositorio">
+  <div class="lnum">Lección 1.3</div><h2>Tu primer repositorio</h2>
+  <p>Hay dos formas de tener un repositorio: crearlo en una carpeta que ya tienes, o clonar uno que existe en un servidor.</p>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>cd ~/proyectos/tienda
+git init                       # crea la carpeta oculta .git: ya es un repositorio
+
+# o bien, traer uno que ya existe (con toda su historia):
+git clone https://github.com/ana/tienda.git</pre></div>
+  <p><code>git init</code> no toca tus archivos. Solo crea una carpeta oculta, <code>.git</code>, donde Git guardará toda la historia. <b>Si borras <code>.git</code>, borras la historia</b>; tus archivos actuales quedan, pero dejan de ser un repositorio.</p>
+  <div class="simple"><b class="h">En simple</b><p>Un repositorio es tu carpeta de siempre más una carpeta oculta <code>.git</code> con la historia. En el nivel Experto abrimos esa carpeta y vemos qué hay dentro.</p></div>
+  <h3>El comando que más vas a usar</h3>
+  <p><code>git status</code> te dice en qué rama estás y en qué estado está cada archivo. Úsalo antes y después de cada cosa que hagas: es la forma más rápida de no perderte.</p>
+  <div class="code"><div class="ch"><span>salida de git status en un repo nuevo</span><button class="copy">copiar</button></div><pre data-hl>En la rama main
+
+No hay commits todavía
+
+Archivos sin seguimiento:
+  (usa "git add &lt;archivo&gt;..." para incluirlo a lo que será confirmado)
+	index.html
+	estilos.css</pre></div>
+  <p>Git en español dice «confirmar» donde casi todo el mundo dice <b>commit</b>. En esta guía usamos los nombres en inglés, que son los que vas a ver en la documentación, en GitHub y en tu equipo. Si prefieres la terminal en inglés: <code>LANG=en_US.UTF-8 git status</code>. Las animaciones de esta guía muestran la salida en inglés, que es la que aparece en casi toda la documentación y en los mensajes de error que vas a buscar en internet.</p>
+  <button class="done-btn" data-done="b3">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="b4" data-t="Las tres áreas: trabajo, staging y repositorio">
+  <div class="lnum">Lección 1.4</div><h2>Las tres áreas: trabajo, staging y repositorio</h2>
+  <p>Esta es la idea que más confunde al empezar, y la que más ayuda después. Tus cambios pasan por tres lugares antes de quedar guardados:</p>
+  <div class="cols3">
+    <div class="mini"><b>Directorio de trabajo</b>Tus archivos, tal como los ves en el editor. Aquí cambias cosas.</div>
+    <div class="mini"><b>Staging (índice)</b>Una zona de preparación: lo que pongas aquí es lo que irá en el próximo commit.</div>
+    <div class="mini"><b>Repositorio</b>La historia guardada en <code>.git</code>: cada commit, para siempre.</div>
+  </div>
+  <div data-escena="tres-areas" tabindex="0"></div>
+  <p>¿Para qué el paso intermedio? Porque casi nunca cambias una sola cosa. Arreglas un bug, de paso renombras una variable y dejas un <code>console.log</code> de prueba. El staging te deja elegir qué va en cada commit, para que cada uno cuente una sola historia.</p>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git add index.html app.js      # agrega dos archivos al staging
+git add .                      # agrega todo lo cambiado en esta carpeta y sus subcarpetas
+git add -p                     # revisa cada trozo cambiado y elige cuáles agregar
+git commit -m "agrega el buscador de productos"</pre></div>
+  <div class="tip"><b class="h">git add -p es un superpoder</b>Te muestra cada bloque cambiado y pregunta <code>y</code> (sí), <code>n</code> (no) o <code>s</code> (dividir en partes más chicas). Así un archivo con dos cambios distintos puede ir en dos commits distintos.</div>
+  <button class="done-btn" data-done="b4">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="b5" data-t="Qué es un commit">
+  <div class="lnum">Lección 1.5</div><h2>Qué es un commit</h2>
+  <p>Mucha gente cree que Git guarda las diferencias entre versiones. No: cada commit guarda una <b>foto completa</b> del proyecto. Lo que no cambió no se copia otra vez: el commit nuevo apunta al mismo contenido que ya estaba guardado.</p>
+  <div data-escena="instantanea" tabindex="0"></div>
+  <p>Además de la foto, cada commit guarda:</p>
+  <ul>
+    <li><b>Su padre</b>: el commit anterior. Así se forma la historia, como una cadena que apunta hacia atrás.</li>
+    <li><b>Autor y fecha</b>: quién escribió el cambio y cuándo.</li>
+    <li><b>Mensaje</b>: por qué existe este cambio.</li>
+    <li><b>Un hash</b>: un identificador como <code>3f9a2c1</code>, calculado a partir de todo lo anterior. Es su nombre único.</li>
+  </ul>
+  <div class="simple"><b class="h">En simple</b><p>Un commit es una foto completa del proyecto más una nota que dice «vengo de este otro commit». La historia de Git es una cadena de fotos que apuntan hacia atrás.</p></div>
+  <div class="tip"><b class="h">¿Cada cuánto hacer commit?</b>Cada vez que algo funciona y puedes describirlo en una frase. Commits chicos son más fáciles de revisar, de revertir y de entender meses después. «Arregla el total del carrito» es un buen commit; «cambios del martes», no.</div>
+  <button class="done-btn" data-done="b5">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="b6" data-t="Dentro de un commit: blobs, trees y hashes">
+  <div class="lnum">Lección 1.6</div><h2>Dentro de un commit: blobs, trees y hashes</h2>
+  <p>Git guarda todo con solo tres tipos de objeto. Conocerlos explica por qué Git es tan rápido y por qué nunca pierde datos sin avisar.</p>
+  <table class="ref">
+    <thead><tr><th>Objeto</th><th>Qué guarda</th></tr></thead>
+    <tbody>
+      <tr><td><b>Blob</b></td><td>El contenido de un archivo. Solo el contenido: ni el nombre ni la carpeta</td></tr>
+      <tr><td><b>Tree</b></td><td>Una carpeta: la lista de nombres de archivo, sus permisos y el hash de cada blob o subcarpeta</td></tr>
+      <tr><td><b>Commit</b></td><td>El tree raíz del proyecto, el padre, autor, fecha y mensaje</td></tr>
+    </tbody>
+  </table>
+  <div data-escena="objetos" tabindex="0"></div>
+  <p>Cada objeto se guarda con el nombre de su <b>hash</b>: un número de 40 caracteres calculado con SHA-1 a partir del contenido. Mismo contenido, mismo hash, siempre y en cualquier computador. Por eso dos archivos idénticos ocupan un solo blob, y por eso si cambia una letra de un archivo, cambia el hash de su blob, de su carpeta y del commit.</p>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git cat-file -p HEAD            # el commit actual por dentro
+git cat-file -p HEAD^{tree}     # la carpeta raíz de ese commit
+git log --oneline               # hashes abreviados: con 7 caracteres basta</pre></div>
+  <div class="tip"><b class="h">SHA-256 y Git 3.0</b>SHA-1 ya tiene ataques conocidos, y Git lo usa con detección de colisiones. Git 3.0 (previsto para 2027) creará los repositorios nuevos con SHA-256, de 64 caracteres. Para tu día a día no cambia nada: seguirás usando hashes abreviados.</div>
+  <button class="done-btn" data-done="b6">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="b7" data-t="Ver el historial y los cambios">
+  <div class="lnum">Lección 1.7</div><h2>Ver el historial y los cambios</h2>
+  <p>Dos preguntas que te harás todos los días: «¿qué cambié?» y «¿qué pasó antes?». La primera la responde <code>git diff</code>; la segunda, <code>git log</code>.</p>
+  <div data-escena="diff" tabindex="0"></div>
+  <table class="ref">
+    <thead><tr><th>Comando</th><th>Compara</th></tr></thead>
+    <tbody>
+      <tr><td><code>git diff</code></td><td>Tu directorio de trabajo con el staging: lo que cambiaste y todavía no agregaste</td></tr>
+      <tr><td><code>git diff --staged</code></td><td>El staging con el último commit: lo que entraría si haces commit ahora</td></tr>
+      <tr><td><code>git diff HEAD</code></td><td>Tu directorio de trabajo con el último commit: todo lo que cambió</td></tr>
+      <tr><td><code>git diff main feature</code></td><td>Dos ramas o dos commits cualesquiera</td></tr>
+    </tbody>
+  </table>
+  <h3>El historial, a tu medida</h3>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git log --oneline --graph --all     # todo el grafo, una línea por commit
+git log -p -2                       # los dos últimos commits con sus cambios
+git log --stat                      # qué archivos tocó cada commit
+git log --author="Ana" --since="2 weeks ago"
+git log -- src/carrito.js           # solo los commits que tocaron ese archivo
+git show 3f9a2c1                    # un commit: mensaje y cambios</pre></div>
+  <div class="tip"><b class="h">Guárdalo como alias</b><code>git config --global alias.lg "log --oneline --graph --all --decorate"</code> y desde ahora <code>git lg</code> te muestra el grafo completo. Es lo más parecido a las animaciones de esta guía que vas a ver en la terminal.</div>
+  <p>Con <code>q</code> sales del historial, con <code>/texto</code> buscas dentro y con la barra espaciadora avanzas una página.</p>
+  <button class="done-btn" data-done="b7">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="b8" data-t="Ignorar archivos con .gitignore">
+  <div class="lnum">Lección 1.8</div><h2>Ignorar archivos con .gitignore</h2>
+  <p>Hay archivos que nunca deben entrar al repositorio: dependencias que se reinstalan (<code>node_modules/</code>), archivos generados (<code>dist/</code>), configuraciones locales y, sobre todo, <b>secretos</b> como <code>.env</code>. Un archivo <code>.gitignore</code> en la raíz le dice a Git que haga como si no existieran.</p>
+  <div class="wd" id="giW">
+    <div class="wh"><span class="dot"></span><span class="tt">Probador de .gitignore</span></div>
+    <div class="wb gi-grid">
+      <label>.gitignore<textarea id="giRules" rows="9" spellcheck="false"># dependencias y build
+node_modules/
+dist/
+# secretos, salvo la plantilla
+.env*
+!.env.example
+# logs en cualquier carpeta
+*.log
+/borradores</textarea></label>
+      <label>Archivos del proyecto (uno por línea)<textarea id="giFiles" rows="9" spellcheck="false">node_modules/react/index.js
+src/app.js
+.env
+.env.example
+.env.local
+logs/servidor.log
+dist/index.html
+borradores/idea.md
+src/borradores/nota.md</textarea></label>
+    </div>
+    <div class="wb" id="giOut"></div>
+  </div>
+  <table class="ref">
+    <thead><tr><th>Patrón</th><th>Qué ignora</th></tr></thead>
+    <tbody>
+      <tr><td><code>*.log</code></td><td>Cualquier archivo que termine en .log, en cualquier carpeta</td></tr>
+      <tr><td><code>dist/</code></td><td>Carpetas llamadas dist (la barra final dice «solo carpetas»)</td></tr>
+      <tr><td><code>/borradores</code></td><td>Solo la de la raíz (la barra inicial ancla el patrón)</td></tr>
+      <tr><td><code>docs/**/*.pdf</code></td><td>PDFs dentro de docs, a cualquier profundidad</td></tr>
+      <tr><td><code>!.env.example</code></td><td>Excepción: este sí se versiona, aunque una regla anterior lo ignore</td></tr>
+    </tbody>
+  </table>
+  <div class="tip warn"><b class="h">.gitignore no saca lo que ya está versionado</b>Si un archivo ya entró en un commit, agregarlo a <code>.gitignore</code> no basta. Primero quítalo del índice sin borrarlo del disco: <code>git rm --cached .env</code>. Y si era un secreto que ya subiste, cámbialo: quedó en la historia.</div>
+  <p>Para saber qué regla ignora un archivo: <code>git check-ignore -v ruta/al/archivo</code>. GitHub mantiene plantillas por lenguaje en <a href="https://github.com/github/gitignore">github/gitignore</a>.</p>
+  <button class="done-btn" data-done="b8">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="b9" data-t="Deshacer lo básico">
+  <div class="lnum">Lección 1.9</div><h2>Deshacer lo básico</h2>
+  <p>Para deshacer algo, primero pregúntate <b>dónde está</b> lo que quieres deshacer: en tu directorio de trabajo, en el staging o en el último commit. Cada lugar tiene su comando.</p>
+  <div data-escena="deshacer" tabindex="0"></div>
+  <table class="ref">
+    <thead><tr><th>Quiero…</th><th>Comando</th><th>¿Se pierde algo?</th></tr></thead>
+    <tbody>
+      <tr><td>Descartar lo que cambié en un archivo</td><td><code>git restore app.js</code></td><td>Sí: los cambios sin guardar se pierden para siempre</td></tr>
+      <tr><td>Sacar un archivo del staging</td><td><code>git restore --staged app.js</code></td><td>No: los cambios siguen en el archivo</td></tr>
+      <tr><td>Corregir el último commit (mensaje o archivos)</td><td><code>git commit --amend</code></td><td>No, pero el commit cambia de hash</td></tr>
+      <tr><td>Borrar archivos nuevos sin seguimiento</td><td><code>git clean -n</code> y luego <code>git clean -f</code></td><td>Sí: <code>-n</code> muestra qué borraría</td></tr>
+    </tbody>
+  </table>
+  <div class="tip warn"><b class="h">amend reemplaza, no edita</b><code>--amend</code> crea un commit nuevo con otro hash. Si ya subiste el commit original y alguien más trabaja sobre él, corregirlo te obliga a reescribir historia compartida. Regla práctica: amend solo antes del push.</div>
+  <p>Vas a ver <code>git checkout -- archivo</code> en tutoriales viejos: hace lo mismo que <code>git restore archivo</code>. <code>restore</code> existe desde Git 2.23 y es más claro, porque <code>checkout</code> hace dos trabajos distintos (cambiar de rama y restaurar archivos).</p>
+  <button class="done-btn" data-done="b9">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="b10" data-t="Mensajes de commit que sirven">
+  <div class="lnum">Lección 1.10</div><h2>Mensajes de commit que sirven</h2>
+  <p>Un mensaje de commit lo va a leer alguien (tú, en seis meses) que intenta entender por qué el código es como es. La convención que usa casi todo el mundo:</p>
+  <ul>
+    <li><b>Asunto</b> de hasta 50 caracteres (72 como máximo), que diga qué hace el commit: «agrega», «corrige», «elimina».</li>
+    <li>Una <b>línea en blanco</b>.</li>
+    <li>Un <b>cuerpo</b> opcional que explique el porqué y lo que no es obvio. El qué ya lo muestra el diff.</li>
+  </ul>
+  <div class="wd" id="msgW">
+    <div class="wh"><span class="dot"></span><span class="tt">Revisor de mensajes</span></div>
+    <div class="wb">
+      <textarea id="msgIn" rows="4" spellcheck="false" aria-label="Mensaje de commit">fix(carrito): corrige el total cuando hay cupones
+
+El descuento se aplicaba antes del IVA. Ahora se calcula
+sobre el total con impuestos, como pide contabilidad.</textarea>
+      <div class="msg-ex"><span>Ejemplos:</span>
+        <button class="chip" type="button" data-msg="wip">malo</button>
+        <button class="chip" type="button" data-msg="Arreglé el bug del carrito que pasaba con los cupones y además cambié estilos.">largo</button>
+        <button class="chip" type="button" data-msg="feat: agrega búsqueda por categoría">conventional</button>
+      </div>
+      <ul class="msg-out" id="msgOut"></ul>
+    </div>
+  </div>
+  <p><b>Conventional Commits</b> es un formato opcional que agrega un tipo al comienzo (<code>feat</code>, <code>fix</code>, <code>docs</code>, <code>refactor</code>, <code>test</code>…). Muchos equipos lo usan para generar el changelog y calcular la próxima versión automáticamente. Si tu equipo lo usa, síguelo; si no, un buen asunto en presente basta.</p>
+  <div class="tip"><b class="h">Escribe el mensaje en el editor</b>Con <code>git commit</code> (sin <code>-m</code>) se abre tu editor y es más fácil escribir asunto y cuerpo. Las líneas que empiezan con <code>#</code> son ayuda de Git y no quedan en el mensaje.</div>
+  <button class="done-btn" data-done="b10">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="bq" data-t="Quiz · Básico">
+  <div class="lnum">Quiz final</div><h2>Quiz · Nivel Básico</h2>
+  <div class="wd quiz" data-quiz="basico"><div class="wh"><span class="dot"></span><span class="tt">Responde todas correctamente para aprobar</span></div><div class="wb"></div></div>
+  <div class="next"><div><h3>Siguiente: Intermedio</h3><p>Ramas, fusiones, conflictos, remotos y pull requests.</p></div><a class="btn lv" href="#intermedio" style="--lv:var(--i)">Continuar</a></div>
+</article>
+
+    </main>
+  </div>
+</section>
+<section class="view" id="v-intermedio" style="--lv:var(--i)">
+  <div class="lvhead"><div class="bigglyph">02</div><div class="tag">Nivel 02 · Intermedio</div><h1>Ramas y equipo</h1><p>Ramas, fusiones y conflictos, y cómo trabajar con un repositorio remoto: fetch, pull, push y pull requests. Lo que necesitas para trabajar con otras personas sin miedo a romper nada.</p></div>
+  <div class="lvbody">
+    <aside class="toc"></aside>
+    <main>
+
+<article class="lesson" id="i1" data-t="Qué es una rama de verdad">
+  <div class="lnum">Lección 2.1</div><h2>Qué es una rama de verdad</h2>
+  <p>En otros sistemas, crear una rama copia el proyecto entero. En Git, una rama es <b>un nombre que apunta a un commit</b>. Nada más. Por eso crear una rama es instantáneo, y por eso en Git se crean ramas para todo.</p>
+  <div data-escena="ramas" tabindex="0"></div>
+  <div class="simple"><b class="h">En simple</b><p>Los commits son la historia; las ramas son post-its pegados en algunos commits. Cuando haces commit, el post-it de la rama en la que estás se mueve al commit nuevo.</p></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git branch                    # lista las ramas; * marca la actual
+git branch feature            # crea una rama (no te cambia a ella)
+git switch -c feature         # crea y cambia en un solo paso
+git branch -m viejo nuevo     # renombra
+git branch -d feature         # borra (si ya está fusionada; -D fuerza)</pre></div>
+  <p>Ahora pruébalo tú. Escribe los comandos en la terminal del laboratorio y mira cómo se mueven las etiquetas:</p>
+  <div data-lab="ramas"></div>
+  <button class="done-btn" data-done="i1">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="i2" data-t="HEAD y cambiar de rama">
+  <div class="lnum">Lección 2.2</div><h2>HEAD y cambiar de rama</h2>
+  <p><b>HEAD</b> es la respuesta de Git a «¿dónde estoy?». Normalmente apunta a una rama (<code>HEAD → main</code>), y esa rama apunta a un commit. Cuando cambias de rama, Git mueve HEAD y deja tus archivos como estaban en el commit de esa rama.</p>
+  <div data-escena="head" tabindex="0"></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git switch feature        # cambia a feature
+git switch -              # vuelve a la rama anterior (como cd -)
+git switch -c arreglo     # crea arreglo desde donde estás y cambia a ella</pre></div>
+  <div class="tip"><b class="h">switch o checkout</b><code>git checkout feature</code> hace lo mismo y sigue existiendo: no está deprecado y no se va a eliminar. Desde Git 2.23, <code>switch</code> (cambiar de rama) y <code>restore</code> (restaurar archivos) separan sus dos trabajos, y los errores son más claros. Esta guía usa <code>switch</code>.</div>
+  <div class="tip warn"><b class="h">Si Git se niega a cambiar de rama</b>Tienes cambios sin guardar en un archivo que es distinto en la otra rama, y cambiar los pisaría. Haz commit, guárdalos con <code>git stash</code> (lección 2.9) o descártalos. Los cambios que no chocan viajan contigo a la otra rama.</div>
+  <button class="done-btn" data-done="i2">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="i3" data-t="Fusionar: fast-forward">
+  <div class="lnum">Lección 2.3</div><h2>Fusionar: fast-forward</h2>
+  <p>Terminaste tu trabajo en <code>feature</code> y quieres llevarlo a <code>main</code>. Te cambias a <code>main</code> y ejecutas <code>git merge feature</code>. Lo que pasa depende de la forma del grafo.</p>
+  <p>El caso más simple: nadie tocó <code>main</code> desde que creaste <code>feature</code>. Entonces no hay nada que combinar: Git solo <b>adelanta</b> la etiqueta <code>main</code> hasta el último commit de <code>feature</code>. Se llama <b>fast-forward</b>.</p>
+  <div data-escena="fast-forward" tabindex="0"></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git switch main
+git merge feature            # fast-forward si se puede; si no, commit de merge
+git merge --no-ff feature    # siempre crea un commit de merge (deja registro de la rama)
+git merge --ff-only feature  # solo si es fast-forward; si no, falla sin tocar nada</pre></div>
+  <div class="simple"><b class="h">En simple</b><p>Fast-forward = «main estaba atrás, ahora está adelante». No se crea ningún commit: solo se mueve una etiqueta.</p></div>
+  <button class="done-btn" data-done="i3">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="i4" data-t="Merge de tres vías">
+  <div class="lnum">Lección 2.4</div><h2>Merge de tres vías</h2>
+  <p>Ahora el caso real: mientras trabajabas en <code>feature</code>, alguien agregó commits a <code>main</code>. Las historias divergieron. Git busca el último commit que ambas ramas tienen en común (la <b>base</b>), mira qué cambió cada lado desde ahí y combina los dos conjuntos de cambios en un <b>commit de merge</b>, que tiene dos padres.</p>
+  <div data-escena="merge" tabindex="0"></div>
+  <p>Se llama «de tres vías» porque compara tres versiones: la base, tu rama y la otra. Si un lado cambió un archivo y el otro no, gana el cambio. Si los dos cambiaron partes distintas del mismo archivo, Git junta ambas. Solo si los dos cambiaron <b>las mismas líneas</b> de forma distinta, te pregunta: eso es un conflicto (siguiente lección).</p>
+  <div data-lab="merge"></div>
+  <div class="tip"><b class="h">La estrategia ort</b>Desde Git 2.34, el algoritmo de merge por defecto se llama <code>ort</code>. Por eso ves «Merge made by the 'ort' strategy». Es más rápido y maneja mejor los archivos renombrados que el anterior, <code>recursive</code>.</div>
+  <button class="done-btn" data-done="i4">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="i5" data-t="Conflictos sin pánico">
+  <div class="lnum">Lección 2.5</div><h2>Conflictos sin pánico</h2>
+  <p>Un conflicto no es un error: es Git diciendo «las dos ramas cambiaron lo mismo de forma distinta, y no me corresponde a mí decidir». Git deja el merge a medias, marca el archivo y espera a que elijas.</p>
+  <div data-escena="conflicto" tabindex="0"></div>
+  <h3>Leer los marcadores</h3>
+  <div class="code"><div class="ch"><span>precio.js durante el conflicto</span><button class="copy">copiar</button></div><pre data-hl>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+const precio = 120;
+=======
+const precio = 95;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature</pre></div>
+  <p>Arriba de <code>=======</code> está tu versión (la de <code>HEAD</code>, la rama en la que estás); abajo, la que llega de la otra rama. Tu trabajo: dejar el archivo como debe quedar y borrar los tres marcadores. Practícalo:</p>
+  <div class="wd" id="cfW">
+    <div class="wh"><span class="dot"></span><span class="tt">Resuelve el conflicto</span></div>
+    <div class="wb">
+      <div class="cf-acts">
+        <button class="btn sm" type="button" data-cf="ours">Quedarme con lo mío</button>
+        <button class="btn sm" type="button" data-cf="theirs">Quedarme con lo que llega</button>
+        <button class="btn sm" type="button" data-cf="both">Combinar ambos</button>
+        <button class="btn sm" type="button" data-cf="reset">Empezar de nuevo</button>
+      </div>
+      <textarea id="cfEd" rows="8" spellcheck="false" aria-label="Archivo con conflicto"></textarea>
+      <div class="cf-bar"><button class="btn sm pri" type="button" data-cf="add">git add precio.js</button><p class="cf-msg" id="cfMsg"></p></div>
+    </div>
+  </div>
+  <h3>El flujo completo</h3>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git merge feature          # CONFLICT (content): Merge conflict in precio.js
+git status                 # "both modified: precio.js"
+# edita el archivo, deja el resultado correcto y borra los marcadores
+git add precio.js          # marca el archivo como resuelto
+git commit                 # crea el commit de merge (el mensaje ya viene escrito)
+
+git merge --abort          # o vuelve atrás como si nada hubiera pasado</pre></div>
+  <div class="tip"><b class="h">Nuevo en Git 2.56: git add --resolved</b>Agrega al staging los archivos que tenían conflicto, sin arrastrar otros cambios sin relación, y antes revisa que no queden marcadores: si encuentra alguno, se detiene sin agregar nada. Útil cuando el merge toca muchos archivos.</div>
+  <div class="tip"><b class="h">Menos conflictos, más chicos</b>Integra seguido (ramas de días, no de semanas), haz commits chicos y no mezcles cambios de formato con cambios de lógica. Para ver también la versión base en los marcadores: <code>git config --global merge.conflictStyle zdiff3</code>.</div>
+  <button class="done-btn" data-done="i5">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="i6" data-t="Remotos: clone, origin y ramas remotas">
+  <div class="lnum">Lección 2.6</div><h2>Remotos: clone, origin y ramas remotas</h2>
+  <p>Un <b>remoto</b> es otra copia del repositorio, normalmente en un servidor como GitHub. Cuando clonas, Git llama <code>origin</code> al remoto de donde viene, y crea dos cosas que conviene distinguir:</p>
+  <div class="cols3">
+    <div class="mini"><b>main</b>Tu rama local. Se mueve cuando tú haces commit, merge o reset.</div>
+    <div class="mini"><b>origin/main</b>Una rama remota: tu recuerdo de dónde estaba <code>main</code> en GitHub la última vez que preguntaste. Solo se mueve con fetch, pull o push.</div>
+    <div class="mini"><b>Upstream</b>La conexión entre las dos: <code>main</code> «sigue» a <code>origin/main</code>. Así Git sabe si vas adelante o atrás.</div>
+  </div>
+  <div data-escena="remotos" tabindex="0"></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git remote -v                   # remotos y sus URL
+git branch -vv                  # cada rama con su upstream y si va adelante o atrás
+git remote add origin git@github.com:ana/tienda.git   # conectar un repo creado con init</pre></div>
+  <div class="tip"><b class="h">HTTPS o SSH</b>Con HTTPS, GitHub pide un token (no tu contraseña) o un gestor de credenciales; Git for Windows y GitHub CLI (<code>gh auth login</code>) lo configuran solos. Con SSH generas una llave una vez (<code>ssh-keygen -t ed25519</code>), la agregas a tu cuenta y no vuelves a escribir nada.</div>
+  <button class="done-btn" data-done="i6">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="i7" data-t="fetch, pull y push">
+  <div class="lnum">Lección 2.7</div><h2>fetch, pull y push</h2>
+  <p>Git nunca habla con el servidor por su cuenta. Tres comandos mueven commits entre tu repositorio y el remoto:</p>
+  <table class="ref">
+    <thead><tr><th>Comando</th><th>Qué hace</th><th>¿Toca tus ramas?</th></tr></thead>
+    <tbody>
+      <tr><td><code>git fetch</code></td><td>Descarga commits nuevos y mueve <code>origin/*</code></td><td>No. Siempre seguro</td></tr>
+      <tr><td><code>git pull</code></td><td><code>fetch</code> y después integra <code>origin/tu-rama</code> en tu rama</td><td>Sí: merge, rebase o fast-forward</td></tr>
+      <tr><td><code>git push</code></td><td>Sube tus commits y mueve tu rama en el servidor</td><td>Mueve la del servidor</td></tr>
+    </tbody>
+  </table>
+  <div data-escena="sync" tabindex="0"></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git fetch                       # mira qué hay de nuevo sin tocar nada
+git log main..origin/main       # qué commits llegaron
+git pull                        # trae e integra
+git push                        # sube
+git push -u origin feature      # primera vez de una rama: crea y conecta el upstream</pre></div>
+  <div class="tip"><b class="h">pull con historias distintas</b>Si tú tienes commits locales y el servidor también, <code>git pull</code> tiene que combinarlos. Con <code>pull.rebase true</code> tus commits se reaplican encima (historia lineal); con <code>false</code>, se crea un commit de merge. Si no lo configuraste, Git te pide elegir. Lo configuraste en la lección 1.2.</div>
+  <button class="done-btn" data-done="i7">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="i8" data-t="Cuando push es rechazado">
+  <div class="lnum">Lección 2.8</div><h2>Cuando push es rechazado</h2>
+  <p>Tarde o temprano verás esto:</p>
+  <div class="code"><div class="ch"><span>salida</span><button class="copy">copiar</button></div><pre data-hl> ! [rejected]        main -&gt; main (fetch first)
+error: failed to push some refs to 'github.com:ana/tienda.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally.</pre></div>
+  <p>No es un error tuyo: alguien subió commits que tú no tienes. Si Git aceptara tu push, su trabajo desaparecería del servidor. Por eso solo acepta pushes que <b>avanzan</b> la rama remota (fast-forward).</p>
+  <div data-escena="push-rechazado" tabindex="0"></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git pull --rebase     # trae lo nuevo y pone tus commits encima
+git push              # ahora sí es un avance</pre></div>
+  <div class="tip warn"><b class="h">No fuerces en ramas compartidas</b><code>git push --force</code> reemplaza la rama del servidor por la tuya, y borra lo que otros subieron. En tu propia rama, tras un rebase, a veces hace falta forzar: usa <code>--force-with-lease</code> (lección 3.9), que se niega si hay trabajo ajeno que no viste.</div>
+  <button class="done-btn" data-done="i8">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="i9" data-t="Guardar a medias: stash">
+  <div class="lnum">Lección 2.9</div><h2>Guardar a medias: stash</h2>
+  <p>Estás a mitad de algo y te piden un arreglo urgente en otra rama. No quieres hacer un commit de «wip» ni perder lo que llevas. <code>git stash</code> guarda tus cambios en una pila y deja el directorio de trabajo limpio.</p>
+  <div data-escena="stash" tabindex="0"></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git stash push -m "búsqueda a medias"   # guarda y limpia
+git stash -u                            # incluye archivos nuevos sin seguimiento
+git stash list                          # stash@{0}, stash@{1}...
+git stash pop                           # aplica el último y lo quita de la pila
+git stash apply stash@{1}               # aplica uno y lo deja en la pila
+git stash drop stash@{1}                # borra uno</pre></div>
+  <div class="tip"><b class="h">Úsalo como bolsillo, no como cajón</b>Un stash es fácil de olvidar: no tiene rama y su nombre es un número. Para algo que va a durar más de un rato, mejor una rama con un commit temporal, o un worktree (nivel Experto).</div>
+  <button class="done-btn" data-done="i9">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="i10" data-t="Tags y versiones">
+  <div class="lnum">Lección 2.10</div><h2>Tags y versiones</h2>
+  <p>Un <b>tag</b> es como una rama que nunca se mueve: un nombre fijo para un commit. Se usa para marcar versiones publicadas: <code>v1.0.0</code>, <code>v1.1.0</code>. En los grafos de esta guía, los tags son las etiquetas blancas.</p>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git tag -a v1.2.0 -m "Versión 1.2.0"    # tag anotado: con autor, fecha y mensaje
+git tag v1.2.0-beta                     # tag liviano: solo el nombre
+git tag -l "v1.*"                       # lista
+git push origin v1.2.0                  # los tags no suben con un push normal
+git push --tags                         # sube todos
+git switch --detach v1.2.0              # mira el código de esa versión</pre></div>
+  <p>Usa tags <b>anotados</b> para versiones: guardan quién y cuándo, y se pueden firmar. La convención más común para los números es <b>versionado semántico</b> (MAYOR.MENOR.PARCHE): sube MAYOR si rompes compatibilidad, MENOR si agregas funciones, PARCHE si solo corriges.</p>
+  <div class="tip"><b class="h">Releases en GitHub</b>Un «Release» de GitHub es un tag más notas y archivos descargables. Crea el tag con Git (o desde la interfaz) y GitHub arma la página.</div>
+  <button class="done-btn" data-done="i10">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="i11" data-t="El flujo con pull requests">
+  <div class="lnum">Lección 2.11</div><h2>El flujo con pull requests</h2>
+  <p>Casi todos los equipos trabajan igual: nadie hace commit directo en <code>main</code>. Cada cambio vive en su rama, se sube, y se propone con un <b>pull request</b> (en GitLab, merge request), donde otras personas lo revisan y las pruebas automáticas lo validan antes de fusionarlo.</p>
+  <div data-escena="pull-request" tabindex="0"></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git switch main && git pull          # parte desde main al día
+git switch -c login-google           # una rama por cambio
+# ... commits ...
+git push -u origin login-google      # súbela y abre el pull request en GitHub
+# ... revisión: más commits y git push actualizan el mismo PR ...
+git switch main && git pull          # después del merge, trae main
+git branch -d login-google           # y borra tu rama local</pre></div>
+  <table class="ref">
+    <thead><tr><th>Botón de merge en GitHub</th><th>Resultado en main</th></tr></thead>
+    <tbody>
+      <tr><td>Create a merge commit</td><td>Todos tus commits más un commit de merge</td></tr>
+      <tr><td>Squash and merge</td><td>Un solo commit con todos tus cambios (el más común)</td></tr>
+      <tr><td>Rebase and merge</td><td>Tus commits copiados encima de main, sin commit de merge</td></tr>
+    </tbody>
+  </table>
+  <div class="tip"><b class="h">Con squash, borra tu rama después</b>Tras un «Squash and merge», tus commits originales no están en <code>main</code> (está su resumen). Si sigues trabajando en la misma rama, la próxima PR va a mostrar los cambios viejos otra vez. Rama nueva para cada cambio. Desde Git 2.56, <code>git branch --delete-merged origin</code> limpia las ramas locales ya fusionadas.</div>
+  <button class="done-btn" data-done="i11">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="iq" data-t="Quiz · Intermedio">
+  <div class="lnum">Quiz final</div><h2>Quiz · Nivel Intermedio</h2>
+  <div class="wd quiz" data-quiz="intermedio"><div class="wh"><span class="dot"></span><span class="tt">Responde todas correctamente para aprobar</span></div><div class="wb"></div></div>
+  <div class="next"><div><h3>Siguiente: Avanzado</h3><p>Rebase, reset, revert, reflog y cómo rescatar casi cualquier cosa.</p></div><a class="btn lv" href="#avanzado" style="--lv:var(--a)">Continuar</a></div>
+</article>
+
+    </main>
+  </div>
+</section>
+<section class="view" id="v-avanzado" style="--lv:var(--a)">
+  <div class="lvhead"><div class="bigglyph">03</div><div class="tag">Nivel 03 · Avanzado</div><h1>Reescribir y rescatar</h1><p>Rebase, rebase interactivo, cherry-pick, reset y revert para dar forma a la historia, y reflog, bisect y force push seguro para salir de cualquier lío. Aquí se pierde el miedo a Git.</p></div>
+  <div class="lvbody">
+    <aside class="toc"></aside>
+    <main>
+
+<article class="lesson" id="a1" data-t="Rebase: mover commits a otra base">
+  <div class="lnum">Lección 3.1</div><h2>Rebase: mover commits a otra base</h2>
+  <p>Tu rama <code>feature</code> salió de <code>main</code> hace unos días, y <code>main</code> avanzó. Con merge juntarías las dos historias. Con <b>rebase</b> haces otra cosa: tomas tus commits y los <b>vuelves a aplicar</b>, uno por uno, encima del <code>main</code> actual, como si hubieras empezado tu rama hoy.</p>
+  <div data-escena="rebase" tabindex="0"></div>
+  <p>El detalle clave: los commits de un rebase son <b>copias nuevas</b>. Tienen el mismo cambio y el mismo mensaje, pero otro padre, y por lo tanto otro hash. Los originales no se borran: quedan sin rama que los apunte, y el reflog los recuerda.</p>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git switch feature
+git rebase main             # reaplica tus commits encima de main
+# si hay conflicto: resuélvelo, git add, y luego
+git rebase --continue       # sigue con el próximo commit
+git rebase --abort          # o vuelve a como estaba todo antes</pre></div>
+  <div class="tip warn"><b class="h">La regla de oro</b>No hagas rebase de commits que otras personas ya tienen. Si alguien basó trabajo en tus commits originales y tú los reemplazas por copias, sus historias y la tuya ya no coinciden. Rebase sí, pero en tu rama, antes de compartirla (o en una rama solo tuya).</div>
+  <div data-lab="rebase"></div>
+  <button class="done-btn" data-done="a1">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="a2" data-t="¿Merge o rebase?">
+  <div class="lnum">Lección 3.2</div><h2>¿Merge o rebase?</h2>
+  <p>Las dos integran cambios; la diferencia es cómo queda la historia. Merge conserva lo que pasó de verdad (dos líneas que se unen). Rebase cuenta una historia más simple (una sola línea), a costa de reescribir tus commits.</p>
+  <div data-escena="merge-vs-rebase" tabindex="0"></div>
+  <table class="ref">
+    <thead><tr><th></th><th>Merge</th><th>Rebase</th></tr></thead>
+    <tbody>
+      <tr><td>Historia</td><td>Real, con bifurcaciones</td><td>Lineal, más fácil de leer</td></tr>
+      <tr><td>Hashes</td><td>No cambian</td><td>Tus commits cambian de hash</td></tr>
+      <tr><td>Conflictos</td><td>Se resuelven una vez</td><td>Pueden aparecer en cada commit reaplicado</td></tr>
+      <tr><td>Seguro en ramas compartidas</td><td>Sí</td><td>No</td></tr>
+    </tbody>
+  </table>
+  <div class="simple"><b class="h">Una regla que funciona</b><p>Usa <b>rebase para actualizar tu rama</b> con lo último de <code>main</code> antes de abrir o actualizar tu pull request. Usa <b>merge (o squash) para integrar</b> la rama terminada en <code>main</code>. Así tu rama se lee limpia y <code>main</code> nunca se reescribe.</p></div>
+  <button class="done-btn" data-done="a2">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="a3" data-t="Rebase interactivo: limpiar antes de compartir">
+  <div class="lnum">Lección 3.3</div><h2>Rebase interactivo: limpiar antes de compartir</h2>
+  <p>Mientras trabajas, haces commits como «wip», «arregla typo» o «ahora sí». Está bien: son tu borrador. Antes de pedir revisión, el <b>rebase interactivo</b> te deja editar esa serie: unir commits, cambiar mensajes, reordenarlos o borrarlos.</p>
+  <div data-escena="rebase-i" tabindex="0"></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git rebase -i main          # edita todos los commits de tu rama que no están en main
+git rebase -i HEAD~4        # o los últimos cuatro</pre></div>
+  <table class="ref">
+    <thead><tr><th>Palabra</th><th>Qué hace con ese commit</th></tr></thead>
+    <tbody>
+      <tr><td><code>pick</code> (p)</td><td>Lo deja tal cual</td></tr>
+      <tr><td><code>reword</code> (r)</td><td>Lo deja, pero te deja cambiar el mensaje</td></tr>
+      <tr><td><code>edit</code> (e)</td><td>Se detiene ahí para que cambies el contenido (luego <code>git rebase --continue</code>)</td></tr>
+      <tr><td><code>squash</code> (s)</td><td>Lo une al commit de arriba y te deja combinar los mensajes</td></tr>
+      <tr><td><code>fixup</code> (f)</td><td>Lo une al de arriba y descarta su mensaje</td></tr>
+      <tr><td><code>drop</code> (d)</td><td>Lo elimina</td></tr>
+    </tbody>
+  </table>
+  <p>En el editor, el commit más viejo va <b>arriba</b> (al revés que en <code>git log</code>). Para reordenar, mueve las líneas.</p>
+  <h3>Correcciones que se acomodan solas</h3>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git commit --fixup=a1b2c3d          # "fixup! ..." : corrige un commit anterior
+git rebase -i --autosquash main     # coloca y marca los fixup automáticamente
+git config --global rebase.autoSquash true   # siempre</pre></div>
+  <h3>Nuevo: git history (experimental)</h3>
+  <p>Git 2.54 agregó <code>git history</code> para las ediciones más comunes sin abrir un rebase interactivo. Git 2.55 sumó <code>fixup</code> y 2.56, <code>drop</code>. Por diseño, aborta si la operación generaría un conflicto, y todavía no funciona con historias que tienen merges.</p>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git history reword a1b2c3d     # cambia el mensaje de ese commit
+git history split a1b2c3d      # divide un commit en dos, eligiendo trozos
+git history fixup a1b2c3d      # mete lo que está en staging dentro de ese commit
+git history drop a1b2c3d       # lo elimina y reaplica los que venían después</pre></div>
+  <button class="done-btn" data-done="a3">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="a4" data-t="Cherry-pick: copiar un commit">
+  <div class="lnum">Lección 3.4</div><h2>Cherry-pick: copiar un commit</h2>
+  <p>A veces no quieres una rama entera, solo un commit. El caso típico: arreglaste un bug en <code>main</code> y necesitas el mismo arreglo en <code>release/1.0</code>, sin traer todo lo nuevo. <code>git cherry-pick</code> copia ese cambio y lo aplica encima de tu rama actual.</p>
+  <div data-escena="cherry-pick" tabindex="0"></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git switch release/1.0
+git cherry-pick -x a1b2c3d      # -x anota de qué commit viene la copia
+git cherry-pick A^..B           # una serie de commits (de A a B, incluidos)
+git cherry-pick --abort         # si hay conflicto y prefieres no seguir</pre></div>
+  <div class="tip"><b class="h">No lo uses para todo</b>Cada cherry-pick crea un commit duplicado (mismo cambio, otro hash). Si después fusionas las dos ramas, Git normalmente lo nota, pero la historia queda confusa. Para traer muchos commits, merge o rebase.</div>
+  <div data-lab="cherry-pick"></div>
+  <button class="done-btn" data-done="a4">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="a5" data-t="Reset: soft, mixed y hard">
+  <div class="lnum">Lección 3.5</div><h2>Reset: soft, mixed y hard</h2>
+  <p><code>git reset</code> asusta porque hace tres cosas distintas según la opción. Todo se aclara con las tres áreas de la lección 1.4: reset <b>mueve la rama actual</b> a otro commit, y luego, según el modo, iguala también el staging y el directorio de trabajo.</p>
+  <div data-escena="reset" tabindex="0"></div>
+  <table class="ref">
+    <thead><tr><th>Modo</th><th>Rama</th><th>Staging</th><th>Directorio de trabajo</th></tr></thead>
+    <tbody>
+      <tr><td><code>--soft</code></td><td>Se mueve</td><td>Igual</td><td>Igual</td></tr>
+      <tr><td><code>--mixed</code> (por defecto)</td><td>Se mueve</td><td>Se iguala al commit</td><td>Igual</td></tr>
+      <tr><td><code>--hard</code></td><td>Se mueve</td><td>Se iguala al commit</td><td>Se iguala al commit: lo no guardado se pierde</td></tr>
+    </tbody>
+  </table>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git reset --soft HEAD~1      # deshace el commit; los cambios quedan listos en staging
+git reset HEAD~1             # deshace el commit; los cambios quedan sin agregar
+git reset --hard HEAD~1      # deshace el commit y sus cambios
+git reset --hard origin/main # deja tu main idéntico al del servidor</pre></div>
+  <div class="tip warn"><b class="h">--hard borra de verdad lo que no estaba guardado</b>Los commits que «deshaces» se recuperan con el reflog. Pero los cambios que no estaban en ningún commit ni en el staging desaparecen sin rastro. Antes de un <code>--hard</code>, un <code>git status</code>.</div>
+  <button class="done-btn" data-done="a5">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="a6" data-t="Revert: deshacer sin reescribir">
+  <div class="lnum">Lección 3.6</div><h2>Revert: deshacer sin reescribir</h2>
+  <p>Si el commit que quieres deshacer ya está en una rama compartida, no lo borres: <b>contrarréstalo</b>. <code>git revert</code> crea un commit nuevo que aplica el cambio inverso. La historia no se reescribe, nadie tiene que hacer nada especial y se sube con un push normal.</p>
+  <div data-escena="revert" tabindex="0"></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git revert a1b2c3d          # abre el editor con 'Revert "..."'
+git revert --no-edit HEAD   # sin abrir el editor
+git revert -m 1 &lt;merge&gt;     # revertir un merge: -m 1 dice qué padre es "la línea principal"</pre></div>
+  <div class="simple"><b class="h">Reset o revert</b><p>¿El commit está solo en tu máquina? Reset (o rebase). ¿Ya lo tiene alguien más? Revert.</p></div>
+  <div data-lab="deshacer"></div>
+  <button class="done-btn" data-done="a6">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="a7" data-t="Reflog: la red de seguridad">
+  <div class="lnum">Lección 3.7</div><h2>Reflog: la red de seguridad</h2>
+  <p>Casi nada se pierde en Git. Cada vez que HEAD o una rama se mueve (commit, reset, rebase, switch, merge), Git lo anota en el <b>reflog</b>. Si «perdiste» commits con un reset o un rebase, el reflog sabe dónde estaban.</p>
+  <div data-escena="reflog" tabindex="0"></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git reflog                       # HEAD@{0} es ahora, HEAD@{1} el paso anterior...
+git reflog show feature          # el de una rama
+git reset --hard HEAD@{1}        # vuelve a donde estabas antes del último movimiento
+git branch rescate HEAD@{4}      # o crea una rama en ese punto, sin tocar nada más
+git log -g --oneline main@{yesterday}..main   # qué cambió en main desde ayer</pre></div>
+  <table class="ref">
+    <thead><tr><th>Lo que el reflog sí guarda</th><th>Lo que no</th></tr></thead>
+    <tbody>
+      <tr><td>Commits a los que apuntó HEAD o una rama, durante 90 días (30 si quedaron inalcanzables)</td><td>Cambios que nunca entraron en un commit ni en el staging</td></tr>
+      <tr><td>Solo en tu máquina</td><td>No viaja con push: el reflog de un compañero no te sirve a ti</td></tr>
+    </tbody>
+  </table>
+  <div data-lab="rescate"></div>
+  <button class="done-btn" data-done="a7">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="a8" data-t="HEAD separado (detached)">
+  <div class="lnum">Lección 3.8</div><h2>HEAD separado (detached)</h2>
+  <p>Si te cambias a un commit o a un tag en vez de a una rama, HEAD apunta directo a ese commit. Git dice «You are in 'detached HEAD' state». No es un error: es el modo para mirar una versión vieja o probar algo. El único riesgo es hacer commits ahí y luego irte.</p>
+  <div data-escena="detached" tabindex="0"></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git switch --detach v1.2.0     # mira el código de esa versión
+git switch -c experimento      # ¿hiciste commits que quieres guardar? crea una rama aquí
+git switch -                   # vuelve a tu rama</pre></div>
+  <div class="tip"><b class="h">Si ya te fuiste</b>Git te avisó: «Warning: you are leaving 2 commits behind» e imprimió el hash. Créale una rama: <code>git branch experimento a1b2c3d</code>. ¿No lo copiaste? Está en <code>git reflog</code>.</div>
+  <button class="done-btn" data-done="a8">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="a9" data-t="Push forzado sin pisar a nadie">
+  <div class="lnum">Lección 3.9</div><h2>Push forzado sin pisar a nadie</h2>
+  <p>Después de un rebase o un amend en tu rama, el servidor tiene la versión vieja y tu push normal es rechazado (no es un avance). Tienes que forzarlo. La pregunta es cómo.</p>
+  <div data-escena="force-lease" tabindex="0"></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git push --force-with-lease                     # fuerza solo si nadie subió algo nuevo
+git push --force-with-lease --force-if-includes # además exige que hayas integrado lo que viste
+git config --global alias.pushf "push --force-with-lease --force-if-includes"</pre></div>
+  <p><code>--force-with-lease</code> compara la rama del servidor con tu <code>origin/feature</code>: si coinciden, nadie subió nada desde tu último fetch y es seguro reemplazarla. Si no, se niega. El problema: un <code>git fetch</code> en segundo plano (tu editor lo hace) actualiza <code>origin/feature</code> sin que veas los commits nuevos. <code>--force-if-includes</code> cierra ese hueco.</p>
+  <div class="tip warn"><b class="h">Protege main en el servidor</b>En GitHub y GitLab activa la protección de ramas (o rulesets) en <code>main</code>: prohíbe force push y exige pull request. Así un error local nunca reescribe la rama de todos.</div>
+  <button class="done-btn" data-done="a9">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="a10" data-t="Bisect: encontrar el commit culpable">
+  <div class="lnum">Lección 3.10</div><h2>Bisect: encontrar el commit culpable</h2>
+  <p>Algo funcionaba hace dos semanas y hoy no, y entre medio hay 200 commits. <code>git bisect</code> hace una búsqueda binaria: te lleva al commit del medio, le dices si está bien o mal, y descarta la mitad. Con 200 commits, encuentra al culpable en unos 8 pasos.</p>
+  <div data-escena="bisect" tabindex="0"></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git bisect start
+git bisect bad                 # el commit actual está mal
+git bisect good v2.3           # esta versión funcionaba
+# Git te cambia a un commit intermedio: pruébalo y responde
+git bisect good                # o: git bisect bad · git bisect skip si no se puede probar
+# ... hasta: "a1b2c3d is the first bad commit"
+git bisect reset               # vuelve a donde estabas
+
+git bisect run npm test        # o automatízalo con cualquier comando</pre></div>
+  <p>Con <code>bisect run</code>, el código de salida decide: 0 es bueno, de 1 a 127 es malo (salvo 125, que significa «no se puede probar, sáltalo»). Un script de diez líneas que reproduce el bug encuentra el culpable mientras tomas un café.</p>
+  <button class="done-btn" data-done="a10">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="a11" data-t="Investigar el código con Git">
+  <div class="lnum">Lección 3.11</div><h2>Investigar el código con Git</h2>
+  <p>Git sabe mucho más que «qué cambió». Bien preguntado, te dice quién escribió cada línea, cuándo apareció una función o por qué existe un <code>if</code> raro.</p>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git blame -L 40,60 src/carrito.js    # quién cambió cada línea, y en qué commit
+git blame -w -C src/carrito.js       # ignora espacios y sigue código movido entre archivos
+git log -S "calcularIVA" --oneline   # commits que agregaron o quitaron ese texto
+git log -G "descuento\s*=" -p        # commits cuyo diff coincide con una regex
+git log -L :calcularIVA:src/iva.js   # la historia de una función
+git grep -n "TODO" main              # busca en los archivos de una rama
+git range-diff main feature@{1} feature   # cómo cambió tu serie antes y después del rebase</pre></div>
+  <div class="tip"><b class="h">Que blame ignore los commits de formato</b>Si tu equipo hizo un commit gigante de formato, todo <code>blame</code> apunta a él. Pon sus hashes en un archivo <code>.git-blame-ignore-revs</code> y configura <code>git config blame.ignoreRevsFile .git-blame-ignore-revs</code>. GitHub lo respeta automáticamente.</div>
+  <button class="done-btn" data-done="a11">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="aq" data-t="Quiz · Avanzado">
+  <div class="lnum">Quiz final</div><h2>Quiz · Nivel Avanzado</h2>
+  <div class="wd quiz" data-quiz="avanzado"><div class="wh"><span class="dot"></span><span class="tt">Responde todas correctamente para aprobar</span></div><div class="wb"></div></div>
+  <div class="next"><div><h3>Siguiente: Experto</h3><p>La carpeta .git por dentro, hooks, monorepos y estrategias de equipo.</p></div><a class="btn lv" href="#experto" style="--lv:var(--x)">Continuar</a></div>
+</article>
+
+    </main>
+  </div>
+</section>
+<section class="view" id="v-experto" style="--lv:var(--x)">
+  <div class="lvhead"><div class="bigglyph">04</div><div class="tag">Nivel 04 · Experto</div><h1>Git por dentro</h1><p>Abre la carpeta .git y mira cómo están hechos los commits, las ramas y los packfiles. Después, las herramientas para trabajar a escala: worktrees, hooks, repos gigantes, submódulos, estrategias de equipo y lo que trae Git 3.0.</p></div>
+  <div class="lvbody">
+    <aside class="toc"></aside>
+    <main>
+
+<article class="lesson" id="x1" data-t="La carpeta .git por dentro">
+  <div class="lnum">Lección 4.1</div><h2>La carpeta .git por dentro</h2>
+  <p>Todo lo que Git sabe de tu proyecto está en <code>.git</code>, y casi todo son archivos de texto que puedes leer. Cuando lo ves, desaparece la magia: una rama es literalmente un archivo con un hash.</p>
+  <div data-escena="carpeta-git" tabindex="0"></div>
+  <table class="ref">
+    <thead><tr><th>Ruta</th><th>Qué es</th></tr></thead>
+    <tbody>
+      <tr><td><code>HEAD</code></td><td>Dónde estás: <code>ref: refs/heads/main</code>, o un hash si HEAD está separado</td></tr>
+      <tr><td><code>refs/heads/</code></td><td>Tus ramas: un archivo por rama con el hash al que apunta</td></tr>
+      <tr><td><code>refs/remotes/</code>, <code>refs/tags/</code></td><td>Ramas remotas y tags, igual</td></tr>
+      <tr><td><code>objects/</code></td><td>Todos los commits, trees y blobs, por hash (sueltos o en packfiles)</td></tr>
+      <tr><td><code>index</code></td><td>El staging, en formato binario</td></tr>
+      <tr><td><code>logs/</code></td><td>El reflog</td></tr>
+      <tr><td><code>config</code>, <code>hooks/</code></td><td>Configuración del repo y scripts de hooks</td></tr>
+    </tbody>
+  </table>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>cat .git/HEAD
+cat .git/refs/heads/main
+git cat-file -t 3f9a2c1      # qué tipo de objeto es
+git rev-parse main           # el hash completo de una rama
+git count-objects -vH        # cuántos objetos hay y cuánto ocupan</pre></div>
+  <div class="tip"><b class="h">Plumbing y porcelain</b>Git tiene dos capas de comandos. Los de «porcelana» (<code>commit</code>, <code>switch</code>, <code>merge</code>) son para personas. Los de «fontanería» (<code>cat-file</code>, <code>hash-object</code>, <code>update-ref</code>, <code>rev-parse</code>) son las piezas con las que se construyen los anteriores, y son estables para usarlos en scripts.</div>
+  <button class="done-btn" data-done="x1">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="x2" data-t="Hashes en cadena">
+  <div class="lnum">Lección 4.2</div><h2>Hashes en cadena</h2>
+  <p>Cada commit incluye el hash de su padre, y el hash de un commit se calcula con todo lo que contiene. Esa cadena tiene una consecuencia enorme: si cambias cualquier cosa de un commit viejo, cambia su hash, y con él el de todos los que vienen después.</p>
+  <div data-escena="merkle" tabindex="0"></div>
+  <p>Esto explica dos cosas que ya viste. Por qué <b>reescribir historia</b> (amend, rebase) siempre crea commits nuevos: no hay forma de «editar» uno sin cambiar su identidad. Y por qué con el hash del último commit basta para <b>verificar toda la historia</b>: si alguien alterara un byte en el pasado, los hashes dejarían de coincidir. A esta estructura se le llama árbol de Merkle.</p>
+  <div class="simple"><b class="h">En simple</b><p>Un hash de commit es la huella de ese commit y de todo su pasado. Dos repositorios con el mismo hash en <code>main</code> tienen exactamente la misma historia.</p></div>
+  <button class="done-btn" data-done="x2">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="x3" data-t="Objetos sueltos y packfiles">
+  <div class="lnum">Lección 4.3</div><h2>Objetos sueltos y packfiles</h2>
+  <p>Cuando haces commit, cada objeto nuevo se guarda como un archivo comprimido aparte (un objeto «suelto»). Con el tiempo serían miles. Git los junta periódicamente en <b>packfiles</b>: un solo archivo donde las versiones parecidas de un mismo archivo se guardan como diferencias (deltas) de otra.</p>
+  <div data-escena="packfiles" tabindex="0"></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git count-objects -vH       # objetos sueltos, packs y tamaño
+git gc                      # compacta a mano (Git lo hace solo de vez en cuando)
+git maintenance start       # programa mantenimiento en segundo plano
+git maintenance run --task=gc</pre></div>
+  <p>Los packfiles también son lo que viaja por la red: <code>fetch</code>, <code>clone</code> y <code>push</code> negocian qué objetos le faltan a cada lado y mandan un pack con solo eso. Por eso clonar un repo con años de historia es más rápido de lo que parece.</p>
+  <div class="tip"><b class="h">Archivos binarios grandes</b>Los deltas funcionan mal con videos, imágenes pesadas o modelos de datos: cada versión pesa casi completa y el repositorio crece sin parar. Para eso existe <b>Git LFS</b>, que guarda esos archivos fuera del repositorio y deja en Git solo un puntero.</div>
+  <button class="done-btn" data-done="x3">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="x4" data-t="Worktrees: varias ramas a la vez">
+  <div class="lnum">Lección 4.4</div><h2>Worktrees: varias ramas a la vez</h2>
+  <p>Cambiar de rama obliga a guardar o hacer stash de lo que llevas. Un <b>worktree</b> es otra carpeta de trabajo conectada al mismo repositorio, con su propia rama. Puedes tener <code>main</code> en una carpeta, un hotfix en otra y la revisión de un PR en una tercera, todo al mismo tiempo.</p>
+  <div data-escena="worktrees" tabindex="0"></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git worktree add ../tienda-hotfix -b hotfix/pago   # carpeta nueva con rama nueva
+git worktree add ../tienda-review origin/feature-x  # revisar un PR sin tocar tu trabajo
+git worktree list
+git worktree remove ../tienda-hotfix
+git worktree prune                                  # limpia worktrees borrados a mano</pre></div>
+  <p>Comparten objetos, ramas, stash y configuración: un commit hecho en un worktree aparece en el historial de todos. Lo único que no comparten es lo que está a medias en cada carpeta. Son ideales para dejar trabajando a un agente de IA en una rama mientras tú sigues en otra.</p>
+  <div class="tip warn"><b class="h">Una rama, un worktree</b>Git no deja tener la misma rama en dos worktrees a la vez, porque un commit en uno dejaría desactualizado al otro. Si lo necesitas para mirar, usa <code>--detach</code>.</div>
+  <button class="done-btn" data-done="x4">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="x5" data-t="Hooks de Git">
+  <div class="lnum">Lección 4.5</div><h2>Hooks de Git</h2>
+  <p>Un <b>hook</b> es un script que Git ejecuta en un momento concreto: antes de crear un commit, al escribir el mensaje, antes de un push. Si un hook «de antes» termina con error, Git cancela la operación. Sirven para que nadie suba código sin formatear, con tests rotos o con mensajes fuera de formato.</p>
+  <div data-escena="hooks" tabindex="0"></div>
+  <table class="ref">
+    <thead><tr><th>Hook</th><th>Cuándo corre</th><th>Uso típico</th></tr></thead>
+    <tbody>
+      <tr><td><code>pre-commit</code></td><td>Antes de crear el commit</td><td>Formateo, lint, tests rápidos, buscar secretos</td></tr>
+      <tr><td><code>commit-msg</code></td><td>Con el mensaje escrito</td><td>Validar Conventional Commits o un ID de ticket</td></tr>
+      <tr><td><code>pre-push</code></td><td>Antes de subir</td><td>Tests más lentos</td></tr>
+      <tr><td><code>post-checkout</code>, <code>post-merge</code></td><td>Después de cambiar de rama o fusionar</td><td>Reinstalar dependencias si cambió el lockfile</td></tr>
+    </tbody>
+  </table>
+  <p>Los hooks viven en <code>.git/hooks/</code>, que <b>no se versiona</b>: cada persona tendría que instalarlos. Los equipos los guardan en el repositorio y apuntan Git ahí con <code>core.hooksPath</code>, o usan herramientas como husky, lefthook o pre-commit. Las versiones recientes de Git también permiten declarar hooks directamente en la configuración, e incluso correr varios en paralelo:</p>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git config core.hooksPath .githooks            # hooks versionados en .githooks/
+
+# hooks declarados en la configuración (ver git help hook)
+git config set hook.lint.command "npm run lint"
+git config set --append hook.lint.event pre-commit</pre></div>
+  <div class="tip warn"><b class="h">Los hooks locales se pueden saltar</b><code>git commit --no-verify</code> no ejecuta <code>pre-commit</code> ni <code>commit-msg</code>. Por eso lo importante se valida también en el servidor: reglas de protección de rama y CI (GitHub Actions, GitLab CI) que bloquean el merge si algo falla.</div>
+  <button class="done-btn" data-done="x5">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="x6" data-t="Repos gigantes: partial clone y sparse-checkout">
+  <div class="lnum">Lección 4.6</div><h2>Repos gigantes: partial clone y sparse-checkout</h2>
+  <p>En un monorepo con años de historia y cientos de carpetas, clonar todo puede tardar horas y llenar el disco. No necesitas todo: Git puede descargar menos y mostrarte menos.</p>
+  <div data-escena="sparse" tabindex="0"></div>
+  <table class="ref">
+    <thead><tr><th>Técnica</th><th>Qué recorta</th><th>Cuándo</th></tr></thead>
+    <tbody>
+      <tr><td><code>--filter=blob:none</code> (partial clone)</td><td>Descarga commits y carpetas, pero el contenido de cada archivo recién cuando lo necesitas</td><td>Desarrollo diario en repos grandes</td></tr>
+      <tr><td><code>sparse-checkout</code></td><td>Deja en disco solo las carpetas que eliges; la historia sigue completa</td><td>Monorepos donde trabajas en una parte</td></tr>
+      <tr><td><code>--depth 1</code> (shallow clone)</td><td>Solo los últimos commits</td><td>CI y despliegues; mala idea para desarrollar</td></tr>
+    </tbody>
+  </table>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git clone --filter=blob:none https://github.com/org/monorepo.git
+cd monorepo
+git sparse-checkout set apps/web services/pagos
+git sparse-checkout add docs
+
+scalar clone https://github.com/org/monorepo.git   # todo lo anterior, más mantenimiento</pre></div>
+  <p><code>scalar</code> viene incluido con Git y configura un repo grande con las opciones recomendadas: partial clone, sparse-checkout, mantenimiento en segundo plano y monitor de archivos.</p>
+  <button class="done-btn" data-done="x6">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="x7" data-t="Submódulos y subtree">
+  <div class="lnum">Lección 4.7</div><h2>Submódulos y subtree</h2>
+  <p>A veces un repositorio necesita incluir otro: una librería de componentes compartida, un tema, un SDK. Hay dos formas, con filosofías opuestas.</p>
+  <div data-escena="submodulos" tabindex="0"></div>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git submodule add https://github.com/org/ui.git vendor/ui
+git clone --recurse-submodules https://github.com/org/app.git
+git submodule update --init --recursive      # si clonaste sin la opción anterior
+git submodule update --remote vendor/ui      # trae lo último del submódulo
+git add vendor/ui && git commit -m "actualiza ui"   # y fija el nuevo puntero</pre></div>
+  <table class="ref">
+    <thead><tr><th></th><th>Submódulo</th><th>Subtree</th></tr></thead>
+    <tbody>
+      <tr><td>Qué guarda el repo padre</td><td>Un puntero a un commit del otro repo</td><td>Una copia de los archivos</td></tr>
+      <tr><td>Clonar</td><td>Necesita <code>--recurse-submodules</code></td><td>Normal</td></tr>
+      <tr><td>Bueno para</td><td>Dependencias con su propio ciclo y versiones exactas</td><td>Incluir código que rara vez cambia, sin pasos extra</td></tr>
+    </tbody>
+  </table>
+  <div class="tip"><b class="h">Antes de elegir cualquiera</b>Si el otro repositorio publica paquetes (npm, PyPI, Maven), un administrador de paquetes casi siempre es mejor opción que submódulos o subtree.</div>
+  <button class="done-btn" data-done="x7">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="x8" data-t="Estrategias de ramas en equipo">
+  <div class="lnum">Lección 4.8</div><h2>Estrategias de ramas en equipo</h2>
+  <p>Git no impone cómo organizar las ramas. Cada equipo elige una estrategia, y la elección depende sobre todo de cada cuánto despliegan.</p>
+  <div data-escena="estrategias" tabindex="0"></div>
+  <table class="ref">
+    <thead><tr><th>Estrategia</th><th>Cómo funciona</th><th>Para quién</th></tr></thead>
+    <tbody>
+      <tr><td><b>Trunk-based</b></td><td>Todos integran a <code>main</code> a diario con ramas de horas; lo incompleto se esconde con feature flags</td><td>Equipos con CI sólido que despliegan varias veces al día</td></tr>
+      <tr><td><b>GitHub flow</b></td><td><code>main</code> siempre desplegable; una rama y un PR por cambio</td><td>La mayoría de los equipos web</td></tr>
+      <tr><td><b>Git flow</b></td><td>Ramas <code>develop</code>, <code>release/*</code> y <code>hotfix/*</code>, y <code>main</code> con tags de versión</td><td>Software con versiones numeradas y soporte largo (apps de escritorio, librerías)</td></tr>
+    </tbody>
+  </table>
+  <div class="simple"><b class="h">Si dudas</b><p>Empieza con GitHub flow: ramas cortas, pull requests y <code>main</code> protegida. Es simple, funciona con equipos de cualquier tamaño y puedes acercarte a trunk-based a medida que mejoran tus pruebas automáticas.</p></div>
+  <button class="done-btn" data-done="x8">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="x9" data-t="Firmar commits y seguridad">
+  <div class="lnum">Lección 4.9</div><h2>Firmar commits y seguridad</h2>
+  <p>Cualquiera puede poner tu nombre y correo en un commit: <code>user.name</code> es solo texto. Firmar tus commits prueba que salieron de tu llave. GitHub y GitLab los marcan como «Verified». La forma más simple hoy es firmar con tu llave SSH.</p>
+  <div class="code"><div class="ch"><span>bash</span><button class="copy">copiar</button></div><pre data-hl>git config --global gpg.format ssh
+git config --global user.signingkey ~/.ssh/id_ed25519.pub
+git config --global commit.gpgsign true
+git config --global tag.gpgsign true
+# y agrega la misma llave en GitHub como "Signing key"
+git log --show-signature -1</pre></div>
+  <h3>Hábitos de seguridad</h3>
+  <ul>
+    <li><b>Nunca subas secretos</b>. Usa <code>.gitignore</code>, variables de entorno y un escáner en <code>pre-commit</code>. Si se te escapa uno, <b>rótalo primero</b>: borrarlo de la historia no deshace que ya estuvo expuesto.</li>
+    <li><b>Borrar de la historia</b> se hace con <code>git filter-repo</code> (herramienta aparte, recomendada por el propio proyecto Git en lugar de <code>filter-branch</code>), y requiere coordinar un force push con todo el equipo.</li>
+    <li><b>Desconfía de repositorios ajenos</b>: un repo puede traer hooks o configuración que ejecute código. Git no copia los hooks al clonar, y <code>safe.directory</code> evita usar repos de otros usuarios del sistema. En Git 3.0, <code>safe.bareRepository</code> pasará a <code>explicit</code> para cerrar otro truco con repos «desnudos».</li>
+  </ul>
+  <button class="done-btn" data-done="x9">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="x10" data-t="Configuración pro y Git 3.0">
+  <div class="lnum">Lección 4.10</div><h2>Configuración pro y Git 3.0</h2>
+  <p>Unas pocas opciones hacen a Git más cómodo y más seguro. Ninguna cambia cómo funciona; solo ajustan valores por defecto pensados para no romper hábitos de hace quince años.</p>
+  <div class="code"><div class="ch"><span>~/.gitconfig</span><button class="copy">copiar</button></div><pre data-hl>[rerere]
+	enabled = true          # recuerda cómo resolviste un conflicto y lo repite
+[merge]
+	conflictStyle = zdiff3  # los marcadores muestran también la versión base
+[diff]
+	algorithm = histogram   # diffs más legibles
+	colorMoved = default    # el código movido se pinta distinto
+[push]
+	autoSetupRemote = true  # el primer push de una rama crea su upstream
+[fetch]
+	prune = true            # borra origin/* de ramas que ya no existen
+[rebase]
+	autoSquash = true
+	updateRefs = true       # mueve también las ramas apiladas encima
+[branch]
+	sort = -committerdate   # git branch: las más recientes primero</pre></div>
+  <p><b>rerere</b> («reuse recorded resolution») merece una mención aparte: si resuelves el mismo conflicto varias veces (por ejemplo, al hacer rebase seguido de una rama larga), Git aprende tu resolución y la aplica sola.</p>
+  <h3>Lo que trae Git 3.0</h3>
+  <p>El proyecto Git anunció la transición: la versión de diciembre de 2026 se llama 2.98, y en 2027 llegan la 2.99 (de soporte largo) y Git 3.0. Los cambios afectan a repositorios nuevos; los que ya tienes siguen funcionando.</p>
+  <table class="ref">
+    <thead><tr><th>Cambio</th><th>Qué significa para ti</th></tr></thead>
+    <tbody>
+      <tr><td>SHA-256 por defecto</td><td>Hashes de 64 caracteres en repos nuevos. Los repos SHA-1 siguen soportados</td></tr>
+      <tr><td>Reftable por defecto</td><td>Las refs se guardan en una tabla y no en un archivo por rama: más rápido y sin problemas con mayúsculas en macOS y Windows. Pruébalo hoy con <code>init.defaultRefFormat=reftable</code></td></tr>
+      <tr><td><code>main</code> como rama inicial</td><td>Lo que ya configuraste en la lección 1.2</td></tr>
+      <tr><td>Comandos retirados</td><td><code>git whatchanged</code> (usa <code>git log --raw</code>), <code>pack-redundant</code> y los grafts (usa <code>git replace</code>)</td></tr>
+      <tr><td>Lo que se queda</td><td><code>git checkout</code> no se elimina ni se depreca</td></tr>
+    </tbody>
+  </table>
+  <button class="done-btn" data-done="x10">○ Marcar como completada</button>
+</article>
+
+<article class="lesson" id="xq" data-t="Quiz · Experto">
+  <div class="lnum">Quiz final</div><h2>Quiz · Nivel Experto</h2>
+  <div class="wd quiz" data-quiz="experto"><div class="wh"><span class="dot"></span><span class="tt">Responde todas correctamente para aprobar</span></div><div class="wb"></div></div>
+  <div class="next"><div><h3>¿Y ahora?</h3><p>Practica en el laboratorio, y guarda la guía de rescate para el día que la necesites.</p></div><a class="btn lv" href="#rescate" style="--lv:var(--a)">Ir a Rescate</a></div>
+</article>
+
+    </main>
+  </div>
+</section>
+<footer>Guía basada en la documentación oficial de Git (<a href="https://git-scm.com/docs">git-scm.com/docs</a>) y el libro <a href="https://git-scm.com/book/es/v2">Pro Git</a>, revisada para Git 2.56 en noviembre de 2026 · el progreso se guarda solo en este navegador</footer>
+
+<section class="view" id="v-laboratorio" style="--lv:var(--clay)">
+  <div class="lvhead"><div class="bigglyph">$</div><div class="tag">Referencia · Laboratorio</div><h1>Laboratorio de Git</h1><p>Escribe comandos reales de Git y mira cómo cambia el grafo al instante: commits, ramas, merge, rebase, reset, revert, cherry-pick y reflog. Nada de lo que hagas aquí toca tus archivos.</p></div>
+  <div class="refbody">
+    <div class="simple"><b class="h">Cómo se usa</b><p>Escribe en la terminal y pulsa Enter. <code>git help</code> lista lo que entiende. Las flechas ↑ ↓ recorren lo que ya escribiste y Tab completa nombres de ramas. Los commits sin rama que los apunte se ven punteados: siguen ahí, y <code>git reflog</code> te dice cómo volver a ellos.</p></div>
+    <h2 class="rh">Repositorio libre</h2>
+    <div data-lab="libre"></div>
+    <h2 class="rh">Desafíos</h2>
+    <p class="sub">Cada uno se valida solo. Si te trabas, la pista dice qué comando usar y la solución, la secuencia completa.</p>
+    <div class="lab-stack">
+      <div data-lab="ramas"></div>
+      <div data-lab="merge"></div>
+      <div data-lab="rebase"></div>
+      <div data-lab="cherry-pick"></div>
+      <div data-lab="deshacer"></div>
+      <div data-lab="rescate"></div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-comandos" style="--lv:var(--i)">
+  <div class="lvhead"><div class="bigglyph">git</div><div class="tag">Referencia · Comandos</div><h1>Comandos de Git</h1><p>Los comandos que de verdad se usan, con las opciones útiles de cada uno y ejemplos listos para copiar. Busca por nombre o por lo que quieres lograr: «subir», «deshacer», «rama».</p></div>
+  <div class="refbody">
+    <div class="wd" id="cmdW">
+      <div class="wh"><span class="dot"></span><span class="tt">Buscador de comandos</span><span class="cmd-count" id="cmdN"></span></div>
+      <div class="wb">
+        <input type="search" id="cmdQ" class="cmd-q" placeholder="Busca un comando o lo que quieres hacer…" aria-label="Buscar comandos" autocomplete="off">
+        <div class="chips" id="cmdCats"></div>
+      </div>
+      <div class="cmd-list" id="cmdList"></div>
+    </div>
+    <h2 class="rh">Cómo nombrar commits</h2>
+    <table class="ref">
+      <thead><tr><th>Forma</th><th>Significa</th></tr></thead>
+      <tbody>
+        <tr><td><code>a1b2c3d</code></td><td>Un commit por su hash (basta con 7 caracteres si no es ambiguo)</td></tr>
+        <tr><td><code>main</code>, <code>origin/main</code>, <code>v1.2.0</code></td><td>Donde apunta esa rama, rama remota o tag</td></tr>
+        <tr><td><code>HEAD</code> (o <code>@</code>)</td><td>Donde estás</td></tr>
+        <tr><td><code>HEAD~3</code></td><td>Tres commits atrás, siguiendo siempre al primer padre</td></tr>
+        <tr><td><code>HEAD^2</code></td><td>El segundo padre de un merge (la rama que se fusionó)</td></tr>
+        <tr><td><code>HEAD@{2}</code>, <code>main@{yesterday}</code></td><td>Entradas del reflog: dónde estaba hace dos movimientos, o ayer</td></tr>
+        <tr><td><code>@{-1}</code> (o <code>-</code> en switch)</td><td>La rama en la que estabas antes</td></tr>
+        <tr><td><code>main..feature</code></td><td>Commits de feature que no están en main</td></tr>
+        <tr><td><code>main...feature</code></td><td>Commits de cualquiera de las dos que no están en ambas</td></tr>
+        <tr><td><code>main:src/app.js</code></td><td>Ese archivo tal como está en main</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="view" id="v-rescate" style="--lv:var(--a)">
+  <div class="lvhead"><div class="bigglyph">↺</div><div class="tag">Referencia · Rescate</div><h1>Me equivoqué en Git</h1><p>Las situaciones más comunes de «¿y ahora qué hago?», cada una con la solución exacta, cuánto riesgo tiene y dónde se explica a fondo. Respira: casi todo en Git tiene arreglo.</p></div>
+  <div class="refbody">
+    <div class="simple"><b class="h">Antes de tocar nada</b><p>Corre <code>git status</code> y <code>git log --oneline --graph -10</code> para ver dónde estás. Si vas a hacer algo destructivo, crea antes una rama de respaldo: <code>git branch respaldo</code>. Cuesta cero y te deja volver con <code>git reset --hard respaldo</code>.</p></div>
+    <div class="wd" id="rsW">
+      <div class="wh"><span class="dot"></span><span class="tt">¿Qué te pasó?</span></div>
+      <div class="wb"><input type="search" id="rsQ" class="cmd-q" placeholder="Describe el problema: «borré una rama», «push rechazado»…" aria-label="Buscar situación" autocomplete="off"></div>
+      <div class="sos-list" id="rsList"></div>
+    </div>
+    <h2 class="rh">El mapa del deshacer</h2>
+    <table class="ref">
+      <thead><tr><th>Lo que quiero deshacer está…</th><th>Solo en mi máquina</th><th>Ya lo subí</th></tr></thead>
+      <tbody>
+        <tr><td>En un archivo, sin agregar</td><td><code>git restore archivo</code></td><td>—</td></tr>
+        <tr><td>En el staging</td><td><code>git restore --staged archivo</code></td><td>—</td></tr>
+        <tr><td>En el último commit</td><td><code>git commit --amend</code> o <code>git reset HEAD~1</code></td><td><code>git revert HEAD</code></td></tr>
+        <tr><td>En un commit más viejo</td><td><code>git rebase -i</code> o <code>git history</code></td><td><code>git revert &lt;commit&gt;</code></td></tr>
+        <tr><td>En una operación que salió mal</td><td><code>git reflog</code> y <code>git reset --hard HEAD@{n}</code></td><td><code>git reflog</code>, y luego push con <code>--force-with-lease</code> si es tu rama</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="view" id="v-glosario" style="--lv:var(--x)">
+  <div class="lvhead"><div class="bigglyph">Aa</div><div class="tag">Referencia · Glosario</div><h1>Glosario de Git</h1><p>Los términos de Git explicados en una o dos frases, con enlace al nivel donde se ven a fondo. Busca la palabra que te confunde.</p></div>
+  <div class="refbody">
+    <div class="wd" id="glW">
+      <div class="wh"><span class="dot"></span><span class="tt">Glosario</span></div>
+      <div class="wb"><input type="search" id="glQ" class="cmd-q" placeholder="Busca un término…" aria-label="Buscar en el glosario" autocomplete="off"></div>
+      <dl class="gl-list" id="glList"></dl>
+    </div>
+  </div>
+</section>

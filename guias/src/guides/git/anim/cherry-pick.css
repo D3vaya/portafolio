@@ -1,0 +1,4 @@
+/* Animación: cherry-pick. Prefijo: .cp- */
+.cp { display: grid; gap: 14px; }
+.cp-graph { padding: 4px 0; }
+.gk-legend i.cp-l-hl { border-color: #ff5b1f; }

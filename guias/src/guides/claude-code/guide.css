@@ -326,3 +326,69 @@ footer { font: 400 14px var(--sans); color: var(--ink-3); border-top: 1px solid 
   .ad-bar span { grid-column: 1 / -1; }
 }
 @media (prefers-reduced-motion: reduce) { .ad-adv.is-reading { animation: none; } }
+
+/* x6 · Fan-out / fan-in: el SVG se dibuja a la medida del widget; texto en sans y nombres de agente en mono */
+.fan #fanSvg { width: 100%; height: auto; }
+.fan #fanSvg text { font-family: var(--sans); }
+.fan #fanSvg text[font-family="var(--mono)"] { font-family: var(--mono); }
+
+/* Simulador de precedencia (x3 y st3 comparten el mismo componente) */
+.prl .prside { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.prl .prtag { min-width: 3.6em; font: 600 12px var(--sans); color: #7a7e89; text-align: right; }
+.prl.win .prtag { color: #ffb08f; }
+.prl.shadow .prn b { color: #a8abb4; }
+:root[data-identidad="placa"] .prl .toggle button.on[data-v="—"] { background: rgb(255 255 255 / .14); color: #ececee; }
+.prn small { display: block; line-height: 1.45; margin-top: 2px; }
+:root[data-identidad="placa"] .prl.shadow .toggle button.on { background: rgb(255 255 255 / .16); color: #ececee; text-decoration: line-through; }
+@media (max-width: 980px) {
+  .prl { gap: 8px; padding: 10px 12px; }
+  .prl .prside { width: 100%; justify-content: space-between; flex-direction: row-reverse; }
+  .prl .prtag { text-align: right; }
+}
+
+/* hk2 · controles del ciclo de vida */
+.lcctl { display: grid; grid-template-columns: repeat(3, max-content); gap: 8px; margin: 14px 0 10px; }
+.lcctl .btn { min-height: 36px; padding-inline: 12px; justify-content: center; text-align: center; }
+.lcctl .btn:disabled { opacity: .4; cursor: default; }
+.lcctl #lcPlay { min-width: 7.2em; }
+@media (max-width: 480px) { .lcctl { grid-template-columns: 1fr 1.25fr 1fr; } .lcctl #lcPlay { min-width: 0; } }
+
+/* sk9 · presupuesto tras compactar */
+.cbf label { display: block; margin-bottom: 6px; }
+.cbrow { display: flex; gap: 8px; align-items: stretch; }
+.cbrow input { flex: 1; min-width: 0; min-height: 40px; font-size: 14px; }
+.cbrow input::placeholder { color: #7a7e89; }
+.wd .cbrow input:focus { outline: 2px solid var(--signal); outline-offset: 1px; border-color: transparent; }
+.cbrow input[aria-invalid="true"] { border-color: #ff4d6d; }
+.cbrow .btn { flex: none; min-height: 40px; }
+.cbhelp { margin: 8px 0 6px; font-size: 13px; color: #a8abb4; }
+#cbPre { margin-bottom: 4px; }
+.cberr { margin: 8px 0 0; font-size: 13px; color: #ffb35c; }
+.cberr code { font-size: 12px; }
+.cbleg { display: flex; gap: 16px; margin: 14px 0 4px; font: 500 12px var(--sans); color: #a8abb4; }
+.cbleg span { display: inline-flex; align-items: center; gap: 6px; }
+.cbleg i { width: 14px; height: 8px; border-radius: 3px; background: rgb(255 255 255 / .28); }
+.cbleg i.k { background: var(--signal); }
+.bsk.out span, .bsk.out b { color: #ff9aac; }
+#cbTxt { margin-top: 10px; }
+#cbTxt.flash { animation: cb-flash .9s ease-out; }
+@keyframes cb-flash { from { background: rgb(255 91 31 / .18); } to { background: transparent; } }
+@media (prefers-reduced-motion: reduce) { #cbTxt.flash { animation: none; } }
+
+/* Comandos en móvil: la lista no tiene scroll propio y el detalle se abre bajo el comando elegido */
+@media (max-width: 980px) {
+  .cmdw .cmdlist { max-height: none; overflow: visible; }
+  .cmdlist .ci { scroll-margin-top: 128px; }
+  .cmdlist .ci.on { border-color: var(--signal); }
+  .cmdlist > .cmddet { margin: 4px 0 12px; padding: 14px; min-height: 0; border: 1px solid var(--signal); box-shadow: 0 0 22px -10px var(--signal); }
+  .cmdlist > .cmddet.closed { display: none; }
+  .cmdlist > .cmddet .cdd { font-size: 15px; line-height: 1.6; }
+  .cmdlist > .cmddet .exl { flex-wrap: wrap; }
+  .cmdlist > .cmddet .exl code { overflow-wrap: anywhere; min-width: 0; }
+  .cmdlist > .cmddet table.ref { display: block; overflow-x: auto; }
+}
+
+/* hk1 · comandos largos dentro de las tarjetas comparativas: en móvil pueden partirse para no desbordar */
+@media (max-width: 760px) {
+  :root[data-identidad="placa"] .vsc p code { white-space: normal; overflow-wrap: anywhere; }
+}

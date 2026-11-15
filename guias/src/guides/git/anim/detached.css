@@ -1,0 +1,9 @@
+/* Animación: HEAD separado (prefijo .dh-) */
+.dh { display: grid; gap: 14px; }
+.dh-graph { padding: 4px 0; }
+.dh .gk-out { min-height: 4.5em; }
+.gk-legend i.dh-l-det { background: #3a2a12; border-color: #ffb35c; border-radius: 3px; }
+.gk-legend i.dh-l-tag { background: #ececee; border-color: #ececee; border-radius: 3px; }
+@media (max-width: 560px) {
+  .dh .gk-out { font-size: 12px; }
+}

@@ -1,0 +1,11 @@
+/* Animación: hashes en cadena. Prefijo: .mk- */
+.mk { display: grid; gap: 14px; }
+.mk-graph { padding: 4px 0; }
+.mk-h { fill: #ececee; font: 700 13.5px var(--mono); text-anchor: middle; transition: fill .3s; }
+.mk-p { fill: #8b8f99; font: 500 13.5px var(--mono); text-anchor: middle; transition: fill .3s; }
+.mk-rl { fill: #7a7e89; font: 500 13.5px var(--sans); text-anchor: end; transition: opacity .3s; }
+.mk-h.c-bad, .mk-p.c-bad { fill: #ff4d6d; }
+.mk-h.c-hl, .mk-p.c-hl { fill: #ff7a45; }
+.mk-h.c-ok { fill: #5fd69a; }
+.mk-p.c-ok { fill: #9fecc4; }
+.gk-node.t-ghost .mk-h, .gk-node.t-ghost .mk-p { fill: #5d6170; }

@@ -134,7 +134,7 @@ Usa siempre estas clases; no crees variantes nuevas sin necesidad.
 ## 6. Animaciones (escenas)
 
 Marco: `src/scripts/escena.ts`. Una escena exporta `{ title, steps: [{ title, text, ms }], setup(stage), go(i, instant) }`
-y se registra sola desde `anim/index.ts` (carga bajo demanda). Referencias de calidad: `anim/advisor.ts`, `anim/cache.ts`.
+y se registra sola desde `anim/index.ts` (carga bajo demanda). Referencias de calidad: `claude-code/anim/advisor.ts`, `claude-code/anim/cache.ts` y `git/anim/ramas.ts`.
 
 Reglas de contenido:
 
@@ -162,6 +162,34 @@ Reglas técnicas:
 7. "Reducir movimiento" lo maneja el marco (sin avance automático y sin animar).
 8. Las escenas se cargan bajo demanda: un error en un archivo solo afecta a su propia escena, pero un `import "./x.css"` a un
    archivo que no existe rompe el build. Crea el CSS antes de importarlo.
+
+### 6.1 Animaciones de Git: kit común y vocabulario fijo
+
+Las escenas de la guía de Git usan `src/guides/git/anim/_kit.ts` (+ `_kit.css`, prefijo `.gk-`): `grafo()` dibuja
+commits, ramas y HEAD de forma declarativa (cada paso describe el grafo completo y `render` anima la diferencia),
+`consola()` muestra el comando del paso y `cerrar()` aplica la regla técnica 2. Los archivos que empiezan con `_`
+no son escenas (el índice los ignora). Vocabulario visual, igual en todas las escenas y en el laboratorio:
+
+| Elemento | Se dibuja como |
+|---|---|
+| Commit | Círculo con letra (A, B…); lo más viejo a la izquierda; la línea apunta al padre |
+| Rama actual | Etiqueta naranja «HEAD → rama» |
+| Otra rama local | Etiqueta con borde lila |
+| Rama remota (`origin/…`) | Etiqueta gris punteada |
+| Tag | Etiqueta blanca |
+| HEAD separado | Etiqueta ámbar «HEAD» pegada al commit |
+| Commit nuevo / copia (rebase, cherry-pick) / sin referencia | Borde naranja / lila con ′ / punteado |
+| Conflicto / correcto | Rojo con ✕ o texto / verde |
+| Archivo modificado / nuevo / borrado (`.gk-file`) | Ámbar / verde / rojo tachado |
+
+Grafos de máximo 6 columnas; textos del kit en 13,5–14 px de viewBox para no bajar de 12 px reales a 390 px.
+
+### 6.2 Laboratorio de Git
+
+`src/guides/git/lab.ts` monta una terminal con un repositorio simulado en cada `<div data-lab="escenario">`.
+El motor implementa commit, branch, switch, checkout, merge, rebase, cherry-pick, reset, revert, tag, log, status y
+reflog con revisiones (`HEAD~2`, `main^`, `HEAD@{1}`). Los escenarios con `goal` y `check` son desafíos que se
+validan solos. Para agregar uno, añade una entrada a `ESCENARIOS` con `build`, `goal`, `hint`, `check` y `solution`.
 
 ---
 

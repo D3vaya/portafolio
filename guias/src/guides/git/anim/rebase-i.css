@@ -1,0 +1,19 @@
+/* Animación: rebase interactivo. Prefijo: .ri- */
+.ri { display: grid; gap: 12px; }
+.ri-graph { padding: 4px 0; }
+.ri-ed {
+  display: none; font: 500 13px/1.55 var(--mono); color: #ececee; background: #0b0c0f;
+  border: 1px solid #23252c; border-radius: 10px; padding: 0 0 8px; overflow: hidden;
+}
+.ri-ed.is-on { display: block; }
+.ri-eh { font: 600 12px var(--sans); color: #7a7e89; padding: 6px 12px; border-bottom: 1px solid #23252c; margin-bottom: 6px; }
+.ri-li { padding: 1px 12px; overflow-wrap: anywhere; }
+.ri-li.is-hl { background: rgb(255 91 31 / .1); box-shadow: inset 3px 0 0 #ff5b1f; }
+.ri-c { font-weight: 700; color: #a8abb4; }
+.ri-c.c-reword { color: #ffb35c; }
+.ri-c.c-squash, .ri-c.c-fixup { color: #9aa8ff; }
+.ri-c.c-drop { color: #ff4d6d; }
+.ri-h { color: #7a7e89; }
+.ri-help { margin-top: 8px; padding: 0 12px; font-size: 12px; color: #6b6f7a; }
+.ri-help div { padding: 0 4px; border-radius: 4px; }
+.ri-help .is-hl { color: #ececee; background: rgb(255 91 31 / .12); }
