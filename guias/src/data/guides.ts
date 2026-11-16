@@ -38,8 +38,8 @@ export const guides: Guide[] = [
     title: "Git",
     tagline: "Lo que guarda de verdad y cómo no perder nada",
     summary:
-      "Entender qué guarda Git de verdad, y desde ahí: ramas, merge, rebase, conflictos, reset, reflog y Git por dentro. Con 34 animaciones y un laboratorio donde escribes comandos y ves el grafo.",
-    facts: ["4 niveles", "42 lecciones", "34 animaciones", "laboratorio interactivo"],
+      "Entender qué guarda Git de verdad, y desde ahí: ramas, merge, rebase, conflictos, reset, reflog y Git por dentro. Con 34 animaciones, un laboratorio donde escribes comandos y ves el grafo, 18 problemas de equipo resueltos paso a paso y una guía de estrategias de ramas.",
+    facts: ["4 niveles", "42 lecciones", "34 animaciones", "18 problemas resueltos", "estrategias de ramas"],
     progress: { key: "gitguia-v1", total: 46 },
     updated: "noviembre de 2026",
     status: "publicada",

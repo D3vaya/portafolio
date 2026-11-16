@@ -45,7 +45,7 @@ document.addEventListener("click", (e) => {
 
 /* ---------- rutas ---------- */
 const LEVELS = ["basico", "intermedio", "avanzado", "experto"];
-const EXTRA = ["laboratorio", "comandos", "rescate", "glosario"];
+const EXTRA = ["problemas", "rescate", "estrategias", "comandos", "laboratorio", "glosario"];
 const VIEWS = ["inicio", ...LEVELS, ...EXTRA];
 const BASE = "/git/";
 const viewUrl = (v) => (v === "inicio" ? BASE : BASE + v + "/");

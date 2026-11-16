@@ -96,3 +96,68 @@
 /* el estilo global de code dentro de placas pinta naranja: aquí el nombre de archivo es dato, no código */
 :root[data-identidad="placa"] .wd code.gi-f { background: none; padding: 0; color: #ececee; }
 :root[data-identidad="placa"] .wd .is-ign code.gi-f { color: #8b8f99; }
+
+/* ---------- problemas comunes (vista problemas, casos/html.ts) ---------- */
+.pb-list { list-style: none; margin: 0; padding: 0 8px 8px; display: grid; }
+.pb-list li a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 10px; border-radius: 9px; color: #ececee; text-decoration: none; font: 500 15px/1.4 var(--sans); }
+.pb-list li a:hover, .pb-list li a:focus-visible { background: rgb(255 255 255 / .05); }
+.pb-list li + li a { border-top: 1px solid rgb(255 255 255 / .06); }
+.pb { max-width: 900px; margin: 0 0 56px; scroll-margin-top: 130px; }
+.pb[hidden], .pb-gh[hidden] { display: none; }
+.pb-top { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+.pb h3 { font: 800 clamp(22px, 2.4vw, 27px)/1.15 var(--display); font-stretch: 82%; margin: 0 0 14px; text-wrap: balance; }
+.pb-sint { border: 1px solid var(--line); border-left: 3px solid var(--lv); background: var(--card); border-radius: 5px; padding: 12px 16px; margin: 0 0 14px; }
+.pb-sint b.h, .pb-c b.h { display: block; font: 600 11.5px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--lv); margin-bottom: 4px; }
+.pb-sint p { margin: 0; }
+.pb-msg { margin: 10px 0 0; padding: 10px 12px; border-radius: 8px; background: #0b0c0f; color: #ffb35c; font: 500 13px/1.55 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+.pb-causa { margin: 0 0 18px; }
+.pb-h { font: 600 12px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--mute); margin: 22px 0 10px; }
+.pb-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-top: 14px; }
+.pb-c { border: 1px solid var(--line); background: var(--card); border-radius: 5px; padding: 12px 16px; font-size: 15px; }
+.pb-c p { margin: 0; }
+.pb-prev b.h { color: var(--ok, #2f9e6a); }
+.pb-more { display: inline-block; margin-top: 12px; font: 600 14px var(--sans); }
+.pb-gh { scroll-margin-top: 130px; }
+
+/* ---------- estrategias de ramas (vista estrategias) ---------- */
+.es-form { display: grid; gap: 14px; }
+.es-form fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; }
+.es-form legend { font: 600 14.5px/1.4 var(--sans); color: #ececee; margin-bottom: 8px; padding: 0; }
+.es-ops { display: flex; flex-wrap: wrap; gap: 8px; }
+.es-ops label { position: relative; display: inline-flex; margin: 0; }
+.es-ops input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.es-ops span { display: inline-block; padding: 8px 12px; border-radius: 9px; border: 1px solid #2c2f37; background: #15161b; color: #c8cad0; font: 500 14px var(--sans); cursor: pointer; transition: border-color .15s, background .15s; }
+.es-ops input:checked + span { border-color: #ff5b1f; background: rgb(255 91 31 / .14); color: #fff; }
+.es-ops input:focus-visible + span { outline: 2px solid #ff5b1f; outline-offset: 2px; }
+#esOut { margin: 4px 18px 18px; }
+.es-wait { color: #8b8f99; font: 400 14.5px var(--sans); margin: 0; }
+.es-rec { display: grid; gap: 6px; padding: 14px 16px; border-radius: 12px; border: 1px solid rgb(255 91 31 / .45); background: rgb(255 91 31 / .07); }
+.es-rec .es-k { font: 600 11.5px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: #ff7a45; }
+.es-rec b { font: 800 24px/1.1 var(--display); font-stretch: 80%; color: #fff; }
+.es-rec p { margin: 0; color: #d5d7dc; font: 400 15px/1.55 var(--sans); }
+.es-rec .btn { justify-self: start; margin-top: 6px; }
+.es-alt { margin: 10px 0 0; color: #a8abb4; font: 400 14px/1.5 var(--sans); }
+.es-alt a, .es-rec a:not(.btn) { color: #ff9a6b; }
+.es-a { max-width: 900px; scroll-margin-top: 130px; margin-bottom: 24px; }
+.es-a.is-rec > .rh::after { content: "Recomendada para ti"; display: inline-block; vertical-align: middle; margin-left: 12px; padding: 3px 9px; border-radius: 999px; font: 600 12px var(--sans); font-stretch: normal; background: var(--lv); color: var(--on-accent); }
+.es-idea { font-size: 17px; margin: 0 0 18px; color: var(--ink); }
+.es-dl { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 18px 0 14px; }
+.es-dl > div { border: 1px solid var(--line); background: var(--card); border-radius: 5px; padding: 12px 16px; }
+.es-dl > .wide { grid-column: 1 / -1; }
+.es-dl dt { font: 600 11.5px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--mute); margin-bottom: 4px; }
+.es-dl .ok dt { color: var(--ok, #2f9e6a); } .es-dl .no dt { color: var(--bad, #d6455d); }
+.es-dl dd { margin: 0; font-size: 15px; }
+.es-src { font-size: 13.5px; color: var(--mute); }
+@media (max-width: 760px) {
+  .es-dl { grid-template-columns: minmax(0, 1fr); }
+  .pb-list li a { font-size: 14.5px; }
+  .es-a.is-rec > .rh::after { display: table; margin: 8px 0 0; }
+}
+.tblwrap { overflow-x: auto; max-width: 100%; }
+.tblwrap table.ref { min-width: 560px; }
+/* reserva el alto de la animación antes de montarla: los enlaces #c-… no saltan de lugar */
+[data-flujo]:not(.escena) { display: block; min-height: 560px; }
+@media (max-width: 760px) { [data-flujo]:not(.escena) { min-height: 720px; } }
+.pb-top .sos-r.r-bajo { color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent); }
+.pb-top .sos-r.r-medio { color: var(--warn); background: color-mix(in srgb, var(--warn) 14%, transparent); }
+.pb-top .sos-r.r-alto { color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, transparent); }

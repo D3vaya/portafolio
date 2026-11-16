@@ -57,8 +57,10 @@
 
   <div class="sec">
     <h2 class="big">Referencia para el día a día</h2>
-    <p class="sub">Para cuando ya sabes qué quieres hacer y solo necesitas el comando, o cuando algo salió mal.</p>
+    <p class="sub">Para cuando tienes un problema concreto, necesitas el comando exacto o algo salió mal.</p>
     <div class="refcards">
+      <a class="refcard" href="#problemas" style="--c:var(--a)"><div class="gl">?!</div><b>Problemas comunes</b><span><span data-count="casos">18</span> problemas de trabajo en equipo con su flujo recomendado, animado paso a paso.</span></a>
+      <a class="refcard" href="#estrategias" style="--c:var(--x)"><div class="gl">⑂</div><b>Estrategias de ramas</b><span>GitHub flow, trunk-based, Git flow y más. Responde cinco preguntas y te recomendamos una.</span></a>
       <a class="refcard" href="#laboratorio" style="--c:var(--clay)"><div class="gl">$</div><b>Laboratorio</b><span>Practica cualquier comando y mira el grafo. Seis desafíos con pista y solución.</span></a>
       <a class="refcard" href="#comandos" style="--c:var(--i)"><div class="gl">git</div><b>Comandos</b><span><span data-count="cmds">40</span> comandos con sus opciones útiles y ejemplos, con buscador.</span></a>
       <a class="refcard" href="#rescate" style="--c:var(--a)"><div class="gl">↺</div><b>Rescate</b><span><span data-count="rescate">18</span> situaciones de «me equivoqué» con la solución exacta y su riesgo.</span></a>
@@ -865,7 +867,7 @@ git add vendor/ui && git commit -m "actualiza ui"   # y fija el nuevo puntero</p
       <tr><td><b>Git flow</b></td><td>Ramas <code>develop</code>, <code>release/*</code> y <code>hotfix/*</code>, y <code>main</code> con tags de versión</td><td>Software con versiones numeradas y soporte largo (apps de escritorio, librerías)</td></tr>
     </tbody>
   </table>
-  <div class="simple"><b class="h">Si dudas</b><p>Empieza con GitHub flow: ramas cortas, pull requests y <code>main</code> protegida. Es simple, funciona con equipos de cualquier tamaño y puedes acercarte a trunk-based a medida que mejoran tus pruebas automáticas.</p></div>
+  <div class="simple"><b class="h">Si dudas</b><p>Empieza con GitHub flow: ramas cortas, pull requests y <code>main</code> protegida. Es simple, funciona con equipos de cualquier tamaño y puedes acercarte a trunk-based a medida que mejoran tus pruebas automáticas. Compara todas las estrategias, con animaciones y un asistente para elegir, en <a href="#estrategias">Estrategias de ramas</a>.</p></div>
   <button class="done-btn" data-done="x8">○ Marcar como completada</button>
 </article>
 
@@ -979,6 +981,77 @@ git log --show-signature -1</pre></div>
         <tr><td><code>main:src/app.js</code></td><td>Ese archivo tal como está en main</td></tr>
       </tbody>
     </table>
+  </div>
+</section>
+
+<section class="view" id="v-problemas" style="--lv:var(--a)">
+  <div class="lvhead"><div class="bigglyph">?!</div><div class="tag">Referencia · Problemas</div><h1>Problemas comunes con Git en equipo</h1><p>Los problemas que más se repiten al trabajar con otras personas: ramas que se quedan atrás, conflictos en el lockfile, pull requests enormes, hotfixes con una release en curso, main roto. Cada uno con el flujo recomendado, animado paso a paso.</p></div>
+  <div class="refbody">
+    <div class="simple"><b class="h">Cómo usar esta página</b><p>Busca tu problema con tus palabras o elige un tema. Cada caso dice qué ves, por qué pasa, el flujo para salir paso a paso (con el grafo de commits cambiando en cada comando) y cómo evitar que se repita. Si lo tuyo es deshacer un error puntual, como un commit o una rama borrada, mira <a href="#rescate">Rescate</a>.</p></div>
+    <!--casos-->
+    <div class="next"><div><h3>¿Tu equipo choca seguido con estos problemas?</h3><p>Muchos vienen de la estrategia de ramas. Compara las que se usan hoy y elige la que encaja con tu equipo.</p></div><a class="btn lv" href="#estrategias" style="--lv:var(--x)">Ver estrategias</a></div>
+  </div>
+</section>
+
+<section class="view" id="v-estrategias" style="--lv:var(--x)">
+  <div class="lvhead"><div class="bigglyph">⑂</div><div class="tag">Referencia · Estrategias</div><h1>Estrategias de ramas en Git</h1><p>GitHub flow, trunk-based, Git flow, GitLab flow, ramas de release, pull requests apilados y forks: cómo funciona cada estrategia, para quién sirve y para quién no. Responde cinco preguntas y te recomendamos una.</p></div>
+  <div class="refbody">
+    <div class="simple"><b class="h">Lo que más importa</b><p>La estrategia depende sobre todo de <b>cada cuánto despliegas</b> y de <b>cuántas versiones mantienes a la vez</b>. Las investigaciones de DORA encontraron que los equipos de mejor desempeño tienen tres ramas activas o menos e integran al tronco al menos una vez al día. Las ramas cortas son la parte que más ayuda, sea cual sea la estrategia que uses.</p></div>
+    <div class="wd" id="esW">
+      <div class="wh"><span class="dot"></span><span class="tt">¿Qué estrategia me sirve?</span></div>
+      <div class="wb">
+        <form class="es-form" onsubmit="return false">
+          <fieldset><legend>¿Cada cuánto despliegas o publicas?</legend><div class="es-ops">
+            <label><input type="radio" name="deploy" value="continuo"><span>Varias veces al día o a la semana</span></label>
+            <label><input type="radio" name="deploy" value="programado"><span>En fechas o ventanas fijas</span></label>
+            <label><input type="radio" name="deploy" value="versiones"><span>Versiones numeradas cada tanto</span></label>
+          </div></fieldset>
+          <fieldset><legend>¿Cuántas versiones mantienes a la vez?</legend><div class="es-ops">
+            <label><input type="radio" name="versiones" value="una"><span>Una: la que está en producción</span></label>
+            <label><input type="radio" name="versiones" value="varias"><span>Varias (por ejemplo 1.x y 2.x)</span></label>
+          </div></fieldset>
+          <fieldset><legend>¿Tus pruebas automáticas son confiables?</legend><div class="es-ops">
+            <label><input type="radio" name="ci" value="solido"><span>Sí: si CI pasa, confiamos</span></label>
+            <label><input type="radio" name="ci" value="debil"><span>A medias o no hay</span></label>
+          </div></fieldset>
+          <fieldset><legend>¿Quién contribuye al repositorio?</legend><div class="es-ops">
+            <label><input type="radio" name="equipo" value="chico"><span>Un equipo pequeño</span></label>
+            <label><input type="radio" name="equipo" value="grande"><span>Varios equipos en un repo</span></label>
+            <label><input type="radio" name="equipo" value="oss"><span>Gente externa (open source)</span></label>
+          </div></fieldset>
+          <fieldset><legend>¿Necesitas aprobación entre entornos (staging, producción)?</legend><div class="es-ops">
+            <label><input type="radio" name="regulado" value="no"><span>No</span></label>
+            <label><input type="radio" name="regulado" value="si"><span>Sí, por proceso o regulación</span></label>
+          </div></fieldset>
+        </form>
+      </div>
+      <div id="esOut" aria-live="polite"></div>
+    </div>
+
+    <h2 class="rh">Comparación rápida</h2>
+    <div class="tblwrap"><table class="ref">
+      <thead><tr><th>Estrategia</th><th>Ramas permanentes</th><th>Vida de una rama</th><th>Ideal para</th></tr></thead>
+      <tbody>
+        <tr><td><a href="#e-github-flow"><b>GitHub flow</b></a></td><td><code>main</code></td><td>Horas a pocos días</td><td>Web y SaaS que despliegan seguido</td></tr>
+        <tr><td><a href="#e-trunk"><b>Trunk-based</b></a></td><td><code>main</code></td><td>Horas</td><td>CI sólido, despliegues diarios</td></tr>
+        <tr><td><a href="#e-git-flow"><b>Git flow</b></a></td><td><code>main</code> y <code>develop</code></td><td>Días a semanas</td><td>Versiones numeradas, apps instaladas</td></tr>
+        <tr><td><a href="#e-gitlab-flow"><b>GitLab flow</b></a></td><td><code>main</code> + una por entorno</td><td>Horas a días</td><td>Despliegues por ventanas o con aprobación</td></tr>
+        <tr><td><a href="#e-release"><b>Ramas de release</b></a></td><td><code>main</code> (+ una por versión)</td><td>Horas a días</td><td>Sprints, anillos, varias versiones</td></tr>
+        <tr><td><a href="#e-stacked"><b>PRs apilados</b></a></td><td>(se combina con otras)</td><td>Horas a días</td><td>Cambios grandes que hay que revisar por partes</td></tr>
+        <tr><td><a href="#e-fork"><b>Forks</b></a></td><td>Las del proyecto</td><td>Lo que dure el PR</td><td>Open source y contribuciones externas</td></tr>
+      </tbody>
+    </table></div>
+
+    <!--estrategias-->
+
+    <h2 class="rh">Prácticas que funcionan con cualquier estrategia</h2>
+    <div class="cols3">
+      <div class="mini"><b>Merge queue</b>Cada PR se prueba junto con <code>main</code> y con los que entran antes, y solo se fusiona si todo pasa. Evita el «main roto» cuando muchos fusionan a la vez. GitHub la tiene como merge queue (escucha el evento <code>merge_group</code> en tus workflows) y GitLab como merge trains.</div>
+      <div class="mini"><b>Ship / Show / Ask</b>No todo cambio necesita esperar revisión. <i>Ship</i>: va directo a <code>main</code>. <i>Show</i>: PR que se fusiona sin esperar y se revisa después. <i>Ask</i>: PR que espera la revisión. Propuesto por Rouan Wilsenach en martinfowler.com; requiere confianza y buen CI.</div>
+      <div class="mini"><b>main protegida</b>Pull request obligatorio, checks de CI que deben pasar, sin force push y, si hace falta, archivo <code>CODEOWNERS</code> para pedir revisión a quien conoce cada parte. Es lo primero que conviene configurar en cualquier repo de equipo.</div>
+    </div>
+    <p class="es-src">Más sobre estas prácticas: <a href="https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue" rel="noopener" target="_blank">GitHub merge queue</a> · <a href="https://docs.gitlab.com/ci/pipelines/merge_trains/" rel="noopener" target="_blank">GitLab merge trains</a> · <a href="https://martinfowler.com/articles/ship-show-ask.html" rel="noopener" target="_blank">Ship / Show / Ask</a> · <a href="https://dora.dev/capabilities/trunk-based-development/" rel="noopener" target="_blank">DORA</a></p>
+    <div class="next"><div><h3>¿Ya elegiste y aparecen problemas?</h3><p>Ramas largas, conflictos que se repiten, hotfixes, main roto: el flujo para cada uno.</p></div><a class="btn lv" href="#problemas" style="--lv:var(--a)">Ver problemas comunes</a></div>
   </div>
 </section>
 

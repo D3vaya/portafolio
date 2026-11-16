@@ -56,7 +56,8 @@ Los enlaces antiguos (`/claude-code/#hooks`) redirigen a la URL nueva.
 La guía de Git (`/git/`, `/git/basico/` … `/git/glosario/`) usa la misma estructura con código propio en
 `src/guides/git/`: `content.html` (lecciones y vistas), `views.ts`, `app.js` (progreso, quizzes y widgets),
 `anim/` (escenas sobre el kit de grafos `_kit.ts`), `lab.ts` (el laboratorio: un repositorio simulado donde se escriben
-comandos de Git y el grafo cambia en vivo) y `hero.ts` (el grafo animado de la portada). Ver DESIGN.md §6.1 y §6.2.
+comandos de Git y el grafo cambia en vivo), `hero.ts` (el grafo animado de la portada) y `casos/` (problemas comunes en equipo y estrategias de ramas,
+escritos como datos con su animación). Ver DESIGN.md §6.1, §6.2 y §6.3.
 
 ## SEO
 
