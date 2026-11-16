@@ -1,0 +1,197 @@
+---
+import "../../guides/claude-code/legacy.css";
+import Base from "../../layouts/Base.astro";
+import ReaderMenu from "../../components/ReaderMenu.astro";
+import "../../guides/claude-code/guide.css";
+import appUrl from "../../guides/git/app.js?url";
+import "../../guides/git/guide.css";
+import { views, LEVELS, REFERENCE, META, LESSONS, WIDGETS, ESCENAS, FOOTER, BASE, viewUrl, type View } from "../../guides/git/views";
+import { findGuide } from "../../data/guides";
+
+export function getStaticPaths() {
+  return views.map((v) => ({ params: { view: v.id === "inicio" ? undefined : v.id }, props: { view: v } }));
+}
+
+const { view } = Astro.props as { view: View };
+const guide = findGuide("git");
+const site = Astro.site!;
+const abs = (path: string) => new URL(path, site).href;
+
+const author = { "@type": "Person", name: "Juan Carlos Ayala Higuera", url: "https://www.jcayala.dev/" };
+const course = {
+  "@type": "Course",
+  name: "Git, de cero a experto",
+  description: views[0].description,
+  url: abs(BASE),
+  inLanguage: "es",
+  isAccessibleForFree: true,
+  educationalLevel: "Principiante a avanzado",
+  provider: author,
+  author,
+};
+const crumbs = [
+  { name: "Guías", url: abs("/") },
+  { name: "Git", url: abs(BASE) },
+  ...(view.id === "inicio" ? [] : [{ name: view.label, url: abs(view.url) }]),
+];
+const jsonLd = [
+  view.id === "inicio"
+    ? { "@context": "https://schema.org", ...course, image: abs("/og-git.png") }
+    : {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        headline: view.title,
+        description: view.description,
+        url: abs(view.url),
+        inLanguage: "es",
+        image: abs("/og-git.png"),
+        dateModified: "2026-11-14",
+        author,
+        isPartOf: { "@type": "Course", name: course.name, url: course.url },
+      },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: crumbs.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c.name, item: c.url })),
+  },
+];
+// Datos que el JS necesita de las vistas que no están en esta página
+const ccData = `window.__GIT=${JSON.stringify({ lessons: LESSONS, widgets: WIDGETS, escenas: ESCENAS })};`;
+---
+
+<Base
+  title={view.title}
+  description={view.description}
+  image="/og-git.png"
+  imageAlt="Guía de Git en español, de cero a experto, con animaciones."
+  ogType={view.id === "inicio" ? "website" : "article"}
+  jsonLd={jsonLd}
+  accent={guide.accent}
+>
+  <header class="readerbar guide-head">
+    <div class="row">
+      <button class="icon-btn toc-btn" type="button" data-toc-toggle aria-expanded="false" aria-controls="toc-panel">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>
+        <span class="lbl">Contenido</span>
+      </button>
+      <nav class="crumbs" aria-label="Ruta">
+        <a href="/">Guías</a><span class="sep">/</span>{
+          view.id === "inicio" ? (
+            <a class="here" href={BASE} aria-current="page">Git</a>
+          ) : (
+            <><a href={BASE}>Git</a><span class="sep">/</span><span class="here">{view.label}</span></>
+          )
+        }
+      </nav>
+      <nav class="lvnav" id="lvnav" aria-label="Niveles">
+        {
+          LEVELS.map((id) => (
+            <a href={viewUrl(id)} data-l={id} title={META[id].label} class:list={[id === view.id && "on"]} aria-current={id === view.id ? "page" : undefined}>
+              <svg class="ring" viewBox="0 0 20 20" aria-hidden="true">
+                <circle class="bgc" cx="10" cy="10" r="7" />
+                <circle class="fg" cx="10" cy="10" r="7" stroke="var(--accent)" stroke-dasharray="44" stroke-dashoffset="44" />
+              </svg>
+              <span class="num">{LEVELS.indexOf(id) + 1}</span>
+              <span class="lbl">{META[id].label}</span>
+            </a>
+          ))
+        }
+      </nav>
+      <div class="bar-actions"><ReaderMenu /></div>
+    </div>
+    <div class="refnav">
+      <div class="in" id="refnav">
+        <span class="lb">Referencia</span>
+        {REFERENCE.map((id) => <a href={viewUrl(id)} data-l={id} class:list={[id === view.id && "on"]} aria-current={id === view.id ? "page" : undefined}>{META[id].label}</a>)}
+      </div>
+    </div>
+  </header>
+
+  <div class="drawer-backdrop" data-toc-close></div>
+
+  <div class="wrap" set:html={view.html + FOOTER + '<div class="toast" id="toast" role="status"></div>'} />
+
+  <div class="progressbar is-off" aria-hidden="true">
+    <div class="track"><b></b></div>
+    <div class="row"><span class="where"></span><span class="left"></span></div>
+  </div>
+
+  <script>
+    import "../../guides/git/anim/index";
+    import "../../guides/git/lab";
+    import "../../guides/git/hero";
+  </script>
+  <script is:inline set:html={ccData} />
+  <script is:inline src={appUrl}></script>
+
+  <script is:inline>
+    (function () {
+      var body = document.body;
+      var tocBtn = document.querySelector("[data-toc-toggle]");
+      var LEVELS = { basico: "Básico", intermedio: "Intermedio", avanzado: "Avanzado", experto: "Experto" };
+
+      function activeView() { return document.querySelector(".view.on"); }
+      function activeToc() { var v = activeView(); return v && v.querySelector("aside.toc"); }
+
+      // ---------- panel de contenido ----------
+      function setToc(open) {
+        var t = activeToc();
+        if (!t) open = false;
+        body.classList.toggle("toc-open", open);
+        document.querySelector(".drawer-backdrop").classList.toggle("open", open);
+        tocBtn.setAttribute("aria-expanded", String(open));
+        if (open) { var b = t.querySelector("button.act") || t.querySelector("button"); if (b) b.focus({ preventScroll: true }); }
+      }
+      document.addEventListener("click", function (e) {
+        if (e.target.closest("[data-toc-toggle]")) { setToc(!body.classList.contains("toc-open")); return; }
+        if (e.target.closest("[data-toc-close]") || (body.classList.contains("toc-open") && e.target.closest("aside.toc [data-go]"))) setToc(false);
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && body.classList.contains("toc-open")) { setToc(false); tocBtn.focus(); }
+      });
+
+      // ---------- barra de progreso de lectura ----------
+      var bar = document.querySelector(".progressbar");
+      var fill = bar.querySelector(".track b"), where = bar.querySelector(".where"), left = bar.querySelector(".left");
+      var cache = {};
+      function wordsOf(el) { return (el.textContent || "").trim().split(/\s+/).length; }
+      function measure(view) {
+        if (cache[view.id]) return cache[view.id];
+        var arts = Array.prototype.slice.call(view.querySelectorAll("article.lesson"));
+        return (cache[view.id] = arts.map(function (a) { return { el: a, words: wordsOf(a) }; }));
+      }
+      function update() {
+        var v = activeView(), key = v && v.id.slice(2);
+        if (!v || !LEVELS[key]) { bar.classList.add("is-off"); return; }
+        bar.classList.remove("is-off");
+        var arts = measure(v), mark = innerHeight * 0.35, cur = 0, rest = 0;
+        arts.forEach(function (a, i) { if (a.el.getBoundingClientRect().top < mark) cur = i; });
+        var r = arts[cur].el.getBoundingClientRect();
+        var inCur = Math.min(1, Math.max(0, (mark - r.top) / Math.max(1, r.height)));
+        rest = Math.round(arts[cur].words * (1 - inCur));
+        for (var i = cur + 1; i < arts.length; i++) rest += arts[i].words;
+        var total = arts.reduce(function (s, a) { return s + a.words; }, 0);
+        var pct = Math.round((1 - rest / total) * 100);
+        var mins = Math.max(1, Math.round(rest / 230));
+        fill.style.width = pct + "%";
+        var lnum = arts[cur].el.querySelector(".lnum");
+        where.textContent = LEVELS[key] + " · " + (lnum ? lnum.textContent.replace("Lección ", "") + " " : "") + (arts[cur].el.dataset.t || "");
+        left.textContent = (rest < 60 ? "Fin del nivel" : mins + " min restantes en el nivel") + " · " + pct + " %";
+      }
+      var ticking = false;
+      addEventListener("scroll", function () {
+        if (ticking) return; ticking = true;
+        requestAnimationFrame(function () { ticking = false; update(); });
+      }, { passive: true });
+      addEventListener("resize", function () { cache = {}; update(); });
+
+      function onRoute() {
+        setToc(false);
+        tocBtn.hidden = !activeToc();
+        setTimeout(update, 60);
+      }
+      addEventListener("hashchange", onRoute);
+      onRoute();
+    })();
+  </script>
+</Base>

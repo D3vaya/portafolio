@@ -1,0 +1,98 @@
+/* Ajustes propios de la guía de Git (sobre guide.css y legacy.css de la guía de Claude Code). */
+
+/* ---------- portada: grafo vivo en una placa ---------- */
+.git-hero {
+  width: 100%; max-width: 640px; margin: 56px auto 0; padding: 18px; display: grid; gap: 10px; text-align: left;
+  background-color: #111216; background-image: radial-gradient(rgb(255 255 255 / .07) 1px, transparent 1.2px);
+  background-size: 18px 18px; border: 1px solid #23252c; border-radius: 18px; box-shadow: 0 30px 60px -32px rgb(0 0 0 / .55);
+}
+:root[data-theme="noche"] .git-hero { background-color: #1a1c22; }
+.hero > .git-hero { order: 3; }
+.hero > .figcap { order: 4; }
+
+/* ---------- títulos dentro de las vistas de referencia ---------- */
+.refbody .rh { font: 800 clamp(26px, 3vw, 34px)/1.1 var(--display); font-stretch: 80%; margin: 48px 0 14px; }
+.lab-stack { display: grid; gap: 28px; }
+
+/* ---------- formulario de configuración (b2) ---------- */
+.cfg-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+.cfg-form label { display: grid; gap: 6px; font: 500 13px var(--sans); color: #a8abb4; }
+.cfg-form :is(input, select), .gi-grid textarea, #msgIn, #cfEd, .cmd-q {
+  font: 500 15px var(--mono); color: #ececee; background: #0b0c0f; border: 1px solid #2c2f37; border-radius: 9px; padding: 9px 11px; width: 100%;
+}
+.cfg-form :is(input, select):focus, .gi-grid textarea:focus, #msgIn:focus, #cfEd:focus, .cmd-q:focus { outline: 2px solid #ff5b1f; outline-offset: 1px; border-color: transparent; }
+.cfg-form .cfg-chk { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.cfg-form .cfg-chk input { width: auto; accent-color: #ff5b1f; }
+
+/* ---------- probador de .gitignore (b8) ---------- */
+.gi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.gi-grid label { display: grid; gap: 6px; font: 500 13px var(--sans); color: #a8abb4; }
+.gi-grid textarea { resize: vertical; font-size: 13.5px; line-height: 1.55; }
+#giOut { display: grid; gap: 6px; }
+.gi-row { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 2px 12px; align-items: baseline; padding: 7px 10px; border-radius: 8px; background: rgb(255 255 255 / .03); }
+.gi-st { font: 600 12.5px var(--sans); grid-row: span 2; }
+.is-ign .gi-st { color: #a8abb4; } .is-trk .gi-st { color: #5fd69a; }
+.is-ign .gi-f { color: #8b8f99; text-decoration: line-through; }
+.gi-f { font: 500 13.5px var(--mono); background: none !important; padding: 0 !important; color: #ececee; }
+.gi-why { font: 400 13px var(--sans); color: #8b8f99; }
+
+/* ---------- revisor de mensajes (b10) ---------- */
+#msgIn { resize: vertical; line-height: 1.55; }
+.msg-ex { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 10px 0; font: 500 13px var(--sans); color: #8b8f99; }
+.msg-out { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.msg-out li { display: flex; gap: 10px; font: 400 14.5px/1.45 var(--sans); color: #c8cad0; }
+.msg-out li span { flex: none; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font: 700 12px var(--mono); }
+.msg-out .m-ok span { background: rgb(95 214 154 / .16); color: #5fd69a; }
+.msg-out .m-bad span { background: rgb(255 77 109 / .16); color: #ff4d6d; }
+.msg-out .m-warn span { background: rgb(255 179 92 / .16); color: #ffb35c; }
+.msg-out .m-info span { background: rgb(154 168 255 / .14); color: #9aa8ff; }
+
+/* ---------- resolutor de conflictos (i5) ---------- */
+.cf-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+#cfEd { resize: vertical; line-height: 1.6; font-size: 14px; }
+.cf-bar { display: flex; align-items: flex-start; gap: 14px; margin-top: 12px; flex-wrap: wrap; }
+.cf-msg { margin: 4px 0 0; flex: 1; min-width: 220px; font: 400 14.5px/1.5 var(--sans); color: #a8abb4; }
+.cf-msg.ok { color: #5fd69a; } .cf-msg.bad { color: #ff7a8f; }
+
+/* ---------- buscadores: comandos, rescate, glosario ---------- */
+.cmd-count { margin-left: auto; font: 500 12.5px var(--sans); color: #8b8f99; }
+.wd .wh:has(.cmd-count) { display: flex; align-items: center; gap: 10px; }
+.cmd-q { font-family: var(--sans); font-size: 16px; }
+#cmdCats { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+.cmd-list, .sos-list { display: grid; gap: 2px; padding: 0 12px 14px; }
+.cmd, .sos { border-radius: 10px; }
+.cmd summary, .sos summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: minmax(150px, 210px) minmax(0, 1fr); gap: 4px 14px; align-items: baseline; padding: 11px 10px; border-radius: 10px; }
+.cmd summary::-webkit-details-marker, .sos summary::-webkit-details-marker { display: none; }
+.cmd summary:hover, .sos summary:hover, .cmd[open] summary, .sos[open] summary { background: rgb(255 255 255 / .05); }
+.cmd-n { font: 600 14.5px var(--mono); color: #ff9a6e !important; background: none !important; padding: 0 !important; }
+.cmd-d { font: 400 14.5px/1.45 var(--sans); color: #c8cad0; }
+.cmd .code, .sos .code { margin: 6px 10px 14px; }
+.cmd .ch a, .sos .ch a { color: #ff9a6e; }
+.cmd-empty { padding: 16px 12px; color: #a8abb4; font: 400 15px var(--sans); }
+.sos summary { grid-template-columns: minmax(0, 1fr) auto; }
+.sos-q { font: 500 15.5px/1.4 var(--sans); color: #ececee; }
+.sos-r { font: 600 12px var(--sans); padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+.r-bajo { color: #5fd69a; background: rgb(95 214 154 / .12); }
+.r-medio { color: #ffb35c; background: rgb(255 179 92 / .12); }
+.r-alto { color: #ff7a8f; background: rgb(255 77 109 / .14); }
+.r-alto::before { content: "! "; }
+.sos > p { margin: 4px 10px 8px; font: 400 15px/1.55 var(--sans); color: #c8cad0; }
+.gl-list { display: grid; gap: 0; padding: 0 18px 16px; margin: 0; }
+.gl-i { padding: 12px 0; border-top: 1px solid rgb(255 255 255 / .07); }
+.gl-i dt { font: 800 19px/1.2 var(--display); font-stretch: 85%; color: #ececee; }
+.gl-i dd { margin: 4px 0 0; font: 400 15px/1.55 var(--sans); color: #b9bcc4; }
+.gl-i dd a { font-size: 13px; color: #ff9a6e; margin-left: 4px; }
+
+@media (max-width: 760px) {
+  .git-hero { margin-top: 40px; padding: 12px; }
+  .cfg-form, .gi-grid { grid-template-columns: 1fr; }
+  .gi-row { grid-template-columns: 1fr; }
+  .gi-st { grid-row: auto; }
+  .cmd summary { grid-template-columns: 1fr; }
+  .cmd-list, .sos-list { padding: 0 4px 10px; }
+  .gl-list { padding: 0 12px 12px; }
+}
+
+/* el estilo global de code dentro de placas pinta naranja: aquí el nombre de archivo es dato, no código */
+:root[data-identidad="placa"] .wd code.gi-f { background: none; padding: 0; color: #ececee; }
+:root[data-identidad="placa"] .wd .is-ign code.gi-f { color: #8b8f99; }

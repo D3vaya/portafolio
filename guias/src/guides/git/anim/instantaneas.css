@@ -1,0 +1,38 @@
+/* Animación: de mil copias a un historial. Prefijo: .in- */
+.in { display: grid; gap: 14px; }
+.in-board { position: relative; display: grid; grid-template-columns: minmax(0, 250px) minmax(0, 1fr); gap: 12px; align-items: start; }
+.in-board.is-copias { grid-template-columns: minmax(0, 1fr) minmax(0, 300px); align-items: center; }
+.in-h b { display: block; font: 800 16px/1.1 var(--display); font-stretch: 82%; color: #ececee; }
+.in-h span { display: block; margin-top: 2px; font: 500 12px/1.3 var(--sans); color: #8b8f99; }
+
+.in-folder, .in-doc, .in-hist { display: grid; gap: 10px; padding: 12px; border-radius: 12px; background: #16171c; border: 1.5px solid #2a2c34; min-width: 0; }
+.in-copias { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.in-copias .gk-file { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.in-duda { margin: 0; }
+
+.in-paper { display: grid; gap: 4px; padding: 10px 12px; border-radius: 8px; background: #ececee; color: #2a2c34; font: 400 13px/1.45 var(--sans); }
+.in-paper b { font: 700 14px var(--sans); color: #111216; }
+.in-paper span { display: block; border-radius: 4px; }
+.in-paper em { font-style: normal; font-weight: 700; color: #111216; }
+
+.in-line { display: flex; align-items: flex-start; }
+.in-cm { position: relative; width: 33.33%; max-width: 150px; flex: none; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; border-radius: 10px; padding-bottom: 6px; }
+.in-cm + .in-cm::before {
+  content: ""; position: absolute; top: 45px; left: calc(16px - 50%); width: calc(100% - 32px); height: 2.5px; background: rgb(255 255 255 / .3);
+}
+.in-ref { height: 26px; display: flex; align-items: center; }
+.in-msg { font: 600 12.5px/1.3 var(--sans); color: #ececee; padding: 0 4px; margin-top: 2px; }
+.in-who { font: 500 12px var(--sans); color: #a8abb4; }
+.in-hash { font: 500 12px var(--mono); color: #ffb35c; }
+.in-cm:not(.is-here) .in-msg { color: #a8abb4; }
+
+.in-cierre { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.in-cierre .bx-note { margin: 0; }
+.in-remote { margin: 0; padding: 8px 12px; border-radius: 10px; border: 1.5px dashed #757984; font: 500 13.5px/1.45 var(--sans); color: #a8abb4; }
+.in-remote b { display: block; color: #ececee; }
+.in-remote .mo { font: 600 12.5px var(--mono); color: #ffb08f; }
+
+@media (max-width: 760px) {
+  .in-board, .in-board.is-copias, .in-cierre { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .in-doc, .in-hist, .in-folder { padding: 10px; }
+}

@@ -1,0 +1,19 @@
+.pr { display: grid; gap: 12px; }
+.pr-zones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+.pr-z { border: 1px solid #2a2d35; border-radius: 12px; padding: 10px 10px 8px; display: grid; gap: 4px; background: rgb(27 29 35 / .55); }
+.pr-gh { border-style: dashed; border-color: #3a3d47; }
+.pr-l { font: 600 12.5px var(--sans); color: #a8abb4; }
+.pr-local .pr-g { padding-top: 18px; }
+.pr-card { background: #1b1d23; border: 1px solid #3a3d47; border-radius: 10px; padding: 10px 12px; display: grid; gap: 6px; }
+.pr-card[hidden] { display: none; }
+.pr-ct { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.pr-ct b { font: 700 14px var(--sans); color: #ececee; }
+.pr-num { font: 600 12.5px var(--mono); color: #a8abb4; }
+.pr-br { font: 500 12.5px var(--sans); color: #a8abb4; }
+.pr-ch { font: 600 12px var(--mono); color: #c8cfff; border: 1.5px solid #9aa8ff; border-radius: 4px; padding: 0 5px; }
+.pr-card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font: 600 12.5px/1.45 var(--sans); }
+.pr-card li.ok { color: #5fd69a; } .pr-card li.warn { color: #ffb35c; }
+.pr-card li.pr-com { color: #ececee; font-weight: 500; border-left: 2px solid #ffb35c; padding-left: 8px; }
+.pr-state { justify-self: start; font: 700 12.5px var(--sans); color: #ececee; border: 1.5px solid #757984; border-radius: 999px; padding: 2px 10px; }
+.pr-state.is-merged { color: #5fd69a; border-color: #5fd69a; }
+@media (max-width: 760px) { .pr-zones { grid-template-columns: 1fr; } .pr-z { padding: 8px 4px 6px; } .pr-l { padding-left: 6px; } .pr-card { margin: 0 4px 4px; } }

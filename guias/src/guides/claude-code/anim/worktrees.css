@@ -80,4 +80,21 @@
   .wt-track { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   /* en móvil solo se listan los archivos modificados y el .env */
   .wt-files li[data-f]:not(.is-m):not([data-f="env"]) { display: none; }
+  /* compacto: cabecera en una línea, pregunta en una fila, menos aire */
+  .wt-board { gap: 10px; }
+  .wt-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; }
+  .wt-kind { flex-basis: 100%; }
+  .wt-path { font-size: 15px; }
+  .wt-br { padding: 1px 7px; }
+  .wt-cmd { padding: 4px 7px; }
+  .wt-nocmd { display: none; }
+  .wt-sess { padding: 5px 8px; }
+  .wt-files li { padding: 1px 6px; }
+  .wt-col.is-ask .wt-ask { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; padding: 5px 9px; }
+  .wt-batch { padding: 8px 10px; }
+  .wt-minis i { padding: 3px 7px; }
+  .wt-git { padding: 8px 10px; gap: 4px; }
+  .wt-track { grid-template-columns: 160px minmax(0, 1fr); gap: 8px; }
+  .escena .wt .wt-git .wt-track code { font-size: 12px; white-space: nowrap; background: none; padding: 0; }
+  .wt-minis i:nth-child(n + 7) { display: none; }
 }

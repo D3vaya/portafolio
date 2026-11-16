@@ -1,0 +1,36 @@
+/* Piezas compartidas por las escenas DOM del nivel básico de Git (ver _basico.ts). Prefijo: .bx- */
+.bx-vuelo { position: absolute; left: 0; top: 0; z-index: 6; pointer-events: none; }
+.bx-salida { pointer-events: none; z-index: 3; box-sizing: border-box; }
+
+/* commit en DOM: mismo vocabulario que el grafo del kit */
+.bx-commit {
+  width: 32px; height: 32px; flex: none; box-sizing: border-box; display: grid; place-items: center; border-radius: 50%;
+  background: #1b1d23; border: 2.5px solid #a8abb4; font: 700 14px/1 var(--mono); color: #ececee;
+}
+.bx-commit.t-new { border-color: #ff5b1f; background: #2a1a14; box-shadow: 0 0 12px -2px rgb(255 91 31 / .7); }
+.bx-commit.t-ok { border-color: #5fd69a; background: #15261d; }
+.bx-commit.t-ghost { border-style: dashed; border-color: #5d6170; background: transparent; color: #757984; }
+
+/* etiquetas de rama y HEAD */
+.bx-ref {
+  display: inline-block; font: 600 13.5px/1 var(--mono); padding: 4px 7px; border-radius: 5px; white-space: nowrap;
+  border: 1.5px solid #9aa8ff; color: #c8cfff; background: #1b1d23;
+}
+.bx-ref.is-head { background: #ff5b1f; border-color: #ff5b1f; color: #fff; box-shadow: 0 0 10px -2px rgb(255 91 31 / .55); }
+.bx-ref.is-det { background: #3a2a12; border-color: #ffb35c; color: #ffb35c; }
+.bx-ref.is-remote { background: transparent; border: 1.5px dashed #757984; color: #a8abb4; }
+
+/* avisos dentro de la placa */
+.bx-note { border-radius: 10px; padding: 8px 12px; font: 500 13.5px/1.45 var(--sans); color: #d6d8de; background: #16171c; border: 1.5px solid #3a3d47; }
+.bx-note b { font-weight: 700; }
+.bx-note.is-warn { border-color: #ffb35c; background: rgb(255 179 92 / .08); }
+.bx-note.is-warn b { color: #ffb35c; }
+.bx-note.is-ok { border-color: #5fd69a; background: rgb(95 214 154 / .07); }
+.bx-note.is-ok b { color: #5fd69a; }
+.bx-note .mo, .bx-mo { font: 600 12.5px var(--mono); color: #ffb08f; }
+
+/* leyenda: complementos de .gk-legend */
+.gk-legend i.l-fnew { border-color: #5fd69a; background: #5fd69a; }
+.gk-legend i.l-fneutral { border-color: #757984; background: #757984; }
+.gk-legend i.l-det { background: #3a2a12; border-color: #ffb35c; border-radius: 3px; }
+.gk-legend i.l-sq { border-radius: 3px; }

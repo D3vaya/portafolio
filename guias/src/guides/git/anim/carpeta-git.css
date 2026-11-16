@@ -1,0 +1,32 @@
+/* Animación: la carpeta .git por dentro. Prefijo: .cg- */
+.cg { display: grid; gap: 12px; }
+.cg .gk-term { min-height: 68px; }
+.cg-tree { background: #15161b; border: 1px solid #23252c; border-radius: 12px; padding: 10px 12px; }
+.cg-root { font: 800 17px/1.2 var(--display); font-stretch: 80%; color: #ececee; margin-bottom: 6px; }
+.cg-tree ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.cg-tree li {
+  display: none; align-items: center; gap: 10px; flex-wrap: wrap;
+  position: relative;
+}
+.cg-tree li[data-d="1"] { padding-left: 20px; }
+.cg-tree li[data-d="2"] { padding-left: 40px; }
+.cg-tree li.on { display: flex; }
+.cg-tree li[data-d="1"]::before, .cg-tree li[data-d="2"]::before {
+  content: ""; position: absolute; left: 8px; top: 50%; width: 8px; border-top: 1.5px solid #3a3d47;
+}
+.cg-tree li[data-d="2"]::before { left: 28px; }
+.cg-tree em { font: 500 12px var(--sans); font-style: normal; color: #7a7e89; transition: color .3s; }
+.cg-tree li.hl em { color: #ffb38f; }
+.cg-dir { color: #c8cfff; }
+.cg-dir::before { border-radius: 2px !important; background: #9aa8ff !important; }
+.cg-tree li.ghost .gk-file { border-style: dashed; border-color: #5d6170; color: #a8abb4; background: transparent; }
+.cg-tree li.ghost .gk-file::before { background: #5d6170 !important; }
+.cg-tree li.hl .gk-file.cg-dir::before { background: #ff5b1f !important; }
+.cg .gk-legend i.cg-l-hl { border-color: #ff5b1f; border-radius: 3px; }
+
+@media (min-width: 761px) {
+  .cg { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); grid-template-rows: auto 1fr; align-items: start; }
+  .cg .gk-term { grid-column: 2; grid-row: 1; }
+  .cg-tree { grid-column: 1; grid-row: 1 / span 2; }
+  .cg .gk-legend { grid-column: 2; grid-row: 2; align-self: start; }
+}

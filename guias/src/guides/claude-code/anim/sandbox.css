@@ -117,6 +117,18 @@
   .sb-perim { padding: 36px 14px 36px; }
   .sb-pl { top: auto; bottom: 10px; }
   .sb-res { margin-left: 0; }
+  /* compacto: las dos zonas en una fila, menos aire y config más apretada */
+  .sb { gap: 10px; }
+  .sb-grid { gap: 10px; }
+  .sb-map { gap: 18px; }
+  .sb-machine { gap: 10px; padding: 10px 12px 12px; }
+  .sb-zone { flex: 1 1 110px; padding: 8px 10px; }
+  .sb-zone b { font-size: 16px; }
+  .sb-perim { gap: 8px; padding: 32px 12px 32px; }
+  .sb-home { padding: 8px 10px; gap: 6px; }
+  .sb-chip { padding: 4px 8px; }
+  .sb-cfg { padding: 8px 10px; }
+  .sb-cfg pre { line-height: 1.45; }
 }
 .sb-cmd:empty { display: none; }
 .sb-tool.is-you { color: #111216; background: var(--sb-sig); }

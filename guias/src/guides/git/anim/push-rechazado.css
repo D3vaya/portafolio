@@ -1,0 +1,31 @@
+/* Animación: push rechazado. Prefijo: .pj- */
+.pj { display: grid; gap: 10px; }
+.pj-plate {
+  position: relative; border: 1.5px solid #2a2d35; border-radius: 12px; padding: 8px 10px 0; background: #15161b;
+  transition: border-color .4s, box-shadow .4s;
+}
+.pj-ph { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 10px; }
+.pj-ph b { font: 800 16px var(--display); font-stretch: 80%; letter-spacing: -.01em; color: #ececee; }
+.pj-note { font: 600 12.5px var(--sans); color: #a8abb4; padding: 2px 9px; border-radius: 999px; background: #1b1d23; }
+.pj-note:empty { display: none; }
+.pj-plate[data-st="ok"] { border-color: rgb(95 214 154 / .7); box-shadow: 0 0 22px -12px #5fd69a; }
+.pj-plate[data-st="ok"] .pj-note { color: #9fecc4; box-shadow: inset 0 0 0 1px rgb(95 214 154 / .5); }
+.pj-plate[data-st="warn"] { border-color: rgb(255 179 92 / .75); box-shadow: 0 0 22px -10px #ffb35c; }
+.pj-plate[data-st="warn"] .pj-note { color: #ffd29c; box-shadow: inset 0 0 0 1px rgb(255 179 92 / .55); }
+.pj-plate[data-st="bad"] { border-color: rgb(255 77 109 / .8); box-shadow: 0 0 22px -10px #ff4d6d; }
+.pj-plate[data-st="bad"] .pj-note { color: #ff9aac; box-shadow: inset 0 0 0 1px rgb(255 77 109 / .6); }
+.pj-plate[data-st="hl"] { border-color: rgb(255 91 31 / .6); box-shadow: 0 0 22px -10px #ff5b1f; }
+.pj-plate[data-st="hl"] .pj-note { color: #ffd6c4; box-shadow: inset 0 0 0 1px rgb(255 91 31 / .5); }
+.pj-plate[data-st="hypo"] { border-style: dashed; border-color: rgb(255 77 109 / .7); }
+.pj-plate[data-st="hypo"] .pj-note { color: #ff9aac; box-shadow: inset 0 0 0 1px rgb(255 77 109 / .6); }
+.pj-wire { min-height: 18px; text-align: center; font: 600 13px var(--mono); color: #ff7a45; opacity: 0; transition: opacity .4s; }
+.pj-wire.is-on { opacity: 1; }
+.pj-wire.is-bad { color: #ff4d6d; }
+.pj-wire.is-ok { color: #5fd69a; }
+/* commit que se perdería: punteado rojo */
+.pj .gk-node.pj-lost .gk-c { stroke: #ff4d6d; stroke-dasharray: 4 4; fill: transparent; filter: none; }
+.pj .gk-node.pj-lost .gk-l, .pj .gk-node.pj-lost .gk-msg { fill: #ff9aac; }
+.pj .gk-node.pj-safe .gk-c { stroke: #5fd69a; fill: #15261d; }
+.pj .gk-node.pj-safe .gk-msg { fill: #9fecc4; }
+.gk-legend i.pj-l-lost { border: 2px dashed #ff4d6d; }
+@media (max-width: 520px) { .pj-plate { padding: 7px 3px 0; } .pj-ph { padding: 0 7px; } }

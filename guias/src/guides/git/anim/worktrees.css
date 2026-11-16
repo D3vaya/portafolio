@@ -1,0 +1,38 @@
+/* Animación: worktrees en Git puro. Prefijo: .wk- */
+.wk { display: grid; gap: 12px; }
+.wk .gk-term { min-height: 92px; }
+.wk-board { display: grid; gap: 10px; }
+.wk-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.wk-card {
+  display: grid; gap: 6px; align-content: start; padding: 10px 12px; border-radius: 12px;
+  background: #1b1d23; border: 1.5px solid rgb(255 255 255 / .14);
+}
+.wk-card[data-st="off"] { display: none; }
+.wk-card[data-n="0"] { border-color: rgb(255 255 255 / .22); }
+.wk-card[data-st="err"] { background: #2c141b; border: 1.5px dashed #ff4d6d; }
+.wk-card[data-st="err"] .wk-br { background: transparent; color: #ff9aac; box-shadow: inset 0 0 0 1px #ff4d6d; }
+.wk-card[data-st="err"] .wk-git { color: #ff9aac; font-weight: 700; }
+.wk-top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.wk-path { font: 800 16px/1.15 var(--display); font-stretch: 80%; color: #ececee; overflow-wrap: anywhere; }
+.wk-br {
+  font: 600 12px var(--mono); color: #fff; background: #ff5b1f; padding: 2px 8px; border-radius: 5px;
+  box-shadow: 0 0 12px -4px #ff5b1f; white-space: nowrap;
+}
+.wk-git { font: 500 12px var(--mono); color: #7a7e89; overflow-wrap: anywhere; }
+.wk-files { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.wk-repo { display: grid; gap: 6px; padding: 10px 12px; border-radius: 12px; background: #15161b; box-shadow: inset 0 0 0 1px rgb(154 168 255 / .35); }
+.wk-rl { font: 500 12px var(--sans); color: #a8abb4; }
+.wk-lane { display: grid; grid-template-columns: 8.5em 1fr; align-items: center; gap: 10px; }
+.wk-bn { font: 600 12.5px var(--mono); color: #c8cfff; }
+.wk-dots { display: flex; gap: 8px; align-items: center; min-height: 16px; }
+.wk-dots i { width: 13px; height: 13px; border-radius: 50%; border: 2.5px solid #a8abb4; background: #1b1d23; }
+.wk-dots i.is-new { border-color: #ff5b1f; box-shadow: 0 0 10px -1px #ff5b1f; background: #2a1a14; }
+
+@media (min-width: 761px) {
+  .wk-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .wk-cards { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .wk-card { padding: 8px 10px; gap: 4px; }
+}

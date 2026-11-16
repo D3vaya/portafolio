@@ -1,0 +1,71 @@
+/* Kit visual de las animaciones de Git (ver _kit.ts). Prefijo: .gk- */
+.gk-svg { display: block; width: 100%; margin: 0 auto; height: auto; overflow: visible; font-family: var(--mono); }
+
+/* commits */
+.gk-c { fill: #1b1d23; stroke: #a8abb4; stroke-width: 2.5; transition: stroke .35s, fill .35s; }
+.gk-l { fill: #ececee; font: 700 15px var(--mono); text-anchor: middle; pointer-events: none; }
+.gk-msg { fill: #a8abb4; font: 500 14px var(--sans); text-anchor: middle; }
+.gk-node.t-new .gk-c { stroke: #ff5b1f; fill: #2a1a14; filter: drop-shadow(0 0 7px rgb(255 91 31 / .7)); }
+.gk-node.t-hl .gk-c { stroke: #ff5b1f; }
+.gk-node.t-ok .gk-c { stroke: #5fd69a; fill: #15261d; }
+.gk-node.t-copy .gk-c { stroke: #9aa8ff; fill: #1b1f33; }
+.gk-node.t-conflict .gk-c { stroke: #ff4d6d; fill: #2c141b; filter: drop-shadow(0 0 7px rgb(255 77 109 / .6)); }
+.gk-node.t-ghost .gk-c { stroke-dasharray: 4 4; fill: transparent; stroke: #5d6170; }
+.gk-node.t-ghost .gk-l { fill: #757984; }
+.gk-node.t-dim { opacity: .4; }
+
+/* líneas hijo → padre */
+.gk-e { fill: none; stroke: rgb(255 255 255 / .3); stroke-width: 2.5; stroke-linecap: round; }
+.gk-e.is-merge { stroke: rgb(154 168 255 / .55); }
+.gk-e.is-ghost { stroke-dasharray: 4 5; stroke: rgb(255 255 255 / .16); }
+
+/* ramas, tags y HEAD */
+.gk-ref rect { fill: #1b1d23; stroke: #9aa8ff; stroke-width: 1.5; }
+.gk-ref text { fill: #c8cfff; font: 600 13.5px var(--mono); text-anchor: middle; }
+.gk-ref.is-head rect { fill: #ff5b1f; stroke: #ff5b1f; filter: drop-shadow(0 0 8px rgb(255 91 31 / .55)); }
+.gk-ref.is-head text { fill: #fff; }
+.gk-ref.k-remote rect { fill: transparent; stroke: #757984; stroke-dasharray: 3 3; }
+.gk-ref.k-remote text { fill: #a8abb4; }
+.gk-ref.k-tag rect { fill: #ececee; stroke: #ececee; }
+.gk-ref.k-tag text { fill: #111216; }
+.gk-ref.k-detached rect { fill: #3a2a12; stroke: #ffb35c; }
+.gk-ref.k-detached text { fill: #ffb35c; }
+
+/* consola */
+.gk-term {
+  font: 500 14px/1.5 var(--mono); color: #ececee; background: #0b0c0f; border: 1px solid #23252c;
+  border-radius: 10px; padding: 10px 14px; min-height: 44px; overflow-wrap: anywhere;
+}
+.gk-ps { color: #ff5b1f; margin-right: .6ch; font-weight: 700; }
+.gk-cur { display: inline-block; width: .55ch; height: 1.1em; vertical-align: -0.18em; background: #ececee; margin-left: 1px; animation: gk-blink 1s steps(1) infinite; }
+.gk-term.is-empty .gk-cur { opacity: .5; }
+.gk-out { color: #a8abb4; font-size: 13px; white-space: pre-wrap; }
+.gk-out:empty { display: none; }
+.gk-out .ok { color: #5fd69a; } .gk-out .bad { color: #ff4d6d; } .gk-out .warn { color: #ffb35c; } .gk-out .hl { color: #ff7a45; }
+@keyframes gk-blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .gk-cur { animation: none; } }
+
+/* archivos (para escenas con carpetas y áreas) */
+.gk-file {
+  display: inline-flex; align-items: center; gap: 6px; font: 600 12.5px var(--mono); color: #ececee;
+  background: #1b1d23; border: 1.5px solid #3a3d47; border-radius: 7px; padding: 4px 9px; white-space: nowrap;
+}
+.gk-file::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #757984; flex: none; }
+.gk-file.f-mod { border-color: #ffb35c; } .gk-file.f-mod::before { background: #ffb35c; }
+.gk-file.f-new { border-color: #5fd69a; } .gk-file.f-new::before { background: #5fd69a; }
+.gk-file.f-del { border-color: #ff4d6d; color: #a8abb4; text-decoration: line-through; } .gk-file.f-del::before { background: #ff4d6d; }
+.gk-file.f-hl { border-color: #ff5b1f; box-shadow: 0 0 18px -6px #ff5b1f; } .gk-file.f-hl::before { background: #ff5b1f; }
+
+/* leyenda */
+.gk-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 500 12.5px var(--sans); color: #a8abb4; margin-top: 10px; }
+.gk-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.gk-legend i { width: 10px; height: 10px; border-radius: 50%; border: 2px solid #a8abb4; flex: none; }
+.gk-legend i.l-head { background: #ff5b1f; border-color: #ff5b1f; border-radius: 3px; }
+.gk-legend i.l-branch { border-color: #9aa8ff; border-radius: 3px; }
+.gk-legend i.l-remote { border: 1.5px dashed #757984; border-radius: 3px; }
+.gk-legend i.l-new { border-color: #ff5b1f; }
+.gk-legend i.l-copy { border-color: #9aa8ff; }
+.gk-legend i.l-ghost { border: 2px dashed #5d6170; }
+.gk-legend i.l-conflict { border-color: #ff4d6d; }
+.gk-legend i.l-ok { border-color: #5fd69a; }
+.gk-legend i.l-mod { border-color: #ffb35c; background: #ffb35c; }

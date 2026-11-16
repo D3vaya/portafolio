@@ -622,20 +622,32 @@ on($("#scen"),"click",e=>{const b=e.target.closest("[data-m]");if(!b)return;cons
   const ok=b.dataset.m===SC[i][1];scAns[i]=ok;b.classList.add(ok?"right":"wrong");if(!ok)card.querySelector('[data-m="'+SC[i][1]+'"]').classList.add("right");card.classList.add("open");
   $("#scScore").textContent=Object.values(scAns).filter(Boolean).length+"/"+SC.length+" correctas";});
 
-/* ---------- STACK ---------- */
-const LAY=[
- ["Managed settings","consola de claude.ai, MDM o managed-settings.json","claude-opus-5-5"],
- ["Línea de comandos","--settings '{...}' (solo esta sesión)","haiku"],
- ["Local del proyecto",".claude/settings.local.json (fuera de git)","opus"],
- ["Proyecto compartido",".claude/settings.json (versionado)","sonnet"],
- ["Usuario","~/.claude/settings.json (todos tus proyectos)","opus"]
-];
-const layOn=[false,false,false,true,true];
-function renderStack(){const win=layOn.indexOf(true);
-  $("#stack").innerHTML=LAY.map((l,i)=>'<div class="layer'+(layOn[i]?" def":"")+(i===win?" win":"")+(layOn[i]&&i!==win?" shadow":"")+'" data-i="'+i+'"><span class="sw">'+(layOn[i]?"✓":"")+'</span><div><b>'+(i+1)+'. '+l[0]+'</b><small>'+esc(l[1])+'</small></div><span class="val">'+(layOn[i]?'"model": "'+l[2]+'"':"—")+'</span></div>').join("");
-  $("#stackMsg").innerHTML=win<0?"Ninguna capa define <code>model</code>: se usa el default de la cuenta.":"Gana <b style='color:var(--lv)'>"+LAY[win][0]+"</b> → <code>"+LAY[win][2]+"</code>."+(win===0?" Un model gestionado es el default de partida; para bloquear modelos se usan availableModels y deniedModels.":"")+" Recuerda: <code>/model</code>, <code>--model</code> y <code>ANTHROPIC_MODEL</code> también lo sobrescriben por su cuenta.";}
-on($("#stack"),"click",e=>{const l=e.target.closest(".layer");if(!l)return;const i=+l.dataset.i;layOn[i]=!layOn[i];renderStack();});
-renderStack();
+/* ---------- PRECEDENCIA DE SETTINGS (simulador único: lección x3 y referencia st3) ----------
+   Orden oficial (code.claude.com/docs/en/settings): managed > línea de comandos > local > proyecto > usuario.
+   Para un valor escalar gana el nivel más alto que define la clave; los de abajo quedan tapados. */
+const PREC_LAYERS=[["Managed","organización: consola de claude.ai, MDM o managed-settings.json","man"],["Línea de comandos","--settings, solo esta sesión","cli"],["Local del proyecto",".claude/settings.local.json, fuera de git","loc"],["Proyecto compartido",".claude/settings.json, versionado","prj"],["Usuario","~/.claude/settings.json, todos tus proyectos","usr"]];
+function precSim(o){
+  const box=byId(o.stack);if(!(box instanceof HTMLElement))return;
+  const v0=Object.assign({man:null,cli:null,loc:null,prj:null,usr:null},o.init),pv=Object.assign({},v0);
+  const show=x=>x===null?"—":typeof x==="string"?x:String(x);
+  function render(){
+    const w=PREC_LAYERS.find(l=>pv[l[2]]!==null);
+    box.innerHTML=PREC_LAYERS.map((l,i)=>{const k=l[2],def=pv[k]!==null,win=w&&w[2]===k;
+      return '<div class="prl'+(win?' win':'')+(def&&!win?' shadow':'')+'" data-k="'+k+'"><div class="prn"><b>'+(i+1)+' · '+l[0]+'</b><small>'+esc(l[1])+'</small></div>'+
+        '<div class="prside"><span class="prtag">'+(win?'gana':def?'tapado':'')+'</span><div class="toggle" role="group" aria-label="'+esc(o.key)+' en '+l[0]+'">'+[null].concat(o.values).map(x=>'<button type="button" data-v="'+esc(show(x))+'" aria-pressed="'+(pv[k]===x)+'"'+(pv[k]===x?' class="on"':'')+'>'+esc(show(x))+'</button>').join("")+'</div></div></div>';}).join("");
+    const r=byId(o.res);
+    if(!w){r.innerHTML='Ningún nivel define <code>'+o.key+'</code>: se usa el valor por defecto ('+o.dflt+').';return;}
+    const val=pv[w[2]],k=w[2];
+    r.innerHTML='Resultado: <code>'+o.key+' = '+esc(show(val))+'</code>'+(o.effect?' → '+o.effect(val):'')+'. Gana <b>'+w[0]+'</b> por ser el nivel más alto que define la clave.'+
+      (k==="man"?' Nada por debajo puede cambiarlo: pídelo a tu admin.':k==="cli"?' Dura solo esta sesión.':k==="prj"&&pv.usr!==null?' Tu valor de usuario queda tapado: para cambiarlo solo para ti en este proyecto, ponlo en <code>.claude/settings.local.json</code>.':'')+
+      (o.note?' '+o.note(k):'');
+  }
+  on(box,"click",e=>{const b=e.target.closest("button[data-v]");if(!b)return;const k=b.closest(".prl").dataset.k;const x=[null].concat(o.values).find(x=>show(x)===b.dataset.v);pv[k]=x===undefined?null:x;render();});
+  on(byId(o.reset),"click",()=>{Object.assign(pv,v0);render();});
+  render();
+}
+precSim({stack:"stack",res:"stackMsg",reset:"stackReset",key:"model",values:["sonnet","opus"],init:{prj:"sonnet",usr:"opus"},dflt:"el modelo recomendado para tu cuenta",
+  note:k=>(k==="man"?'Un <code>model</code> gestionado es el default de partida; para bloquear modelos se usan <code>availableModels</code> y <code>deniedModels</code>. ':'')+'Ojo: <code>/model</code>, <code>--model</code> y <code>ANTHROPIC_MODEL</code> también lo cambian por su cuenta.'});
 
 /* ---------- TREE ---------- */
 const TREE=[
@@ -690,39 +702,107 @@ function dqRender(){
 }
 dqRender();
 
-/* ---------- FAN-OUT ---------- */
-const fanSvg=$("#fanSvg");
-const SUBS=[{x:95,t:"Explore",s:"flujo de cobro"},{x:285,t:"Explore",s:"webhooks de pago"},{x:475,t:"security",s:"RLS y secretos"},{x:665,t:"test-runner",s:"cobertura"}];
+/* ---------- FAN-OUT / FAN-IN ---------- */
+/* El SVG se dibuja a la medida real del widget (1 unidad = 1 px), así el texto nunca baja de 12px.
+   Ancho: 4 agentes en fila. Angosto (móvil): 2×2 con una vía central que baja a la verificación. */
+const fanSvg=byId("fanSvg");
+const SUBS=[{t:"Explore",s:"flujo de cobro",r:"3 hallazgos",v:"2 confirmados"},{t:"Explore",s:"webhooks de pago",r:"1 crítico",v:"1 crítico"},{t:"security",s:"RLS y secretos",r:"2 hallazgos",v:"1 confirmado"},{t:"test-runner",s:"cobertura",r:"cobertura 64%",v:"cobertura 64%"}];
+const FC={sig:"#ff5b1f",lv:"#9aa8ff",ok:"#5fd69a",am:"#ffb35c",bad:"#ff4d6d",tx:"#ececee",t2:"#a8abb4",t3:"#7a7e89",chip:"#1b1d23",ln:"rgb(255 255 255 / .16)"};
+let fanSt={ph:0,bars:0},fanW=0;
+function fanLayout(W){
+  const L={W,ag:[],out:[],inn:[]},cx=W/2;
+  if(W>=600){
+    const g=14,w=(W-3*g)/4,h=96;
+    L.sc={x:cx-130,y:6,w:260,h:58};
+    for(let i=0;i<4;i++){const x=i*(w+g),ax=x+w/2;L.ag.push({x,y:120,w,h});
+      L.out.push("M"+cx+" 64 C"+cx+" 96 "+ax+" 90 "+ax+" 120");
+      L.inn.push("M"+ax+" 216 C"+ax+" 250 "+cx+" 244 "+cx+" 278");}
+    L.ve={x:cx-170,y:278,w:340,h:56};L.fin="M"+cx+" 334 V376";L.re={x:cx-190,y:376,w:380,h:62};L.H=446;
+  }else{
+    const g=30,w=(W-g)/2,h=96,ys=[96,206];
+    L.sc={x:Math.max(0,cx-140),y:6,w:Math.min(W,280),h:58};
+    for(let i=0;i<4;i++){const left=i%2===0,y=ys[i>>1],x=left?0:w+g,edge=left?w:w+g,my=y+h/2;L.ag.push({x,y,w,h});
+      L.out.push("M"+cx+" 64 V"+(my-10)+" H"+edge);
+      L.inn.push("M"+edge+" "+(my+12)+" H"+cx+" V320");}
+    L.ve={x:0,y:320,w:W,h:56};L.fin="M"+cx+" 376 V410";L.re={x:0,y:410,w:W,h:78};L.H=496;
+  }
+  return L;
+}
+function fanText(x,y,s,o){o=o||{};return '<text x="'+x+'" y="'+y+'" text-anchor="'+(o.a||"middle")+'" font-size="'+(o.fs||12)+'" font-weight="'+(o.fw||500)+'" style="fill:'+(o.c||FC.tx)+'"'+(o.id?' id="'+o.id+'"':"")+(o.ff?' font-family="'+o.ff+'"':' font-family="var(--sans)"')+'>'+s+'</text>';}
 function drawFan(){
-  let h='';
-  SUBS.forEach((s,i)=>{h+='<path id="pd'+i+'" d="M380 92 C380 150 '+s.x+' 140 '+s.x+' 196" fill="none" stroke="var(--line2)" stroke-width="1.5" stroke-dasharray="4 5"/>';});
-  h+='<rect x="270" y="30" width="220" height="62" rx="14" fill="var(--surface-2)" stroke="var(--lv)" stroke-width="1.5"/><text x="380" y="56" text-anchor="middle" font-size="13" font-weight="700">SCRIPT DEL WORKFLOW</text><text x="380" y="76" text-anchor="middle" font-size="11" style="fill:var(--mute)">tu contexto: solo el resultado</text>';
-  h+='<rect x="300" y="100" width="160" height="8" rx="4" fill="var(--line)"/><rect id="orcCtx" x="300" y="100" width="12" height="8" rx="4" fill="var(--lv)"/>';
-  SUBS.forEach((s,i)=>{h+='<g id="sub'+i+'" opacity=".4"><rect x="'+(s.x-80)+'" y="196" width="160" height="88" rx="12" fill="var(--surface)" stroke="var(--line2)"/><text x="'+s.x+'" y="222" text-anchor="middle" font-size="12" font-weight="700">'+s.t+'</text><text x="'+s.x+'" y="240" text-anchor="middle" font-size="11" style="fill:var(--mute)">'+s.s+'</text><rect x="'+(s.x-60)+'" y="256" width="120" height="8" rx="4" fill="var(--line)"/><rect id="sc'+i+'" x="'+(s.x-60)+'" y="256" width="0" height="8" rx="4" fill="var(--a)"/><text id="st'+i+'" x="'+s.x+'" y="306" text-anchor="middle" font-size="10.5" style="fill:var(--dim)">en espera</text></g>';});
-  h+='<g id="pkts"></g><text x="380" y="356" text-anchor="middle" font-size="11" style="fill:var(--dim)" id="fanFoot">cada agente tiene su propia ventana de contexto</text>';
-  fanSvg.innerHTML=h;
+  if(!(fanSvg instanceof SVGElement))return;
+  const W=Math.round(fanSvg.parentNode.clientWidth-parseFloat(getComputedStyle(fanSvg.parentNode).paddingLeft)*2)||700;
+  fanW=fanSvg.parentNode.clientWidth;const L=fanLayout(W);let h="";
+  fanSvg.setAttribute("viewBox","0 0 "+W+" "+L.H);fanSvg.setAttribute("height",L.H);
+  L.out.forEach((d,i)=>{h+='<path id="fo'+i+'" d="'+d+'" fill="none" stroke="'+FC.ln+'" stroke-width="1.5" stroke-dasharray="4 5"/>';});
+  L.inn.forEach((d,i)=>{h+='<path id="fi'+i+'" class="fa-in" d="'+d+'" fill="none" stroke="'+FC.ln+'" stroke-width="1.5" stroke-dasharray="4 5"/>';});
+  h+='<path id="ff" d="'+L.fin+'" fill="none" stroke="'+FC.ln+'" stroke-width="1.5" stroke-dasharray="4 5"/>';
+  const s=L.sc;
+  h+='<g id="faSc"><rect x="'+s.x+'" y="'+s.y+'" width="'+s.w+'" height="'+s.h+'" rx="12" fill="'+FC.chip+'" stroke="'+FC.sig+'" stroke-width="1.5"/>'+fanText(s.x+s.w/2,s.y+23,"Script del workflow",{fs:14,fw:800})+fanText(s.x+s.w/2,s.y+43,"orquesta sin gastar tu contexto",{c:FC.t2})+'</g>';
+  L.ag.forEach((a,i)=>{const c=a.x+a.w/2,bw=a.w-28,S=SUBS[i];
+    h+='<g id="fa'+i+'" class="fa-ag"><rect id="far'+i+'" x="'+a.x+'" y="'+a.y+'" width="'+a.w+'" height="'+a.h+'" rx="12" fill="'+FC.chip+'" stroke="'+FC.ln+'" stroke-width="1.5"/>'+
+      fanText(c,a.y+22,S.t,{fs:13,fw:700,ff:"var(--mono)",c:"#c3cbff"})+fanText(c,a.y+40,S.s,{c:FC.t2})+
+      '<rect x="'+(a.x+14)+'" y="'+(a.y+52)+'" width="'+bw+'" height="7" rx="3.5" fill="rgb(255 255 255 / .1)"/><rect id="fab'+i+'" x="'+(a.x+14)+'" y="'+(a.y+52)+'" width="0" height="7" rx="3.5" fill="'+FC.lv+'"/>'+
+      fanText(c,a.y+80,"en espera",{id:"fas"+i,c:FC.t3,fw:600})+'</g>';});
+  const v=L.ve;
+  h+='<g id="faVe"><rect id="faVr" x="'+v.x+'" y="'+v.y+'" width="'+v.w+'" height="'+v.h+'" rx="12" fill="'+FC.chip+'" stroke="'+FC.ln+'" stroke-width="1.5"/>'+fanText(v.x+v.w/2,v.y+22,"Verificación cruzada",{fs:13,fw:700})+fanText(v.x+v.w/2,v.y+42,"esperando resultados",{id:"faVt",c:FC.t3})+'</g>';
+  const r=L.re;
+  h+='<g id="faRe"><rect id="faRr" x="'+r.x+'" y="'+r.y+'" width="'+r.w+'" height="'+r.h+'" rx="12" fill="'+FC.chip+'" stroke="'+FC.ln+'" stroke-width="1.5"/>'+fanText(r.x+r.w/2,r.y+22,"Tu conversación",{fs:13,fw:700})+
+    '<rect x="'+(r.x+r.w/2-80)+'" y="'+(r.y+32)+'" width="160" height="7" rx="3.5" fill="rgb(255 255 255 / .1)"/><rect id="faCtx" x="'+(r.x+r.w/2-80)+'" y="'+(r.y+32)+'" width="10" height="7" rx="3.5" fill="'+FC.sig+'"/>'+
+    fanText(r.x+r.w/2,r.y+58,"contexto casi vacío",{id:"faRt",c:FC.t3})+'</g>';
+  h+='<g id="faPk"></g>';
+  fanSvg.innerHTML=h;fanPaint();
 }
-function packet(i,back){return new Promise(res=>{const p=byId("pd"+i),L=p.getTotalLength(),c=document.createElementNS("http://www.w3.org/2000/svg","circle");c.setAttribute("r",back?5:6);c.setAttribute("fill",back?"var(--ok)":"var(--lv)");$("#pkts").appendChild(c);const t0=performance.now(),D=900;
-  (function f(t){const k=Math.min((t-t0)/D,1),pt=p.getPointAtLength(back?L*(1-k):L*k);c.setAttribute("cx",pt.x);c.setAttribute("cy",pt.y);if(k<1)requestAnimationFrame(f);else{c.remove();res();}})(t0);});}
+function fanPaint(){
+  const st=fanSt,on=st.ph>=1;
+  SUBS.forEach((S,i)=>{
+    byId("far"+i).setAttribute("stroke",on?FC.lv:FC.ln);
+    byId("fa"+i).setAttribute("opacity",on?1:.75);
+    byId("fab"+i).setAttribute("width",(+byId("far"+i).getAttribute("width")-28)*[.88,.76,.95,.66][i]*st.bars);
+    const s=byId("fas"+i);s.textContent=st.ph>=4?S.v:st.ph>=3?S.r:on?"trabajando…":"en espera";
+    s.style.fill=st.ph>=4?(i===1?"#ff9aac":FC.ok):st.ph>=3?FC.am:on?"#c3cbff":FC.t3;
+  });
+  ["fo0","fo1","fo2","fo3"].forEach(id=>byId(id).setAttribute("stroke",on?"rgb(154 168 255 / .5)":FC.ln));
+  ["fi0","fi1","fi2","fi3"].forEach(id=>byId(id).setAttribute("stroke",st.ph>=3?"rgb(255 179 92 / .55)":FC.ln));
+  byId("ff").setAttribute("stroke",st.ph>=5?"rgb(95 214 154 / .6)":FC.ln);
+  const vt=byId("faVt");
+  byId("faVr").setAttribute("stroke",st.ph>=3?FC.am:FC.ln);
+  vt.textContent=st.ph>=4?"6 hallazgos: 4 confirmados, ✕ 2 descartados":st.ph>=3?"verificadores intentan refutar 6 hallazgos…":"esperando resultados";
+  vt.style.fill=st.ph>=4?FC.tx:st.ph>=3?"#ffd29c":FC.t3;
+  byId("faRr").setAttribute("stroke",st.ph>=5?FC.ok:FC.ln);
+  byId("faCtx").setAttribute("width",st.ph>=5?34:10);
+  const rt=byId("faRt");rt.textContent=st.ph>=5?"1 informe: 1 crítico, 3 medios":"contexto casi vacío";rt.style.fill=st.ph>=5?"#9fecc4":FC.t3;
+}
+const fanReduce=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
+function packet(id,color){return new Promise(res=>{const p=document.getElementById(id);if(!p||fanReduce())return res();const L=p.getTotalLength(),c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+  c.setAttribute("r",6);c.setAttribute("fill",color);c.setAttribute("style","filter:drop-shadow(0 0 6px "+color+")");byId("faPk").appendChild(c);const t0=performance.now(),D=900;
+  (function f(t){const k=Math.min((t-t0)/D,1),pt=p.getPointAtLength(L*k);c.setAttribute("cx",pt.x);c.setAttribute("cy",pt.y);if(k<1)requestAnimationFrame(f);else{c.remove();res();}})(t0);});}
 let fanRun=0;
-async function playFan(){const my=++fanRun;drawFan();const msg=$("#fanMsg");
+async function playFan(){const my=++fanRun,msg=byId("fanMsg"),live=()=>my===fanRun;
+  fanSt={ph:0,bars:0};drawFan();
   msg.innerHTML="<b>1. Fan-out:</b> el script divide la auditoría en 4 tareas independientes y lanza un agente por cada una con <code>parallel()</code>.";
-  await Promise.all(SUBS.map((s,i)=>sleep(i*150).then(()=>packet(i,false)).then(()=>{byId("sub"+i).setAttribute("opacity","1");byId("st"+i).textContent="trabajando…";})));
-  if(my!==fanRun)return;
-  msg.innerHTML="<b>2. Trabajo aislado:</b> cada agente lee decenas de archivos en su contexto. Los resultados intermedios viven en variables del script.";
-  const tgt=[105,92,118,80];const t0=performance.now();
-  await new Promise(r=>{(function f(t){const k=Math.min((t-t0)/2200,1);SUBS.forEach((s,i)=>byId("sc"+i).setAttribute("width",tgt[i]*k));if(k<1&&my===fanRun)requestAnimationFrame(f);else r();})(t0);});
-  if(my!==fanRun)return;
-  SUBS.forEach((s,i)=>byId("st"+i).textContent=["3 hallazgos","1 crítico","2 hallazgos","cobertura 64%"][i]);
-  msg.innerHTML="<b>3. Verificación cruzada:</b> agentes independientes intentan refutar cada hallazgo; los que no sobreviven se descartan.";
-  await sleep(1500);if(my!==fanRun)return;
-  byId("st0").textContent="2 confirmados";byId("st2").textContent="1 confirmado";
-  await Promise.all(SUBS.map((s,i)=>sleep(i*200).then(()=>packet(i,true))));
-  if(my!==fanRun)return;
-  byId("orcCtx").setAttribute("width",34);
-  msg.innerHTML='<b style="color:var(--ok)">4. Resultado:</b> a tu conversación llega un solo informe priorizado: <span style="color:var(--bad)">1 crítico</span> (webhook sin verificación de firma), 3 medios y un plan de tests. Tu contexto casi no creció.';
+  await Promise.all(SUBS.map((s,i)=>sleep(i*150).then(()=>packet("fo"+i,FC.lv))));if(!live())return;
+  fanSt.ph=1;fanPaint();
+  msg.innerHTML="<b>2. Trabajo aislado:</b> cada agente lee decenas de archivos en su propio contexto (la barra de cada caja). Los resultados intermedios viven en variables del script.";
+  const t0=performance.now(),D=fanReduce()?0:2200;
+  await new Promise(r=>{(function f(t){const k=D?Math.min((t-t0)/D,1):1;fanSt.bars=k;if(live())fanPaint();if(k<1&&live())requestAnimationFrame(f);else r();})(t0);});
+  if(!live())return;await sleep(500);if(!live())return;
+  fanSt.ph=2;fanPaint();
+  msg.innerHTML="<b>3. Fan-in:</b> cada agente devuelve sus hallazgos al script. Todavía no son confiables: pasan a verificación antes de llegar a ti.";
+  await Promise.all(SUBS.map((s,i)=>sleep(i*200).then(()=>packet("fi"+i,FC.am))));if(!live())return;
+  fanSt.ph=3;fanPaint();
+  await sleep(1800);if(!live())return;
+  msg.innerHTML="<b>4. Verificación cruzada:</b> agentes independientes intentan refutar cada hallazgo. De 6, sobreviven 4; los 2 que no se sostienen se descartan.";
+  fanSt.ph=4;fanPaint();
+  await sleep(2200);if(!live())return;
+  await packet("ff",FC.ok);if(!live())return;
+  fanSt.ph=5;fanPaint();
+  msg.innerHTML='<b style="color:#5fd69a">5. Resultado:</b> a tu conversación llega un solo informe priorizado: 1 crítico (webhook sin verificación de firma), 3 medios y un plan de tests. Tu contexto casi no creció.';
+  byId("fanPlay").textContent="repetir";
 }
-drawFan();on($("#fanPlay"),"click",playFan);
+if(fanSvg instanceof SVGElement){drawFan();on(byId("fanPlay"),"click",playFan);
+  /* Al cambiar el ancho se redibuja con la misma fase (la animación en curso se detiene en su estado) */
+  let fanT;on(window,"resize",()=>{clearTimeout(fanT);fanT=setTimeout(()=>{if(Math.abs(fanSvg.parentNode.clientWidth-fanW)>24){fanRun++;drawFan();}},150);});}
 
 /* ---------- CI FLOW ---------- */
 const CI=[
@@ -1066,18 +1146,30 @@ try{(function(){if(!document.getElementById("v-comandos"))return; // módulo de 
       r=r.filter(i=>sc(i)<9).sort((a,b)=>sc(a)-sc(b));}
     return r;}
   let cur=[];
+  /* En pantallas angostas el detalle se abre debajo del comando elegido (acordeón), no al final de la lista */
+  const cmdHome=document.querySelector(".cmdgrid"),cmdDetEl=document.getElementById("cmdDet"),cmdMQ=matchMedia("(max-width: 980px)");
+  function placeDet(){if(!cmdHome||!cmdDetEl)return;
+    const b=sel>=0&&document.querySelector('#cmdList .ci[data-i="'+sel+'"]');
+    if(cmdMQ.matches&&b){if(b.nextElementSibling!==cmdDetEl)b.after(cmdDetEl);}
+    else{cmdDetEl.classList.remove("closed");if(cmdDetEl.parentNode!==cmdHome)cmdHome.appendChild(cmdDetEl);}
+    $$("#cmdList .ci").forEach(x=>x.setAttribute("aria-expanded",String(cmdMQ.matches&&+x.dataset.i===sel&&!cmdDetEl.classList.contains("closed"))));}
+  if(cmdMQ.addEventListener)cmdMQ.addEventListener("change",placeDet);
   function renderList(selFirst){cur=filtered();
+    if(cmdHome&&cmdDetEl&&cmdDetEl.parentNode!==cmdHome)cmdHome.appendChild(cmdDetEl);
     if(!cur.includes(sel)||selFirst)sel=cur.length?cur[0]:-1;
     $("#cmdList").innerHTML=cur.length?cur.map(i=>{const c=CMDS[i];return '<button class="ci'+(i===sel?' on':'')+(c.t==="x"?' rm':'')+'" data-i="'+i+'"><span class="cn">'+esc(c.n)+'</span>'+(c.a?'<span class="ca">'+esc(c.a)+'</span>':'')+(c.t==="s"?'<span class="badge sk">skill</span>':c.t==="w"?'<span class="badge sk">workflow</span>':c.t==="x"?'<span class="badge">eliminado</span>':'')+'<span class="cd">'+esc(c.d.split(". ")[0].replace(/\.$/,""))+'</span></button>';}).join(""):'<p class="pn" style="padding:14px">Nada coincide. Prueba otra palabra: "contexto", "revisar", "sesión"…</p>';
     renderDet();}
-  function renderDet(){const d=$("#cmdDet");if(sel<0){d.innerHTML="";return;}const c=CMDS[sel];
+  function renderDet(){const d=$("#cmdDet");if(sel<0){d.innerHTML="";placeDet();return;}const c=CMDS[sel];
     d.innerHTML='<div class="cdh"><span class="cn big">'+esc(c.n)+'</span>'+(c.a?' <span class="ca">'+esc(c.a)+'</span>':'')+'</div>'+
     '<div class="cdm"><span class="badge">'+esc(CMD_CATS[c.c])+'</span>'+(c.t==="s"?'<span class="badge sk">skill incluida</span>':'')+(c.t==="w"?'<span class="badge sk">workflow</span>':'')+(c.t==="x"?'<span class="badge exp">eliminado</span>':'')+(c.al?'<span class="badge">alias '+esc(c.al)+'</span>':'')+'</div>'+
     '<p class="cdd">'+esc(c.d)+'</p>'+
     (c.o&&c.o.length?'<div class="cdl">Opciones</div><table class="ref opt"><tbody>'+c.o.map(o=>'<tr><td><code>'+esc(o[0])+'</code></td><td>'+esc(o[1])+'</td></tr>').join("")+'</tbody></table>':'<div class="cdl">Opciones</div><p class="pn">No recibe argumentos.</p>')+
     '<div class="cdl">Ejemplos</div>'+c.e.map(x=>'<div class="exl"><code>'+esc(x)+'</code><button class="copy mini-copy" data-txt="'+esc(x)+'">copiar</button></div>').join("")+
-    (c.tip?'<div class="tip" style="margin:14px 0 0"><b class="h">Consejo</b>'+esc(c.tip)+'</div>':'');}
-  on($("#cmdList"),"click",e=>{const b=e.target.closest(".ci");if(!b)return;sel=+b.dataset.i;$$("#cmdList .ci").forEach(x=>x.classList.toggle("on",x===b));renderDet();if(innerWidth<900)$("#cmdDet").scrollIntoView({behavior:"smooth",block:"nearest"});});
+    (c.tip?'<div class="tip" style="margin:14px 0 0"><b class="h">Consejo</b>'+esc(c.tip)+'</div>':'');placeDet();}
+  on($("#cmdList"),"click",e=>{const b=e.target.closest(".ci");if(!b)return;
+    if(cmdMQ.matches&&+b.dataset.i===sel){cmdDetEl.classList.toggle("closed");placeDet();return;} // tocar el abierto lo cierra
+    sel=+b.dataset.i;$$("#cmdList .ci").forEach(x=>x.classList.toggle("on",x===b));cmdDetEl.classList.remove("closed");renderDet();
+    if(cmdMQ.matches){const top=b.getBoundingClientRect().top;if(top<90||top>innerHeight*.45)b.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});}});
   on($("#cmdQ"),"input",()=>{intent=null;$$("#cmdIntent .chip").forEach(x=>x.classList.remove("on"));renderList(true);});
   on($("#cmdQ"),"keydown",e=>{if(e.key!=="ArrowDown"&&e.key!=="ArrowUp")return;e.preventDefault();const k=cur.indexOf(sel)+(e.key==="ArrowDown"?1:-1);if(k<0||k>=cur.length)return;sel=cur[k];$$("#cmdList .ci").forEach(x=>x.classList.toggle("on",+x.dataset.i===sel));const el=$('#cmdList .ci[data-i="'+sel+'"]');if(el)el.scrollIntoView({block:"nearest"});renderDet();});
   renderList();
@@ -1182,10 +1274,21 @@ try{(function(){if(!document.getElementById("v-hooks"))return; // módulo de la 
   const LC=[["SessionStart","Abres claude. SessionStart (matcher startup) puede inyectar contexto."],["InstructionsLoaded","Se cargan los CLAUDE.md y reglas: InstructionsLoaded por cada archivo."],["UserPromptSubmit","Escribes 'agrega validación al formulario'. UserPromptSubmit puede bloquearlo o agregar contexto."],["PreToolUse","Claude quiere ejecutar Edit. PreToolUse corre ANTES del chequeo de permisos: puede denegar."],["PermissionRequest","No hay regla allow: Claude Code va a preguntarte. PermissionRequest puede responder por ti."],["PostToolUse","El Edit tuvo éxito: PostToolUse corre prettier sobre el archivo."],["PostToolBatch","Claude había lanzado varias herramientas en paralelo: PostToolBatch al resolverse todas."],["Notification","Claude espera tu respuesta: Notification (idle_prompt) te avisa en el escritorio."],["Stop","Claude terminó de responder. Stop puede obligarlo a seguir si los tests fallan."],["PreCompact","El contexto se llenó: PreCompact antes de compactar (puede bloquear)."],["SessionStart","Tras compactar, SessionStart vuelve a disparar con matcher compact: re-inyecta lo importante."],["SessionEnd","Sales con /exit: SessionEnd para limpieza (1,5 s de presupuesto)."]];
   const PH=[[0,1,"Inicio"],[2,2,"Turno"],[3,6,"Cada herramienta"],[7,8,"Fin de turno"],[9,10,"Compactación"],[11,11,"Salida"]];
   $("#lc").innerHTML=PH.map(p=>'<div class="lcph"><div class="lcpt">'+p[2]+'</div><div class="lcrow">'+LC.slice(p[0],p[1]+1).map((x,k)=>'<button class="lcn" data-k="'+(p[0]+k)+'">'+x[0]+'</button>').join("")+'</div></div>').join("");
-  let lcRun=0;
-  function lcShow(k){$$("#lc .lcn").forEach(b=>b.classList.toggle("on",+b.dataset.k===k));$$("#lc .lcn").forEach(b=>{if(+b.dataset.k<k)b.classList.add("past");});$("#lcNar").innerHTML='<b>'+(k+1)+'/'+LC.length+'</b> · '+esc(LC[k][1]);}
-  on($("#lcPlay"),"click",async()=>{const my=++lcRun;$$("#lc .lcn").forEach(b=>b.classList.remove("past","on"));for(let k=0;k<LC.length;k++){if(my!==lcRun)return;lcShow(k);await sleep(1900);}$("#lcNar").innerHTML+=' <span style="color:var(--ok)">· fin de la sesión</span>';});
-  on($("#lc"),"click",e=>{const b=e.target.closest(".lcn");if(!b)return;lcRun++;const ev=byName(b.textContent);$$("#lc .lcn").forEach(x=>x.classList.toggle("on",x===b));$("#lcNar").innerHTML=evCard(ev);});
+  /* reproductor: pausar/reanudar y avanzar paso a paso */
+  let lcCur=-1,lcPlaying=false,lcTimer=0;const LC_MS=2600;
+  function lcShow(k){lcCur=Math.max(0,Math.min(LC.length-1,k));
+    $$("#lc .lcn").forEach(b=>{const n=+b.dataset.k;b.classList.toggle("on",n===lcCur);b.classList.toggle("past",n<lcCur);});
+    $("#lcNar").innerHTML='<b>'+(lcCur+1)+'/'+LC.length+'</b> · '+esc(LC[lcCur][1])+(lcCur===LC.length-1?' <span style="color:var(--ok)">· fin de la sesión</span>':'');
+    lcSync();}
+  function lcSync(){const p=$("#lcPlay");p.textContent=lcPlaying?"Pausar":lcCur>=LC.length-1?"Repetir":lcCur<0?"Reproducir":"Reanudar";p.setAttribute("aria-pressed",String(lcPlaying));
+    $("#lcPrev").disabled=lcCur<=0;$("#lcNext").disabled=lcCur>=LC.length-1;}
+  function lcSet(p){lcPlaying=p;clearTimeout(lcTimer);if(p)lcTimer=setTimeout(lcTick,LC_MS);lcSync();}
+  function lcTick(){if(!lcPlaying)return;if(lcCur>=LC.length-1)return lcSet(false);lcShow(lcCur+1);lcSet(lcCur<LC.length-1);}
+  on($("#lcPlay"),"click",()=>{if(lcPlaying)return lcSet(false);if(lcCur<0||lcCur>=LC.length-1)lcShow(0);lcSet(true);});
+  on($("#lcPrev"),"click",()=>{lcSet(false);lcShow(lcCur-1);});
+  on($("#lcNext"),"click",()=>{lcSet(false);lcShow(lcCur+1);});
+  on($("#lc"),"click",e=>{const b=e.target.closest(".lcn");if(!b)return;lcSet(false);lcShow(+b.dataset.k);const ev=byName(b.textContent);$("#lcNar").innerHTML='<b>'+(lcCur+1)+'/'+LC.length+'</b> · '+esc(LC[lcCur][1])+evCard(ev);});
+  lcSync();
   /* anatomía */
   const NJ=['{','  "hooks": {','    "PreToolUse": [','      {','        "matcher": "Bash",','        "hooks": [','          {','            "type": "command",','            "if": "Bash(rm *)",','            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/block-rm.sh"','          }','        ]','      }','    ]','  }','}'];
   const NR={1:[2,13],2:[3,12],3:[6,10]};
@@ -1334,10 +1437,22 @@ try{(function(){if(!document.getElementById("v-skills"))return; // módulo de la
   $("#dynA").textContent=DA;$("#dynB").textContent="…";
   on($("#dynPlay"),"click",async()=>{$("#dynB").textContent="…";$("#dynArr").classList.add("run");$("#dynA").innerHTML=esc(DA).replace("!`git diff --stat`",'<mark>!`git diff --stat`</mark>');await sleep(900);$("#dynArr").classList.remove("run");$("#dynB").innerHTML=esc(DB).replace(/( src[\s\S]*?deletions\(-\))/,'<mark>$1</mark>');});
   /* presupuesto */
-  function bud(){const v=$("#cbSk").value.split(/[,\s]+/).map(Number).filter(n=>n>0);let left=25000;const res=[];for(let i=v.length-1;i>=0;i--){const keep=Math.min(v[i],5000,left);left-=keep;res[i]=[v[i],keep];}
-    $("#cbBar").innerHTML=res.map((r,i)=>'<div class="bsk"><span>skill '+(i+1)+(i===res.length-1?' (más reciente)':'')+'</span><div class="bt"><i class="full" style="width:'+Math.min(100,r[0]/150)+'%"></i><i class="keep" style="width:'+(r[1]/150)+'%"></i></div><b>'+(r[1]?r[1].toLocaleString("es")+" tok":"descartada")+'</b></div>').join("");
-    const tot=res.reduce((a,r)=>a+r[1],0);$("#cbTxt").textContent="Re-adjuntado: "+tot.toLocaleString("es")+" de 25.000 tokens. Cada skill se corta a 5.000; se llena desde la más reciente."+(res.some(r=>!r[1])?" Las más antiguas quedaron fuera: re-invócalas si las necesitas.":"");}
-  on($("#cbSk"),"input",bud);bud();
+  function budParse(){const raw=$("#cbSk").value.split(/[,;\s]+/).filter(Boolean),bad=[],v=[];
+    raw.forEach(t=>{const n=Number(t.replace(/[.\u00a0_]/g,""));if(Number.isFinite(n)&&n>0)v.push(Math.round(n));else bad.push(t);});return {v,bad};}
+  function budErr(m){const e=$("#cbErr");e.hidden=!m;e.innerHTML=m||"";$("#cbSk").setAttribute("aria-invalid",String(!!m&&m.startsWith("✕")));}
+  function bud(submit){const {v,bad}=budParse();
+    if(!v.length){budErr("✕ Escribe al menos un tamaño en tokens, por ejemplo <code>3000, 12000</code>.");if(submit)$("#cbSk").focus();return;}
+    budErr(bad.length?"Ignoré "+bad.map(t=>"<code>"+esc(t)+"</code>").join(", ")+(bad.length>1?": no son números positivos.":": no es un número positivo."):"");
+    let left=25000;const res=[];for(let i=v.length-1;i>=0;i--){const keep=Math.min(v[i],5000,left);left-=keep;res[i]=[v[i],keep];}
+    const fmt=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,".");
+    $("#cbBar").innerHTML=res.map((r,i)=>'<div class="bsk'+(r[1]?'':' out')+'"><span>skill '+(i+1)+(i===res.length-1?' · reciente':'')+'</span><div class="bt"><i class="full" style="width:'+Math.min(100,r[0]/150)+'%"></i><i class="keep" style="width:'+(r[1]/150)+'%"></i></div><b>'+(r[1]?fmt(r[1])+" tok":"✕ fuera")+'</b></div>').join("");
+    const tot=res.reduce((a,r)=>a+r[1],0),out=res.filter(r=>!r[1]).length,cut=res.filter(r=>r[1]&&r[1]<r[0]).length;
+    $("#cbTxt").innerHTML="<b>Re-adjuntado: "+fmt(tot)+" de 25.000 tokens.</b> "+(cut?cut+(cut===1?" skill entra recortada":" skills entran recortadas")+" (tope de 5.000 por skill, o lo que quedaba del presupuesto). ":"")+(out?out+(out===1?" quedó fuera por ser la más antigua: re-invócala si la necesitas.":" quedaron fuera por ser las más antiguas: re-invócalas si las necesitas."):"Ninguna quedó fuera.");
+    if(submit){const t=$("#cbTxt");t.classList.remove("flash");void t.offsetWidth;t.classList.add("flash");}}
+  on($("#skBudForm"),"submit",e=>{e.preventDefault();bud(true);});
+  on($("#cbSk"),"input",()=>bud(false));
+  on($("#cbPre"),"click",e=>{const c=e.target.closest(".chip");if(!c)return;$("#cbSk").value=c.dataset.v;$$("#cbPre .chip").forEach(x=>x.classList.toggle("on",x===c));bud(true);});
+  bud(false);
   /* incluidas */
   const BS=[["/code-review","Revisión de bugs del diff, PR o rama; --fix aplica, --comment publica."],["/simplify","Cuatro agentes en paralelo buscan limpieza y la aplican."],["/batch","Cambios masivos en paralelo, un subagente por unidad en su worktree."],["/loop","Repite un prompt cada cierto intervalo mientras la sesión esté abierta."],["/debug","Activa logs de depuración y diagnostica leyendo el log."],["/doctor","Chequeo de instalación, settings y CLAUDE.md con arreglos."],["/verify","Compila, ejecuta y observa la app para confirmar un cambio."],["/run","Lanza y maneja la app del proyecto."],["/run-skill-generator","Escribe la skill de ejecución de tu proyecto para /run y /verify."],["/claude-api","Referencia de la Claude API y el Agent SDK."],["/update-config","Edita settings.json a partir de una descripción."],["/fewer-permission-prompts","Propone una allowlist a partir de tus transcripts."],["/dataviz","Guía de diseño de gráficos accesibles."],["/design · /slides","Diseños y presentaciones como artefactos."],["/claude-in-chrome","Tareas en tu navegador."],["/workflow-authoring","Referencia para escribir workflows dinámicos."]];
   $("#bundled").innerHTML=BS.map(b=>'<div class="mini"><b><code>'+esc(b[0])+'</code></b>'+esc(b[1])+'</div>').join("");
@@ -1450,14 +1565,9 @@ try{(function(){if(!document.getElementById("v-settings"))return; // módulo de 
   $("#scMap").innerHTML=BOX.map(b=>'<div class="scb"><div class="scbt">'+b[0]+'</div>'+b[1].map(p=>'<div class="scp" data-p="'+p[1]+'"> '+p[0]+'</div>').join("")+'</div>').join("");
   function sc(f){const r=REACH[f];$$("#scMap .scp").forEach(p=>{p.classList.toggle("on",r.on.includes(p.dataset.p));p.classList.toggle("dash",r.dash.includes(p.dataset.p));});$("#scTxt").textContent=r.t;}
   on($("#scFiles"),"click",e=>{const b=e.target.closest(".chip");if(!b)return;$$("#scFiles .chip").forEach(x=>x.classList.toggle("on",x===b));sc(b.dataset.f);});sc("user");
-  /* precedencia */
-  const PL=[["Managed","Organización: MDM, managed-settings.json, consola","man"],["Línea de comandos","--settings para esta sesión","cli"],["Proyecto local",".claude/settings.local.json","loc"],["Proyecto compartido",".claude/settings.json","prj"],["Usuario","~/.claude/settings.json","usr"]];
-  const pv={man:null,cli:null,loc:null,prj:true,usr:false};const PV0=Object.assign({},pv);
-  function pr(){$("#prStack").innerHTML=PL.map((l,i)=>'<div class="prl" data-k="'+l[2]+'"><div class="prn"><b>'+(i+1)+' · '+l[0]+'</b><small>'+esc(l[1])+'</small></div><div class="toggle">'+[["—",null],["true",true],["false",false]].map(o=>'<button data-v="'+o[0]+'"'+(pv[l[2]]===o[1]?' class="on"':'')+'>'+o[0]+'</button>').join("")+'</div></div>').join("");
-    const w=PL.find(l=>pv[l[2]]!==null);$$("#prStack .prl").forEach(r=>r.classList.toggle("win",w&&r.dataset.k===w[2]));
-    $("#prRes").innerHTML=w?'Resultado: <code>spinnerTipsEnabled = '+pv[w[2]]+'</code> → los tips '+(pv[w[2]]?'<b>se muestran</b>':'<b>se ocultan</b>')+'. Gana <b>'+w[0]+'</b> por ser el nivel más alto que define la clave.'+(w[2]==="man"?' Nada por debajo puede cambiarlo: pídelo a tu admin.':w[2]==="prj"&&pv.usr!==null?' Tu valor de usuario queda tapado: para recuperarlo en este proyecto ponlo en settings.local.json.':w[2]==="cli"?' Dura solo esta sesión.':''):'Nadie define la clave: se usa el valor por defecto (tips activados).';}
-  on($("#prStack"),"click",e=>{const b=e.target.closest("button[data-v]");if(!b)return;const k=b.closest(".prl").dataset.k;pv[k]={"—":null,"true":true,"false":false}[b.dataset.v];pr();});
-  on($("#prReset"),"click",()=>{Object.assign(pv,PV0);pr();});pr();
+  /* precedencia: el mismo simulador de la lección x3 */
+  precSim({stack:"prStack",res:"prRes",reset:"prReset",key:"spinnerTipsEnabled",values:[true,false],init:{prj:true,usr:false},dflt:"tips activados",
+    effect:v=>'los tips '+(v?'<b>se muestran</b>':'<b>se ocultan</b>')});
   /* fusión */
   const MG=[["~/.claude/settings.json",["Bash(git status)","Bash(git diff *)"]],[".claude/settings.json",["Bash(npm run test *)","Bash(npm run lint)"]],[".claude/settings.local.json",["Bash(docker compose up *)"]]];
   $("#mgBox").innerHTML='<div class="mgsrc">'+MG.map(m=>'<div class="mgc"><div class="scbt">'+esc(m[0])+'</div>'+m[1].map(r=>'<code>'+esc(r)+'</code>').join("")+'</div>').join("")+'</div><div class="mgarr">⟶ fusión ⟶</div><div class="mgc res"><div class="scbt">permissions.allow efectivo</div>'+MG.flatMap(m=>m[1]).map(r=>'<code>'+esc(r)+'</code>').join("")+'</div>';

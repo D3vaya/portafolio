@@ -1,0 +1,26 @@
+/* Animación: git reflog (prefijo .rf-) */
+.rf { display: grid; gap: 12px; }
+.rf-graph { padding: 2px 0; }
+.rf-graph .gk-node.rf-ping .gk-c { stroke: #ff5b1f; stroke-dasharray: none; filter: drop-shadow(0 0 8px rgb(255 91 31 / .8)); }
+.rf-log {
+  display: grid; gap: 6px; padding: 10px 12px; border-radius: 12px; background: #0b0c0f; border: 1px solid #23252c;
+  min-height: 9.6em; visibility: hidden; align-content: start;
+}
+.rf-log.is-on { visibility: visible; }
+.rf-cap { font: 500 12px var(--sans); color: #8b8f99; }
+.rf-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; font: 500 13px/1.45 var(--mono); color: #a8abb4; }
+.rf-list li { padding: 1px 6px; border-radius: 5px; transition: background-color .25s, color .25s; overflow-wrap: anywhere; }
+.rf-h { color: #ffb35c; }
+.rf-n { color: #ececee; }
+.rf-list li.is-walk { background: rgb(255 91 31 / .16); color: #ececee; }
+.rf-list li.is-hl { background: rgb(95 214 154 / .14); color: #ececee; box-shadow: inset 3px 0 0 #5fd69a; }
+.rf-note { display: none; list-style: none; margin: 4px 0 0; padding: 8px 0 0; border-top: 1px solid #23252c; gap: 4px; }
+.rf-log.has-note .rf-note { display: grid; }
+.rf-log.has-note .rf-list { display: none; }
+.rf-note li { font: 500 13px/1.45 var(--sans); color: #ececee; }
+.rf-note li b { color: #ff4d6d; }
+.rf-note .mo { font: 600 12.5px var(--mono); color: #ffb38f; }
+@media (max-width: 560px) {
+  .rf-list { font-size: 12px; }
+  .rf-list li:nth-child(n+5) { display: none; }
+}

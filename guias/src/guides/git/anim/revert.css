@@ -1,0 +1,4 @@
+/* Animación: git revert (prefijo .rv-) */
+.rv { display: grid; gap: 14px; }
+.rv-graph { padding: 4px 0; }
+.rv .gk-out { min-height: 6em; }

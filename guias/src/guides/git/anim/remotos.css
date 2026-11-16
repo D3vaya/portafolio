@@ -1,0 +1,30 @@
+/* Animación: remotos (clone, origin/main). Prefijo: .rt- */
+.rt { display: grid; gap: 10px; }
+.rt-plate {
+  position: relative; border: 1.5px solid #2a2d35; border-radius: 12px; padding: 8px 10px 0; background: #15161b;
+  transition: border-color .4s, box-shadow .4s;
+}
+.rt-ph { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 10px; }
+.rt-ph b { font: 800 16px var(--display); font-stretch: 80%; letter-spacing: -.01em; color: #ececee; }
+.rt-note { font: 600 12.5px var(--sans); color: #a8abb4; padding: 2px 9px; border-radius: 999px; background: #1b1d23; }
+.rt-note:empty { display: none; }
+.rt-plate[data-st="ok"] { border-color: rgb(95 214 154 / .7); box-shadow: 0 0 22px -12px #5fd69a; }
+.rt-plate[data-st="ok"] .rt-note { color: #9fecc4; box-shadow: inset 0 0 0 1px rgb(95 214 154 / .5); }
+.rt-plate[data-st="warn"] { border-color: rgb(255 179 92 / .75); box-shadow: 0 0 22px -10px #ffb35c; }
+.rt-plate[data-st="warn"] .rt-note { color: #ffd29c; box-shadow: inset 0 0 0 1px rgb(255 179 92 / .55); }
+.rt-plate[data-st="bad"] { border-color: rgb(255 77 109 / .8); box-shadow: 0 0 22px -10px #ff4d6d; }
+.rt-plate[data-st="bad"] .rt-note { color: #ff9aac; box-shadow: inset 0 0 0 1px rgb(255 77 109 / .6); }
+.rt-plate[data-st="hl"] { border-color: rgb(255 91 31 / .6); box-shadow: 0 0 22px -10px #ff5b1f; }
+.rt-plate[data-st="hl"] .rt-note { color: #ffd6c4; box-shadow: inset 0 0 0 1px rgb(255 91 31 / .5); }
+.rt-plate[data-st="hypo"] { border-style: dashed; border-color: rgb(255 77 109 / .7); }
+.rt-plate[data-st="hypo"] .rt-note { color: #ff9aac; box-shadow: inset 0 0 0 1px rgb(255 77 109 / .6); }
+.rt-wire { min-height: 18px; text-align: center; font: 600 13px var(--mono); color: #ff7a45; opacity: 0; transition: opacity .4s; }
+.rt-wire.is-on { opacity: 1; }
+.rt-wire.is-bad { color: #ff4d6d; }
+.rt-wire.is-ok { color: #5fd69a; }
+.rt-empty {
+  display: none; position: absolute; inset: 36px 0 0; margin: 0; place-items: center;
+  font: 500 13px var(--sans); color: #7a7e89;
+}
+.rt-plate.is-empty .rt-empty { display: grid; }
+@media (max-width: 520px) { .rt-plate { padding: 7px 3px 0; } .rt-ph { padding: 0 7px; } }

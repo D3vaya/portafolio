@@ -1,0 +1,12 @@
+.hd { display: grid; gap: 14px; }
+.hd-graph { padding: 12px 0 4px; }
+.hd-wd { background: #1b1d23; border: 1px solid #2a2d35; border-radius: 12px; padding: 12px 14px; display: grid; gap: 10px; }
+.hd-l { font: 600 12.5px var(--sans); color: #a8abb4; }
+.hd-list { display: flex; flex-wrap: wrap; gap: 8px; min-height: 30px; }
+.hd-f { background: #111216; }
+.hd-f b { font-weight: 600; }
+.hd-f em { font: 500 12px var(--sans); font-style: normal; color: #a8abb4; }
+.hd-f.f-mod em { color: #ffb35c; }
+.hd-err { margin: 0; font: 600 13px var(--sans); color: #ff4d6d; }
+.hd-err:empty { display: none; }
+.gk-legend i.hd-lhl { border-color: #ff5b1f; border-radius: 3px; }

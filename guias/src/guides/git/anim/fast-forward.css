@@ -1,0 +1,8 @@
+.ff { display: grid; gap: 12px; }
+.ff-graph { padding: 4px 0; }
+.ff-note { margin: 0; min-height: 1.5em; font: 600 13.5px var(--sans); color: #ececee; text-align: center; }
+.ff-note.is-ok { color: #5fd69a; }
+.ff-note.is-bad { color: #ff4d6d; }
+.ff .ff-pre { display: block; white-space: pre; overflow-x: auto; font-size: 12px; line-height: 1.45; }
+@media (max-width: 520px) { .ff .ff-pre { -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); } }
+.ff > .gk-term { min-width: 0; }

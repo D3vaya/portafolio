@@ -1,0 +1,42 @@
+/* Animación: un commit es una foto. Prefijo: .ft- */
+.ft { display: grid; gap: 14px; }
+.ft-board { position: relative; display: grid; gap: 12px; }
+.ft-grid {
+  display: grid; grid-template-columns: 96px repeat(3, minmax(0, 1fr)); column-gap: 6px; row-gap: 8px; align-items: center;
+  padding: 12px; border-radius: 12px; background: #16171c; border: 1.5px solid #2a2c34;
+}
+.ft-head { grid-row: 1; align-self: start; position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; padding-bottom: 6px; border-radius: 10px; }
+.ft-head.has-parent::before {
+  content: ""; position: absolute; top: 15px; left: calc(10px - 50%); width: calc(100% - 26px); height: 2.5px; background: rgb(255 255 255 / .3);
+}
+.ft-head b { font: 600 12px var(--mono); color: #ffb35c; }
+.ft-head span { font: 500 12px/1.25 var(--sans); color: #a8abb4; }
+.ft-head.is-hl { box-shadow: 0 0 0 1.5px #ff5b1f; }
+.ft-head.is-off { min-height: 60px; }
+.ft-name { grid-column: 1; font: 600 12.5px var(--mono); color: #ececee; overflow-wrap: anywhere; }
+
+.ft-bar {
+  display: flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; height: 32px; padding: 0 8px; box-sizing: border-box;
+  border-radius: 7px; background: #23252c; border: 1.5px solid #5d6170; overflow: hidden; white-space: nowrap;
+}
+.ft-bar b { font: 600 12px var(--mono); color: #ececee; }
+.ft-bar em { font: 500 12px var(--sans); font-style: normal; color: #a8abb4; overflow: hidden; text-overflow: ellipsis; }
+.ft-bar.is-new { border-color: #ff5b1f; background: #2a1a14; box-shadow: 0 0 14px -4px rgb(255 91 31 / .7); }
+.ft-bar.is-cmp { border-color: #5fd69a; background: #15261d; }
+.ft-bar.is-skip { opacity: .4; }
+
+.ft-note { margin: 0; }
+.ft-ficha {
+  display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 14px; margin: 0; padding: 10px 14px; border-radius: 10px;
+  border: 1.5px solid #ff5b1f; background: #16171c; font: 500 13px var(--sans); color: #ececee;
+}
+.ft-ficha dt { color: #8b8f99; }
+.ft-ficha dd { margin: 0; overflow-wrap: anywhere; }
+.ft-ficha .mo { font: 600 12.5px var(--mono); color: #ffb35c; }
+
+@media (max-width: 760px) {
+  .ft-grid { grid-template-columns: 74px repeat(3, minmax(0, 1fr)); padding: 10px 8px; }
+  .ft-name { font-size: 12px; }
+  .ft-bar { padding: 0 4px; }
+  .ft-bar em { display: none; }
+}
