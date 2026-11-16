@@ -1,0 +1,15 @@
+/* Animaciones generadas desde datos (casos/flujo.ts). Prefijo: .fl- */
+.fl { display: grid; gap: 12px; }
+.fl .gk-term { min-height: 68px; }
+.fl .gk-term.is-empty { display: none; }
+.fl-graph { display: flex; justify-content: center; overflow: hidden; }
+.fl-graph .gk-svg { width: 100%; max-height: 320px; }
+.fl-nota {
+  padding: 12px 14px; border-radius: 12px; background: #1b1d23; border: 1px solid rgb(255 255 255 / .1);
+  font: 500 14px/1.5 var(--sans); color: #ececee;
+}
+.fl-nota.is-empty { display: none; }
+.fl-nota code { font: 500 13px var(--mono); color: #ffb35c; }
+.fl-nota b { color: #fff; }
+.fl-nota .ok { color: #5fd69a; } .fl-nota .bad { color: #ff4d6d; } .fl-nota .warn { color: #ffb35c; }
+.fl .gk-legend i.l-tag { background: #ececee; border-color: #ececee; border-radius: 3px; }

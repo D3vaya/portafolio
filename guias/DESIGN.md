@@ -191,6 +191,17 @@ El motor implementa commit, branch, switch, checkout, merge, rebase, cherry-pick
 reflog con revisiones (`HEAD~2`, `main^`, `HEAD@{1}`). Los escenarios con `goal` y `check` son desafíos que se
 validan solos. Para agregar uno, añade una entrada a `ESCENARIOS` con `build`, `goal`, `hint`, `check` y `solution`.
 
+### 6.3 Problemas y estrategias: flujos como datos
+
+Las vistas `/git/problemas/` y `/git/estrategias/` no tienen escenas escritas a mano. Cada caso y cada estrategia es un
+objeto en `src/guides/git/casos/casos.ts` o `estrategias.ts`, con su animación como datos (`Flujo`: pasos con `g`
+—grafo completo—, `cmd`, `out` y `nota`). `casos/flujo.ts` (`escenaDe`) los convierte en escenas con el kit de grafos.
+Si el grafo pasa de ~4,2 columnas, `escenaDe` junta las columnas para que el texto no baje de 12 px a 390 px.
+El HTML de cada caso se genera en el build (`casos/html.ts`, marcadores `<!--casos-->` y `<!--estrategias-->` en
+`content.html`) para que los buscadores lo indexen; `casos/client.ts` monta las animaciones, el buscador de problemas
+y el asistente que recomienda una estrategia. Para agregar un problema, añade una entrada a `CASOS`: aparece solo en
+la lista, en su grupo y con su animación. Las salidas de Git van en inglés y copiadas del código fuente de Git.
+
 ---
 
 ## 7. Redacción

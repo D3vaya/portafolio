@@ -3,11 +3,17 @@
   Cada vista tiene su URL, su título y su descripción, para que los buscadores
   puedan indexar por separado "hooks de Claude Code", "comandos", etc.
 */
-import content from "./content.html?raw";
+import raw from "./content.html?raw";
+import { htmlCasos, htmlEstrategias } from "./casos/html";
+import { CASOS, GRUPOS } from "./casos/casos";
+import { ESTRATEGIAS } from "./casos/estrategias";
+
+// los casos y las estrategias se escriben como datos (también los usa la animación) y se insertan aquí
+const content = raw.replace("<!--casos-->", htmlCasos(CASOS, GRUPOS)).replace("<!--estrategias-->", htmlEstrategias(ESTRATEGIAS));
 
 export const BASE = "/git/";
 export const LEVELS = ["basico", "intermedio", "avanzado", "experto"] as const;
-export const REFERENCE = ["laboratorio", "comandos", "rescate", "glosario"] as const;
+export const REFERENCE = ["problemas", "rescate", "estrategias", "comandos", "laboratorio", "glosario"] as const;
 export const VIEWS = ["inicio", ...LEVELS, ...REFERENCE] as const;
 export type ViewId = (typeof VIEWS)[number];
 
@@ -22,6 +28,8 @@ export const META: Record<ViewId, { label: string; title: string }> = {
   experto: { label: "Experto", title: "Git por dentro: objetos, packfiles, hooks y monorepos" },
   laboratorio: { label: "Laboratorio", title: "Laboratorio de Git: practica comandos y mira el grafo" },
   comandos: { label: "Comandos", title: "Comandos de Git explicados en español, con ejemplos" },
+  problemas: { label: "Problemas", title: "Problemas comunes con Git en equipo y cómo resolverlos" },
+  estrategias: { label: "Estrategias", title: "Estrategias de ramas: GitHub flow, trunk-based, Git flow" },
   rescate: { label: "Rescate", title: "Cómo deshacer en Git: recupera commits, ramas y archivos" },
   glosario: { label: "Glosario", title: "Glosario de Git: HEAD, rama, rebase y más, en español" },
 };
