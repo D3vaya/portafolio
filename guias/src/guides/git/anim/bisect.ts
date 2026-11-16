@@ -38,11 +38,11 @@ const PASOS: Estado[] = [
     good: [0, 7], bad: [15, 11], lo: 8, hi: 11, cur: 9, bisecting: true },
   { cmd: "git bisect good", out: `Bisecting: 0 revisions left to test after this (roughly 0 steps)\n[${HASH[10]}] cambia el redondeo`,
     good: [0, 7, 9], bad: [15, 11], lo: 10, hi: 11, cur: 10, bisecting: true },
-  { cmd: "git bisect bad", out: `<span class="bad">${HASH[10]} is the first bad commit</span>\ncommit ${HASH[10]}\n    cambia el redondeo`,
+  { cmd: "git bisect bad", out: `<span class="bad">${HASH[10]} is the first 'bad' commit</span>\ncommit ${HASH[10]}\n    cambia el redondeo`,
     good: [0, 7, 9], bad: [15, 11, 10], lo: 10, hi: 10, cur: 10, found: true, bisecting: true },
   { cmd: "git bisect reset", out: `Previous HEAD position was ${HASH[10]} cambia el redondeo\nSwitched to branch 'main'`,
     good: [0], bad: [15], lo: 10, hi: 10, found: true, bisecting: false },
-  { cmd: "git bisect run npm test", out: `running 'npm' 'test'\n…\n<span class="bad">${HASH[10]} is the first bad commit</span>\nbisect found first bad commit`,
+  { cmd: "git bisect run npm test", out: `running 'npm' 'test'\n…\n<span class="bad">${HASH[10]} is the first 'bad' commit</span>\nbisect found first 'bad' commit`,
     good: [0, 7, 9], bad: [15, 11, 10], lo: 10, hi: 10, cur: 10, found: true, bisecting: true, run: true },
 ];
 // orden en que bisect run prueba (para animarlo)

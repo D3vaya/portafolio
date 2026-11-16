@@ -41,7 +41,7 @@ const PASOS: Paso[] = [
   { cmd: 'git commit -am "maneja la cancelación" && git push', out: "To github.com:tu-usuario/mi-app.git\n   9c2e4f1..b71d3a8  login-google -> login-google",
     local: { nodes: [A, B, C, { ...D, tone: "new" }], refs: [{ name: "main", at: "A" }, rem("A"), { name: "login-google", at: "D" }, remLg("D")], head: "login-google" },
     remote: { nodes: [A, B, C, { ...D, tone: "new" }], refs: [{ name: "main", at: "A" }, { name: "login-google", at: "D" }] }, pr: { review: "changes", commits: 3, comment: true } },
-  { cmd: "gh pr merge 42 --merge", out: '<span class="ok">✓ Merged pull request #42 (Inicio de sesión con Google)</span>',
+  { cmd: "gh pr merge 42 --merge", out: '<span class="ok">✓ Merged pull request tu-usuario/mi-app#42 (Inicio de sesión con Google)</span>',
     local: { nodes: [A, B, C, D], refs: [{ name: "main", at: "A" }, rem("A"), { name: "login-google", at: "D" }, remLg("D")], head: "login-google" },
     remote: { nodes: [A, B, C, D, { ...M, tone: "new" }], refs: [{ name: "main", at: "M" }, { name: "login-google", at: "D" }] }, pr: { review: "ok", commits: 3, merged: true } },
   { cmd: "git switch main && git pull && git branch -d login-google",

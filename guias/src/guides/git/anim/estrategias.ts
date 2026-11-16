@@ -34,7 +34,7 @@ const PASOS: Paso[] = [
     g: { nodes: [hA, hB, hP1, hP2], refs: [{ name: "main", at: "B" }, { name: "feature/pago", at: "p2", side: "down" }], head: "feature/pago" },
   },
   {
-    w: 1, cmd: "gh pr merge 42 --merge --delete-branch", out: '<span class="ok">✓ Merged pull request ana/tienda#42 (agrega pago)</span>',
+    w: 1, cmd: "gh pr merge 42 --merge --delete-branch", out: '<span class="ok">✓ Merged pull request ana/tienda#42 (agrega pago)\n✓ Deleted local branch feature/pago and switched to branch main\n✓ Deleted remote branch feature/pago</span>',
     g: { nodes: [hA, hB, hP1, hP2, hM], refs: [{ name: "main", at: "M" }], head: "main" },
   },
   {
